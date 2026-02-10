@@ -507,7 +507,7 @@
         goal: "Catalog all galleries with couple type, location tags for instant search",
         strategies: [
           "Runs every night at 9pm EST",
-          "Scans 4 new galleries per night",
+          "Scans 4 new VENUES per night (each venue has multiple galleries)",
           "Analyzes photos for couple type (flags uncertain)",
           "Extracts location: rooftop, waterfront, skyline, park, borough",
           "Saves to searchable database"
@@ -516,8 +516,9 @@
         tasksPending: ["First scan tonight at 9pm"],
         nextStep: "Wait for first nightly scan to run at 9pm",
         scanProgress: {
-          scanned: 0,
-          total: "TBD",
+          venuesScanned: 0,
+          galleriesScanned: 0,
+          totalVenues: "TBD",
           lastScan: "Never"
         },
         links: [],
