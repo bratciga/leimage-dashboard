@@ -364,6 +364,48 @@
       color: rgba(255,255,255,0.9);
     }
     
+    .complete-btn {
+      background: rgba(67, 233, 123, 0.2);
+      border: 1px solid #43e97b;
+      color: #43e97b;
+      padding: 8px 16px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 13px;
+      margin-top: 12px;
+      transition: all 0.2s;
+    }
+    
+    .complete-btn:hover {
+      background: rgba(67, 233, 123, 0.3);
+    }
+    
+    .toast {
+      position: fixed;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: #43e97b;
+      color: #1a1a2e;
+      padding: 12px 24px;
+      border-radius: 8px;
+      font-weight: 600;
+      display: none;
+      z-index: 1000;
+    }
+    
+    .toast.show {
+      display: block;
+      animation: fadeInOut 3s ease;
+    }
+    
+    @keyframes fadeInOut {
+      0% { opacity: 0; }
+      10% { opacity: 1; }
+      90% { opacity: 1; }
+      100% { opacity: 0; }
+    }
+    
     .empty-state {
       text-align: center;
       padding: 60px 20px;
@@ -424,6 +466,8 @@
     
     <div class="projects-grid" id="projects-grid"></div>
   </div>
+  
+  <div class="toast" id="toast"></div>
 
   <script>
     // Projects data (edit this array to add/modify projects)
@@ -646,8 +690,12 @@
            </div>`
         : '';
       
+      const completeBtn = project.status !== 'completed'
+        ? `<button class="complete-btn" onclick="markComplete('${project.id}', '${project.name}')">✓ Mark Complete</button>`
+        : '';
+      
       return `
-        <div class="card">
+        <div class="card" data-id="${project.id}">
           <div class="card-title">${project.name}</div>
           <div class="card-description">${project.description}</div>
           ${goalHtml}
@@ -655,6 +703,7 @@
           ${tasksHtml}
           ${nextStepHtml}
           ${linksHtml}
+          ${completeBtn}
           <div class="card-footer">
             <div class="assignee">
               <div class="assignee-dot ${project.assignee}"></div>
@@ -718,7 +767,44 @@
       });
     });
     
-    // Render on start
+    // Mark project complete
+    function markComplete(projectId, projectName) {
+      // Update local state
+      const project = projects.find(p => p.id === projectId);
+      if (project) {
+        project.status = 'completed';
+        // Save to localStorage
+        localStorage.setItem('completedProjects', JSON.stringify(
+          [...(JSON.parse(localStorage.getItem('completedProjects') || '[]')), projectId]
+        ));
+        render();
+        showToast('Marked complete! Notifying Brat to sync...');
+        
+        // Open Telegram to notify Brat
+        const msg = encodeURIComponent(`Sync dashboard: Move "${projectName}" to completed`);
+        window.open(`https://t.me/BratCigaBot?text=${msg}`, '_blank');
+      }
+    }
+    
+    // Show toast notification
+    function showToast(message) {
+      const toast = document.getElementById('toast');
+      toast.textContent = message;
+      toast.classList.add('show');
+      setTimeout(() => toast.classList.remove('show'), 3000);
+    }
+    
+    // Load completed status from localStorage
+    function loadLocalState() {
+      const completed = JSON.parse(localStorage.getItem('completedProjects') || '[]');
+      completed.forEach(id => {
+        const project = projects.find(p => p.id === id);
+        if (project) project.status = 'completed';
+      });
+    }
+    
+    // Initialize
+    loadLocalState();
     render();
   </script>
 </body>
