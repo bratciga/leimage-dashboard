@@ -417,6 +417,111 @@
       font-size: 15px;
       grid-column: 1 / -1;
     }
+    
+    /* Gallery Database Styles */
+    .gallery-filters {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 24px;
+      flex-wrap: wrap;
+    }
+    
+    .gallery-filter {
+      padding: 8px 16px;
+      background: rgba(255,255,255,0.1);
+      border: none;
+      border-radius: 6px;
+      color: #fff;
+      cursor: pointer;
+      font-size: 13px;
+    }
+    
+    .gallery-filter.active {
+      background: #a29bfe;
+      color: #1a1a2e;
+    }
+    
+    .gallery-search {
+      padding: 10px 16px;
+      background: rgba(255,255,255,0.1);
+      border: 1px solid rgba(255,255,255,0.2);
+      border-radius: 6px;
+      color: #fff;
+      font-size: 14px;
+      width: 250px;
+    }
+    
+    .gallery-search::placeholder {
+      color: rgba(255,255,255,0.4);
+    }
+    
+    .gallery-card {
+      background: rgba(255,255,255,0.05);
+      border-radius: 12px;
+      padding: 20px;
+      margin-bottom: 16px;
+    }
+    
+    .gallery-couple {
+      font-size: 18px;
+      font-weight: 600;
+      margin-bottom: 8px;
+    }
+    
+    .gallery-venue {
+      font-size: 14px;
+      color: #a29bfe;
+      margin-bottom: 12px;
+    }
+    
+    .gallery-tags {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-bottom: 12px;
+    }
+    
+    .gallery-tag {
+      padding: 4px 10px;
+      background: rgba(255,255,255,0.1);
+      border-radius: 4px;
+      font-size: 12px;
+    }
+    
+    .gallery-tag.couple-type {
+      background: rgba(79, 172, 254, 0.2);
+      color: #4facfe;
+    }
+    
+    .gallery-tag.uncertain {
+      background: rgba(255, 193, 7, 0.2);
+      color: #ffc107;
+    }
+    
+    .gallery-tag.location {
+      background: rgba(67, 233, 123, 0.2);
+      color: #43e97b;
+    }
+    
+    .gallery-notes {
+      font-size: 13px;
+      color: rgba(255,255,255,0.6);
+      margin-bottom: 12px;
+    }
+    
+    .gallery-edit-btn {
+      background: rgba(162, 155, 254, 0.2);
+      border: 1px solid #a29bfe;
+      color: #a29bfe;
+      padding: 6px 12px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 12px;
+    }
+    
+    .gallery-edit-btn:hover {
+      background: rgba(162, 155, 254, 0.3);
+    }
   </style>
 </head>
 <body>
@@ -448,6 +553,11 @@
         <div class="nav-dot longterm"></div>
         <div class="nav-text">Long Term</div>
         <div class="nav-count" id="nav-longterm-count">0</div>
+      </div>
+      <div class="nav-item" data-status="gallery-db">
+        <div class="nav-dot" style="background: #a29bfe;"></div>
+        <div class="nav-text">Gallery Database</div>
+        <div class="nav-count" id="nav-gallery-count">0</div>
       </div>
     </div>
     
@@ -784,7 +894,11 @@
         document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
         item.classList.add('active');
         currentStatus = item.dataset.status;
-        render();
+        if (currentStatus === 'gallery-db') {
+          renderGalleryDatabase();
+        } else {
+          render();
+        }
       });
     });
     
@@ -832,6 +946,107 @@
         const project = projects.find(p => p.id === id);
         if (project) project.status = 'completed';
       });
+    }
+    
+    // Gallery Database
+    let galleryData = {
+      metadata: { venuesScanned: 0, galleriesScanned: 0, lastScanDate: null },
+      galleries: [
+        // Example entry (will be populated by nightly scans)
+        // { couple: "Rebecca & Kenneth", venue: "Brooklyn Grange", coupleType: "interracial", uncertain: false, location: { rooftop: true, waterfront: false, skyline: true, borough: "Brooklyn", park: null, notes: "Rooftop farm" }, url: "...", scannedAt: "2026-02-10" }
+      ]
+    };
+    
+    let galleryFilter = 'all';
+    let gallerySearch = '';
+    
+    function renderGalleryDatabase() {
+      const grid = document.getElementById('projects-grid');
+      
+      // Filter galleries
+      let filtered = galleryData.galleries;
+      if (galleryFilter !== 'all') {
+        if (['white', 'black', 'interracial', 'asian', 'lgbtq'].includes(galleryFilter)) {
+          filtered = filtered.filter(g => g.coupleType === galleryFilter);
+        } else if (galleryFilter === 'rooftop') {
+          filtered = filtered.filter(g => g.location?.rooftop);
+        } else if (galleryFilter === 'waterfront') {
+          filtered = filtered.filter(g => g.location?.waterfront);
+        } else if (galleryFilter === 'skyline') {
+          filtered = filtered.filter(g => g.location?.skyline);
+        } else if (galleryFilter === 'uncertain') {
+          filtered = filtered.filter(g => g.uncertain);
+        }
+      }
+      if (gallerySearch) {
+        const search = gallerySearch.toLowerCase();
+        filtered = filtered.filter(g => 
+          g.couple?.toLowerCase().includes(search) ||
+          g.venue?.toLowerCase().includes(search) ||
+          g.location?.borough?.toLowerCase().includes(search) ||
+          g.location?.park?.toLowerCase().includes(search) ||
+          g.location?.notes?.toLowerCase().includes(search)
+        );
+      }
+      
+      // Update header
+      document.getElementById('page-title').textContent = 'Gallery Database';
+      document.getElementById('page-dot').style.background = '#a29bfe';
+      document.getElementById('page-count').textContent = filtered.length + ' galleries';
+      
+      // Build HTML
+      let html = '<div class="gallery-filters">';
+      html += '<input type="text" class="gallery-search" placeholder="Search couples, venues..." onkeyup="updateGallerySearch(this.value)">';
+      html += '<button class="gallery-filter ' + (galleryFilter === 'all' ? 'active' : '') + '" onclick="setGalleryFilter(\'all\')">All</button>';
+      html += '<button class="gallery-filter ' + (galleryFilter === 'lgbtq' ? 'active' : '') + '" onclick="setGalleryFilter(\'lgbtq\')">LGBTQ</button>';
+      html += '<button class="gallery-filter ' + (galleryFilter === 'interracial' ? 'active' : '') + '" onclick="setGalleryFilter(\'interracial\')">Interracial</button>';
+      html += '<button class="gallery-filter ' + (galleryFilter === 'rooftop' ? 'active' : '') + '" onclick="setGalleryFilter(\'rooftop\')">Rooftop</button>';
+      html += '<button class="gallery-filter ' + (galleryFilter === 'waterfront' ? 'active' : '') + '" onclick="setGalleryFilter(\'waterfront\')">Waterfront</button>';
+      html += '<button class="gallery-filter ' + (galleryFilter === 'skyline' ? 'active' : '') + '" onclick="setGalleryFilter(\'skyline\')">Skyline</button>';
+      html += '<button class="gallery-filter ' + (galleryFilter === 'uncertain' ? 'active' : '') + '" onclick="setGalleryFilter(\'uncertain\')">⚠️ Uncertain</button>';
+      html += '</div>';
+      
+      if (galleryData.galleries.length === 0) {
+        html += '<div class="empty-state">No galleries scanned yet.<br>First scan runs tonight at 9pm.</div>';
+      } else if (filtered.length === 0) {
+        html += '<div class="empty-state">No galleries match your filters.</div>';
+      } else {
+        filtered.forEach(g => {
+          html += '<div class="gallery-card">';
+          html += '<div class="gallery-couple">' + g.couple + '</div>';
+          html += '<div class="gallery-venue">📍 ' + g.venue + '</div>';
+          html += '<div class="gallery-tags">';
+          if (g.coupleType) html += '<span class="gallery-tag couple-type">' + g.coupleType + '</span>';
+          if (g.uncertain) html += '<span class="gallery-tag uncertain">⚠️ uncertain</span>';
+          if (g.location?.rooftop) html += '<span class="gallery-tag location">rooftop</span>';
+          if (g.location?.waterfront) html += '<span class="gallery-tag location">waterfront</span>';
+          if (g.location?.skyline) html += '<span class="gallery-tag location">skyline</span>';
+          if (g.location?.borough) html += '<span class="gallery-tag location">' + g.location.borough + '</span>';
+          if (g.location?.park) html += '<span class="gallery-tag location">' + g.location.park + '</span>';
+          html += '</div>';
+          if (g.location?.notes) html += '<div class="gallery-notes">' + g.location.notes + '</div>';
+          const editMsg = encodeURIComponent('Edit gallery: ' + g.couple + ' at ' + g.venue + '\\n\\nChange: ');
+          html += '<button class="gallery-edit-btn" onclick="window.open(\'https://t.me/BratCigaBot?text=' + editMsg + '\', \'_blank\')">✏️ Edit</button>';
+          html += '</div>';
+        });
+      }
+      
+      html += '<div style="margin-top:20px;padding:16px;background:rgba(255,255,255,0.05);border-radius:8px;font-size:13px;color:rgba(255,255,255,0.5);">';
+      html += '<strong>Scan Progress:</strong> ' + galleryData.metadata.venuesScanned + ' venues / ' + galleryData.metadata.galleriesScanned + ' galleries<br>';
+      html += '<strong>Last Scan:</strong> ' + (galleryData.metadata.lastScanDate || 'Never');
+      html += '</div>';
+      
+      grid.innerHTML = html;
+    }
+    
+    function setGalleryFilter(filter) {
+      galleryFilter = filter;
+      renderGalleryDatabase();
+    }
+    
+    function updateGallerySearch(value) {
+      gallerySearch = value;
+      renderGalleryDatabase();
     }
     
     // Initialize
