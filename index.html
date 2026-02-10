@@ -1,0 +1,718 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Le Image - Project Dashboard</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+      background: #0f0f1a;
+      min-height: 100vh;
+      color: #fff;
+      display: flex;
+    }
+    
+    /* Sidebar */
+    .sidebar {
+      width: 260px;
+      background: linear-gradient(180deg, #1a1a2e 0%, #16213e 100%);
+      min-height: 100vh;
+      padding: 24px 0;
+      border-right: 1px solid rgba(255,255,255,0.1);
+      position: fixed;
+      left: 0;
+      top: 0;
+      bottom: 0;
+    }
+    
+    .logo {
+      font-size: 22px;
+      font-weight: 700;
+      color: #fff;
+      padding: 0 24px 24px;
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+      margin-bottom: 24px;
+    }
+    
+    .logo span {
+      color: #4facfe;
+    }
+    
+    .nav-section {
+      margin-bottom: 32px;
+    }
+    
+    .nav-label {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      color: rgba(255,255,255,0.4);
+      padding: 0 24px;
+      margin-bottom: 12px;
+    }
+    
+    .nav-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 14px 24px;
+      cursor: pointer;
+      transition: all 0.2s;
+      border-left: 3px solid transparent;
+    }
+    
+    .nav-item:hover {
+      background: rgba(255,255,255,0.05);
+    }
+    
+    .nav-item.active {
+      background: rgba(79, 172, 254, 0.1);
+      border-left-color: #4facfe;
+    }
+    
+    .nav-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+    }
+    
+    .nav-dot.research { background: #f093fb; }
+    .nav-dot.active { background: #4facfe; }
+    .nav-dot.longterm { background: #ffeaa7; }
+    .nav-dot.completed { background: #43e97b; }
+    
+    .nav-text {
+      flex: 1;
+      font-size: 15px;
+    }
+    
+    .nav-count {
+      background: rgba(255,255,255,0.1);
+      padding: 3px 10px;
+      border-radius: 10px;
+      font-size: 12px;
+    }
+    
+    /* Person filter */
+    .person-filter {
+      padding: 0 24px;
+      margin-top: auto;
+      position: absolute;
+      bottom: 24px;
+      left: 0;
+      right: 0;
+    }
+    
+    .person-label {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      color: rgba(255,255,255,0.4);
+      margin-bottom: 12px;
+    }
+    
+    .person-btns {
+      display: flex;
+      gap: 8px;
+    }
+    
+    .person-btn {
+      flex: 1;
+      padding: 10px;
+      border: none;
+      border-radius: 8px;
+      background: rgba(255,255,255,0.1);
+      color: #fff;
+      cursor: pointer;
+      font-size: 13px;
+      transition: all 0.2s;
+    }
+    
+    .person-btn:hover {
+      background: rgba(255,255,255,0.15);
+    }
+    
+    .person-btn.active {
+      background: #4facfe;
+      color: #1a1a2e;
+      font-weight: 600;
+    }
+    
+    /* Main content */
+    .main {
+      flex: 1;
+      margin-left: 260px;
+      padding: 32px 40px;
+    }
+    
+    .page-header {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 32px;
+    }
+    
+    .page-dot {
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+    }
+    
+    .page-title {
+      font-size: 28px;
+      font-weight: 700;
+    }
+    
+    .page-count {
+      background: rgba(255,255,255,0.1);
+      padding: 6px 14px;
+      border-radius: 12px;
+      font-size: 14px;
+      margin-left: 8px;
+    }
+    
+    .projects-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+      gap: 20px;
+    }
+    
+    .card {
+      background: rgba(255,255,255,0.05);
+      border-radius: 16px;
+      padding: 24px;
+      transition: all 0.2s;
+      border: 1px solid rgba(255,255,255,0.05);
+    }
+    
+    .card:hover {
+      background: rgba(255,255,255,0.08);
+      border-color: rgba(255,255,255,0.1);
+      transform: translateY(-2px);
+    }
+    
+    .card-title {
+      font-size: 18px;
+      font-weight: 600;
+      margin-bottom: 10px;
+    }
+    
+    .card-description {
+      font-size: 14px;
+      color: rgba(255,255,255,0.7);
+      margin-bottom: 16px;
+      line-height: 1.6;
+    }
+    
+    .card-notes {
+      font-size: 13px;
+      color: rgba(255,255,255,0.5);
+      font-style: italic;
+      margin-bottom: 16px;
+      padding: 12px;
+      background: rgba(0,0,0,0.3);
+      border-radius: 10px;
+      line-height: 1.5;
+    }
+    
+    .card-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-top: 16px;
+      border-top: 1px solid rgba(255,255,255,0.1);
+    }
+    
+    .assignee {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 13px;
+    }
+    
+    .assignee-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+    }
+    
+    .assignee-dot.nikola { background: #4facfe; }
+    .assignee-dot.josephine { background: #f093fb; }
+    .assignee-dot.both { background: linear-gradient(135deg, #4facfe 50%, #f093fb 50%); }
+    
+    .card-date {
+      font-size: 12px;
+      color: rgba(255,255,255,0.4);
+    }
+    
+    .card-links {
+      display: flex;
+      gap: 8px;
+      margin-top: 12px;
+    }
+    
+    .card-link {
+      font-size: 12px;
+      color: #4facfe;
+      text-decoration: none;
+      background: rgba(79, 172, 254, 0.1);
+      padding: 6px 12px;
+      border-radius: 6px;
+    }
+    
+    .card-link:hover {
+      background: rgba(79, 172, 254, 0.2);
+    }
+    
+    .card-section {
+      margin-top: 16px;
+      padding-top: 16px;
+      border-top: 1px solid rgba(255,255,255,0.1);
+    }
+    
+    .card-section-title {
+      font-size: 12px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: rgba(255,255,255,0.5);
+      margin-bottom: 8px;
+    }
+    
+    .card-goal {
+      color: #4facfe;
+      font-weight: 500;
+      margin-bottom: 12px;
+    }
+    
+    .card-strategies {
+      list-style: none;
+      padding: 0;
+      margin: 0 0 12px 0;
+    }
+    
+    .card-strategies li {
+      font-size: 13px;
+      color: rgba(255,255,255,0.7);
+      padding: 4px 0 4px 16px;
+      position: relative;
+    }
+    
+    .card-strategies li:before {
+      content: "→";
+      position: absolute;
+      left: 0;
+      color: rgba(255,255,255,0.4);
+    }
+    
+    .card-tasks {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+    
+    .card-tasks li {
+      font-size: 13px;
+      color: rgba(255,255,255,0.7);
+      padding: 4px 0 4px 20px;
+      position: relative;
+    }
+    
+    .card-tasks li.done {
+      color: #43e97b;
+    }
+    
+    .card-tasks li.done:before {
+      content: "✓";
+      position: absolute;
+      left: 0;
+      color: #43e97b;
+    }
+    
+    .card-tasks li.pending:before {
+      content: "○";
+      position: absolute;
+      left: 0;
+      color: rgba(255,255,255,0.4);
+    }
+    
+    .next-step {
+      background: rgba(79, 172, 254, 0.15);
+      border-left: 3px solid #4facfe;
+      padding: 12px;
+      border-radius: 0 8px 8px 0;
+      margin-top: 12px;
+    }
+    
+    .next-step-label {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: #4facfe;
+      margin-bottom: 4px;
+    }
+    
+    .next-step-text {
+      font-size: 13px;
+      color: rgba(255,255,255,0.9);
+    }
+    
+    .empty-state {
+      text-align: center;
+      padding: 60px 20px;
+      color: rgba(255,255,255,0.4);
+      font-size: 15px;
+      grid-column: 1 / -1;
+    }
+  </style>
+</head>
+<body>
+  <div class="sidebar">
+    <div class="logo">Le <span>Image</span></div>
+    
+    <div class="nav-section">
+      <div class="nav-label">Projects</div>
+      <div class="nav-item active" data-status="all">
+        <div class="nav-text">All Projects</div>
+        <div class="nav-count" id="nav-all-count">0</div>
+      </div>
+      <div class="nav-item" data-status="research">
+        <div class="nav-dot research"></div>
+        <div class="nav-text">Research</div>
+        <div class="nav-count" id="nav-research-count">0</div>
+      </div>
+      <div class="nav-item" data-status="active">
+        <div class="nav-dot active"></div>
+        <div class="nav-text">Active</div>
+        <div class="nav-count" id="nav-active-count">0</div>
+      </div>
+      <div class="nav-item" data-status="completed">
+        <div class="nav-dot completed"></div>
+        <div class="nav-text">Completed</div>
+        <div class="nav-count" id="nav-completed-count">0</div>
+      </div>
+      <div class="nav-item" data-status="longterm">
+        <div class="nav-dot longterm"></div>
+        <div class="nav-text">Long Term</div>
+        <div class="nav-count" id="nav-longterm-count">0</div>
+      </div>
+    </div>
+    
+    <div class="person-filter">
+      <div class="person-label">Filter by Person</div>
+      <div class="person-btns">
+        <button class="person-btn active" data-person="all">All</button>
+        <button class="person-btn" data-person="nikola">Nikola</button>
+        <button class="person-btn" data-person="josephine">Josephine</button>
+      </div>
+    </div>
+  </div>
+  
+  <div class="main">
+    <div class="page-header">
+      <div class="page-dot" id="page-dot"></div>
+      <div class="page-title" id="page-title">All Projects</div>
+      <div class="page-count" id="page-count">0 projects</div>
+    </div>
+    
+    <div class="projects-grid" id="projects-grid"></div>
+  </div>
+
+  <script>
+    // Projects data (edit this array to add/modify projects)
+    let projects = [
+      {
+        id: "2",
+        name: "Website Reviews Section",
+        status: "active",
+        assignee: "nikola",
+        description: "Add Google reviews to leimageinc.com with client photos",
+        goal: "Display client testimonials with photos on the website",
+        strategies: ["Pull reviews from Google", "Match with client photos from SmugMug", "Create review posts in WordPress"],
+        tasksCompleted: ["Rebecca Larrabee review created as draft"],
+        tasksPending: ["Add gallery link to Rebecca's review", "Find more 5-star reviews to feature"],
+        nextStep: "Publish Rebecca Larrabee review and identify next review to add",
+        links: [],
+        created: "2026-02-10",
+        updated: "2026-02-10"
+      },
+      {
+        id: "3",
+        name: "CRM App Development",
+        status: "longterm",
+        assignee: "nikola",
+        description: "Photography studio CRM - internal use then sell subscriptions",
+        goal: "Build and launch CRM for photography studios",
+        strategies: ["Use internally first", "Gather feedback", "Polish for public release"],
+        tasksCompleted: ["Core development", "Internal testing"],
+        tasksPending: ["Feature refinement", "Subscription system", "Marketing site"],
+        nextStep: "Continue internal use and document improvement opportunities",
+        links: [],
+        created: "2026-02-10",
+        updated: "2026-02-10"
+      },
+      {
+        id: "4",
+        name: "Albumko",
+        status: "longterm",
+        assignee: "nikola",
+        description: "DIY album creation app for clients",
+        goal: "Let clients design their own albums, reducing back-and-forth",
+        strategies: ["Self-service album design", "Notification when complete", "Optional pro design upsell"],
+        tasksCompleted: ["App launched at albumko.com"],
+        tasksPending: ["Monitor usage", "Gather client feedback"],
+        nextStep: "Review client usage patterns and feedback",
+        links: ["https://albumko.com"],
+        created: "2026-02-10",
+        updated: "2026-02-10"
+      },
+      {
+        id: "5",
+        name: "Monday: Increase Booking Rate",
+        status: "active",
+        assignee: "josephine",
+        description: "Strategies to increase booking rate with current leads",
+        goal: "Increase booking conversion rate with current leads",
+        strategies: ["Lead follow-up optimization", "Proposal improvements", "Response time reduction", "Personalization tactics"],
+        tasksCompleted: [],
+        tasksPending: ["Track current booking rate", "Define target booking rate"],
+        nextStep: "Define baseline metrics — Track inquiries received vs bookings confirmed over past 3 months",
+        links: [],
+        created: "2026-02-10",
+        updated: "2026-02-10"
+      },
+      {
+        id: "6",
+        name: "Tuesday: Venues & Vendors",
+        status: "active",
+        assignee: "josephine",
+        description: "Connect with venues and vendors",
+        goal: "Build relationships with wedding venues to get on preferred vendor lists",
+        strategies: ["Research venue requirements", "Send introduction emails", "Follow up consistently", "Offer to shoot styled shoots"],
+        tasksCompleted: ["Researched Tier 1 Brooklyn venues", "Identified Brooklyn Grange as existing relationship"],
+        tasksPending: ["Contact Liberty Warehouse", "Contact 26 Bridge"],
+        nextStep: "Contact Tier 1 venues — Send introduction emails to Liberty Warehouse and 26 Bridge coordinators",
+        links: [],
+        created: "2026-02-10",
+        updated: "2026-02-10"
+      },
+      {
+        id: "7",
+        name: "Wednesday: Administrative",
+        status: "active",
+        assignee: "josephine",
+        description: "Administrative tasks",
+        goal: "Keep operations running smoothly — contracts, scheduling, communication",
+        strategies: ["Weekly checklist system", "Same-day response policy", "Calendar blocking", "Template responses"],
+        tasksCompleted: [],
+        tasksPending: ["Create weekly admin checklist", "Document recurring tasks"],
+        nextStep: "Create weekly admin checklist — Document all recurring tasks and their frequencies",
+        links: [],
+        created: "2026-02-10",
+        updated: "2026-02-10"
+      },
+      {
+        id: "8",
+        name: "Thursday: Social Media",
+        status: "active",
+        assignee: "josephine",
+        description: "Increase social media presence",
+        goal: "Grow social media following and engagement to attract new clients",
+        strategies: ["Consistent posting schedule", "Behind-the-scenes content", "Trending audio/formats", "Engage with venue accounts"],
+        tasksCompleted: [],
+        tasksPending: ["Audit current follower counts", "Document engagement rates", "Create content calendar"],
+        nextStep: "Audit current accounts — Document follower counts and engagement rates across Instagram, TikTok, Facebook",
+        links: ["https://www.instagram.com/le.image.events/", "https://www.tiktok.com/@leimageweddings"],
+        created: "2026-02-10",
+        updated: "2026-02-10"
+      },
+      {
+        id: "9",
+        name: "Friday: Blog Posts",
+        status: "active",
+        assignee: "josephine",
+        description: "Create and publish blog posts",
+        goal: "Create SEO-optimized blog content to drive organic traffic",
+        strategies: ["Venue guides with keywords", "Real wedding features", "Internal linking to packages", "Consistent publishing schedule"],
+        tasksCompleted: ["Hamilton Loft blog post drafted (v3)", "Downloaded hi-res images from SmugMug", "Formatted with proper image layout"],
+        tasksPending: ["Nikola to review Hamilton Loft blog", "Upload to WordPress"],
+        nextStep: "Review and publish Hamilton Loft blog — Then start next venue guide (Brooklyn Grange or Liberty Warehouse)",
+        links: [],
+        created: "2026-02-10",
+        updated: "2026-02-10"
+      }
+    ];
+    
+    let currentStatus = 'all';
+    let currentPerson = 'all';
+    
+    const statusLabels = {
+      all: 'All Projects',
+      research: 'Research',
+      active: 'Active',
+      longterm: 'Long Term',
+      completed: 'Completed'
+    };
+    
+    const statusColors = {
+      all: '#4facfe',
+      research: '#f093fb',
+      active: '#4facfe',
+      longterm: '#ffeaa7',
+      completed: '#43e97b'
+    };
+    
+    function getFilteredProjects() {
+      let filtered = projects;
+      
+      if (currentStatus !== 'all') {
+        filtered = filtered.filter(p => p.status === currentStatus);
+      }
+      
+      if (currentPerson !== 'all') {
+        filtered = filtered.filter(p => p.assignee === currentPerson || p.assignee === 'both');
+      }
+      
+      return filtered;
+    }
+    
+    function createCard(project) {
+      const assigneeLabel = {
+        'nikola': 'Nikola',
+        'josephine': 'Josephine',
+        'both': 'Both'
+      };
+      
+      const linksHtml = project.links && project.links.length > 0 
+        ? `<div class="card-links">${project.links.map(l => 
+            `<a href="${l}" target="_blank" class="card-link">🔗 Open Link</a>`
+          ).join('')}</div>` 
+        : '';
+      
+      // Goal section
+      const goalHtml = project.goal 
+        ? `<div class="card-section">
+            <div class="card-section-title">🎯 Goal</div>
+            <div class="card-goal">${project.goal}</div>
+           </div>` 
+        : '';
+      
+      // Strategies section
+      const strategiesHtml = project.strategies && project.strategies.length > 0
+        ? `<div class="card-section">
+            <div class="card-section-title">📋 Strategies</div>
+            <ul class="card-strategies">
+              ${project.strategies.map(s => `<li>${s}</li>`).join('')}
+            </ul>
+           </div>`
+        : '';
+      
+      // Tasks section
+      const completedHtml = project.tasksCompleted && project.tasksCompleted.length > 0
+        ? project.tasksCompleted.map(t => `<li class="done">${t}</li>`).join('')
+        : '';
+      const pendingHtml = project.tasksPending && project.tasksPending.length > 0
+        ? project.tasksPending.map(t => `<li class="pending">${t}</li>`).join('')
+        : '';
+      const tasksHtml = (completedHtml || pendingHtml)
+        ? `<div class="card-section">
+            <div class="card-section-title">✅ Tasks</div>
+            <ul class="card-tasks">
+              ${completedHtml}
+              ${pendingHtml}
+            </ul>
+           </div>`
+        : '';
+      
+      // Next step section
+      const nextStepHtml = project.nextStep
+        ? `<div class="next-step">
+            <div class="next-step-label">⏭️ Next Step</div>
+            <div class="next-step-text">${project.nextStep}</div>
+           </div>`
+        : '';
+      
+      return `
+        <div class="card">
+          <div class="card-title">${project.name}</div>
+          <div class="card-description">${project.description}</div>
+          ${goalHtml}
+          ${strategiesHtml}
+          ${tasksHtml}
+          ${nextStepHtml}
+          ${linksHtml}
+          <div class="card-footer">
+            <div class="assignee">
+              <div class="assignee-dot ${project.assignee}"></div>
+              ${assigneeLabel[project.assignee]}
+            </div>
+            <div class="card-date">Updated: ${project.updated}</div>
+          </div>
+        </div>
+      `;
+    }
+    
+    function updateNavCounts() {
+      const personFiltered = currentPerson === 'all' 
+        ? projects 
+        : projects.filter(p => p.assignee === currentPerson || p.assignee === 'both');
+      
+      document.getElementById('nav-all-count').textContent = personFiltered.length;
+      document.getElementById('nav-research-count').textContent = personFiltered.filter(p => p.status === 'research').length;
+      document.getElementById('nav-active-count').textContent = personFiltered.filter(p => p.status === 'active').length;
+      document.getElementById('nav-longterm-count').textContent = personFiltered.filter(p => p.status === 'longterm').length;
+      document.getElementById('nav-completed-count').textContent = personFiltered.filter(p => p.status === 'completed').length;
+    }
+    
+    function render() {
+      const filtered = getFilteredProjects();
+      
+      // Update header
+      document.getElementById('page-title').textContent = statusLabels[currentStatus];
+      document.getElementById('page-count').textContent = `${filtered.length} project${filtered.length !== 1 ? 's' : ''}`;
+      
+      const pageDot = document.getElementById('page-dot');
+      pageDot.style.background = statusColors[currentStatus];
+      
+      // Update grid
+      const grid = document.getElementById('projects-grid');
+      grid.innerHTML = filtered.length 
+        ? filtered.map(createCard).join('') 
+        : '<div class="empty-state">No projects in this section</div>';
+      
+      // Update nav counts
+      updateNavCounts();
+    }
+    
+    // Navigation clicks
+    document.querySelectorAll('.nav-item').forEach(item => {
+      item.addEventListener('click', () => {
+        document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
+        item.classList.add('active');
+        currentStatus = item.dataset.status;
+        render();
+      });
+    });
+    
+    // Person filter clicks
+    document.querySelectorAll('.person-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.person-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        currentPerson = btn.dataset.person;
+        render();
+      });
+    });
+    
+    // Render on start
+    render();
+  </script>
+</body>
+</html>

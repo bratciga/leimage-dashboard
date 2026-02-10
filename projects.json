@@ -1,0 +1,48 @@
+{
+  "projects": [
+    {
+      "id": "1",
+      "name": "Tier 1 Venue Outreach",
+      "status": "active",
+      "assignee": "both",
+      "description": "Contact and build relationships with top Brooklyn wedding venues",
+      "notes": "Liberty Warehouse, 26 Bridge, Green Building, Brooklyn Winery, William Vale - contacts researched",
+      "links": [],
+      "created": "2026-02-10",
+      "updated": "2026-02-10"
+    },
+    {
+      "id": "2",
+      "name": "Website Reviews Section",
+      "status": "active",
+      "assignee": "nikola",
+      "description": "Add Google reviews to leimageinc.com with client photos",
+      "notes": "Rebecca Larrabee review created as draft - need more reviews",
+      "links": [],
+      "created": "2026-02-10",
+      "updated": "2026-02-10"
+    },
+    {
+      "id": "3",
+      "name": "CRM App Development",
+      "status": "research",
+      "assignee": "nikola",
+      "description": "Photography studio CRM - internal use then sell subscriptions",
+      "notes": "~1 year from launch, using internally now",
+      "links": [],
+      "created": "2026-02-10",
+      "updated": "2026-02-10"
+    },
+    {
+      "id": "4",
+      "name": "Albumko",
+      "status": "active",
+      "assignee": "nikola",
+      "description": "DIY album creation app for clients",
+      "notes": "Live at albumko.com",
+      "links": ["https://albumko.com"],
+      "created": "2026-02-10",
+      "updated": "2026-02-10"
+    }
+  ]
+}
