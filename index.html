@@ -616,7 +616,7 @@
         description: "Nightly scan of wedding galleries to build searchable portfolio database",
         goal: "Catalog all galleries with couple type, location tags for instant search",
         strategies: [
-          "Runs every night at 9pm EST",
+          "Runs every night at 1am EST",
           "Scans 4 new VENUES per night (each venue has multiple galleries)",
           "Analyzes photos for couple type (flags uncertain)",
           "Extracts location: rooftop, waterfront, skyline, park, borough",
@@ -1009,7 +1009,7 @@
       html += '</div>';
       
       if (galleryData.galleries.length === 0) {
-        html += '<div class="empty-state">No galleries scanned yet.<br>First scan runs tonight at 9pm.</div>';
+        html += '<div class="empty-state">No galleries scanned yet.<br>First scan runs tonight at 1am.</div>';
       } else if (filtered.length === 0) {
         html += '<div class="empty-state">No galleries match your filters.</div>';
       } else {
