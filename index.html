@@ -622,18 +622,18 @@
           "Extracts location: rooftop, waterfront, skyline, park, borough",
           "Saves to searchable database"
         ],
-        tasksCompleted: [],
-        tasksPending: ["First scan tonight at 9pm"],
-        nextStep: "Wait for first nightly scan to run at 9pm",
+        tasksCompleted: ["First scan completed (4 venues, 82 galleries)"],
+        tasksPending: ["Continue nightly scans (76 venues remaining)"],
+        nextStep: "Next scan runs tomorrow at 1am - will process 4 more venues",
         scanProgress: {
-          venuesScanned: 0,
-          galleriesScanned: 0,
-          totalVenues: "TBD",
-          lastScan: "Never"
+          venuesScanned: 4,
+          galleriesScanned: 82,
+          totalVenues: 80,
+          lastScan: "2026-02-11 1:00 AM"
         },
         links: [],
         created: "2026-02-10",
-        updated: "2026-02-10"
+        updated: "2026-02-11"
       },
       {
         id: "3",
@@ -948,12 +948,26 @@
       });
     }
     
-    // Gallery Database
+    // Gallery Database - Updated by nightly scans
     let galleryData = {
-      metadata: { venuesScanned: 0, galleriesScanned: 0, lastScanDate: null },
+      metadata: { venuesScanned: 4, galleriesScanned: 82, totalVenues: 80, lastScanDate: "2026-02-11" },
       galleries: [
-        // Example entry (will be populated by nightly scans)
-        // { couple: "Rebecca & Kenneth", venue: "Brooklyn Grange", coupleType: "interracial", uncertain: false, location: { rooftop: true, waterfront: false, skyline: true, borough: "Brooklyn", park: null, notes: "Rooftop farm" }, url: "...", scannedAt: "2026-02-10" }
+        { couple: "Rebecca & Kenneth", venue: "Brooklyn Grange @ Brooklyn Navy Yard", coupleType: "interracial", uncertain: false, lgbtq: false, location: { rooftop: true, waterfront: false, skyline: true, borough: "Brooklyn", park: "Fort Greene Park", notes: "360-degree skyline views, ceremony at Queen of All Saints Church" }, url: "https://leimageinc.com/wedding-venues/brooklyn-grange-brooklyn-navy-yard/rebecca-and-kenneth/" },
+        { couple: "Imani & Mary", venue: "Deity", coupleType: "black", uncertain: false, lgbtq: true, lgbtqType: "two-brides", location: { rooftop: true, waterfront: false, skyline: false, borough: "Brooklyn", notes: "Two brides, one in dress one in suit" }, url: "https://leimageinc.com/wedding-venues/deity/imani-and-mary/" },
+        { couple: "Elise & Julia", venue: "Deity", coupleType: "white", uncertain: true, lgbtq: true, lgbtqType: "two-brides", location: { rooftop: true, waterfront: false, skyline: false, borough: "Brooklyn", notes: "Two brides, speeches from their moms" }, url: "https://leimageinc.com/wedding-venues/deity/elise-and-julia/" },
+        { couple: "Alberto & Ruanny", venue: "Deity", coupleType: "hispanic", uncertain: false, lgbtq: true, lgbtqType: "two-grooms", location: { rooftop: true, waterfront: false, skyline: false, borough: "Brooklyn", notes: "Same-sex male couple, #morelove sign" }, url: "https://leimageinc.com/wedding-venues/deity/alberto-and-ruanny/" },
+        { couple: "Rosmery & Janeva", venue: "Deity", coupleType: "hispanic", uncertain: true, lgbtq: true, lgbtqType: "two-brides", location: { rooftop: false, waterfront: true, skyline: true, borough: "Brooklyn", notes: "Two brides, Brooklyn Bridge Park photos" }, url: "https://leimageinc.com/wedding-venues/deity/rosmery-and-janeva/" },
+        { couple: "Tiffany & Thomas", venue: "Deity", coupleType: "asian", uncertain: false, lgbtq: false, location: { rooftop: false, waterfront: false, skyline: false, borough: "Brooklyn", notes: "Chinese wedding, red decor, bride changed to red gown" }, url: "https://leimageinc.com/wedding-venues/deity/tiffany-and-thomas/" },
+        { couple: "Taramia & Richard", venue: "Deity", coupleType: "black", uncertain: true, lgbtq: false, location: { rooftop: false, waterfront: false, skyline: false, borough: "Brooklyn", notes: "Culturally-rich ceremony, blue decor" }, url: "https://leimageinc.com/wedding-venues/deity/taramia-and-richard/" },
+        { couple: "Dana & Sharon", venue: "The Greenpoint Loft", coupleType: "white", uncertain: true, lgbtq: true, lgbtqType: "two-brides", location: { rooftop: true, waterfront: false, skyline: true, borough: "Brooklyn", notes: "Two gorgeous brides, rooftop skyline photos" }, url: "https://leimageinc.com/wedding-venues/the-greenpoint-loft/dana-and-sharon/" },
+        { couple: "Christine & Ben", venue: "The Greenpoint Loft", coupleType: "interracial", uncertain: false, lgbtq: false, location: { rooftop: true, waterfront: true, skyline: true, borough: "Brooklyn", notes: "Asian-inspired centerpieces (bride's ethnicity)" }, url: "https://leimageinc.com/wedding-venues/the-greenpoint-loft/christine-and-ben/" },
+        { couple: "Rosa & Sam", venue: "The Greenpoint Loft", coupleType: "white", uncertain: true, lgbtq: false, religion: "jewish", location: { rooftop: true, waterfront: false, skyline: false, borough: "Brooklyn", notes: "Jewish ceremony" }, url: "https://leimageinc.com/wedding-venues/the-greenpoint-loft/rosa-and-sam/" },
+        { couple: "Nicole & Alison", venue: "MyMoon", coupleType: "white", uncertain: true, lgbtq: true, lgbtqType: "two-brides", location: { rooftop: false, waterfront: true, skyline: false, borough: "Brooklyn", notes: "Two brides, East River photos" }, url: "https://leimageinc.com/wedding-venues/mymoon/nicole-and-alison/" },
+        { couple: "Saori & Edward", venue: "MyMoon", coupleType: "interracial", uncertain: false, lgbtq: false, location: { rooftop: false, waterfront: true, skyline: true, borough: "Brooklyn", notes: "Japanese bride, Brooklyn Bridge Park first look" }, url: "https://leimageinc.com/wedding-venues/mymoon/saori-and-edward/" },
+        { couple: "Dilafruz & Jeremy", venue: "MyMoon", coupleType: "interracial", uncertain: false, lgbtq: false, location: { rooftop: false, waterfront: true, skyline: false, borough: "Brooklyn", notes: "Central Asian bride, vibrant cultural celebration" }, url: "https://leimageinc.com/wedding-venues/mymoon/dilafruz-and-jeremy/" },
+        { couple: "Carolina & Vincent", venue: "MyMoon", coupleType: "hispanic", uncertain: false, lgbtq: false, location: { rooftop: false, waterfront: true, skyline: false, borough: "Brooklyn", notes: "Mariachi band, Catholic ceremony" }, url: "https://leimageinc.com/wedding-venues/mymoon/carolina-and-vincent/" },
+        { couple: "Kavita & Matthew", venue: "MyMoon", coupleType: "interracial", uncertain: false, lgbtq: false, location: { rooftop: false, waterfront: false, skyline: false, borough: "Brooklyn", notes: "South Asian bride, cocktail style wedding" }, url: "https://leimageinc.com/wedding-venues/mymoon/kavita-and-matthew/" },
+        { couple: "Lesley & Zachary", venue: "MyMoon", coupleType: "white", uncertain: true, lgbtq: false, religion: "jewish", location: { rooftop: false, waterfront: true, skyline: false, borough: "Brooklyn", notes: "Jewish ceremony, floral Chuppah, graffiti photos" }, url: "https://leimageinc.com/wedding-venues/mymoon/lesley-and-zachary/" }
       ]
     };
     
