@@ -776,8 +776,8 @@
       }
     ];
     
-    let currentStatus = 'all';
-    let currentPerson = 'all';
+    let currentStatus = localStorage.getItem('dashboardStatus') || 'all';
+    let currentPerson = localStorage.getItem('dashboardPerson') || 'all';
     
     const statusLabels = {
       all: 'All Projects',
@@ -928,6 +928,7 @@
         document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
         item.classList.add('active');
         currentStatus = item.dataset.status;
+        localStorage.setItem('dashboardStatus', currentStatus);
         if (currentStatus === 'gallery-db') {
           renderGalleryDatabase();
         } else {
@@ -942,6 +943,7 @@
         document.querySelectorAll('.person-btn').forEach(b => b.classList.remove('active'));
         btn.classList.add('active');
         currentPerson = btn.dataset.person;
+        localStorage.setItem('dashboardPerson', currentPerson);
         render();
       });
     });
