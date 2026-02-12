@@ -1193,9 +1193,20 @@
       renderGalleryDatabase();
     }
     
+    let searchTimeout;
     function updateGallerySearch(value) {
       gallerySearch = value;
-      renderGalleryDatabase();
+      clearTimeout(searchTimeout);
+      searchTimeout = setTimeout(() => {
+        const input = document.querySelector('.gallery-search');
+        const cursorPos = input ? input.selectionStart : 0;
+        renderGalleryDatabase();
+        const newInput = document.querySelector('.gallery-search');
+        if (newInput) {
+          newInput.focus();
+          newInput.setSelectionRange(cursorPos, cursorPos);
+        }
+      }, 300);
     }
     
     // Initialize
