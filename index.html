@@ -1143,7 +1143,7 @@
       
       // Build HTML
       let html = '<div class="gallery-filters">';
-      html += '<input type="text" class="gallery-search" placeholder="Search couples, venues..." onkeyup="updateGallerySearch(this.value)">';
+      html += '<input type="text" class="gallery-search" placeholder="Search couples, venues..." value="' + (gallerySearch || '') + '" oninput="updateGallerySearch(this.value)">';
       html += '<button class="gallery-filter ' + (galleryFilter === 'all' ? 'active' : '') + '" onclick="setGalleryFilter(\'all\')">All</button>';
       html += '<button class="gallery-filter ' + (galleryFilter === 'lgbtq' ? 'active' : '') + '" onclick="setGalleryFilter(\'lgbtq\')">LGBTQ</button>';
       html += '<button class="gallery-filter ' + (galleryFilter === 'interracial' ? 'active' : '') + '" onclick="setGalleryFilter(\'interracial\')">Interracial</button>';
