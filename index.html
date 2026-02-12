@@ -1257,7 +1257,22 @@
     
     // Initialize
     loadLocalState();
-    render();
+    
+    // Apply saved nav state on load
+    document.querySelectorAll('.nav-item').forEach(i => {
+      i.classList.remove('active');
+      if (i.dataset.status === currentStatus) i.classList.add('active');
+    });
+    document.querySelectorAll('.person-btn').forEach(b => {
+      b.classList.remove('active');
+      if (b.dataset.person === currentPerson) b.classList.add('active');
+    });
+    
+    if (currentStatus === 'gallery-db') {
+      renderGalleryDatabase();
+    } else {
+      render();
+    }
   </script>
 </body>
 </html>
