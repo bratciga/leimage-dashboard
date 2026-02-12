@@ -1127,13 +1127,24 @@
       }
       if (gallerySearch) {
         const search = gallerySearch.toLowerCase();
-        filtered = filtered.filter(g => 
-          g.couple?.toLowerCase().includes(search) ||
-          g.venue?.toLowerCase().includes(search) ||
-          g.location?.borough?.toLowerCase().includes(search) ||
-          g.location?.park?.toLowerCase().includes(search) ||
-          g.location?.notes?.toLowerCase().includes(search)
-        );
+        filtered = filtered.filter(g => {
+          // Basic text search
+          if (g.couple?.toLowerCase().includes(search) ||
+              g.venue?.toLowerCase().includes(search) ||
+              g.location?.borough?.toLowerCase().includes(search) ||
+              g.location?.park?.toLowerCase().includes(search) ||
+              g.location?.notes?.toLowerCase().includes(search) ||
+              g.coupleType?.toLowerCase().includes(search) ||
+              g.lgbtqType?.toLowerCase().includes(search)) return true;
+          // Special keyword matches
+          if (['gay', 'lgbtq', 'lgbt', 'same-sex', 'samesex', 'queer'].includes(search) && g.lgbtq) return true;
+          if (['lesbian', 'two brides', 'brides'].includes(search) && g.lgbtqType === 'two-brides') return true;
+          if (['gay', 'two grooms', 'grooms'].includes(search) && g.lgbtqType === 'two-grooms') return true;
+          if (['rooftop', 'roof'].includes(search) && g.location?.rooftop) return true;
+          if (['waterfront', 'water'].includes(search) && g.location?.waterfront) return true;
+          if (['skyline', 'sky'].includes(search) && g.location?.skyline) return true;
+          return false;
+        });
       }
       
       // Update header
