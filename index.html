@@ -411,6 +411,176 @@
       100% { opacity: 0; }
     }
     
+    /* Details Modal */
+    .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0,0,0,0.8);
+      z-index: 2000;
+      display: none;
+      justify-content: center;
+      align-items: flex-start;
+      padding: 40px;
+      overflow-y: auto;
+    }
+    
+    .modal-overlay.show {
+      display: flex;
+    }
+    
+    .modal {
+      background: #1a1a2e;
+      border-radius: 16px;
+      width: 100%;
+      max-width: 900px;
+      border: 1px solid rgba(255,255,255,0.1);
+      animation: modalSlide 0.3s ease;
+    }
+    
+    @keyframes modalSlide {
+      from { opacity: 0; transform: translateY(-20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 20px 24px;
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+    }
+    
+    .modal-title {
+      font-size: 20px;
+      font-weight: 600;
+    }
+    
+    .modal-close {
+      background: none;
+      border: none;
+      color: rgba(255,255,255,0.5);
+      font-size: 24px;
+      cursor: pointer;
+      padding: 4px 8px;
+    }
+    
+    .modal-close:hover {
+      color: #fff;
+    }
+    
+    .modal-body {
+      padding: 24px;
+      max-height: 70vh;
+      overflow-y: auto;
+    }
+    
+    .change-item {
+      background: rgba(255,255,255,0.05);
+      border-radius: 12px;
+      padding: 20px;
+      margin-bottom: 16px;
+      border-left: 3px solid #4facfe;
+    }
+    
+    .change-item.pending {
+      border-left-color: #ffeaa7;
+    }
+    
+    .change-item.completed {
+      border-left-color: #43e97b;
+    }
+    
+    .change-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 16px;
+    }
+    
+    .change-page {
+      font-size: 16px;
+      font-weight: 600;
+    }
+    
+    .change-status {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      padding: 4px 10px;
+      border-radius: 4px;
+      background: rgba(255,255,255,0.1);
+    }
+    
+    .change-status.completed {
+      background: rgba(67, 233, 123, 0.2);
+      color: #43e97b;
+    }
+    
+    .change-status.pending {
+      background: rgba(255, 234, 167, 0.2);
+      color: #ffeaa7;
+    }
+    
+    .change-row {
+      display: grid;
+      grid-template-columns: 140px 1fr 1fr;
+      gap: 12px;
+      padding: 10px 0;
+      border-bottom: 1px solid rgba(255,255,255,0.05);
+      font-size: 13px;
+    }
+    
+    .change-row:last-child {
+      border-bottom: none;
+    }
+    
+    .change-label {
+      color: rgba(255,255,255,0.5);
+      font-weight: 500;
+    }
+    
+    .change-old {
+      color: rgba(255,255,255,0.4);
+      text-decoration: line-through;
+      word-break: break-word;
+    }
+    
+    .change-new {
+      color: #43e97b;
+      word-break: break-word;
+    }
+    
+    .change-date {
+      font-size: 12px;
+      color: rgba(255,255,255,0.4);
+      margin-top: 12px;
+    }
+    
+    .details-btn {
+      background: rgba(79, 172, 254, 0.2);
+      border: 1px solid #4facfe;
+      color: #4facfe;
+      padding: 8px 16px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 13px;
+      margin-top: 12px;
+      transition: all 0.2s;
+    }
+    
+    .details-btn:hover {
+      background: rgba(79, 172, 254, 0.3);
+    }
+    
+    .no-changes {
+      text-align: center;
+      color: rgba(255,255,255,0.4);
+      padding: 40px;
+    }
+    
     .empty-state {
       text-align: center;
       padding: 60px 20px;
@@ -583,6 +753,19 @@
   </div>
   
   <div class="toast" id="toast"></div>
+  
+  <!-- Details Modal -->
+  <div class="modal-overlay" id="modal-overlay">
+    <div class="modal">
+      <div class="modal-header">
+        <div class="modal-title" id="modal-title">Change Details</div>
+        <button class="modal-close" onclick="closeModal()">&times;</button>
+      </div>
+      <div class="modal-body" id="modal-body">
+        <!-- Content populated by JS -->
+      </div>
+    </div>
+  </div>
 
   <script>
     // Projects data (edit this array to add/modify projects)
@@ -638,6 +821,32 @@
           goodSeo: 1,
           okSeo: 8
         },
+        changes: [
+          {
+            page: "HomePage",
+            url: "https://leimageinc.com/",
+            status: "pending",
+            date: "2026-02-12",
+            fields: [
+              {
+                label: "Focus Keyphrase",
+                old: "(none)",
+                new: "NYC wedding photographer"
+              },
+              {
+                label: "SEO Title",
+                old: "Wedding Photography & Video Studio in Brooklyn, NYC - Le Image",
+                new: "NYC Wedding Photographer | Le Image Brooklyn"
+              },
+              {
+                label: "Meta Description",
+                old: "Brooklyn, NYC wedding photographers & videographers telling your unique love story with timeless, candid photos & cinematic films.",
+                new: "NYC wedding photographer in Brooklyn. Affordable wedding photography & videography with transparent pricing. Candid photos & cinematic films."
+              }
+            ],
+            notes: "Yoast changes ready - needs content updates (keyphrase in text, internal links, 300+ words)"
+          }
+        ],
         links: [],
         created: "2026-02-12",
         updated: "2026-02-12"
@@ -869,6 +1078,11 @@
         ? `<button class="complete-btn" onclick="markComplete('${project.id}', '${project.name}')">✓ Mark Complete</button>`
         : '';
       
+      // See Details button for projects with changes
+      const detailsBtn = project.changes && project.changes.length > 0
+        ? `<button class="details-btn" onclick="showDetails('${project.id}')">📋 See Details (${project.changes.length})</button>`
+        : '';
+      
       return `
         <div class="card" data-id="${project.id}">
           <div class="card-title">${project.name}</div>
@@ -878,6 +1092,7 @@
           ${tasksHtml}
           ${nextStepHtml}
           ${linksHtml}
+          ${detailsBtn}
           ${completeBtn}
           <div class="card-footer">
             <div class="assignee">
@@ -974,6 +1189,55 @@
       toast.classList.add('show');
       setTimeout(() => toast.classList.remove('show'), 3000);
     }
+    
+    // Modal functions for change details
+    function showDetails(projectId) {
+      const project = projects.find(p => p.id === projectId);
+      if (!project || !project.changes) return;
+      
+      document.getElementById('modal-title').textContent = `${project.name} - Change Details`;
+      
+      const body = document.getElementById('modal-body');
+      
+      if (project.changes.length === 0) {
+        body.innerHTML = '<div class="no-changes">No changes recorded yet</div>';
+      } else {
+        body.innerHTML = project.changes.map(change => `
+          <div class="change-item ${change.status}">
+            <div class="change-header">
+              <div class="change-page">📄 ${change.page}</div>
+              <span class="change-status ${change.status}">${change.status}</span>
+            </div>
+            ${change.url ? `<div style="font-size: 12px; color: rgba(255,255,255,0.4); margin-bottom: 12px;"><a href="${change.url}" target="_blank" style="color: #4facfe;">${change.url}</a></div>` : ''}
+            ${change.fields.map(field => `
+              <div class="change-row">
+                <div class="change-label">${field.label}</div>
+                <div class="change-old">${field.old || '(empty)'}</div>
+                <div class="change-new">${field.new}</div>
+              </div>
+            `).join('')}
+            ${change.notes ? `<div class="change-date">📝 ${change.notes}</div>` : ''}
+            <div class="change-date">📅 ${change.date}</div>
+          </div>
+        `).join('');
+      }
+      
+      document.getElementById('modal-overlay').classList.add('show');
+    }
+    
+    function closeModal() {
+      document.getElementById('modal-overlay').classList.remove('show');
+    }
+    
+    // Close modal on overlay click
+    document.getElementById('modal-overlay').addEventListener('click', function(e) {
+      if (e.target === this) closeModal();
+    });
+    
+    // Close modal on Escape key
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'Escape') closeModal();
+    });
     
     // Load completed status from localStorage
     function loadLocalState() {
