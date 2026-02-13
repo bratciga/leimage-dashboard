@@ -2582,27 +2582,29 @@
       ]
     };
 
-    let galleryFilter = 'all';
+    let galleryFilters = []; // Changed to array for multi-select
     let gallerySearch = '';
     
     function renderGalleryDatabase() {
       const grid = document.getElementById('projects-grid');
       
-      // Filter galleries
+      // Filter galleries - support multiple filters (AND logic)
       let filtered = galleryData.galleries;
-      if (galleryFilter !== 'all') {
-        if (['white', 'black', 'interracial', 'asian', 'lgbtq'].includes(galleryFilter)) {
-          filtered = filtered.filter(g => g.coupleType === galleryFilter);
-        } else if (galleryFilter === 'rooftop') {
+      galleryFilters.forEach(filter => {
+        if (filter === 'lgbtq') {
+          filtered = filtered.filter(g => g.lgbtq === true);
+        } else if (['white', 'black', 'interracial', 'asian', 'hispanic', 'south-asian', 'middle-eastern'].includes(filter)) {
+          filtered = filtered.filter(g => g.coupleType === filter);
+        } else if (filter === 'rooftop') {
           filtered = filtered.filter(g => g.location?.rooftop);
-        } else if (galleryFilter === 'waterfront') {
+        } else if (filter === 'waterfront') {
           filtered = filtered.filter(g => g.location?.waterfront);
-        } else if (galleryFilter === 'skyline') {
+        } else if (filter === 'skyline') {
           filtered = filtered.filter(g => g.location?.skyline);
-        } else if (galleryFilter === 'uncertain') {
+        } else if (filter === 'uncertain') {
           filtered = filtered.filter(g => g.uncertain);
         }
-      }
+      });
       if (gallerySearch) {
         const search = gallerySearch.toLowerCase();
         filtered = filtered.filter(g => {
@@ -2633,15 +2635,16 @@
       // Build HTML
       let html = '<div class="gallery-filters">';
       html += '<input type="text" class="gallery-search" placeholder="Search couples, venues..." value="' + (gallerySearch || '') + '" oninput="updateGallerySearch(this.value)">';
-      html += '<button class="gallery-filter ' + (galleryFilter === 'all' ? 'active' : '') + '" onclick="setGalleryFilter(\'all\')">All</button>';
-      html += '<button class="gallery-filter ' + (galleryFilter === 'lgbtq' ? 'active' : '') + '" onclick="setGalleryFilter(\'lgbtq\')">LGBTQ</button>';
-      html += '<button class="gallery-filter ' + (galleryFilter === 'interracial' ? 'active' : '') + '" onclick="setGalleryFilter(\'interracial\')">Interracial</button>';
-      html += '<button class="gallery-filter ' + (galleryFilter === 'black' ? 'active' : '') + '" onclick="setGalleryFilter(\'black\')">African American</button>';
-      html += '<button class="gallery-filter ' + (galleryFilter === 'asian' ? 'active' : '') + '" onclick="setGalleryFilter(\'asian\')">Asian</button>';
-      html += '<button class="gallery-filter ' + (galleryFilter === 'rooftop' ? 'active' : '') + '" onclick="setGalleryFilter(\'rooftop\')">Rooftop</button>';
-      html += '<button class="gallery-filter ' + (galleryFilter === 'waterfront' ? 'active' : '') + '" onclick="setGalleryFilter(\'waterfront\')">Waterfront</button>';
-      html += '<button class="gallery-filter ' + (galleryFilter === 'skyline' ? 'active' : '') + '" onclick="setGalleryFilter(\'skyline\')">Skyline</button>';
-      html += '<button class="gallery-filter ' + (galleryFilter === 'uncertain' ? 'active' : '') + '" onclick="setGalleryFilter(\'uncertain\')">⚠️ Uncertain</button>';
+      html += '<button class="gallery-filter ' + (galleryFilters.length === 0 ? 'active' : '') + '" onclick="clearGalleryFilters()">All</button>';
+      html += '<button class="gallery-filter ' + (galleryFilters.includes('lgbtq') ? 'active' : '') + '" onclick="toggleGalleryFilter(\'lgbtq\')">LGBTQ</button>';
+      html += '<button class="gallery-filter ' + (galleryFilters.includes('interracial') ? 'active' : '') + '" onclick="toggleGalleryFilter(\'interracial\')">Interracial</button>';
+      html += '<button class="gallery-filter ' + (galleryFilters.includes('black') ? 'active' : '') + '" onclick="toggleGalleryFilter(\'black\')">African American</button>';
+      html += '<button class="gallery-filter ' + (galleryFilters.includes('asian') ? 'active' : '') + '" onclick="toggleGalleryFilter(\'asian\')">Asian</button>';
+      html += '<button class="gallery-filter ' + (galleryFilters.includes('hispanic') ? 'active' : '') + '" onclick="toggleGalleryFilter(\'hispanic\')">Hispanic</button>';
+      html += '<button class="gallery-filter ' + (galleryFilters.includes('rooftop') ? 'active' : '') + '" onclick="toggleGalleryFilter(\'rooftop\')">Rooftop</button>';
+      html += '<button class="gallery-filter ' + (galleryFilters.includes('waterfront') ? 'active' : '') + '" onclick="toggleGalleryFilter(\'waterfront\')">Waterfront</button>';
+      html += '<button class="gallery-filter ' + (galleryFilters.includes('skyline') ? 'active' : '') + '" onclick="toggleGalleryFilter(\'skyline\')">Skyline</button>';
+      html += '<button class="gallery-filter ' + (galleryFilters.includes('uncertain') ? 'active' : '') + '" onclick="toggleGalleryFilter(\'uncertain\')">⚠️ Uncertain</button>';
       html += '</div>';
       
       if (galleryData.galleries.length === 0) {
@@ -2677,8 +2680,18 @@
       grid.innerHTML = html;
     }
     
-    function setGalleryFilter(filter) {
-      galleryFilter = filter;
+    function toggleGalleryFilter(filter) {
+      const index = galleryFilters.indexOf(filter);
+      if (index > -1) {
+        galleryFilters.splice(index, 1); // Remove if already selected
+      } else {
+        galleryFilters.push(filter); // Add if not selected
+      }
+      renderGalleryDatabase();
+    }
+    
+    function clearGalleryFilters() {
+      galleryFilters = [];
       renderGalleryDatabase();
     }
     
