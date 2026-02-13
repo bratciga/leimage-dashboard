@@ -741,6 +741,30 @@
         <button class="person-btn" data-person="sandra">Sandra</button>
       </div>
     </div>
+    
+    <div class="nav-section" style="margin-top: 20px;">
+      <div class="nav-label">📱 Social Media Marketing</div>
+      <div class="nav-item" data-status="smm-calendar">
+        <div class="nav-dot" style="background: #e17055;"></div>
+        <div class="nav-text">Content Calendar</div>
+      </div>
+      <div class="nav-item" data-status="smm-instagram">
+        <div class="nav-dot" style="background: #e1306c;"></div>
+        <div class="nav-text">Instagram</div>
+      </div>
+      <div class="nav-item" data-status="smm-facebook">
+        <div class="nav-dot" style="background: #4267B2;"></div>
+        <div class="nav-text">Facebook</div>
+      </div>
+      <div class="nav-item" data-status="smm-tiktok">
+        <div class="nav-dot" style="background: #000000;"></div>
+        <div class="nav-text">TikTok</div>
+      </div>
+      <div class="nav-item" data-status="smm-linkedin">
+        <div class="nav-dot" style="background: #0077b5;"></div>
+        <div class="nav-text">LinkedIn</div>
+      </div>
+    </div>
   </div>
   
   <div class="main">
@@ -1294,6 +1318,8 @@
         localStorage.setItem('dashboardStatus', currentStatus);
         if (currentStatus === 'gallery-db') {
           renderGalleryDatabase();
+        } else if (currentStatus.startsWith('smm-')) {
+          renderSocialMedia(currentStatus);
         } else {
           render();
         }
@@ -2605,6 +2631,90 @@
       }, 300);
     }
     
+    // Social Media Marketing data
+    const smmData = {
+      calendar: [
+        { date: 'Feb 26', event: 'Women\'s Day (Mar 8)', status: 'scheduled', reminder: true },
+        { date: 'Mar 7', event: 'St. Patrick\'s Day (Mar 17)', status: 'scheduled', reminder: true },
+        { date: 'Mar 10', event: 'First Day of Spring (Mar 20)', status: 'scheduled', reminder: true },
+        { date: 'Apr 2', event: 'Easter (Apr 12)', status: 'scheduled', reminder: true },
+        { date: 'May 1', event: 'Mother\'s Day (May 11)', status: 'scheduled', reminder: true },
+        { date: 'May 22', event: 'Pride Month (Jun 1)', status: 'scheduled', reminder: true }
+      ],
+      instagram: { posts: [], ideas: ['Wedding Wednesday series', 'Behind-the-scenes reels', 'Venue spotlights'] },
+      facebook: { posts: [], ideas: ['Client testimonials', 'Album reveals', 'Vendor features'] },
+      tiktok: { posts: [], ideas: ['Quick tips for couples', 'Day-in-the-life', 'Trending sounds + weddings'] },
+      linkedin: { posts: [], ideas: ['Industry insights', 'Business milestones', 'Team features'] }
+    };
+    
+    function renderSocialMedia(section) {
+      const grid = document.getElementById('projects-grid');
+      const platform = section.replace('smm-', '');
+      
+      const platformInfo = {
+        'calendar': { name: 'Content Calendar', icon: '📅', color: '#e17055' },
+        'instagram': { name: 'Instagram', icon: '📸', color: '#e1306c' },
+        'facebook': { name: 'Facebook', icon: '👥', color: '#4267B2' },
+        'tiktok': { name: 'TikTok', icon: '🎵', color: '#000000' },
+        'linkedin': { name: 'LinkedIn', icon: '💼', color: '#0077b5' }
+      };
+      
+      const info = platformInfo[platform] || { name: platform, icon: '📱', color: '#666' };
+      
+      document.getElementById('page-title').textContent = info.icon + ' ' + info.name;
+      document.getElementById('page-dot').style.background = info.color;
+      
+      let html = '';
+      
+      if (platform === 'calendar') {
+        html = '<div style="color:#fff;">';
+        html += '<h3 style="margin-bottom:16px;">📅 Upcoming Reminders</h3>';
+        html += '<p style="color:rgba(255,255,255,0.6);margin-bottom:20px;">Emails sent to sandra@leimageinc.com 10 days before each date with post suggestions + gallery photos.</p>';
+        html += '<div style="display:grid;gap:12px;">';
+        smmData.calendar.forEach(item => {
+          html += '<div style="background:rgba(255,255,255,0.08);padding:16px;border-radius:8px;display:flex;justify-content:space-between;align-items:center;">';
+          html += '<div><strong style="color:#4facfe;">' + item.date + '</strong> — ' + item.event + '</div>';
+          html += '<span style="background:#43e97b;color:#000;padding:4px 12px;border-radius:12px;font-size:12px;">✓ Scheduled</span>';
+          html += '</div>';
+        });
+        html += '</div>';
+        html += '<div style="margin-top:24px;padding:16px;background:rgba(255,255,255,0.05);border-radius:8px;">';
+        html += '<strong>Add more dates?</strong> Message <a href="https://t.me/BratCiga_Bot" style="color:#4facfe;">@BratCiga_Bot</a> on Telegram.';
+        html += '</div>';
+        html += '</div>';
+      } else {
+        const data = smmData[platform] || { posts: [], ideas: [] };
+        html = '<div style="color:#fff;">';
+        html += '<h3 style="margin-bottom:16px;">' + info.icon + ' ' + info.name + '</h3>';
+        
+        // Ideas section
+        html += '<div style="background:rgba(255,255,255,0.08);padding:20px;border-radius:12px;margin-bottom:20px;">';
+        html += '<h4 style="margin-bottom:12px;color:rgba(255,255,255,0.7);">💡 Content Ideas</h4>';
+        html += '<ul style="margin:0;padding-left:20px;">';
+        data.ideas.forEach(idea => {
+          html += '<li style="margin-bottom:8px;">' + idea + '</li>';
+        });
+        html += '</ul>';
+        html += '</div>';
+        
+        // Saved posts section
+        html += '<div style="background:rgba(255,255,255,0.08);padding:20px;border-radius:12px;">';
+        html += '<h4 style="margin-bottom:12px;color:rgba(255,255,255,0.7);">📝 Saved Posts</h4>';
+        if (data.posts.length === 0) {
+          html += '<p style="color:rgba(255,255,255,0.5);margin:0;">No saved posts yet. When you receive email reminders, your approved posts will appear here.</p>';
+        }
+        html += '</div>';
+        
+        html += '<div style="margin-top:24px;padding:16px;background:rgba(255,255,255,0.05);border-radius:8px;">';
+        html += '<strong>Need help?</strong> Ask <a href="https://t.me/BratCiga_Bot" style="color:#4facfe;">@BratCiga_Bot</a> to create posts or find galleries.';
+        html += '</div>';
+        html += '</div>';
+      }
+      
+      grid.innerHTML = html;
+      document.getElementById('page-count').textContent = '';
+    }
+    
     // Initialize
     loadLocalState();
     
@@ -2620,6 +2730,8 @@
     
     if (currentStatus === 'gallery-db') {
       renderGalleryDatabase();
+    } else if (currentStatus.startsWith('smm-')) {
+      renderSocialMedia(currentStatus);
     } else {
       render();
     }
