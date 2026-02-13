@@ -750,19 +750,15 @@
       </div>
       <div class="nav-item" data-status="smm-instagram">
         <div class="nav-dot" style="background: #e1306c;"></div>
-        <div class="nav-text">Instagram</div>
+        <div class="nav-text">@le.image.events</div>
       </div>
       <div class="nav-item" data-status="smm-facebook">
         <div class="nav-dot" style="background: #4267B2;"></div>
-        <div class="nav-text">Facebook</div>
+        <div class="nav-text">/leimageinc</div>
       </div>
       <div class="nav-item" data-status="smm-tiktok">
         <div class="nav-dot" style="background: #000000;"></div>
-        <div class="nav-text">TikTok</div>
-      </div>
-      <div class="nav-item" data-status="smm-linkedin">
-        <div class="nav-dot" style="background: #0077b5;"></div>
-        <div class="nav-text">LinkedIn</div>
+        <div class="nav-text">@leimageweddings</div>
       </div>
     </div>
   </div>
@@ -2641,10 +2637,9 @@
         { date: 'May 1', event: 'Mother\'s Day (May 11)', status: 'scheduled', reminder: true },
         { date: 'May 22', event: 'Pride Month (Jun 1)', status: 'scheduled', reminder: true }
       ],
-      instagram: { posts: [], ideas: ['Wedding Wednesday series', 'Behind-the-scenes reels', 'Venue spotlights'] },
-      facebook: { posts: [], ideas: ['Client testimonials', 'Album reveals', 'Vendor features'] },
-      tiktok: { posts: [], ideas: ['Quick tips for couples', 'Day-in-the-life', 'Trending sounds + weddings'] },
-      linkedin: { posts: [], ideas: ['Industry insights', 'Business milestones', 'Team features'] }
+      instagram: { posts: [], ideas: ['Wedding Wednesday series', 'Behind-the-scenes reels', 'Venue spotlights', 'Couple features', 'LGBTQ+ celebrations'] },
+      facebook: { posts: [], ideas: ['Client testimonials', 'Album reveals', 'Vendor features', 'Wedding tips articles'] },
+      tiktok: { posts: [], ideas: ['Quick tips for couples', 'Day-in-the-life', 'Trending sounds + weddings', 'First look reactions', 'Venue tours'] }
     };
     
     function renderSocialMedia(section) {
@@ -2653,10 +2648,9 @@
       
       const platformInfo = {
         'calendar': { name: 'Content Calendar', icon: '📅', color: '#e17055' },
-        'instagram': { name: 'Instagram', icon: '📸', color: '#e1306c' },
-        'facebook': { name: 'Facebook', icon: '👥', color: '#4267B2' },
-        'tiktok': { name: 'TikTok', icon: '🎵', color: '#000000' },
-        'linkedin': { name: 'LinkedIn', icon: '💼', color: '#0077b5' }
+        'instagram': { name: '@le.image.events', icon: '📸', color: '#e1306c', url: 'https://instagram.com/le.image.events' },
+        'facebook': { name: '/leimageinc', icon: '👥', color: '#4267B2', url: 'https://facebook.com/leimageinc' },
+        'tiktok': { name: '@leimageweddings', icon: '🎵', color: '#000000', url: 'https://tiktok.com/@leimageweddings' }
       };
       
       const info = platformInfo[platform] || { name: platform, icon: '📱', color: '#666' };
@@ -2685,7 +2679,11 @@
       } else {
         const data = smmData[platform] || { posts: [], ideas: [] };
         html = '<div style="color:#fff;">';
-        html += '<h3 style="margin-bottom:16px;">' + info.icon + ' ' + info.name + '</h3>';
+        html += '<h3 style="margin-bottom:16px;">' + info.icon + ' ' + info.name;
+        if (info.url) {
+          html += ' <a href="' + info.url + '" target="_blank" style="font-size:14px;color:#4facfe;margin-left:8px;">↗ Open</a>';
+        }
+        html += '</h3>';
         
         // Ideas section
         html += '<div style="background:rgba(255,255,255,0.08);padding:20px;border-radius:12px;margin-bottom:20px;">';
