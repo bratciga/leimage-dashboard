@@ -1242,6 +1242,7 @@
         tasksPending: [
           "Draft timelines at beginning of each month for next month's weddings"
         ],
+        temporaryTasks: [],
         nextStep: "Check info/support email first → process new leads → update app → social media",
         links: ["https://docs.google.com/spreadsheets/d/1fmbkAKuxWhIOWHYANNZnyFcCWfYfnVyLaBgG3C-aTgU/edit?usp=sharing"],
         created: "2026-02-13",
@@ -1331,6 +1332,16 @@
            </div>`
         : '';
       
+      // Temporary tasks section
+      const tempTasksHtml = project.temporaryTasks && project.temporaryTasks.length > 0
+        ? `<div class="card-section">
+            <div class="card-section-title">⏳ Temporary Tasks</div>
+            <ul class="card-tasks">
+              ${project.temporaryTasks.map(t => `<li class="pending">${t}</li>`).join('')}
+            </ul>
+           </div>`
+        : '';
+      
       // Next step section
       const nextStepHtml = project.nextStep
         ? `<div class="next-step">
@@ -1355,6 +1366,7 @@
           ${goalHtml}
           ${strategiesHtml}
           ${tasksHtml}
+          ${tempTasksHtml}
           ${nextStepHtml}
           ${linksHtml}
           ${detailsBtn}
