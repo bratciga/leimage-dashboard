@@ -67,6 +67,21 @@ async function initApp() {
     submitBtn.addEventListener('click', handleSubmit);
   }
 
+  // Review page download button
+  const reviewDlBtn = document.getElementById('review-download-btn');
+  if (reviewDlBtn) {
+    reviewDlBtn.addEventListener('click', async () => {
+      const blob = await window.MonogramBuilder.exportPNG();
+      const url  = URL.createObjectURL(blob);
+      const a    = document.createElement('a');
+      const event = new URLSearchParams(window.location.search).get('event') || 'monogram';
+      a.href     = url;
+      a.download = `${event}-monogram.png`;
+      a.click();
+      URL.revokeObjectURL(url);
+    });
+  }
+
   // Show step 1
   goToStep(1);
 }
@@ -153,8 +168,8 @@ function goToStep(step) {
   // Update progress bar
   updateProgressBar(step);
 
-  // If entering step 7 (monogram), sync print size & backdrop
-  if (step === 7) {
+  // If entering step 6 (monogram), sync print size & backdrop
+  if (step === 6) {
     const printSize = document.getElementById('print-size-value')?.value;
     if (printSize) window.MonogramBuilder.updatePrintSize(printSize);
     const backdrop = document.getElementById('backdrop-value')?.value;
@@ -217,7 +232,7 @@ function validateStep(step) {
     }
   }
 
-  if (step === 7) {
+  if (step === 6) {
     const mono = window.MonogramBuilder.state;
     if (!mono.line1.trim() && !mono.line2.trim()) {
       showError('error-monogram', 'Please enter at least one line of monogram text.');

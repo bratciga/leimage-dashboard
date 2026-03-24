@@ -136,80 +136,214 @@ function loadSampleImages() {
 }
 
 /* ================================================================
-   FONT SELECT
+   FONT PICKER — custom scrollable list with hover preview
 ================================================================ */
-function populateFontSelect() {
-  const sel = document.getElementById('mono-font');
-  if (!sel) return;
+let _fontPickerHoverTimer = null;
+let _fontPickerOriginalFont = null;
+
+function buildFontPicker() {
+  // Find the field-group containing mono-font
+  const oldSel = document.getElementById('mono-font');
+  if (!oldSel) return;
+
+  // Hide the native select (keep it for value storage)
+  oldSel.style.display = 'none';
+
+  // Create custom font picker
+  const picker = document.createElement('div');
+  picker.id = 'custom-font-picker';
+  picker.className = 'custom-font-picker';
+
   MONOGRAM_FONTS.forEach((f, i) => {
-    const opt = document.createElement('option');
-    opt.value = f.family;
-    opt.textContent = f.name;
-    if (i === 0) opt.selected = true;
-    sel.appendChild(opt);
+    const item = document.createElement('div');
+    item.className = 'font-picker-item' + (i === 0 ? ' selected' : '');
+    item.dataset.family = f.family;
+
+    const nameSpan = document.createElement('span');
+    nameSpan.className = 'font-picker-name';
+    nameSpan.textContent = f.name;
+    nameSpan.style.fontFamily = `"${f.family}", serif`;
+
+    const checkSpan = document.createElement('span');
+    checkSpan.className = 'font-picker-check';
+    checkSpan.textContent = '✓';
+
+    item.appendChild(nameSpan);
+    item.appendChild(checkSpan);
+    picker.appendChild(item);
+
+    // Hover = temporary preview
+    item.addEventListener('mouseenter', () => {
+      if (_fontPickerOriginalFont === null) {
+        _fontPickerOriginalFont = MonogramState.fontFamily;
+      }
+      clearTimeout(_fontPickerHoverTimer);
+      _fontPickerHoverTimer = setTimeout(async () => {
+        await loadGoogleFont(f.family);
+        // Temporarily preview this font
+        const fontPreview = document.getElementById('font-preview-strip');
+        const line1Input  = document.getElementById('mono-line1');
+        if (fontPreview) {
+          fontPreview.style.fontFamily = `"${f.family}", serif`;
+          fontPreview.textContent = line1Input?.value || f.name;
+        }
+        // Temporarily render with this font (don't update state permanently)
+        const savedFont = MonogramState.fontFamily;
+        MonogramState.fontFamily = f.family;
+        await renderMonogram();
+        MonogramState.fontFamily = savedFont; // restore state
+      }, 120);
+    });
+
+    // Mouse leave — restore original
+    item.addEventListener('mouseleave', () => {
+      clearTimeout(_fontPickerHoverTimer);
+      // Will be restored on next render or click
+    });
+
+    // Click = confirm selection
+    item.addEventListener('click', async () => {
+      _fontPickerOriginalFont = null;
+      picker.querySelectorAll('.font-picker-item').forEach(el => el.classList.remove('selected'));
+      item.classList.add('selected');
+      MonogramState.fontFamily = f.family;
+      oldSel.value = f.family;
+
+      const fontPreview = document.getElementById('font-preview-strip');
+      const line1Input  = document.getElementById('mono-line1');
+      if (fontPreview) {
+        fontPreview.style.fontFamily = `"${f.family}", serif`;
+        fontPreview.textContent = line1Input?.value || f.family;
+      }
+      await loadGoogleFont(f.family);
+      await renderMonogram();
+    });
   });
+
+  // Insert picker after the hidden select
+  oldSel.parentNode.insertBefore(picker, oldSel.nextSibling);
+
+  // When mouse leaves the picker entirely, restore actual selected font preview
+  picker.addEventListener('mouseleave', async () => {
+    clearTimeout(_fontPickerHoverTimer);
+    if (_fontPickerOriginalFont !== null) {
+      const fontPreview = document.getElementById('font-preview-strip');
+      const line1Input  = document.getElementById('mono-line1');
+      if (fontPreview) {
+        fontPreview.style.fontFamily = `"${MonogramState.fontFamily}", serif`;
+        fontPreview.textContent = line1Input?.value || MonogramState.fontFamily;
+      }
+      await renderMonogram(); // re-render with actual selected font
+      _fontPickerOriginalFont = null;
+    }
+  });
+
+  // Pre-load all fonts in background (non-blocking)
+  setTimeout(() => {
+    MONOGRAM_FONTS.forEach(f => loadGoogleFont(f.family));
+  }, 500);
+}
+
+function populateFontSelect() {
+  // Legacy: just build the custom picker
+  buildFontPicker();
 }
 
 /* ================================================================
-   FRAME PICKER — render preview cards with inline SVG
+   FRAME PICKER — render preview cards grouped by category
 ================================================================ */
+
+const FRAME_CATEGORY_LABELS = {
+  simple:    'Simple',
+  elegant:   'Elegant',
+  classic:   'Classic',
+  geometric: 'Geometric',
+  ornate:    'Ornate',
+  nature:    'Nature',
+  romantic:  'Romantic',
+  royal:     'Royal',
+  divider:   'Line Dividers',
+};
+
 function initFramePicker() {
   const grid = document.getElementById('flourish-picker-grid');
   if (!grid) return;
   grid.innerHTML = '';
 
   const PREVIEW_COLOR = '#c9a84c'; // gold for picker previews
-
   const templates = window.FrameTemplates ? window.FrameTemplates.templates : [];
 
+  // Group templates by category preserving order of first appearance
+  const categoryOrder = [];
+  const byCategory = {};
   templates.forEach(template => {
-    const isSelected = template.id === MonogramState.frame;
-
-    const card = document.createElement('div');
-    card.className = 'flourish-option frame-option' + (isSelected ? ' selected' : '');
-    card.dataset.frame = template.id;
-
-    // Preview: inline SVG scaled to card, or text for "None"
-    const previewWrap = document.createElement('div');
-    previewWrap.className = 'frame-preview-inner';
-
-    if (template.svg) {
-      const colored = template.svg.split('FRAME_COLOR').join(PREVIEW_COLOR);
-      const svgEl = document.createElement('div');
-      svgEl.className = 'frame-preview-svg';
-      svgEl.innerHTML = colored;
-      const svgTag = svgEl.querySelector('svg');
-      if (svgTag) {
-        svgTag.setAttribute('width', '100%');
-        svgTag.setAttribute('height', '100%');
-        svgTag.style.display = 'block';
-      }
-      previewWrap.appendChild(svgEl);
-    } else {
-      // "None" option
-      previewWrap.classList.add('frame-preview-none');
-      const noText = document.createElement('span');
-      noText.textContent = '—';
-      noText.style.cssText = 'font-size:1.4rem;color:rgba(255,255,255,0.3);line-height:1';
-      previewWrap.appendChild(noText);
+    const cat = template.category || 'simple';
+    if (!byCategory[cat]) {
+      byCategory[cat] = [];
+      categoryOrder.push(cat);
     }
+    byCategory[cat].push(template);
+  });
 
-    const label = document.createElement('span');
-    label.className = 'flourish-option-label';
-    label.textContent = template.name;
+  categoryOrder.forEach(cat => {
+    // Category heading
+    const heading = document.createElement('div');
+    heading.className = 'frame-category-label';
+    heading.textContent = FRAME_CATEGORY_LABELS[cat] || cat;
+    grid.appendChild(heading);
 
-    card.appendChild(previewWrap);
-    card.appendChild(label);
-    grid.appendChild(card);
+    // Category grid row
+    const catGrid = document.createElement('div');
+    catGrid.className = 'frame-category-grid';
+    grid.appendChild(catGrid);
 
-    card.addEventListener('click', () => {
-      grid.querySelectorAll('.frame-option').forEach(c => c.classList.remove('selected'));
-      card.classList.add('selected');
-      MonogramState.frame = template.id;
-      MonogramState.flourish = template.id; // backward compat
-      // Invalidate cached frame images on color changes (they're color-keyed so fine)
-      renderMonogram();
-      renderPrintMock();
+    byCategory[cat].forEach(template => {
+      const isSelected = template.id === MonogramState.frame;
+
+      const card = document.createElement('div');
+      card.className = 'flourish-option frame-option' + (isSelected ? ' selected' : '');
+      card.dataset.frame = template.id;
+
+      // Preview: inline SVG scaled to card, or text for "None"
+      const previewWrap = document.createElement('div');
+      previewWrap.className = 'frame-preview-inner';
+
+      if (template.svg) {
+        const colored = template.svg.split('FRAME_COLOR').join(PREVIEW_COLOR);
+        const svgEl = document.createElement('div');
+        svgEl.className = 'frame-preview-svg';
+        svgEl.innerHTML = colored;
+        const svgTag = svgEl.querySelector('svg');
+        if (svgTag) {
+          svgTag.setAttribute('width', '100%');
+          svgTag.setAttribute('height', '100%');
+          svgTag.style.display = 'block';
+        }
+        previewWrap.appendChild(svgEl);
+      } else {
+        // "None" option
+        previewWrap.classList.add('frame-preview-none');
+        const noText = document.createElement('span');
+        noText.textContent = '—';
+        noText.style.cssText = 'font-size:1.4rem;color:rgba(255,255,255,0.3);line-height:1';
+        previewWrap.appendChild(noText);
+      }
+
+      const label = document.createElement('span');
+      label.className = 'flourish-option-label';
+      label.textContent = template.name;
+
+      card.appendChild(previewWrap);
+      card.appendChild(label);
+      catGrid.appendChild(card);
+
+      card.addEventListener('click', () => {
+        grid.querySelectorAll('.frame-option').forEach(c => c.classList.remove('selected'));
+        card.classList.add('selected');
+        MonogramState.frame = template.id;
+        MonogramState.flourish = template.id; // backward compat
+        renderMonogram();
+      });
     });
   });
 }
@@ -283,8 +417,10 @@ async function drawMonogramContent(ctx, spec, state, transparent = false) {
   const textZoneH    = zoneH * (1 - py * 2);
   const textZoneTop  = zoneTop + zoneH * py;
 
-  const maxLine1Size = Math.floor(textZoneH * (line2 ? 0.46 : 0.60));
-  const maxLine2Size = Math.floor(textZoneH * (line1 ? 0.34 : 0.60));
+  // Reduce max font size by ~20% when a frame is active to prevent overflow
+  const frameSizeReduction = hasFrame ? 0.80 : 1.0;
+  const maxLine1Size = Math.floor(textZoneH * (line2 ? 0.46 : 0.60) * frameSizeReduction);
+  const maxLine2Size = Math.floor(textZoneH * (line1 ? 0.34 : 0.60) * frameSizeReduction);
 
   let size1 = line1 ? fitFontSize(ctx, line1, font, textZoneW, maxLine1Size) : 0;
   let size2 = line2 ? fitFontSize(ctx, line2, font, textZoneW, maxLine2Size) : 0;
@@ -460,7 +596,6 @@ function scheduleRender() {
   clearTimeout(_renderTimer);
   _renderTimer = setTimeout(async () => {
     await renderMonogram();
-    await renderPrintMock();
   }, 80);
 }
 
@@ -524,8 +659,7 @@ function isColorTooLight(hex) {
    INIT
 ================================================================ */
 async function initMonogramBuilder() {
-  populateFontSelect();
-  loadSampleImages();
+  populateFontSelect(); // builds custom font picker
 
   // Create main canvas
   const outer = document.getElementById('canvas-outer');
@@ -540,49 +674,28 @@ async function initMonogramBuilder() {
   outer.appendChild(canvas);
   MonogramState.canvas = canvas;
 
-  // Create mock canvas
-  const mockWrap = document.getElementById('print-mock-canvas-wrap');
-  if (mockWrap) {
-    const mock = document.createElement('canvas');
-    mock.id             = 'print-mock-canvas';
-    mock.style.maxWidth = '100%';
-    mock.style.display  = 'block';
-    mock.style.borderRadius = '6px';
-    mock.style.border       = '1px solid rgba(255,255,255,0.1)';
-    mockWrap.appendChild(mock);
-    MonogramState.mockCanvas = mock;
-  }
-
   // Init frame picker (was flourish picker)
   initFramePicker();
 
   await loadGoogleFont(MonogramState.fontFamily);
   await renderMonogram();
-  await renderPrintMock();
 
   /* ---- Wire controls ---- */
 
   const line1Input = document.getElementById('mono-line1');
   const line2Input = document.getElementById('mono-line2');
 
-  if (line1Input) line1Input.addEventListener('input', () => { MonogramState.line1 = line1Input.value; scheduleRender(); });
+  if (line1Input) line1Input.addEventListener('input', () => {
+    MonogramState.line1 = line1Input.value;
+    // Update font preview text
+    const fontPreview = document.getElementById('font-preview-strip');
+    if (fontPreview) fontPreview.textContent = line1Input.value || MonogramState.fontFamily;
+    scheduleRender();
+  });
   if (line2Input) line2Input.addEventListener('input', () => { MonogramState.line2 = line2Input.value; scheduleRender(); });
 
-  // Font
-  const fontSel     = document.getElementById('mono-font');
+  // Font preview strip init
   const fontPreview = document.getElementById('font-preview-strip');
-  if (fontSel) {
-    fontSel.addEventListener('change', async () => {
-      MonogramState.fontFamily = fontSel.value;
-      if (fontPreview) {
-        fontPreview.style.fontFamily = `"${fontSel.value}", serif`;
-        fontPreview.textContent = line1Input?.value || fontSel.value;
-      }
-      await loadGoogleFont(fontSel.value);
-      await renderMonogram();
-      await renderPrintMock();
-    });
-  }
   if (fontPreview) {
     fontPreview.style.fontFamily = `"${MonogramState.fontFamily}", serif`;
   }
@@ -691,39 +804,6 @@ async function initMonogramBuilder() {
       URL.revokeObjectURL(url);
     });
   }
-
-  // Zoom mock button
-  const zoomMockBtn = document.getElementById('btn-zoom-mock');
-  if (zoomMockBtn) {
-    zoomMockBtn.addEventListener('click', () => {
-      const modal   = document.getElementById('zoom-modal');
-      const content = document.getElementById('zoom-modal-content');
-      if (!modal || !content || !MonogramState.mockCanvas) return;
-
-      content.innerHTML = '';
-      const zoomed = document.createElement('canvas');
-      const src    = MonogramState.mockCanvas;
-      zoomed.width  = src.width  * 2;
-      zoomed.height = src.height * 2;
-      const ctx = zoomed.getContext('2d');
-      ctx.drawImage(src, 0, 0, zoomed.width, zoomed.height);
-      zoomed.style.maxWidth = '100%';
-      content.appendChild(zoomed);
-      modal.classList.remove('hidden');
-      document.body.style.overflow = 'hidden';
-    });
-  }
-
-  // Close zoom modal
-  const zoomClose    = document.getElementById('zoom-modal-close');
-  const zoomBackdrop = document.getElementById('zoom-modal-backdrop');
-  function closeZoomModal() {
-    const modal = document.getElementById('zoom-modal');
-    if (modal) modal.classList.add('hidden');
-    document.body.style.overflow = '';
-  }
-  if (zoomClose)    zoomClose.addEventListener('click', closeZoomModal);
-  if (zoomBackdrop) zoomBackdrop.addEventListener('click', closeZoomModal);
 }
 
 /* ================================================================
@@ -731,7 +811,7 @@ async function initMonogramBuilder() {
 ================================================================ */
 function updateMonogramPrintSize(size) {
   MonogramState.printSize = size;
-  renderMonogram().then(() => renderPrintMock());
+  renderMonogram();
 }
 
 function updateMonogramBackdropColor(color) {

@@ -879,9 +879,6 @@ h1, h2, h3 {
 
 /* ---- Frame / Flourish Picker ---- */
 .flourish-picker-grid {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 0.5rem;
   margin-top: 0.25rem;
 }
 
@@ -963,12 +960,129 @@ h1, h2, h3 {
   color: var(--gold);
 }
 
+/* ---- Frame Category Labels ---- */
+.flourish-picker-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.frame-category-label {
+  font-family: 'Cinzel', serif;
+  font-size: 0.62rem;
+  letter-spacing: 0.10em;
+  text-transform: uppercase;
+  color: var(--gold);
+  padding: 0.3rem 0 0.2rem;
+  margin-top: 0.4rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.frame-category-label::before,
+.frame-category-label::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: linear-gradient(to right, transparent, var(--gold-dim));
+}
+
+.frame-category-label::after {
+  background: linear-gradient(to left, transparent, var(--gold-dim));
+}
+
+.frame-category-label:first-child {
+  margin-top: 0;
+}
+
+.frame-category-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0.5rem;
+}
+
+/* ---- Custom Font Picker ---- */
+.custom-font-picker {
+  max-height: 300px;
+  overflow-y: auto;
+  background: var(--bg-card-alt);
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-sm);
+  display: flex;
+  flex-direction: column;
+  scrollbar-width: thin;
+  scrollbar-color: var(--gold-dim) var(--bg-card-alt);
+}
+
+.custom-font-picker::-webkit-scrollbar {
+  width: 5px;
+}
+.custom-font-picker::-webkit-scrollbar-track {
+  background: var(--bg-card-alt);
+}
+.custom-font-picker::-webkit-scrollbar-thumb {
+  background: var(--gold-dim);
+  border-radius: 3px;
+}
+
+.font-picker-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.5rem 0.75rem;
+  cursor: pointer;
+  transition: background var(--transition);
+  border-bottom: 1px solid rgba(255,255,255,0.04);
+}
+
+.font-picker-item:last-child {
+  border-bottom: none;
+}
+
+.font-picker-item:hover {
+  background: rgba(201,168,76,0.08);
+}
+
+.font-picker-item.selected {
+  background: rgba(201,168,76,0.12);
+}
+
+.font-picker-name {
+  font-size: 1.05rem;
+  color: var(--text);
+  line-height: 1.4;
+  flex: 1;
+}
+
+.font-picker-check {
+  color: var(--gold);
+  font-size: 0.85rem;
+  opacity: 0;
+  margin-left: 0.5rem;
+  flex-shrink: 0;
+}
+
+.font-picker-item.selected .font-picker-check {
+  opacity: 1;
+}
+
+/* ---- Review Download ---- */
+.review-download {
+  display: flex;
+  justify-content: center;
+  margin: 1rem 0 1.5rem;
+}
+
 /* ---- Canvas area ---- */
 .monogram-preview-wrap {
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 0.5rem;
+  position: sticky;
+  top: 120px; /* below header + progress bar */
+  align-self: flex-start;
 }
 
 .canvas-label {
@@ -1558,7 +1672,7 @@ h1, h2, h3 {
   .wizard-steps-track { gap: 0; }
   .step-label { display: none; }
   .review-row { grid-template-columns: 100px 1fr auto; gap: 0.6rem; }
-  .flourish-picker-grid { grid-template-columns: repeat(2, 1fr); }
+  .frame-category-grid { grid-template-columns: repeat(2, 1fr); }
 }
 
 @media (max-width: 420px) {

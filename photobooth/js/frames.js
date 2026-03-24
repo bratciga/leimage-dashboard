@@ -59,7 +59,7 @@ const FRAME_TEMPLATES = [
     id: 'circle-ring',
     name: 'Circle Ring',
     category: 'elegant',
-    textPadding: { x: 0.20, y: 0.18 },
+    textPadding: { x: 0.20, y: 0.20 },
     svg: `<svg viewBox="0 0 400 200" xmlns="http://www.w3.org/2000/svg">
   <ellipse cx="200" cy="100" rx="188" ry="92" fill="none" stroke="FRAME_COLOR" stroke-width="2.5"/>
   <circle cx="200" cy="6"   r="5" fill="FRAME_COLOR"/>
@@ -78,7 +78,7 @@ const FRAME_TEMPLATES = [
     id: 'double-circle',
     name: 'Double Circle',
     category: 'elegant',
-    textPadding: { x: 0.24, y: 0.22 },
+    textPadding: { x: 0.24, y: 0.25 },
     svg: `<svg viewBox="0 0 400 200" xmlns="http://www.w3.org/2000/svg">
   <ellipse cx="200" cy="100" rx="190" ry="93" fill="none" stroke="FRAME_COLOR" stroke-width="2"/>
   <ellipse cx="200" cy="100" rx="178" ry="81" fill="none" stroke="FRAME_COLOR" stroke-width="1"/>
@@ -94,7 +94,7 @@ const FRAME_TEMPLATES = [
     id: 'ornate-oval',
     name: 'Ornate Oval',
     category: 'ornate',
-    textPadding: { x: 0.22, y: 0.26 },
+    textPadding: { x: 0.22, y: 0.28 },
     svg: `<svg viewBox="0 0 400 200" xmlns="http://www.w3.org/2000/svg">
   <ellipse cx="200" cy="100" rx="172" ry="78" fill="none" stroke="FRAME_COLOR" stroke-width="2"/>
   <path d="M186,22 C191,10 209,10 214,22" fill="none" stroke="FRAME_COLOR" stroke-width="1.8"/>
@@ -342,7 +342,7 @@ const FRAME_TEMPLATES = [
     id: 'banner',
     name: 'Banner',
     category: 'ornate',
-    textPadding: { x: 0.14, y: 0.28 },
+    textPadding: { x: 0.14, y: 0.30 },
     svg: `<svg viewBox="0 0 400 200" xmlns="http://www.w3.org/2000/svg">
   <!-- Main ribbon -->
   <path d="M6,50 L30,65 L30,150 L6,165 L6,50 Z" fill="none" stroke="FRAME_COLOR" stroke-width="1.5"/>
@@ -368,7 +368,7 @@ const FRAME_TEMPLATES = [
     id: 'vintage-scroll',
     name: 'Vintage Scroll',
     category: 'ornate',
-    textPadding: { x: 0.20, y: 0.24 },
+    textPadding: { x: 0.20, y: 0.26 },
     svg: `<svg viewBox="0 0 400 200" xmlns="http://www.w3.org/2000/svg">
   <rect x="30" y="22" width="340" height="156" rx="3" fill="none" stroke="FRAME_COLOR" stroke-width="2"/>
   <rect x="36" y="28" width="328" height="144" rx="2" fill="none" stroke="FRAME_COLOR" stroke-width="0.8"/>
@@ -447,7 +447,7 @@ const FRAME_TEMPLATES = [
     id: 'star-frame',
     name: 'Star Frame',
     category: 'ornate',
-    textPadding: { x: 0.22, y: 0.22 },
+    textPadding: { x: 0.22, y: 0.24 },
     svg: `<svg viewBox="0 0 400 200" xmlns="http://www.w3.org/2000/svg">
   <!-- Star/sunburst outer ring -->
   <ellipse cx="200" cy="100" rx="186" ry="90" fill="none" stroke="FRAME_COLOR" stroke-width="1.5"/>
@@ -540,7 +540,7 @@ const FRAME_TEMPLATES = [
     id: 'elegant-swirl',
     name: 'Elegant Swirl',
     category: 'ornate',
-    textPadding: { x: 0.18, y: 0.24 },
+    textPadding: { x: 0.18, y: 0.26 },
     svg: `<svg viewBox="0 0 400 200" xmlns="http://www.w3.org/2000/svg">
   <!-- Central oval -->
   <ellipse cx="200" cy="100" rx="155" ry="72" fill="none" stroke="FRAME_COLOR" stroke-width="1.5"/>
@@ -570,7 +570,7 @@ const FRAME_TEMPLATES = [
     id: 'infinity',
     name: 'Infinity',
     category: 'geometric',
-    textPadding: { x: 0.10, y: 0.22 },
+    textPadding: { x: 0.15, y: 0.22 },
     svg: `<svg viewBox="0 0 400 200" xmlns="http://www.w3.org/2000/svg">
   <!-- Infinity shape (thick) -->
   <path d="M200,100 C200,68 224,44 256,44 C288,44 312,68 312,100 C312,132 288,156 256,156 C224,156 200,132 200,100 C200,68 176,44 144,44 C112,44 88,68 88,100 C88,132 112,156 144,156 C176,156 200,132 200,100 Z"
@@ -589,7 +589,7 @@ const FRAME_TEMPLATES = [
     id: 'chandelier',
     name: 'Chandelier',
     category: 'ornate',
-    textPadding: { x: 0.18, y: 0.28 },
+    textPadding: { x: 0.18, y: 0.30 },
     svg: `<svg viewBox="0 0 400 200" xmlns="http://www.w3.org/2000/svg">
   <!-- Base horizontal line -->
   <line x1="20" y1="170" x2="380" y2="170" stroke="FRAME_COLOR" stroke-width="2"/>
@@ -674,6 +674,163 @@ const FRAME_TEMPLATES = [
   <line x1="280" y1="182" x2="280" y2="194" stroke="FRAME_COLOR" stroke-width="1"/>
   <line x1="310" y1="182" x2="310" y2="194" stroke="FRAME_COLOR" stroke-width="1"/>
   <line x1="340" y1="182" x2="340" y2="194" stroke="FRAME_COLOR" stroke-width="1"/>
+</svg>`,
+  },
+
+
+  /* ═══════════════════════════════════════════════════════════
+     LINE DIVIDERS — horizontal ornamental dividers
+     These render as top+bottom decorations, center open for text
+  ═══════════════════════════════════════════════════════════ */
+
+  /* ─────────────────── 25. Classic Lines ───────────────────── */
+  {
+    id: 'div-classic',
+    name: 'Classic Lines',
+    category: 'divider',
+    textPadding: { x: 0.04, y: 0.15 },
+    svg: `<svg viewBox="0 0 400 200" xmlns="http://www.w3.org/2000/svg">
+  <!-- Top divider -->
+  <line x1="20" y1="22" x2="170" y2="22" stroke="FRAME_COLOR" stroke-width="1.5"/>
+  <line x1="230" y1="22" x2="380" y2="22" stroke="FRAME_COLOR" stroke-width="1.5"/>
+  <path d="M190,22 L200,12 L210,22 L200,32 Z" fill="FRAME_COLOR"/>
+  <line x1="20" y1="28" x2="380" y2="28" stroke="FRAME_COLOR" stroke-width="0.6"/>
+  <!-- Bottom divider -->
+  <line x1="20" y1="172" x2="170" y2="172" stroke="FRAME_COLOR" stroke-width="1.5"/>
+  <line x1="230" y1="172" x2="380" y2="172" stroke="FRAME_COLOR" stroke-width="1.5"/>
+  <path d="M190,172 L200,162 L210,172 L200,182 Z" fill="FRAME_COLOR"/>
+  <line x1="20" y1="178" x2="380" y2="178" stroke="FRAME_COLOR" stroke-width="0.6"/>
+</svg>`,
+  },
+
+  /* ─────────────────── 26. Elegant Swirl Divider ───────────── */
+  {
+    id: 'div-swirl',
+    name: 'Elegant Swirl',
+    category: 'divider',
+    textPadding: { x: 0.04, y: 0.15 },
+    svg: `<svg viewBox="0 0 400 200" xmlns="http://www.w3.org/2000/svg">
+  <!-- Top swirl divider -->
+  <line x1="20" y1="22" x2="140" y2="22" stroke="FRAME_COLOR" stroke-width="1.2"/>
+  <path d="M140,22 C155,22 160,14 168,14 C176,14 178,22 170,26 C162,30 156,22 164,20" fill="none" stroke="FRAME_COLOR" stroke-width="1.2"/>
+  <path d="M260,22 C245,22 240,14 232,14 C224,14 222,22 230,26 C238,30 244,22 236,20" fill="none" stroke="FRAME_COLOR" stroke-width="1.2"/>
+  <line x1="260" y1="22" x2="380" y2="22" stroke="FRAME_COLOR" stroke-width="1.2"/>
+  <circle cx="200" cy="22" r="4" fill="none" stroke="FRAME_COLOR" stroke-width="1.2"/>
+  <circle cx="200" cy="22" r="1.5" fill="FRAME_COLOR"/>
+  <!-- Bottom swirl divider -->
+  <line x1="20" y1="178" x2="140" y2="178" stroke="FRAME_COLOR" stroke-width="1.2"/>
+  <path d="M140,178 C155,178 160,170 168,170 C176,170 178,178 170,182 C162,186 156,178 164,176" fill="none" stroke="FRAME_COLOR" stroke-width="1.2"/>
+  <path d="M260,178 C245,178 240,170 232,170 C224,170 222,178 230,182 C238,186 244,178 236,176" fill="none" stroke="FRAME_COLOR" stroke-width="1.2"/>
+  <line x1="260" y1="178" x2="380" y2="178" stroke="FRAME_COLOR" stroke-width="1.2"/>
+  <circle cx="200" cy="178" r="4" fill="none" stroke="FRAME_COLOR" stroke-width="1.2"/>
+  <circle cx="200" cy="178" r="1.5" fill="FRAME_COLOR"/>
+</svg>`,
+  },
+
+  /* ─────────────────── 27. Double Lines ────────────────────── */
+  {
+    id: 'div-double',
+    name: 'Double Lines',
+    category: 'divider',
+    textPadding: { x: 0.04, y: 0.15 },
+    svg: `<svg viewBox="0 0 400 200" xmlns="http://www.w3.org/2000/svg">
+  <!-- Top double line -->
+  <line x1="20" y1="18" x2="380" y2="18" stroke="FRAME_COLOR" stroke-width="2"/>
+  <line x1="20" y1="26" x2="380" y2="26" stroke="FRAME_COLOR" stroke-width="0.8"/>
+  <!-- Bottom double line -->
+  <line x1="20" y1="174" x2="380" y2="174" stroke="FRAME_COLOR" stroke-width="0.8"/>
+  <line x1="20" y1="182" x2="380" y2="182" stroke="FRAME_COLOR" stroke-width="2"/>
+  <!-- Corner accents -->
+  <rect x="16" y="14" width="8" height="16" rx="1" fill="FRAME_COLOR" opacity="0.4"/>
+  <rect x="376" y="14" width="8" height="16" rx="1" fill="FRAME_COLOR" opacity="0.4"/>
+  <rect x="16" y="170" width="8" height="16" rx="1" fill="FRAME_COLOR" opacity="0.4"/>
+  <rect x="376" y="170" width="8" height="16" rx="1" fill="FRAME_COLOR" opacity="0.4"/>
+</svg>`,
+  },
+
+  /* ─────────────────── 28. Dots ────────────────────────────── */
+  {
+    id: 'div-dots',
+    name: 'Dots',
+    category: 'divider',
+    textPadding: { x: 0.04, y: 0.15 },
+    svg: `<svg viewBox="0 0 400 200" xmlns="http://www.w3.org/2000/svg">
+  <!-- Top dots line -->
+  <line x1="20" y1="22" x2="180" y2="22" stroke="FRAME_COLOR" stroke-width="1" stroke-dasharray="3,6"/>
+  <line x1="220" y1="22" x2="380" y2="22" stroke="FRAME_COLOR" stroke-width="1" stroke-dasharray="3,6"/>
+  <circle cx="200" cy="22" r="5" fill="FRAME_COLOR"/>
+  <circle cx="174" cy="22" r="2.5" fill="FRAME_COLOR"/>
+  <circle cx="226" cy="22" r="2.5" fill="FRAME_COLOR"/>
+  <!-- Bottom dots line -->
+  <line x1="20" y1="178" x2="180" y2="178" stroke="FRAME_COLOR" stroke-width="1" stroke-dasharray="3,6"/>
+  <line x1="220" y1="178" x2="380" y2="178" stroke="FRAME_COLOR" stroke-width="1" stroke-dasharray="3,6"/>
+  <circle cx="200" cy="178" r="5" fill="FRAME_COLOR"/>
+  <circle cx="174" cy="178" r="2.5" fill="FRAME_COLOR"/>
+  <circle cx="226" cy="178" r="2.5" fill="FRAME_COLOR"/>
+</svg>`,
+  },
+
+  /* ─────────────────── 29. Minimal ─────────────────────────── */
+  {
+    id: 'div-minimal',
+    name: 'Minimal',
+    category: 'divider',
+    textPadding: { x: 0.04, y: 0.15 },
+    svg: `<svg viewBox="0 0 400 200" xmlns="http://www.w3.org/2000/svg">
+  <!-- Top single line -->
+  <line x1="20" y1="22" x2="380" y2="22" stroke="FRAME_COLOR" stroke-width="1.5"/>
+  <!-- Bottom single line -->
+  <line x1="20" y1="178" x2="380" y2="178" stroke="FRAME_COLOR" stroke-width="1.5"/>
+</svg>`,
+  },
+
+  /* ─────────────────── 30. Hearts ──────────────────────────── */
+  {
+    id: 'div-hearts',
+    name: 'Hearts',
+    category: 'divider',
+    textPadding: { x: 0.04, y: 0.15 },
+    svg: `<svg viewBox="0 0 400 200" xmlns="http://www.w3.org/2000/svg">
+  <!-- Top line with heart -->
+  <line x1="20" y1="22" x2="183" y2="22" stroke="FRAME_COLOR" stroke-width="1.2"/>
+  <line x1="217" y1="22" x2="380" y2="22" stroke="FRAME_COLOR" stroke-width="1.2"/>
+  <path d="M200,30 C194,24 186,20 186,14 C186,9 191,6 196,8 C198,9 200,11 200,11 C200,11 202,9 204,8 C209,6 214,9 214,14 C214,20 206,24 200,30 Z" fill="FRAME_COLOR"/>
+  <!-- Bottom line with heart -->
+  <line x1="20" y1="178" x2="183" y2="178" stroke="FRAME_COLOR" stroke-width="1.2"/>
+  <line x1="217" y1="178" x2="380" y2="178" stroke="FRAME_COLOR" stroke-width="1.2"/>
+  <path d="M200,186 C194,180 186,176 186,170 C186,165 191,162 196,164 C198,165 200,167 200,167 C200,167 202,165 204,164 C209,162 214,165 214,170 C214,176 206,180 200,186 Z" fill="FRAME_COLOR"/>
+</svg>`,
+  },
+
+  /* ─────────────────── 31. Stars ───────────────────────────── */
+  {
+    id: 'div-stars',
+    name: 'Stars',
+    category: 'divider',
+    textPadding: { x: 0.04, y: 0.15 },
+    svg: `<svg viewBox="0 0 400 200" xmlns="http://www.w3.org/2000/svg">
+  <!-- Top line with star -->
+  <line x1="20" y1="22" x2="183" y2="22" stroke="FRAME_COLOR" stroke-width="1.2"/>
+  <line x1="217" y1="22" x2="380" y2="22" stroke="FRAME_COLOR" stroke-width="1.2"/>
+  <polygon points="200,12 202.4,18.8 209.5,18.8 203.8,23 206.1,29.8 200,25.6 193.9,29.8 196.2,23 190.5,18.8 197.6,18.8" fill="FRAME_COLOR"/>
+  <!-- Bottom line with star -->
+  <line x1="20" y1="178" x2="183" y2="178" stroke="FRAME_COLOR" stroke-width="1.2"/>
+  <line x1="217" y1="178" x2="380" y2="178" stroke="FRAME_COLOR" stroke-width="1.2"/>
+  <polygon points="200,168 202.4,174.8 209.5,174.8 203.8,179 206.1,185.8 200,181.6 193.9,185.8 196.2,179 190.5,174.8 197.6,174.8" fill="FRAME_COLOR"/>
+</svg>`,
+  },
+
+  /* ─────────────────── 32. Waves ───────────────────────────── */
+  {
+    id: 'div-waves',
+    name: 'Waves',
+    category: 'divider',
+    textPadding: { x: 0.04, y: 0.15 },
+    svg: `<svg viewBox="0 0 400 200" xmlns="http://www.w3.org/2000/svg">
+  <!-- Top wave -->
+  <path d="M20,22 C40,14 60,30 80,22 C100,14 120,30 140,22 C160,14 180,30 200,22 C220,14 240,30 260,22 C280,14 300,30 320,22 C340,14 360,30 380,22" fill="none" stroke="FRAME_COLOR" stroke-width="1.5"/>
+  <!-- Bottom wave -->
+  <path d="M20,178 C40,170 60,186 80,178 C100,170 120,186 140,178 C160,170 180,186 200,178 C220,170 240,186 260,178 C280,170 300,186 320,178 C340,170 360,186 380,178" fill="none" stroke="FRAME_COLOR" stroke-width="1.5"/>
 </svg>`,
   },
 
