@@ -944,7 +944,7 @@ h1, h2, h3 {
 }
 
 .canvas-outer {
-  background: repeating-conic-gradient(#1a1a2e 0% 25%, #12122a 0% 50%) 0 0 / 16px 16px;
+  background: #ffffff;
   border: 1.5px solid var(--border);
   border-radius: var(--radius-sm);
   overflow: hidden;

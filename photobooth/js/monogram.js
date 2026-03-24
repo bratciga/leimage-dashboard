@@ -453,7 +453,9 @@ function renderMonogram() {
   const color1 = MonogramState.textColor1;
   const color2 = MonogramState.textColor2;
 
-  ctx.clearRect(0, 0, spec.w, spec.h);
+  // White background for preview (export is transparent)
+  ctx.fillStyle = '#ffffff';
+  ctx.fillRect(0, 0, spec.w, spec.h);
 
   if (!line1 && !line2) {
     ctx.fillStyle = 'rgba(100,100,100,0.3)';
@@ -645,6 +647,45 @@ function exportMonogramDataURL() {
 
 function getExportCanvas() {
   const printSize = MonogramState.printSize;
+  const srcCanvas = MonogramState.canvas;
+  const spec = CANVAS_SPECS[printSize];
+
+  // Re-render without white background for export (transparent)
+  const exportSingle = document.createElement('canvas');
+  exportSingle.width = spec.w;
+  exportSingle.height = spec.h;
+  const ectx = exportSingle.getContext('2d');
+  // Clear = transparent
+  ectx.clearRect(0, 0, spec.w, spec.h);
+
+  // Redraw monogram content (skip the white fill)
+  const font = MonogramState.fontFamily;
+  const line1 = MonogramState.line1.trim();
+  const line2 = MonogramState.line2.trim();
+  const color1 = MonogramState.textColor1;
+  const color2 = MonogramState.textColor2;
+
+  if (line1 || line2) {
+    const zoneTop = spec.h * (1 - MONOGRAM_ZONE_HEIGHT_RATIO);
+    const zoneH = spec.h * MONOGRAM_ZONE_HEIGHT_RATIO;
+    const centerX = spec.w / 2;
+    const padding = spec.w * PADDING_RATIO;
+    const maxW = spec.w - padding * 2;
+    const maxLine1Size = Math.floor(zoneH * 0.38);
+    const maxLine2Size = Math.floor(zoneH * 0.22);
+    let size1 = line1 ? fitFontSize(ectx, line1, font, maxW, maxLine1Size) : 0;
+    let size2 = line2 ? fitFontSize(ectx, line2, font, maxW, maxLine2Size) : 0;
+    const flourishH = (MonogramState.flourish !== 'none') ? zoneH * 0.06 : 0;
+    const lineGap = zoneH * 0.06;
+    const totalH = (line1 ? size1 : 0) + (line2 ? size2 + lineGap : 0) + (flourishH > 0 ? flourishH * 2 + lineGap * 2 : 0);
+    let cursor = zoneTop + (zoneH - totalH) / 2;
+    ectx.textAlign = 'center';
+    ectx.textBaseline = 'alphabetic';
+    if (flourishH > 0) { drawFlourish(ectx, MonogramState.flourish, centerX, cursor + flourishH / 2, maxW * 0.7, color1); cursor += flourishH + lineGap; }
+    if (line1) { ectx.fillStyle = color1; ectx.font = `${size1}px "${font}"`; ectx.fillText(line1, centerX, cursor + size1 * 0.85); cursor += size1 + lineGap; }
+    if (line2) { ectx.fillStyle = color2; ectx.font = `${size2}px "${font}"`; ectx.fillText(line2, centerX, cursor + size2 * 0.85); cursor += size2 + lineGap; }
+    if (flourishH > 0) { drawFlourish(ectx, MonogramState.flourish, centerX, cursor + flourishH / 2, maxW * 0.7, color1); }
+  }
 
   if (printSize === '2x6') {
     // 2x6 export: create 1844×1240 with monogram doubled side by side
@@ -652,21 +693,13 @@ function getExportCanvas() {
     doubled.width = 1844;
     doubled.height = 1240;
     const ctx = doubled.getContext('2d');
-
-    const singleCanvas = MonogramState.canvas; // 1240×1844
-    // Each half: 922×1240
     const halfW = 922;
-
-    // Draw left half
-    ctx.drawImage(singleCanvas, 0, 0, singleCanvas.width, singleCanvas.height, 0, 0, halfW, 1240);
-    // Draw right half (identical)
-    ctx.drawImage(singleCanvas, 0, 0, singleCanvas.width, singleCanvas.height, halfW, 0, halfW, 1240);
-
+    ctx.drawImage(exportSingle, 0, 0, exportSingle.width, exportSingle.height, 0, 0, halfW, 1240);
+    ctx.drawImage(exportSingle, 0, 0, exportSingle.width, exportSingle.height, halfW, 0, halfW, 1240);
     return doubled;
   }
 
-  // 4x6: return canvas as-is
-  return MonogramState.canvas;
+  return exportSingle;
 }
 
 /* ================================================================
