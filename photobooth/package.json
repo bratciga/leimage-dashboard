@@ -1,0 +1,19 @@
+{
+  "name": "leimage-photobooth-configurator",
+  "version": "1.0.0",
+  "description": "Client-facing photo booth configurator for Le Image Photography Studio",
+  "private": true,
+  "scripts": {
+    "start": "npx serve . --listen 8080",
+    "dev":   "npx serve . --listen 8080"
+  },
+  "keywords": ["photo-booth", "wedding", "le-image", "configurator"],
+  "author": "Le Image Photography Studio",
+  "license": "UNLICENSED",
+  "devDependencies": {
+    "serve": "^14.0.0"
+  },
+  "engines": {
+    "node": ">=16"
+  }
+}

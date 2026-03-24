@@ -1,0 +1,430 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Le Image — Photo Booth Configurator</title>
+
+  <!-- Google Fonts — Preloaded set for quick access -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600&family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300&display=swap" rel="stylesheet" />
+
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+
+  <!-- ============================================================
+       HEADER
+  ============================================================ -->
+  <header class="site-header">
+    <div class="header-inner">
+      <div class="brand">Le Image</div>
+      <div class="header-sub">Photo Booth Configurator</div>
+    </div>
+  </header>
+
+  <!-- ============================================================
+       EVENT BANNER
+  ============================================================ -->
+  <div class="event-banner">
+    <span class="event-label">Event:</span>
+    <span id="event-name" class="event-slug">Loading…</span>
+  </div>
+
+  <!-- ============================================================
+       MAIN FORM
+  ============================================================ -->
+  <main class="container">
+    <form id="configurator-form" novalidate>
+
+      <!-- --------------------------------------------------------
+           A. PHOTO BOOTH INFO
+      -------------------------------------------------------- -->
+      <section class="card" id="section-info">
+        <h2 class="section-title">Photo Booth Setup</h2>
+        <p class="section-desc">
+          We typically need about a <strong>10 by 10-foot space</strong> for the setup.
+          The dimensions of our photo booth backdrop are <strong>7 by 7 feet</strong>,
+          and the size is not adjustable.
+        </p>
+
+        <div class="photo-grid">
+          <div class="photo-slot">
+            <img src="assets/images/booth-setup/booth-action-props.jpg" alt="Photo booth in action with props" />
+          </div>
+          <div class="photo-slot">
+            <img src="assets/images/booth-setup/booth-setup-gold.jpg" alt="Photo booth setup with gold backdrop" />
+          </div>
+          <div class="photo-slot">
+            <img src="assets/images/booth-setup/booth-props-table.jpg" alt="Photo booth props table" />
+          </div>
+          <div class="photo-slot">
+            <img src="assets/images/booth-setup/booth-ballroom.jpg" alt="Photo booth setup in ballroom" />
+          </div>
+        </div>
+      </section>
+
+      <!-- --------------------------------------------------------
+           B. PARKING
+      -------------------------------------------------------- -->
+      <section class="card" id="section-parking">
+        <h2 class="section-title">Parking</h2>
+        <p class="section-desc">
+          The client is responsible for providing parking for the photo booth.
+          Do you have parking arranged with your venue or a nearby lot?
+        </p>
+
+        <div class="radio-group">
+          <label class="radio-card">
+            <input type="radio" name="parking" value="yes" required />
+            <span class="radio-label">Yes</span>
+          </label>
+          <label class="radio-card">
+            <input type="radio" name="parking" value="no" />
+            <span class="radio-label">No</span>
+          </label>
+        </div>
+        <div class="field-error" id="error-parking" aria-live="polite"></div>
+      </section>
+
+      <!-- --------------------------------------------------------
+           C. QUALITY DISCLAIMER
+      -------------------------------------------------------- -->
+      <section class="card" id="section-disclaimer">
+        <h2 class="section-title">Quality Disclaimer</h2>
+        <p class="section-desc">
+          We strive to maintain the highest standards of quality in our services,
+          but we cannot guarantee the same level of quality when using external
+          monograms and backdrops. These elements may not be optimized for our
+          equipment and may lead to variations in image quality, lighting, and
+          overall aesthetics.
+        </p>
+
+        <label class="checkbox-card">
+          <input type="checkbox" id="disclaimer-check" name="disclaimer" required />
+          <span class="checkbox-label">I understand</span>
+        </label>
+        <div class="field-error" id="error-disclaimer" aria-live="polite"></div>
+      </section>
+
+      <!-- --------------------------------------------------------
+           D. BACKDROP COLOR
+      -------------------------------------------------------- -->
+      <section class="card" id="section-backdrop">
+        <h2 class="section-title">Backdrop Color</h2>
+        <p class="section-desc">Select the backdrop that best fits your event.</p>
+
+        <div class="backdrop-grid" role="radiogroup" aria-label="Backdrop selection">
+          <!-- Each backdrop card — add a real image to .backdrop-img src when available -->
+
+          <label class="backdrop-card">
+            <input type="radio" name="backdrop" value="Marble White" required />
+            <div class="backdrop-img-wrap">
+              <img src="assets/images/backdrops/marble-white.jpg" alt="Marble White backdrop" class="backdrop-img" />
+            </div>
+            <span class="backdrop-name">Marble White</span>
+            <span class="check-mark">✓</span>
+          </label>
+
+          <label class="backdrop-card">
+            <input type="radio" name="backdrop" value="Marble Black" />
+            <div class="backdrop-img-wrap">
+              <img src="assets/images/backdrops/marble-black.jpg" alt="Marble Black backdrop" class="backdrop-img" />
+            </div>
+            <span class="backdrop-name">Marble Black</span>
+            <span class="check-mark">✓</span>
+          </label>
+
+          <label class="backdrop-card">
+            <input type="radio" name="backdrop" value="Lollipop" />
+            <div class="backdrop-img-wrap">
+              <img src="assets/images/backdrops/lollipop.jpg" alt="Lollipop backdrop" class="backdrop-img" />
+            </div>
+            <span class="backdrop-name">Lollipop</span>
+            <span class="check-mark">✓</span>
+          </label>
+
+          <label class="backdrop-card">
+            <input type="radio" name="backdrop" value="Romb" />
+            <div class="backdrop-img-wrap">
+              <img src="assets/images/backdrops/romb.jpg" alt="Romb backdrop" class="backdrop-img" />
+            </div>
+            <span class="backdrop-name">Romb</span>
+            <span class="check-mark">✓</span>
+          </label>
+
+          <label class="backdrop-card">
+            <input type="radio" name="backdrop" value="Red" />
+            <div class="backdrop-img-wrap">
+              <img src="assets/images/backdrops/red.jpg" alt="Red backdrop" class="backdrop-img" />
+            </div>
+            <span class="backdrop-name">Red</span>
+            <span class="check-mark">✓</span>
+          </label>
+
+          <label class="backdrop-card">
+            <input type="radio" name="backdrop" value="Silver" />
+            <div class="backdrop-img-wrap">
+              <img src="assets/images/backdrops/silver.jpg" alt="Silver backdrop" class="backdrop-img" />
+            </div>
+            <span class="backdrop-name">Silver</span>
+            <span class="check-mark">✓</span>
+          </label>
+
+          <label class="backdrop-card">
+            <input type="radio" name="backdrop" value="Pink" />
+            <div class="backdrop-img-wrap">
+              <img src="assets/images/backdrops/pink.jpg" alt="Pink backdrop" class="backdrop-img" />
+            </div>
+            <span class="backdrop-name">Pink</span>
+            <span class="check-mark">✓</span>
+          </label>
+
+          <label class="backdrop-card">
+            <input type="radio" name="backdrop" value="Gold" />
+            <div class="backdrop-img-wrap">
+              <img src="assets/images/backdrops/gold.jpg" alt="Gold backdrop" class="backdrop-img" />
+            </div>
+            <span class="backdrop-name">Gold</span>
+            <span class="check-mark">✓</span>
+          </label>
+
+          <label class="backdrop-card backdrop-card--own">
+            <input type="radio" name="backdrop" value="Own Backdrop" />
+            <div class="backdrop-img-wrap">
+              <div class="backdrop-placeholder" style="background: linear-gradient(135deg, #2c3e50, #4a5568);">
+                <span>✦</span>
+              </div>
+            </div>
+            <span class="backdrop-name">I will provide my own backdrop</span>
+            <span class="backdrop-note">The studio will reach out regarding backdrop requirements.</span>
+            <span class="check-mark">✓</span>
+          </label>
+
+        </div>
+        <div class="field-error" id="error-backdrop" aria-live="polite"></div>
+      </section>
+
+      <!-- --------------------------------------------------------
+           E. PRINT SIZE
+      -------------------------------------------------------- -->
+      <section class="card" id="section-print">
+        <h2 class="section-title">Print Size</h2>
+        <p class="section-desc">Select your preferred print size. This also determines the monogram layout below.</p>
+
+        <div class="print-grid" role="radiogroup" aria-label="Print size selection">
+
+          <label class="print-card">
+            <input type="radio" name="print_size" value="4x6" required />
+            <div class="print-preview print-preview--4x6">
+              <img src="assets/images/prints/4x6-sample.jpg" alt="4×6 print sample" class="print-img" />
+            </div>
+            <span class="print-name">4×6 Print</span>
+            <span class="check-mark">✓</span>
+          </label>
+
+          <label class="print-card">
+            <input type="radio" name="print_size" value="2x6" />
+            <div class="print-preview print-preview--2x6">
+              <img src="assets/images/prints/2x6-sample.jpg" alt="2×6 strip sample" class="print-img" />
+            </div>
+            <span class="print-name">2×6 Strip</span>
+            <span class="check-mark">✓</span>
+          </label>
+
+        </div>
+        <div class="field-error" id="error-print" aria-live="polite"></div>
+      </section>
+
+      <!-- --------------------------------------------------------
+           F. MONOGRAM BUILDER
+      -------------------------------------------------------- -->
+      <section class="card" id="section-monogram">
+        <h2 class="section-title">Monogram Builder ✦</h2>
+        <p class="section-desc">
+          Design your monogram — it will appear at the bottom of every print.
+          Customize the text, font, and colors below. The preview updates live.
+        </p>
+
+        <div class="monogram-layout">
+
+          <!-- Controls column -->
+          <div class="monogram-controls">
+
+            <div class="field-group">
+              <label class="field-label" for="mono-line1">Line 1 <span class="field-hint">(e.g. "J &amp; M" or "Jessica &amp; Michael")</span></label>
+              <input type="text" id="mono-line1" class="text-input" placeholder="J & M" maxlength="60" />
+            </div>
+
+            <div class="field-group">
+              <label class="field-label" for="mono-line2">Line 2 <span class="field-hint">(e.g. "April 15, 2026")</span></label>
+              <input type="text" id="mono-line2" class="text-input" placeholder="April 15, 2026" maxlength="60" />
+            </div>
+
+            <div class="field-group">
+              <label class="field-label" for="mono-font">Font</label>
+              <select id="mono-font" class="select-input">
+                <!-- Options injected by monogram.js so font names stay in one place -->
+              </select>
+              <!-- Live font preview strip -->
+              <div id="font-preview-strip" class="font-preview-strip">Font Preview</div>
+            </div>
+
+            <div class="field-row">
+              <div class="field-group">
+                <label class="field-label" for="mono-text-color">Text Color</label>
+                <div class="color-picker-wrap">
+                  <input type="color" id="mono-text-color" class="color-input" value="#ffffff" />
+                  <span id="mono-text-color-hex" class="color-hex">#ffffff</span>
+                </div>
+              </div>
+
+              <div class="field-group">
+                <label class="field-label" for="mono-bg-color">Background</label>
+                <div class="color-picker-wrap">
+                  <input type="color" id="mono-bg-color" class="color-input" value="#000000" />
+                  <span id="mono-bg-color-hex" class="color-hex">#000000</span>
+                </div>
+                <label class="toggle-wrap">
+                  <input type="checkbox" id="mono-bg-transparent" checked />
+                  <span>Transparent background</span>
+                </label>
+              </div>
+            </div>
+
+            <div class="field-group">
+              <label class="toggle-wrap">
+                <input type="checkbox" id="mono-flourish" checked />
+                <span>Show decorative flourish lines</span>
+              </label>
+            </div>
+
+            <div class="monogram-actions">
+              <button type="button" id="btn-download-preview" class="btn btn-secondary">
+                ↓ Download Preview
+              </button>
+            </div>
+
+          </div><!-- /monogram-controls -->
+
+          <!-- Canvas preview column -->
+          <div class="monogram-preview-wrap">
+            <div class="canvas-label">Live Preview</div>
+            <div class="canvas-outer" id="canvas-outer">
+              <!-- Canvas injected by monogram.js -->
+            </div>
+            <div class="canvas-note">Preview is scaled to fit. Final export is full resolution.</div>
+          </div>
+
+        </div><!-- /monogram-layout -->
+        <div class="field-error" id="error-monogram" aria-live="polite"></div>
+      </section>
+
+      <!-- --------------------------------------------------------
+           G. PROPS
+      -------------------------------------------------------- -->
+      <section class="card" id="section-props">
+        <h2 class="section-title">Props</h2>
+        <p class="section-desc">Choose a prop theme for your event:</p>
+
+        <div class="props-grid">
+          <!-- Add new props here — just copy a label block -->
+          <label class="prop-card">
+            <input type="checkbox" name="props" value="Wedding" />
+            <span class="prop-emoji">🎊</span>
+            <span class="prop-name">Wedding</span>
+            <span class="check-mark">✓</span>
+          </label>
+
+          <label class="prop-card">
+            <input type="checkbox" name="props" value="Birthday" />
+            <span class="prop-emoji">🎂</span>
+            <span class="prop-name">Birthday</span>
+            <span class="check-mark">✓</span>
+          </label>
+
+          <label class="prop-card">
+            <input type="checkbox" name="props" value="Bar/Bat Mitzvah" />
+            <span class="prop-emoji">✡️</span>
+            <span class="prop-name">Bar/Bat Mitzvah</span>
+            <span class="check-mark">✓</span>
+          </label>
+
+          <label class="prop-card">
+            <input type="checkbox" name="props" value="Graduation" />
+            <span class="prop-emoji">🎓</span>
+            <span class="prop-name">Graduation</span>
+            <span class="check-mark">✓</span>
+          </label>
+
+          <label class="prop-card">
+            <input type="checkbox" name="props" value="General Party" />
+            <span class="prop-emoji">🎉</span>
+            <span class="prop-name">General Party</span>
+            <span class="check-mark">✓</span>
+          </label>
+        </div>
+      </section>
+
+      <!-- --------------------------------------------------------
+           H. SPECIAL INSTRUCTIONS
+      -------------------------------------------------------- -->
+      <section class="card" id="section-notes">
+        <h2 class="section-title">Special Instructions</h2>
+        <p class="section-desc">Anything else we should know about your event?</p>
+        <textarea
+          id="special-instructions"
+          name="special_instructions"
+          class="textarea-input"
+          rows="5"
+          placeholder="Any special requests, venue details, allergies, accessibility needs, etc."
+        ></textarea>
+      </section>
+
+      <!-- --------------------------------------------------------
+           I. SUBMIT
+      -------------------------------------------------------- -->
+      <section class="card card--submit" id="section-submit">
+        <button type="submit" id="submit-btn" class="btn btn-primary btn-large">
+          Submit Configuration
+        </button>
+        <p class="submit-note">
+          By submitting, you confirm all selections above are accurate.
+          Our team will review your configuration and reach out if needed.
+        </p>
+        <div id="submit-status" class="submit-status" aria-live="polite"></div>
+      </section>
+
+    </form>
+  </main>
+
+  <!-- ============================================================
+       SUCCESS OVERLAY
+  ============================================================ -->
+  <div id="success-overlay" class="success-overlay hidden" role="dialog" aria-modal="true" aria-label="Submission successful">
+    <div class="success-box">
+      <div class="success-icon">✦</div>
+      <h2>All Set!</h2>
+      <p>Your photo booth configuration has been submitted successfully.</p>
+      <p class="success-ref">Event reference: <strong id="success-event-name"></strong></p>
+      <p>Our team will review your selections and reach out if we have any questions.</p>
+      <button class="btn btn-primary" onclick="document.getElementById('success-overlay').classList.add('hidden')">
+        Close
+      </button>
+    </div>
+  </div>
+
+  <!-- ============================================================
+       FOOTER
+  ============================================================ -->
+  <footer class="site-footer">
+    <p>© <span id="footer-year"></span> Le Image Photography Studio. All rights reserved.</p>
+  </footer>
+
+  <!-- Scripts — order matters: monogram first, then app -->
+  <script src="js/monogram.js"></script>
+  <script src="js/app.js"></script>
+
+</body>
+</html>

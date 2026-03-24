@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Le Image — Admin Dashboard</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600&family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300&display=swap" rel="stylesheet" />
+
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body class="admin-page">
+
+  <!-- ============================================================
+       LOGIN GATE — shown until authenticated
+  ============================================================ -->
+  <div id="login-gate" class="login-gate">
+    <div class="login-box">
+      <div class="brand">Le Image</div>
+      <p class="login-sub">Admin Dashboard</p>
+      <div class="field-group">
+        <label class="field-label" for="admin-password">Password</label>
+        <input
+          type="password"
+          id="admin-password"
+          class="text-input"
+          placeholder="Enter admin password"
+          autocomplete="current-password"
+        />
+      </div>
+      <button id="login-btn" class="btn btn-primary" style="width:100%;margin-top:1rem;">
+        Sign In
+      </button>
+      <div id="login-error" class="field-error" style="margin-top:.75rem;" aria-live="polite"></div>
+    </div>
+  </div>
+
+  <!-- ============================================================
+       ADMIN CONTENT — hidden until authenticated
+  ============================================================ -->
+  <div id="admin-content" class="hidden">
+
+    <!-- Header -->
+    <header class="site-header">
+      <div class="header-inner">
+        <div class="brand">Le Image</div>
+        <div class="header-sub">Admin — Photo Booth Submissions</div>
+        <button id="logout-btn" class="btn btn-ghost btn-sm">Sign Out</button>
+      </div>
+    </header>
+
+    <main class="container admin-container">
+
+      <!-- Stats bar -->
+      <div class="stats-bar">
+        <div class="stat-item">
+          <span class="stat-value" id="total-count">0</span>
+          <span class="stat-label">Total Submissions</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-value" id="today-count">0</span>
+          <span class="stat-label">Today</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-value" id="week-count">0</span>
+          <span class="stat-label">This Week</span>
+        </div>
+      </div>
+
+      <!-- Toolbar: search + export -->
+      <div class="admin-toolbar">
+        <input
+          type="search"
+          id="search-input"
+          class="text-input search-input"
+          placeholder="Search by event name…"
+          aria-label="Search submissions"
+        />
+        <button id="export-all-btn" class="btn btn-secondary">
+          ↓ Export All (JSON)
+        </button>
+        <button id="refresh-btn" class="btn btn-ghost">
+          ↻ Refresh
+        </button>
+      </div>
+
+      <!-- Submission list -->
+      <div id="submissions-list" class="submissions-list" aria-live="polite">
+        <div class="loading-state">Loading submissions…</div>
+      </div>
+
+      <!-- Empty state (shown when no results) -->
+      <div id="empty-state" class="empty-state hidden">
+        <div class="empty-icon">✦</div>
+        <p>No submissions found.</p>
+      </div>
+
+    </main>
+
+    <footer class="site-footer">
+      <p>© <span id="footer-year"></span> Le Image Photography Studio. Admin view.</p>
+    </footer>
+
+  </div><!-- /admin-content -->
+
+  <!-- ============================================================
+       SUBMISSION DETAIL MODAL
+  ============================================================ -->
+  <div id="detail-modal" class="modal hidden" role="dialog" aria-modal="true" aria-label="Submission details">
+    <div class="modal-backdrop" id="modal-backdrop"></div>
+    <div class="modal-box">
+      <div class="modal-header">
+        <h2 id="modal-title">Submission Details</h2>
+        <button class="modal-close" id="modal-close" aria-label="Close">✕</button>
+      </div>
+      <div id="modal-body" class="modal-body"></div>
+    </div>
+  </div>
+
+  <script src="js/admin.js"></script>
+
+</body>
+</html>
