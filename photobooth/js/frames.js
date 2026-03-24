@@ -26,6 +26,109 @@ const FRAME_TEMPLATES = [
     svg: null,
   },
 
+  /* ─────────────────── BOTANICAL FRAMES ─────────────────────── */
+
+  {
+    id: 'botanical-leaf-wreath',
+    name: 'Botanical Leaf Wreath',
+    category: 'botanical',
+    textPadding: { x: 0.20, y: 0.22 },
+    svg: null,
+    svgFile: 'assets/frames/botanical-leaf-wreath.svg',
+    viewBoxW: 3271.04,
+    viewBoxH: 5000,
+  },
+  {
+    id: 'olive-branch',
+    name: 'Olive Branch',
+    category: 'botanical',
+    textPadding: { x: 0.15, y: 0.18 },
+    svg: null,
+    svgFile: 'assets/frames/olive-branch.svg',
+    viewBoxW: 5000,
+    viewBoxH: 3362.87,
+  },
+  {
+    id: 'classic-laurel-crest',
+    name: 'Classic Laurel Crest',
+    category: 'botanical',
+    textPadding: { x: 0.15, y: 0.18 },
+    svg: null,
+    svgFile: 'assets/frames/classic-laurel-crest.svg',
+    viewBoxW: 5000,
+    viewBoxH: 3519.47,
+  },
+  {
+    id: 'fine-art-botanical',
+    name: 'Fine Art Botanical',
+    category: 'botanical',
+    textPadding: { x: 0.20, y: 0.22 },
+    svg: null,
+    svgFile: 'assets/frames/fine-art-botanical.svg',
+    viewBoxW: 4194.53,
+    viewBoxH: 5000,
+  },
+  {
+    id: 'hand-drawn-laurel',
+    name: 'Hand-Drawn Laurel',
+    category: 'botanical',
+    textPadding: { x: 0.20, y: 0.22 },
+    svg: null,
+    svgFile: 'assets/frames/hand-drawn-laurel.svg',
+    viewBoxW: 5000,
+    viewBoxH: 4076.1,
+  },
+  {
+    id: 'minimal-floral',
+    name: 'Minimal Floral',
+    category: 'botanical',
+    textPadding: { x: 0.15, y: 0.18 },
+    svg: null,
+    svgFile: 'assets/frames/minimal-floral.svg',
+    viewBoxW: 5000,
+    viewBoxH: 3564.25,
+  },
+  {
+    id: 'rustic-floral',
+    name: 'Rustic Floral',
+    category: 'botanical',
+    textPadding: { x: 0.15, y: 0.18 },
+    svg: null,
+    svgFile: 'assets/frames/rustic-floral.svg',
+    viewBoxW: 5000,
+    viewBoxH: 4241.39,
+  },
+  {
+    id: 'timeless-floral-crest',
+    name: 'Timeless Floral Crest',
+    category: 'botanical',
+    textPadding: { x: 0.15, y: 0.18 },
+    svg: null,
+    svgFile: 'assets/frames/timeless-floral-crest.svg',
+    viewBoxW: 5000,
+    viewBoxH: 4338.65,
+  },
+  {
+    id: 'wildflower-botanical',
+    name: 'Wildflower Botanical',
+    category: 'botanical',
+    textPadding: { x: 0.15, y: 0.18 },
+    svg: null,
+    svgFile: 'assets/frames/wildflower-botanical.svg',
+    viewBoxW: 5000,
+    viewBoxH: 3146.93,
+  },
+  {
+    id: 'elegant-floral-emblem',
+    name: 'Elegant Floral Emblem',
+    category: 'botanical',
+    textPadding: { x: 0.20, y: 0.22 },
+    svg: null,
+    svgFile: 'assets/frames/elegant-floral-emblem.svg',
+    viewBoxW: 5000,
+    viewBoxH: 2923.3,
+  },
+
   /* ─────────────────── 2. Classic Oval ─────────────────────── */
   {
     id: 'classic-oval',
@@ -839,11 +942,32 @@ const FRAME_TEMPLATES = [
 /* ================================================================
    SVG → Canvas image cache
    Key: `${frameId}::${color}`, Value: HTMLImageElement
+   SVG text cache (for external files)
+   Key: svgFile path, Value: raw SVG string
 ================================================================ */
 const _frameImageCache = new Map();
+const _svgTextCache    = new Map();
+
+/**
+ * Fetch an external SVG file once and cache the raw text.
+ * Returns a Promise<string|null>.
+ */
+function _fetchSvgText(svgFile) {
+  if (_svgTextCache.has(svgFile)) {
+    return Promise.resolve(_svgTextCache.get(svgFile));
+  }
+  return fetch(svgFile)
+    .then(r => r.ok ? r.text() : null)
+    .then(text => {
+      if (text) _svgTextCache.set(svgFile, text);
+      return text;
+    })
+    .catch(() => null);
+}
 
 /**
  * Render a frame SVG to an HTMLImageElement, cached per id+color.
+ * Supports both inline svg strings and external svgFile paths.
  * Returns a Promise<HTMLImageElement>.
  */
 function getFrameImage(frameId, color) {
@@ -853,32 +977,69 @@ function getFrameImage(frameId, color) {
   }
 
   const template = FRAME_TEMPLATES.find(f => f.id === frameId);
-  if (!template || !template.svg) return Promise.resolve(null);
+  if (!template) return Promise.resolve(null);
 
-  const coloredSvg = template.svg.split('FRAME_COLOR').join(color);
-  const dataUrl = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(coloredSvg);
+  const makeImageFromSvg = (svgText) => {
+    return new Promise((resolve) => {
+      let coloredSvg;
+      if (svgText.includes('FRAME_COLOR')) {
+        // Standard placeholder replacement
+        coloredSvg = svgText.split('FRAME_COLOR').join(color);
+      } else {
+        // No placeholder found: inject fill on the root <svg> element
+        coloredSvg = svgText.replace(/<svg([^>]*)>/, (match, attrs) => {
+          // Only add fill if not already present
+          if (/fill=/.test(attrs)) {
+            return match;
+          }
+          return `<svg${attrs} fill="${color}">`;
+        });
+      }
+      const dataUrl = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(coloredSvg);
+      const img = new Image();
+      img.onload = () => {
+        _frameImageCache.set(cacheKey, img);
+        resolve(img);
+      };
+      img.onerror = () => resolve(null);
+      img.src = dataUrl;
+    });
+  };
 
-  return new Promise((resolve) => {
-    const img = new Image();
-    img.onload = () => {
-      _frameImageCache.set(cacheKey, img);
-      resolve(img);
-    };
-    img.onerror = () => resolve(null);
-    img.src = dataUrl;
-  });
+  // External SVG file (botanical frames)
+  if (template.svgFile) {
+    return _fetchSvgText(template.svgFile).then(text => {
+      if (!text) return null;
+      return makeImageFromSvg(text);
+    });
+  }
+
+  // Inline SVG string (legacy frames)
+  if (!template.svg) return Promise.resolve(null);
+  return makeImageFromSvg(template.svg);
 }
 
 /**
  * Clear the image cache (call when switching events or on memory pressure).
+ * Keeps the SVG text cache (raw files) since that's cheap to retain.
  */
 function clearFrameCache() {
   _frameImageCache.clear();
 }
 
+/**
+ * Clear both image and SVG text caches.
+ */
+function clearAllFrameCaches() {
+  _frameImageCache.clear();
+  _svgTextCache.clear();
+}
+
 /* Export to window */
 window.FrameTemplates = {
-  templates: FRAME_TEMPLATES,
-  getImage:  getFrameImage,
-  clearCache: clearFrameCache,
+  templates:      FRAME_TEMPLATES,
+  getImage:       getFrameImage,
+  fetchSvgText:   _fetchSvgText,
+  clearCache:     clearFrameCache,
+  clearAllCaches: clearAllFrameCaches,
 };

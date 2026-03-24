@@ -136,106 +136,44 @@ function loadSampleImages() {
 }
 
 /* ================================================================
-   FONT PICKER — custom scrollable list with hover preview
+   FONT PICKER — native <select> with font preview strip
 ================================================================ */
-let _fontPickerHoverTimer = null;
-let _fontPickerOriginalFont = null;
-
 function buildFontPicker() {
-  // Find the field-group containing mono-font
-  const oldSel = document.getElementById('mono-font');
-  if (!oldSel) return;
+  const sel = document.getElementById('mono-font');
+  if (!sel) return;
 
-  // Hide the native select (keep it for value storage)
-  oldSel.style.display = 'none';
+  // Remove any previously injected custom picker (defensive)
+  const old = document.getElementById('custom-font-picker');
+  if (old) old.remove();
 
-  // Create custom font picker
-  const picker = document.createElement('div');
-  picker.id = 'custom-font-picker';
-  picker.className = 'custom-font-picker';
+  // Make sure the select is visible and styled
+  sel.style.display = '';
 
+  // Populate <option> elements (idempotent — clear first)
+  sel.innerHTML = '';
   MONOGRAM_FONTS.forEach((f, i) => {
-    const item = document.createElement('div');
-    item.className = 'font-picker-item' + (i === 0 ? ' selected' : '');
-    item.dataset.family = f.family;
-
-    const nameSpan = document.createElement('span');
-    nameSpan.className = 'font-picker-name';
-    nameSpan.textContent = f.name;
-    nameSpan.style.fontFamily = `"${f.family}", serif`;
-
-    const checkSpan = document.createElement('span');
-    checkSpan.className = 'font-picker-check';
-    checkSpan.textContent = '✓';
-
-    item.appendChild(nameSpan);
-    item.appendChild(checkSpan);
-    picker.appendChild(item);
-
-    // Hover = temporary preview
-    item.addEventListener('mouseenter', () => {
-      if (_fontPickerOriginalFont === null) {
-        _fontPickerOriginalFont = MonogramState.fontFamily;
-      }
-      clearTimeout(_fontPickerHoverTimer);
-      _fontPickerHoverTimer = setTimeout(async () => {
-        await loadGoogleFont(f.family);
-        // Temporarily preview this font
-        const fontPreview = document.getElementById('font-preview-strip');
-        const line1Input  = document.getElementById('mono-line1');
-        if (fontPreview) {
-          fontPreview.style.fontFamily = `"${f.family}", serif`;
-          fontPreview.textContent = line1Input?.value || f.name;
-        }
-        // Temporarily render with this font (don't update state permanently)
-        const savedFont = MonogramState.fontFamily;
-        MonogramState.fontFamily = f.family;
-        await renderMonogram();
-        MonogramState.fontFamily = savedFont; // restore state
-      }, 120);
-    });
-
-    // Mouse leave — restore original
-    item.addEventListener('mouseleave', () => {
-      clearTimeout(_fontPickerHoverTimer);
-      // Will be restored on next render or click
-    });
-
-    // Click = confirm selection
-    item.addEventListener('click', async () => {
-      _fontPickerOriginalFont = null;
-      picker.querySelectorAll('.font-picker-item').forEach(el => el.classList.remove('selected'));
-      item.classList.add('selected');
-      MonogramState.fontFamily = f.family;
-      oldSel.value = f.family;
-
-      const fontPreview = document.getElementById('font-preview-strip');
-      const line1Input  = document.getElementById('mono-line1');
-      if (fontPreview) {
-        fontPreview.style.fontFamily = `"${f.family}", serif`;
-        fontPreview.textContent = line1Input?.value || f.family;
-      }
-      await loadGoogleFont(f.family);
-      await renderMonogram();
-    });
+    const opt = document.createElement('option');
+    opt.value = f.family;
+    opt.textContent = f.name;
+    opt.style.fontFamily = `"${f.family}", serif`;
+    if (i === 0) opt.selected = true;
+    sel.appendChild(opt);
   });
 
-  // Insert picker after the hidden select
-  oldSel.parentNode.insertBefore(picker, oldSel.nextSibling);
+  // Font preview strip — update on change
+  sel.addEventListener('change', async () => {
+    const family = sel.value;
+    MonogramState.fontFamily = family;
 
-  // When mouse leaves the picker entirely, restore actual selected font preview
-  picker.addEventListener('mouseleave', async () => {
-    clearTimeout(_fontPickerHoverTimer);
-    if (_fontPickerOriginalFont !== null) {
-      const fontPreview = document.getElementById('font-preview-strip');
-      const line1Input  = document.getElementById('mono-line1');
-      if (fontPreview) {
-        fontPreview.style.fontFamily = `"${MonogramState.fontFamily}", serif`;
-        fontPreview.textContent = line1Input?.value || MonogramState.fontFamily;
-      }
-      await renderMonogram(); // re-render with actual selected font
-      _fontPickerOriginalFont = null;
+    const strip     = document.getElementById('font-preview-strip');
+    const line1Input = document.getElementById('mono-line1');
+    if (strip) {
+      strip.style.fontFamily = `"${family}", serif`;
+      strip.textContent = line1Input?.value || family;
     }
+
+    await loadGoogleFont(family);
+    await renderMonogram();
   });
 
   // Pre-load all fonts in background (non-blocking)
@@ -245,7 +183,6 @@ function buildFontPicker() {
 }
 
 function populateFontSelect() {
-  // Legacy: just build the custom picker
   buildFontPicker();
 }
 
@@ -254,6 +191,7 @@ function populateFontSelect() {
 ================================================================ */
 
 const FRAME_CATEGORY_LABELS = {
+  botanical: 'Botanical',
   simple:    'Simple',
   elegant:   'Elegant',
   classic:   'Classic',
@@ -305,10 +243,12 @@ function initFramePicker() {
       card.dataset.frame = template.id;
 
       // Preview: inline SVG scaled to card, or text for "None"
+      const isBotanical = template.category === 'botanical';
       const previewWrap = document.createElement('div');
-      previewWrap.className = 'frame-preview-inner';
+      previewWrap.className = 'frame-preview-inner' + (isBotanical ? ' botanical-frame-preview' : '');
 
       if (template.svg) {
+        // Inline SVG frame
         const colored = template.svg.split('FRAME_COLOR').join(PREVIEW_COLOR);
         const svgEl = document.createElement('div');
         svgEl.className = 'frame-preview-svg';
@@ -320,6 +260,44 @@ function initFramePicker() {
           svgTag.style.display = 'block';
         }
         previewWrap.appendChild(svgEl);
+      } else if (template.svgFile) {
+        // External SVG file (botanical) — load async and inject inline
+        const svgEl = document.createElement('div');
+        svgEl.className = 'frame-preview-svg botanical-preview-loading';
+        svgEl.style.cssText = 'display:flex;align-items:center;justify-content:center;width:100%;height:100%;';
+        const placeholder = document.createElement('span');
+        placeholder.textContent = '✿';
+        placeholder.style.cssText = 'color:var(--gold-dim);font-size:1.1rem;';
+        svgEl.appendChild(placeholder);
+        previewWrap.appendChild(svgEl);
+
+        // Fetch and render asynchronously
+        if (window.FrameTemplates && window.FrameTemplates.fetchSvgText) {
+          window.FrameTemplates.fetchSvgText(template.svgFile).then(text => {
+            if (!text) return;
+            let colored;
+            if (text.includes('FRAME_COLOR')) {
+              colored = text.split('FRAME_COLOR').join(PREVIEW_COLOR);
+            } else {
+              // No placeholder: inject fill on root <svg>
+              colored = text.replace(/<svg([^>]*)>/, (match, attrs) => {
+                if (/fill=/.test(attrs)) return match;
+                return `<svg${attrs} fill="${PREVIEW_COLOR}">`;
+              });
+            }
+            // Parse the SVG and inject responsive size attrs
+            const parser = new DOMParser();
+            const doc = parser.parseFromString(colored, 'image/svg+xml');
+            const svgTag = doc.querySelector('svg');
+            if (svgTag) {
+              svgTag.setAttribute('width', '100%');
+              svgTag.setAttribute('height', '100%');
+              svgTag.style.display = 'block';
+              svgEl.innerHTML = svgTag.outerHTML;
+              svgEl.classList.remove('botanical-preview-loading');
+            }
+          });
+        }
       } else {
         // "None" option
         previewWrap.classList.add('frame-preview-none');
@@ -407,7 +385,7 @@ async function drawMonogramContent(ctx, spec, state, transparent = false) {
   // Find the frame template
   const templates = window.FrameTemplates ? window.FrameTemplates.templates : [];
   const frameTpl = templates.find(f => f.id === frameId) || templates.find(f => f.id === 'none');
-  const hasFrame = frameTpl && frameTpl.svg;
+  const hasFrame = frameTpl && (frameTpl.svg || frameTpl.svgFile);
 
   // Text area: if frame, inset by frame's textPadding
   const px = hasFrame ? (frameTpl.textPadding ? frameTpl.textPadding.x : 0.18) : 0.04;
@@ -432,12 +410,33 @@ async function drawMonogramContent(ctx, spec, state, transparent = false) {
   if (hasFrame && window.FrameTemplates) {
     const frameImg = await window.FrameTemplates.getImage(frameId, color1);
     if (frameImg) {
-      // Scale frame to fill zone width (with padding)
-      const frameW = maxW;
-      const frameH = zoneH;
-      const frameX = centerX - frameW / 2;
-      const frameY = zoneTop;
-      ctx.drawImage(frameImg, frameX, frameY, frameW, frameH);
+      // For frames with a known viewBox aspect ratio (botanical), scale to fit
+      // the zone while maintaining aspect ratio and centering.
+      // For legacy inline-SVG frames (fixed 400×200 viewBox), fill the zone.
+      if (frameTpl.viewBoxW && frameTpl.viewBoxH) {
+        const vbAspect   = frameTpl.viewBoxW / frameTpl.viewBoxH;
+        const zoneAspect = maxW / zoneH;
+        let drawW, drawH;
+        if (vbAspect > zoneAspect) {
+          // Frame is wider — constrain by width
+          drawW = maxW;
+          drawH = maxW / vbAspect;
+        } else {
+          // Frame is taller — constrain by height
+          drawH = zoneH;
+          drawW = zoneH * vbAspect;
+        }
+        const drawX = centerX - drawW / 2;
+        const drawY = zoneTop + (zoneH - drawH) / 2;
+        ctx.drawImage(frameImg, drawX, drawY, drawW, drawH);
+      } else {
+        // Legacy inline frames: stretch to fill zone
+        const frameW = maxW;
+        const frameH = zoneH;
+        const frameX = centerX - frameW / 2;
+        const frameY = zoneTop;
+        ctx.drawImage(frameImg, frameX, frameY, frameW, frameH);
+      }
     }
   }
 

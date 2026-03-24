@@ -960,6 +960,12 @@ h1, h2, h3 {
   color: var(--gold);
 }
 
+/* ---- Botanical frame previews (mixed portrait/landscape aspect ratios) ---- */
+.frame-preview-inner.botanical-frame-preview {
+  aspect-ratio: unset;
+  height: 48px;
+}
+
 /* ---- Frame Category Labels ---- */
 .flourish-picker-grid {
   display: flex;
@@ -1002,69 +1008,12 @@ h1, h2, h3 {
   gap: 0.5rem;
 }
 
-/* ---- Custom Font Picker ---- */
-.custom-font-picker {
-  max-height: 300px;
-  overflow-y: auto;
-  background: var(--bg-card-alt);
-  border: 1.5px solid var(--border);
-  border-radius: var(--radius-sm);
-  display: flex;
-  flex-direction: column;
-  scrollbar-width: thin;
-  scrollbar-color: var(--gold-dim) var(--bg-card-alt);
-}
-
-.custom-font-picker::-webkit-scrollbar {
-  width: 5px;
-}
-.custom-font-picker::-webkit-scrollbar-track {
-  background: var(--bg-card-alt);
-}
-.custom-font-picker::-webkit-scrollbar-thumb {
-  background: var(--gold-dim);
-  border-radius: 3px;
-}
-
-.font-picker-item {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 0.5rem 0.75rem;
-  cursor: pointer;
-  transition: background var(--transition);
-  border-bottom: 1px solid rgba(255,255,255,0.04);
-}
-
-.font-picker-item:last-child {
-  border-bottom: none;
-}
-
-.font-picker-item:hover {
-  background: rgba(201,168,76,0.08);
-}
-
-.font-picker-item.selected {
-  background: rgba(201,168,76,0.12);
-}
-
-.font-picker-name {
-  font-size: 1.05rem;
-  color: var(--text);
-  line-height: 1.4;
-  flex: 1;
-}
-
-.font-picker-check {
-  color: var(--gold);
-  font-size: 0.85rem;
-  opacity: 0;
-  margin-left: 0.5rem;
-  flex-shrink: 0;
-}
-
-.font-picker-item.selected .font-picker-check {
-  opacity: 1;
+/* ---- Font select dropdown ---- */
+/* Native <select> styled via .select-input — see that rule above */
+/* Font options have inline font-family set via JS for visual hint */
+#mono-font option {
+  font-size: 1rem;
+  padding: 0.3rem;
 }
 
 /* ---- Review Download ---- */
