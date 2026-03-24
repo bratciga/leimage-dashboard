@@ -387,13 +387,41 @@ async function drawMonogramContent(ctx, spec, state, transparent = false) {
   const frameTpl = templates.find(f => f.id === frameId) || templates.find(f => f.id === 'none');
   const hasFrame = frameTpl && (frameTpl.svg || frameTpl.svgFile);
 
-  // Text area: if frame, inset by frame's textPadding
-  const px = hasFrame ? (frameTpl.textPadding ? frameTpl.textPadding.x : 0.18) : 0.04;
-  const py = hasFrame ? (frameTpl.textPadding ? frameTpl.textPadding.y : 0.18) : 0.04;
+  // Text area: use textZone (exact safe rectangle) if available, else textPadding
+  let textZoneW, textZoneH, textZoneTop, textZoneCenterX;
 
-  const textZoneW    = maxW * (1 - px * 2);
-  const textZoneH    = zoneH * (1 - py * 2);
-  const textZoneTop  = zoneTop + zoneH * py;
+  if (hasFrame && frameTpl.textZone && frameTpl.viewBoxW && frameTpl.viewBoxH) {
+    // textZone is in frame-relative coords (0-1). Map to where the frame is drawn on canvas.
+    const tz = frameTpl.textZone;
+    const vbAspect   = frameTpl.viewBoxW / frameTpl.viewBoxH;
+    const zoneAspect = maxW / zoneH;
+    let drawW, drawH, drawX, drawY;
+    if (vbAspect > zoneAspect) {
+      drawW = maxW; drawH = maxW / vbAspect;
+    } else {
+      drawH = zoneH; drawW = zoneH * vbAspect;
+    }
+    drawX = centerX - drawW / 2;
+    drawY = zoneTop + (zoneH - drawH) / 2;
+
+    // Map textZone fractions to canvas pixels
+    const safeLeft   = drawX + drawW * tz.left;
+    const safeRight  = drawX + drawW * tz.right;
+    const safeTop    = drawY + drawH * tz.top;
+    const safeBottom = drawY + drawH * tz.bottom;
+
+    textZoneW = safeRight - safeLeft;
+    textZoneH = safeBottom - safeTop;
+    textZoneTop = safeTop;
+    textZoneCenterX = safeLeft + textZoneW / 2;
+  } else {
+    const px = hasFrame ? (frameTpl.textPadding ? frameTpl.textPadding.x : 0.18) : 0.04;
+    const py = hasFrame ? (frameTpl.textPadding ? frameTpl.textPadding.y : 0.18) : 0.04;
+    textZoneW    = maxW * (1 - px * 2);
+    textZoneH    = zoneH * (1 - py * 2);
+    textZoneTop  = zoneTop + zoneH * py;
+    textZoneCenterX = centerX;
+  }
 
   // Reduce max font size by ~20% when a frame is active to prevent overflow
   const frameSizeReduction = hasFrame ? 0.80 : 1.0;
@@ -450,14 +478,14 @@ async function drawMonogramContent(ctx, spec, state, transparent = false) {
   if (line1) {
     ctx.fillStyle = color1;
     ctx.font = `${size1}px "${font}"`;
-    ctx.fillText(line1, centerX, cursor + size1 * 0.82);
+    ctx.fillText(line1, textZoneCenterX, cursor + size1 * 0.82);
     cursor += size1 + lineGap;
   }
 
   if (line2) {
     ctx.fillStyle = color2;
     ctx.font = `${size2}px "${font}"`;
-    ctx.fillText(line2, centerX, cursor + size2 * 0.82);
+    ctx.fillText(line2, textZoneCenterX, cursor + size2 * 0.82);
   }
 }
 
