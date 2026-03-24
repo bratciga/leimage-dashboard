@@ -771,12 +771,17 @@ async function initMonogramBuilder() {
   const fontPreview = document.getElementById('font-preview-strip');
   if (fontSel) {
     fontSel.addEventListener('change', async () => {
-      MonogramState.fontFamily = fontSel.value;
+      const family = fontSel.value;
+      MonogramState.fontFamily = family;
       if (fontPreview) {
-        fontPreview.style.fontFamily = `"${fontSel.value}", serif`;
-        fontPreview.textContent = line1Input?.value || fontSel.value;
+        fontPreview.style.fontFamily = `"${family}", serif`;
+        fontPreview.textContent = line1Input?.value || family;
       }
-      await loadGoogleFont(fontSel.value);
+      await loadGoogleFont(family);
+      // Force wait for the specific font face to be available
+      try {
+        await document.fonts.load(`400 48px "${family}"`);
+      } catch(e) { /* fallback — render anyway */ }
       renderMonogram();
       renderPrintMock();
     });
