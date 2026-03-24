@@ -59,6 +59,7 @@ async function initApp() {
   initWizardNavigation();
   initToggleSelections();
   initLightbox();
+  addZoomOverlays();
 
   // Submit
   const submitBtn = document.getElementById('submit-btn');
@@ -308,6 +309,32 @@ function setGroupValue(group, value) {
       window.MonogramBuilder.updatePrintSize(value);
     }
   }
+}
+
+/* ================================================================
+   ZOOM ICON OVERLAYS
+================================================================ */
+function addZoomOverlays() {
+  document.querySelectorAll('.lightbox-trigger').forEach(trigger => {
+    // Don't add if already has one
+    if (trigger.querySelector('.zoom-icon-overlay')) return;
+    const btn = document.createElement('button');
+    btn.className = 'zoom-icon-overlay';
+    btn.textContent = '🔍';
+    btn.title = 'Double-click to preview';
+    btn.setAttribute('aria-label', 'Zoom preview');
+    // Clicking the zoom icon opens lightbox immediately (single click shortcut)
+    btn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const src = trigger.dataset.src || trigger.querySelector('img')?.src || '';
+      const alt = trigger.dataset.alt || trigger.querySelector('img')?.alt || '';
+      if (src) {
+        // Dispatch a synthetic dblclick to trigger lightbox
+        trigger.dispatchEvent(new MouseEvent('dblclick', { bubbles: true }));
+      }
+    });
+    trigger.appendChild(btn);
+  });
 }
 
 /* ================================================================

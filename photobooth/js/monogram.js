@@ -386,7 +386,7 @@ function initFlourishPicker() {
 
   FLOURISH_STYLES.forEach(style => {
     const card = document.createElement('div');
-    card.className = 'flourish-card' + (style.id === MonogramState.flourish ? ' selected' : '');
+    card.className = 'flourish-option' + (style.id === MonogramState.flourish ? ' selected' : '');
     card.dataset.flourish = style.id;
 
     const canvas = document.createElement('canvas');
@@ -406,7 +406,7 @@ function initFlourishPicker() {
     }
 
     const label = document.createElement('span');
-    label.className = 'flourish-label';
+    label.className = 'flourish-option-label';
     label.textContent = style.name;
 
     card.appendChild(canvas);
@@ -414,7 +414,7 @@ function initFlourishPicker() {
     grid.appendChild(card);
 
     card.addEventListener('click', () => {
-      grid.querySelectorAll('.flourish-card').forEach(c => c.classList.remove('selected'));
+      grid.querySelectorAll('.flourish-option').forEach(c => c.classList.remove('selected'));
       card.classList.add('selected');
       MonogramState.flourish = style.id;
       renderMonogram();
@@ -699,8 +699,8 @@ async function initMonogramBuilder() {
   const spec = CANVAS_SPECS['4x6'];
   canvas.width = spec.w;
   canvas.height = spec.h;
-  canvas.style.maxWidth = '100%';
-  canvas.style.maxHeight = '400px';
+  canvas.style.width = '100%';
+  canvas.style.height = 'auto';
   canvas.style.display = 'block';
   outer.appendChild(canvas);
   MonogramState.canvas = canvas;
