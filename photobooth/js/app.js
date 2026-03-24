@@ -247,23 +247,9 @@ function clearStepErrors(step) {
 ================================================================ */
 function initToggleSelections() {
   // Generic toggle-selectable cards (backdrop, print size)
+  // Single click = select/deselect. Double-click on image = lightbox (handled separately).
   document.querySelectorAll('.toggle-selectable').forEach(card => {
     card.addEventListener('click', (e) => {
-      // If clicking directly on the lightbox-trigger (image area), open lightbox
-      // but do NOT toggle the selection state — just select without deselect behavior
-      const isImageClick = !!e.target.closest('.lightbox-trigger');
-      if (isImageClick) {
-        // Still select the card if not already selected, but never deselect via image click
-        const group = card.dataset.group;
-        const value = card.dataset.value;
-        if (!card.classList.contains('selected')) {
-          document.querySelectorAll(`.toggle-selectable[data-group="${group}"]`).forEach(c => c.classList.remove('selected'));
-          card.classList.add('selected');
-          setGroupValue(group, value);
-        }
-        return; // lightbox opens via document delegation
-      }
-
       const group = card.dataset.group;
       const value = card.dataset.value;
 
@@ -395,11 +381,11 @@ function initLightbox() {
     return trigger.dataset.alt || trigger.querySelector('img')?.alt || '';
   }
 
-  // Attach to all current and future lightbox triggers using delegation
-  document.addEventListener('click', (e) => {
+  // DOUBLE-CLICK to open lightbox (single click = select)
+  document.addEventListener('dblclick', (e) => {
     const trigger = e.target.closest('.lightbox-trigger');
     if (!trigger) return;
-    e.stopPropagation(); // prevent card toggle
+    e.stopPropagation();
 
     const src = getSrc(trigger);
     const alt = getAlt(trigger);
@@ -408,6 +394,41 @@ function initLightbox() {
     const { gallery, index } = buildGallery(trigger);
     openLightbox(src, alt, gallery, index);
   });
+
+  // Zoom toggle in lightbox
+  const lbZoom = document.getElementById('lightbox-zoom');
+  const lbScrollWrap = document.getElementById('lightbox-scroll-wrap');
+  let isZoomed = false;
+
+  if (lbZoom && lbScrollWrap) {
+    lbZoom.addEventListener('click', (e) => {
+      e.stopPropagation();
+      isZoomed = !isZoomed;
+      if (isZoomed) {
+        lbImg.style.maxWidth = 'none';
+        lbImg.style.maxHeight = 'none';
+        lbImg.style.width = '150%';
+        lbScrollWrap.style.overflow = 'auto';
+        lbZoom.textContent = '🔍 150%';
+      } else {
+        lbImg.style.maxWidth = '90vw';
+        lbImg.style.maxHeight = '85vh';
+        lbImg.style.width = '';
+        lbScrollWrap.style.overflow = 'hidden';
+        lbZoom.textContent = '🔍 Fit';
+      }
+    });
+  }
+
+  // Reset zoom on close
+  const origClose = closeLightbox;
+  closeLightbox = function() {
+    isZoomed = false;
+    if (lbImg) { lbImg.style.maxWidth = '90vw'; lbImg.style.maxHeight = '85vh'; lbImg.style.width = ''; }
+    if (lbScrollWrap) lbScrollWrap.style.overflow = 'hidden';
+    if (lbZoom) lbZoom.textContent = '🔍 Fit';
+    origClose();
+  };
 
   // Arrow navigation
   if (lbPrev) lbPrev.addEventListener('click', (e) => { e.stopPropagation(); showImage(currentIndex - 1); });
@@ -503,8 +524,9 @@ function collectFormData() {
       line1:          mono.line1,
       line2:          mono.line2,
       font:           mono.fontFamily,
-      text_color:     mono.textColor,
-      flourish_style: mono.flourishStyle,
+      text_color1:    mono.textColor1,
+      text_color2:    mono.textColor2,
+      flourish_style: mono.flourish,
       bg_transparent: true,
     },
     props,

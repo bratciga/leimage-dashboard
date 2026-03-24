@@ -92,9 +92,6 @@
         <div class="photo-slot lightbox-trigger" data-src="assets/images/booth-setup/booth-action-props.jpg" data-alt="Photo booth in action with props">
           <img src="assets/images/booth-setup/booth-action-props.jpg" alt="Photo booth in action with props" />
         </div>
-        <div class="photo-slot lightbox-trigger" data-src="assets/images/booth-setup/booth-setup-gold.jpg" data-alt="Photo booth setup with gold backdrop">
-          <img src="assets/images/booth-setup/booth-setup-gold.jpg" alt="Photo booth setup with gold backdrop" />
-        </div>
         <div class="photo-slot lightbox-trigger" data-src="assets/images/booth-setup/booth-props-table.jpg" data-alt="Photo booth props table">
           <img src="assets/images/booth-setup/booth-props-table.jpg" alt="Photo booth props table" />
         </div>
@@ -143,7 +140,7 @@
     ============================================================ -->
     <section class="wizard-step-panel card hidden" id="step-panel-3" data-step="3">
       <h2 class="section-title">Backdrop Color</h2>
-      <p class="section-desc">Select the backdrop that best fits your event. Click an image to preview it larger. Click the selected backdrop again to deselect.</p>
+      <p class="section-desc">Select the backdrop that best fits your event. Double-click any image to preview it full size. Click the selected backdrop again to deselect.</p>
 
       <div class="backdrop-grid" role="group" aria-label="Backdrop selection">
 
@@ -365,10 +362,29 @@
           </div>
 
           <div class="field-group">
-            <label class="field-label" for="mono-text-color">Text Color</label>
-            <div class="color-picker-wrap">
-              <input type="color" id="mono-text-color" class="color-input" value="#ffffff" />
-              <span id="mono-text-color-hex" class="color-hex">#ffffff</span>
+            <label class="field-label">Text Colors</label>
+            <div class="dual-color-row">
+              <div class="color-col">
+                <span class="color-label">Names</span>
+                <div class="color-picker-wrap">
+                  <input type="color" id="mono-color1" class="color-input" value="#333333" />
+                  <span id="mono-color1-hex" class="color-hex">#333333</span>
+                </div>
+                <button type="button" id="match-to-date" class="btn btn-xs btn-ghost color-match-btn hidden">← Match to Date</button>
+                <div id="color1-warning" class="color-warning hidden">⚠️ Light colors may not be visible on the white print strip</div>
+              </div>
+              <div class="color-link-col">
+                <button type="button" id="color-link-toggle" class="color-link-btn linked" title="Link/Unlink colors">🔗</button>
+              </div>
+              <div class="color-col">
+                <span class="color-label">Date</span>
+                <div class="color-picker-wrap">
+                  <input type="color" id="mono-color2" class="color-input" value="#333333" />
+                  <span id="mono-color2-hex" class="color-hex">#333333</span>
+                </div>
+                <button type="button" id="match-to-names" class="btn btn-xs btn-ghost color-match-btn hidden">← Match to Names</button>
+                <div id="color2-warning" class="color-warning hidden">⚠️ Light colors may not be visible on the white print strip</div>
+              </div>
             </div>
           </div>
 
@@ -396,6 +412,7 @@
             <div class="canvas-label">Print Layout Preview</div>
             <div id="print-mock-canvas-wrap" class="print-mock-wrap"></div>
             <div class="canvas-note">How it looks on your actual print</div>
+            <button type="button" id="btn-zoom-mock" class="btn btn-xs btn-ghost">🔍 Zoom In</button>
           </div>
         </div>
 
@@ -482,11 +499,27 @@
   <div id="lightbox" class="lightbox hidden" role="dialog" aria-modal="true" aria-label="Image preview">
     <div class="lightbox-backdrop" id="lightbox-backdrop"></div>
     <button class="lightbox-arrow lightbox-prev" id="lightbox-prev" aria-label="Previous image">‹</button>
-    <div class="lightbox-box">
-      <button class="lightbox-close" id="lightbox-close" aria-label="Close">✕</button>
-      <img id="lightbox-img" src="" alt="" class="lightbox-img" />
+    <div class="lightbox-box" id="lightbox-box">
+      <div class="lightbox-toolbar">
+        <button class="lightbox-zoom-btn" id="lightbox-zoom" aria-label="Toggle zoom">🔍 Fit</button>
+        <button class="lightbox-close" id="lightbox-close" aria-label="Close">✕</button>
+      </div>
+      <div class="lightbox-scroll-wrap" id="lightbox-scroll-wrap">
+        <img id="lightbox-img" src="" alt="" class="lightbox-img" />
+      </div>
     </div>
     <button class="lightbox-arrow lightbox-next" id="lightbox-next" aria-label="Next image">›</button>
+  </div>
+
+  <!-- ============================================================
+       ZOOM MODAL (for print mock)
+  ============================================================ -->
+  <div id="zoom-modal" class="zoom-modal hidden" role="dialog" aria-modal="true">
+    <div class="zoom-modal-backdrop" id="zoom-modal-backdrop"></div>
+    <div class="zoom-modal-box" id="zoom-modal-box">
+      <button class="lightbox-close" id="zoom-modal-close" aria-label="Close">✕</button>
+      <div class="zoom-modal-content" id="zoom-modal-content"></div>
+    </div>
   </div>
 
   <!-- ============================================================
