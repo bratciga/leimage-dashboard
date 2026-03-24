@@ -332,20 +332,67 @@ function initLightbox() {
   const lbImg      = document.getElementById('lightbox-img');
   const lbBackdrop = document.getElementById('lightbox-backdrop');
   const lbClose    = document.getElementById('lightbox-close');
+  const lbPrev     = document.getElementById('lightbox-prev');
+  const lbNext     = document.getElementById('lightbox-next');
 
   if (!lb || !lbImg) return;
 
-  function openLightbox(src, alt) {
+  // Track current gallery of images for prev/next navigation
+  let currentGallery = []; // array of {src, alt}
+  let currentIndex = 0;
+
+  function updateArrows() {
+    if (lbPrev) lbPrev.classList.toggle('hidden', currentGallery.length <= 1 || currentIndex <= 0);
+    if (lbNext) lbNext.classList.toggle('hidden', currentGallery.length <= 1 || currentIndex >= currentGallery.length - 1);
+  }
+
+  function showImage(index) {
+    if (index < 0 || index >= currentGallery.length) return;
+    currentIndex = index;
+    lbImg.src = currentGallery[index].src;
+    lbImg.alt = currentGallery[index].alt;
+    updateArrows();
+  }
+
+  function openLightbox(src, alt, gallery, index) {
+    currentGallery = gallery || [{src, alt}];
+    currentIndex = index || 0;
     lbImg.src = src;
     lbImg.alt = alt || '';
     lb.classList.remove('hidden');
     document.body.style.overflow = 'hidden';
+    updateArrows();
   }
 
   function closeLightbox() {
     lb.classList.add('hidden');
     document.body.style.overflow = '';
     lbImg.src = '';
+    currentGallery = [];
+    currentIndex = 0;
+  }
+
+  // Build gallery from sibling lightbox-trigger elements
+  function buildGallery(trigger) {
+    const parent = trigger.closest('.photo-grid, .backdrop-grid, .print-grid, section');
+    if (!parent) return { gallery: [{src: getSrc(trigger), alt: getAlt(trigger)}], index: 0 };
+
+    const triggers = Array.from(parent.querySelectorAll('.lightbox-trigger'));
+    const gallery = triggers.map(t => ({
+      src: t.dataset.src || t.querySelector('img')?.src || '',
+      alt: t.dataset.alt || t.querySelector('img')?.alt || ''
+    })).filter(item => item.src);
+
+    const index = triggers.indexOf(trigger);
+    return { gallery, index: Math.max(0, index) };
+  }
+
+  function getSrc(trigger) {
+    return trigger.dataset.src || trigger.querySelector('img')?.src || '';
+  }
+
+  function getAlt(trigger) {
+    return trigger.dataset.alt || trigger.querySelector('img')?.alt || '';
   }
 
   // Attach to all current and future lightbox triggers using delegation
@@ -354,18 +401,26 @@ function initLightbox() {
     if (!trigger) return;
     e.stopPropagation(); // prevent card toggle
 
-    const src = trigger.dataset.src || trigger.querySelector('img')?.src;
-    const alt = trigger.dataset.alt || trigger.querySelector('img')?.alt || '';
-    if (src) openLightbox(src, alt);
+    const src = getSrc(trigger);
+    const alt = getAlt(trigger);
+    if (!src) return;
+
+    const { gallery, index } = buildGallery(trigger);
+    openLightbox(src, alt, gallery, index);
   });
+
+  // Arrow navigation
+  if (lbPrev) lbPrev.addEventListener('click', (e) => { e.stopPropagation(); showImage(currentIndex - 1); });
+  if (lbNext) lbNext.addEventListener('click', (e) => { e.stopPropagation(); showImage(currentIndex + 1); });
 
   lbBackdrop.addEventListener('click', closeLightbox);
   lbClose.addEventListener('click', closeLightbox);
 
   document.addEventListener('keydown', (e) => {
-    if (e.key === 'Escape' && !lb.classList.contains('hidden')) {
-      closeLightbox();
-    }
+    if (lb.classList.contains('hidden')) return;
+    if (e.key === 'Escape') closeLightbox();
+    if (e.key === 'ArrowLeft') showImage(currentIndex - 1);
+    if (e.key === 'ArrowRight') showImage(currentIndex + 1);
   });
 }
 

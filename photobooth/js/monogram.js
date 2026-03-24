@@ -480,8 +480,8 @@ function renderPrintMock() {
   const printSize = MonogramState.printSize;
   const spec      = CANVAS_SPECS[printSize];
 
-  // Display at ~200px wide for 4x6, ~140px for 2x6
-  const displayW = printSize === '4x6' ? 240 : 130;
+  // Display at a large size so clients can clearly see the print
+  const displayW = printSize === '4x6' ? 460 : 240;
   const displayH = Math.round(displayW * spec.h / spec.w);
 
   mock.width  = displayW;

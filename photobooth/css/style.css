@@ -467,8 +467,10 @@ h1, h2, h3 {
 ================================================================ */
 .print-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-  gap: 1rem;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5rem;
+  max-width: 700px;
+  margin: 0 auto;
 }
 
 .print-card {
@@ -505,19 +507,20 @@ h1, h2, h3 {
   justify-content: center;
   overflow: hidden;
   cursor: zoom-in;
+  width: 100%;
 }
 
 .print-img {
   width: 100%;
-  height: 100%;
-  object-fit: cover;
+  height: auto;
+  object-fit: contain;
   transition: transform var(--transition);
 }
 
-.print-card:hover .print-img { transform: scale(1.05); }
+.print-card:hover .print-img { transform: scale(1.02); }
 
-.print-preview--4x6 { width: 180px; height: 240px; }
-.print-preview--2x6 { width: 100px; height: 240px; }
+.print-preview--4x6 { max-width: 400px; }
+.print-preview--2x6 { max-width: 220px; }
 
 .print-name {
   font-family: 'Cinzel', serif;
@@ -1054,6 +1057,37 @@ h1, h2, h3 {
   color: var(--text);
   border-color: var(--border-hover);
 }
+
+.lightbox-arrow {
+  position: fixed;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 1102;
+  background: rgba(0,0,0,0.5);
+  color: #fff;
+  border: 1px solid rgba(255,255,255,0.2);
+  border-radius: 50%;
+  width: 48px;
+  height: 48px;
+  font-size: 1.8rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background var(--transition), border-color var(--transition);
+  line-height: 1;
+  padding: 0;
+}
+
+.lightbox-arrow:hover {
+  background: rgba(201,168,76,0.3);
+  border-color: var(--gold);
+}
+
+.lightbox-prev { left: 1rem; }
+.lightbox-next { right: 1rem; }
+
+.lightbox-arrow.hidden { display: none; }
 
 /* ================================================================
    SUCCESS OVERLAY
