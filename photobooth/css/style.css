@@ -877,7 +877,7 @@ h1, h2, h3 {
   max-height: 85vh;
 }
 
-/* ---- Flourish Picker ---- */
+/* ---- Frame / Flourish Picker ---- */
 .flourish-picker-grid {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
@@ -889,10 +889,13 @@ h1, h2, h3 {
   background: var(--bg-card-alt);
   border: 2px solid var(--border);
   border-radius: var(--radius-sm);
-  padding: 0.4rem 0.3rem 0.3rem;
+  padding: 0.35rem 0.3rem 0.3rem;
   cursor: pointer;
   transition: border-color var(--transition), transform var(--transition);
   user-select: none;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 .flourish-option:hover {
@@ -906,6 +909,7 @@ h1, h2, h3 {
   box-shadow: 0 0 0 2px rgba(201,168,76,0.18);
 }
 
+/* Legacy canvas-based previews (no longer rendered, kept for safety) */
 .flourish-option canvas {
   border-radius: 3px;
   pointer-events: none;
@@ -913,13 +917,46 @@ h1, h2, h3 {
   max-width: 100%;
 }
 
+/* SVG frame preview container */
+.frame-preview-inner {
+  width: 100%;
+  aspect-ratio: 2 / 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  border-radius: 3px;
+  min-height: 36px;
+}
+
+.frame-preview-svg {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.frame-preview-svg svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.frame-preview-none {
+  background: rgba(255,255,255,0.04);
+  border-radius: 3px;
+}
+
 .flourish-option-label {
   font-family: 'Cinzel', serif;
-  font-size: 0.6rem;
+  font-size: 0.55rem;
   letter-spacing: 0.04em;
   color: var(--text-muted);
   text-align: center;
-  margin-top: 0.25rem;
+  margin-top: 0.2rem;
+  line-height: 1.2;
+  width: 100%;
 }
 
 .flourish-option.selected .flourish-option-label {
@@ -1521,7 +1558,7 @@ h1, h2, h3 {
   .wizard-steps-track { gap: 0; }
   .step-label { display: none; }
   .review-row { grid-template-columns: 100px 1fr auto; gap: 0.6rem; }
-  .flourish-picker-grid { grid-template-columns: repeat(auto-fill, minmax(90px, 1fr)); }
+  .flourish-picker-grid { grid-template-columns: repeat(2, 1fr); }
 }
 
 @media (max-width: 420px) {

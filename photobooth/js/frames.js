@@ -1,0 +1,727 @@
+'use strict';
+
+/**
+ * frames.js — SVG Frame Templates for the Le Image Monogram Builder
+ *
+ * Each frame has:
+ *  - id:           unique string identifier
+ *  - name:         display name
+ *  - category:     grouping hint
+ *  - textPadding:  { x, y } — fractional inset from frame edges (0–1)
+ *  - svg:          SVG string with FRAME_COLOR placeholder, viewBox="0 0 400 200"
+ *                  null for the "no frame" option
+ *
+ * Color replacement: every FRAME_COLOR occurrence is replaced with the
+ * user's active text color at render time.
+ */
+
+const FRAME_TEMPLATES = [
+
+  /* ─────────────────── 1. None ─────────────────────────────── */
+  {
+    id: 'none',
+    name: 'None',
+    category: 'simple',
+    textPadding: { x: 0.04, y: 0.04 },
+    svg: null,
+  },
+
+  /* ─────────────────── 2. Classic Oval ─────────────────────── */
+  {
+    id: 'classic-oval',
+    name: 'Classic Oval',
+    category: 'elegant',
+    textPadding: { x: 0.16, y: 0.18 },
+    svg: `<svg viewBox="0 0 400 200" xmlns="http://www.w3.org/2000/svg">
+  <ellipse cx="200" cy="100" rx="188" ry="88" fill="none" stroke="FRAME_COLOR" stroke-width="2.5"/>
+  <ellipse cx="200" cy="100" rx="180" ry="80" fill="none" stroke="FRAME_COLOR" stroke-width="0.8"/>
+</svg>`,
+  },
+
+  /* ─────────────────── 3. Diamond ──────────────────────────── */
+  {
+    id: 'diamond',
+    name: 'Diamond',
+    category: 'geometric',
+    textPadding: { x: 0.26, y: 0.22 },
+    svg: `<svg viewBox="0 0 400 200" xmlns="http://www.w3.org/2000/svg">
+  <polygon points="200,6 393,100 200,194 7,100" fill="none" stroke="FRAME_COLOR" stroke-width="2.5"/>
+  <polygon points="200,22 375,100 200,178 25,100" fill="none" stroke="FRAME_COLOR" stroke-width="0.8"/>
+  <circle cx="200" cy="6"   r="4" fill="FRAME_COLOR"/>
+  <circle cx="393" cy="100" r="4" fill="FRAME_COLOR"/>
+  <circle cx="200" cy="194" r="4" fill="FRAME_COLOR"/>
+  <circle cx="7"   cy="100" r="4" fill="FRAME_COLOR"/>
+</svg>`,
+  },
+
+  /* ─────────────────── 4. Circle Ring ──────────────────────── */
+  {
+    id: 'circle-ring',
+    name: 'Circle Ring',
+    category: 'elegant',
+    textPadding: { x: 0.20, y: 0.18 },
+    svg: `<svg viewBox="0 0 400 200" xmlns="http://www.w3.org/2000/svg">
+  <ellipse cx="200" cy="100" rx="188" ry="92" fill="none" stroke="FRAME_COLOR" stroke-width="2.5"/>
+  <circle cx="200" cy="6"   r="5" fill="FRAME_COLOR"/>
+  <circle cx="200" cy="194" r="5" fill="FRAME_COLOR"/>
+  <circle cx="10"  cy="100" r="5" fill="FRAME_COLOR"/>
+  <circle cx="390" cy="100" r="5" fill="FRAME_COLOR"/>
+  <path d="M123,26 l6,-5 l6,5 l-6,5 Z" fill="FRAME_COLOR"/>
+  <path d="M265,26 l6,-5 l6,5 l-6,5 Z" fill="FRAME_COLOR"/>
+  <path d="M123,164 l6,-5 l6,5 l-6,5 Z" fill="FRAME_COLOR"/>
+  <path d="M265,164 l6,-5 l6,5 l-6,5 Z" fill="FRAME_COLOR"/>
+</svg>`,
+  },
+
+  /* ─────────────────── 5. Double Circle ────────────────────── */
+  {
+    id: 'double-circle',
+    name: 'Double Circle',
+    category: 'elegant',
+    textPadding: { x: 0.24, y: 0.22 },
+    svg: `<svg viewBox="0 0 400 200" xmlns="http://www.w3.org/2000/svg">
+  <ellipse cx="200" cy="100" rx="190" ry="93" fill="none" stroke="FRAME_COLOR" stroke-width="2"/>
+  <ellipse cx="200" cy="100" rx="178" ry="81" fill="none" stroke="FRAME_COLOR" stroke-width="1"/>
+  <circle cx="200" cy="8"   r="3.5" fill="none" stroke="FRAME_COLOR" stroke-width="1.5"/>
+  <circle cx="200" cy="192" r="3.5" fill="none" stroke="FRAME_COLOR" stroke-width="1.5"/>
+  <circle cx="10"  cy="100" r="3.5" fill="none" stroke="FRAME_COLOR" stroke-width="1.5"/>
+  <circle cx="390" cy="100" r="3.5" fill="none" stroke="FRAME_COLOR" stroke-width="1.5"/>
+</svg>`,
+  },
+
+  /* ─────────────────── 6. Ornate Oval ──────────────────────── */
+  {
+    id: 'ornate-oval',
+    name: 'Ornate Oval',
+    category: 'ornate',
+    textPadding: { x: 0.22, y: 0.26 },
+    svg: `<svg viewBox="0 0 400 200" xmlns="http://www.w3.org/2000/svg">
+  <ellipse cx="200" cy="100" rx="172" ry="78" fill="none" stroke="FRAME_COLOR" stroke-width="2"/>
+  <path d="M186,22 C191,10 209,10 214,22" fill="none" stroke="FRAME_COLOR" stroke-width="1.8"/>
+  <path d="M170,28 C176,14 186,22 186,22" fill="none" stroke="FRAME_COLOR" stroke-width="1.4"/>
+  <path d="M214,22 C214,22 224,14 230,28" fill="none" stroke="FRAME_COLOR" stroke-width="1.4"/>
+  <path d="M156,36 C162,22 170,28 170,28" fill="none" stroke="FRAME_COLOR" stroke-width="1"/>
+  <path d="M230,28 C230,28 238,22 244,36" fill="none" stroke="FRAME_COLOR" stroke-width="1"/>
+  <circle cx="200" cy="7"   r="3.5" fill="FRAME_COLOR"/>
+  <circle cx="177" cy="13"  r="2.2" fill="FRAME_COLOR"/>
+  <circle cx="223" cy="13"  r="2.2" fill="FRAME_COLOR"/>
+  <path d="M186,178 C191,190 209,190 214,178" fill="none" stroke="FRAME_COLOR" stroke-width="1.8"/>
+  <path d="M170,172 C176,186 186,178 186,178" fill="none" stroke="FRAME_COLOR" stroke-width="1.4"/>
+  <path d="M214,178 C214,178 224,186 230,172" fill="none" stroke="FRAME_COLOR" stroke-width="1.4"/>
+  <path d="M156,164 C162,178 170,172 170,172" fill="none" stroke="FRAME_COLOR" stroke-width="1"/>
+  <path d="M230,172 C230,172 238,178 244,164" fill="none" stroke="FRAME_COLOR" stroke-width="1"/>
+  <circle cx="200" cy="193" r="3.5" fill="FRAME_COLOR"/>
+  <circle cx="177" cy="187" r="2.2" fill="FRAME_COLOR"/>
+  <circle cx="223" cy="187" r="2.2" fill="FRAME_COLOR"/>
+  <path d="M22,94 L22,106 M16,100 L28,100" stroke="FRAME_COLOR" stroke-width="1.8" stroke-linecap="round"/>
+  <path d="M378,94 L378,106 M372,100 L384,100" stroke="FRAME_COLOR" stroke-width="1.8" stroke-linecap="round"/>
+</svg>`,
+  },
+
+  /* ─────────────────── 7. Rectangular Frame ────────────────── */
+  {
+    id: 'rectangular',
+    name: 'Rect. Frame',
+    category: 'classic',
+    textPadding: { x: 0.14, y: 0.18 },
+    svg: `<svg viewBox="0 0 400 200" xmlns="http://www.w3.org/2000/svg">
+  <rect x="8"  y="8"  width="384" height="184" fill="none" stroke="FRAME_COLOR" stroke-width="2.5"/>
+  <rect x="16" y="16" width="368" height="168" fill="none" stroke="FRAME_COLOR" stroke-width="0.8"/>
+  <line x1="8"   y1="40"  x2="8"   y2="8"   stroke="FRAME_COLOR" stroke-width="2.2"/>
+  <line x1="8"   y1="8"   x2="40"  y2="8"   stroke="FRAME_COLOR" stroke-width="2.2"/>
+  <line x1="360" y1="8"   x2="392" y2="8"   stroke="FRAME_COLOR" stroke-width="2.2"/>
+  <line x1="392" y1="8"   x2="392" y2="40"  stroke="FRAME_COLOR" stroke-width="2.2"/>
+  <line x1="8"   y1="160" x2="8"   y2="192" stroke="FRAME_COLOR" stroke-width="2.2"/>
+  <line x1="8"   y1="192" x2="40"  y2="192" stroke="FRAME_COLOR" stroke-width="2.2"/>
+  <line x1="360" y1="192" x2="392" y2="192" stroke="FRAME_COLOR" stroke-width="2.2"/>
+  <line x1="392" y1="192" x2="392" y2="160" stroke="FRAME_COLOR" stroke-width="2.2"/>
+  <circle cx="8"   cy="8"   r="3" fill="FRAME_COLOR"/>
+  <circle cx="392" cy="8"   r="3" fill="FRAME_COLOR"/>
+  <circle cx="8"   cy="192" r="3" fill="FRAME_COLOR"/>
+  <circle cx="392" cy="192" r="3" fill="FRAME_COLOR"/>
+</svg>`,
+  },
+
+  /* ─────────────────── 8. Art Deco Frame ───────────────────── */
+  {
+    id: 'art-deco',
+    name: 'Art Deco',
+    category: 'geometric',
+    textPadding: { x: 0.20, y: 0.22 },
+    svg: `<svg viewBox="0 0 400 200" xmlns="http://www.w3.org/2000/svg">
+  <rect x="10" y="10" width="380" height="180" fill="none" stroke="FRAME_COLOR" stroke-width="2"/>
+  <rect x="18" y="18" width="364" height="164" fill="none" stroke="FRAME_COLOR" stroke-width="0.8"/>
+  <rect x="26" y="26" width="348" height="148" fill="none" stroke="FRAME_COLOR" stroke-width="0.5"/>
+  <!-- Stepped corners TL -->
+  <path d="M10,50 L10,10 L50,10" fill="none" stroke="FRAME_COLOR" stroke-width="3"/>
+  <path d="M18,54 L18,18 L54,18" fill="none" stroke="FRAME_COLOR" stroke-width="1.5"/>
+  <!-- TR -->
+  <path d="M350,10 L390,10 L390,50" fill="none" stroke="FRAME_COLOR" stroke-width="3"/>
+  <path d="M346,18 L382,18 L382,54" fill="none" stroke="FRAME_COLOR" stroke-width="1.5"/>
+  <!-- BL -->
+  <path d="M10,150 L10,190 L50,190" fill="none" stroke="FRAME_COLOR" stroke-width="3"/>
+  <path d="M18,146 L18,182 L54,182" fill="none" stroke="FRAME_COLOR" stroke-width="1.5"/>
+  <!-- BR -->
+  <path d="M350,190 L390,190 L390,150" fill="none" stroke="FRAME_COLOR" stroke-width="3"/>
+  <path d="M346,182 L382,182 L382,146" fill="none" stroke="FRAME_COLOR" stroke-width="1.5"/>
+  <!-- Center top/bottom accents -->
+  <path d="M175,10 L175,18 M200,10 L200,18 M225,10 L225,18" stroke="FRAME_COLOR" stroke-width="1.5"/>
+  <path d="M175,182 L175,190 M200,182 L200,190 M225,182 L225,190" stroke="FRAME_COLOR" stroke-width="1.5"/>
+  <!-- Center side accents -->
+  <path d="M10,88 L18,88 M10,100 L18,100 M10,112 L18,112" stroke="FRAME_COLOR" stroke-width="1.5"/>
+  <path d="M382,88 L390,88 M382,100 L390,100 M382,112 L390,112" stroke="FRAME_COLOR" stroke-width="1.5"/>
+</svg>`,
+  },
+
+  /* ─────────────────── 9. Laurel Wreath ────────────────────── */
+  {
+    id: 'laurel-wreath',
+    name: 'Laurel Wreath',
+    category: 'nature',
+    textPadding: { x: 0.28, y: 0.22 },
+    svg: `<svg viewBox="0 0 400 200" xmlns="http://www.w3.org/2000/svg">
+  <!-- Left laurel branch -->
+  <path d="M68,100 C62,92 56,84 50,82 C52,90 56,96 62,100" fill="FRAME_COLOR" opacity="0.9"/>
+  <path d="M78,88  C72,76 62,70 54,70 C58,80 66,86 74,88" fill="FRAME_COLOR" opacity="0.9"/>
+  <path d="M92,78  C86,64 74,56 64,58 C70,68 80,74 88,76" fill="FRAME_COLOR" opacity="0.9"/>
+  <path d="M108,70 C104,56 92,48 82,50 C88,60 98,66 106,68" fill="FRAME_COLOR" opacity="0.9"/>
+  <path d="M126,64 C122,50 110,42 100,44 C106,54 116,60 124,62" fill="FRAME_COLOR" opacity="0.9"/>
+  <path d="M146,60 C142,46 130,40 120,42 C126,52 136,58 144,58" fill="FRAME_COLOR" opacity="0.9"/>
+  <path d="M167,58 C164,44 152,38 142,40 C148,50 158,56 165,56" fill="FRAME_COLOR" opacity="0.9"/>
+  <!-- Left stem -->
+  <path d="M68,100 C92,88 120,70 167,58" fill="none" stroke="FRAME_COLOR" stroke-width="1.5"/>
+  <!-- Right laurel branch (mirrored) -->
+  <path d="M332,100 C338,92 344,84 350,82 C348,90 344,96 338,100" fill="FRAME_COLOR" opacity="0.9"/>
+  <path d="M322,88  C328,76 338,70 346,70 C342,80 334,86 326,88" fill="FRAME_COLOR" opacity="0.9"/>
+  <path d="M308,78  C314,64 326,56 336,58 C330,68 320,74 312,76" fill="FRAME_COLOR" opacity="0.9"/>
+  <path d="M292,70  C296,56 308,48 318,50 C312,60 302,66 294,68" fill="FRAME_COLOR" opacity="0.9"/>
+  <path d="M274,64  C278,50 290,42 300,44 C294,54 284,60 276,62" fill="FRAME_COLOR" opacity="0.9"/>
+  <path d="M254,60  C258,46 270,40 280,42 C274,52 264,58 256,58" fill="FRAME_COLOR" opacity="0.9"/>
+  <path d="M233,58  C236,44 248,38 258,40 C252,50 242,56 235,56" fill="FRAME_COLOR" opacity="0.9"/>
+  <!-- Right stem -->
+  <path d="M332,100 C308,88 280,70 233,58" fill="none" stroke="FRAME_COLOR" stroke-width="1.5"/>
+  <!-- Center top bow -->
+  <path d="M167,58 C180,50 190,48 200,48 C210,48 220,50 233,58" fill="none" stroke="FRAME_COLOR" stroke-width="1.5"/>
+  <!-- Bottom line -->
+  <path d="M68,100 Q200,130 332,100" fill="none" stroke="FRAME_COLOR" stroke-width="1.5"/>
+  <!-- Center ribbon tie -->
+  <path d="M192,48 C196,44 200,42 204,44 C200,48 196,48 192,48 Z" fill="FRAME_COLOR"/>
+  <path d="M208,48 C204,44 200,42 196,44 C200,48 204,48 208,48 Z" fill="FRAME_COLOR"/>
+</svg>`,
+  },
+
+  /* ─────────────────── 10. Floral Frame ────────────────────── */
+  {
+    id: 'floral',
+    name: 'Floral Frame',
+    category: 'nature',
+    textPadding: { x: 0.22, y: 0.24 },
+    svg: `<svg viewBox="0 0 400 200" xmlns="http://www.w3.org/2000/svg">
+  <ellipse cx="200" cy="100" rx="172" ry="80" fill="none" stroke="FRAME_COLOR" stroke-width="1.5"/>
+  <!-- Top center flower -->
+  <circle cx="200" cy="18" r="6" fill="none" stroke="FRAME_COLOR" stroke-width="1.5"/>
+  <circle cx="200" cy="18" r="2.5" fill="FRAME_COLOR"/>
+  <ellipse cx="200" cy="9"  rx="3" ry="5" fill="FRAME_COLOR" opacity="0.7"/>
+  <ellipse cx="200" cy="27" rx="3" ry="5" fill="FRAME_COLOR" opacity="0.7"/>
+  <ellipse cx="191" cy="18" rx="5" ry="3" fill="FRAME_COLOR" opacity="0.7"/>
+  <ellipse cx="209" cy="18" rx="5" ry="3" fill="FRAME_COLOR" opacity="0.7"/>
+  <!-- Bottom center flower -->
+  <circle cx="200" cy="182" r="6" fill="none" stroke="FRAME_COLOR" stroke-width="1.5"/>
+  <circle cx="200" cy="182" r="2.5" fill="FRAME_COLOR"/>
+  <ellipse cx="200" cy="173" rx="3" ry="5" fill="FRAME_COLOR" opacity="0.7"/>
+  <ellipse cx="200" cy="191" rx="3" ry="5" fill="FRAME_COLOR" opacity="0.7"/>
+  <ellipse cx="191" cy="182" rx="5" ry="3" fill="FRAME_COLOR" opacity="0.7"/>
+  <ellipse cx="209" cy="182" rx="5" ry="3" fill="FRAME_COLOR" opacity="0.7"/>
+  <!-- Left flower -->
+  <circle cx="26" cy="100" r="5" fill="none" stroke="FRAME_COLOR" stroke-width="1.5"/>
+  <circle cx="26" cy="100" r="2" fill="FRAME_COLOR"/>
+  <ellipse cx="26" cy="92"  rx="2.5" ry="4" fill="FRAME_COLOR" opacity="0.7"/>
+  <ellipse cx="26" cy="108" rx="2.5" ry="4" fill="FRAME_COLOR" opacity="0.7"/>
+  <ellipse cx="18" cy="100" rx="4" ry="2.5" fill="FRAME_COLOR" opacity="0.7"/>
+  <ellipse cx="34" cy="100" rx="4" ry="2.5" fill="FRAME_COLOR" opacity="0.7"/>
+  <!-- Right flower -->
+  <circle cx="374" cy="100" r="5" fill="none" stroke="FRAME_COLOR" stroke-width="1.5"/>
+  <circle cx="374" cy="100" r="2" fill="FRAME_COLOR"/>
+  <ellipse cx="374" cy="92"  rx="2.5" ry="4" fill="FRAME_COLOR" opacity="0.7"/>
+  <ellipse cx="374" cy="108" rx="2.5" ry="4" fill="FRAME_COLOR" opacity="0.7"/>
+  <ellipse cx="366" cy="100" rx="4" ry="2.5" fill="FRAME_COLOR" opacity="0.7"/>
+  <ellipse cx="382" cy="100" rx="4" ry="2.5" fill="FRAME_COLOR" opacity="0.7"/>
+  <!-- Vine segments top-left -->
+  <path d="M200,24 Q170,30 148,50 Q132,62 126,80" fill="none" stroke="FRAME_COLOR" stroke-width="1"/>
+  <ellipse cx="168" cy="36" rx="6" ry="3.5" transform="rotate(-30 168 36)" fill="FRAME_COLOR" opacity="0.5"/>
+  <ellipse cx="142" cy="58" rx="6" ry="3.5" transform="rotate(-50 142 58)" fill="FRAME_COLOR" opacity="0.5"/>
+  <!-- Vine segments top-right -->
+  <path d="M200,24 Q230,30 252,50 Q268,62 274,80" fill="none" stroke="FRAME_COLOR" stroke-width="1"/>
+  <ellipse cx="232" cy="36" rx="6" ry="3.5" transform="rotate(30 232 36)" fill="FRAME_COLOR" opacity="0.5"/>
+  <ellipse cx="258" cy="58" rx="6" ry="3.5" transform="rotate(50 258 58)" fill="FRAME_COLOR" opacity="0.5"/>
+  <!-- Vine segments bottom-left -->
+  <path d="M200,176 Q170,170 148,150 Q132,138 126,120" fill="none" stroke="FRAME_COLOR" stroke-width="1"/>
+  <ellipse cx="168" cy="164" rx="6" ry="3.5" transform="rotate(30 168 164)" fill="FRAME_COLOR" opacity="0.5"/>
+  <ellipse cx="142" cy="142" rx="6" ry="3.5" transform="rotate(50 142 142)" fill="FRAME_COLOR" opacity="0.5"/>
+  <!-- Vine segments bottom-right -->
+  <path d="M200,176 Q230,170 252,150 Q268,138 274,120" fill="none" stroke="FRAME_COLOR" stroke-width="1"/>
+  <ellipse cx="232" cy="164" rx="6" ry="3.5" transform="rotate(-30 232 164)" fill="FRAME_COLOR" opacity="0.5"/>
+  <ellipse cx="258" cy="142" rx="6" ry="3.5" transform="rotate(-50 258 142)" fill="FRAME_COLOR" opacity="0.5"/>
+</svg>`,
+  },
+
+  /* ─────────────────── 11. Heart Frame ─────────────────────── */
+  {
+    id: 'heart',
+    name: 'Heart Frame',
+    category: 'romantic',
+    textPadding: { x: 0.22, y: 0.24 },
+    svg: `<svg viewBox="0 0 400 200" xmlns="http://www.w3.org/2000/svg">
+  <path d="M200,175 C140,145 30,110 30,65 C30,36 54,18 80,18 C112,18 132,38 142,52 C152,38 172,18 200,18 C228,18 248,38 258,52 C268,38 288,18 320,18 C346,18 370,36 370,65 C370,110 260,145 200,175 Z"
+    fill="none" stroke="FRAME_COLOR" stroke-width="2.5" stroke-linejoin="round"/>
+  <path d="M200,162 C148,136 50,106 50,65 C50,46 66,34 80,34 C106,34 124,52 138,68 C150,52 170,34 200,34 C230,34 250,52 262,68 C276,52 294,34 320,34 C334,34 350,46 350,65 C350,106 252,136 200,162 Z"
+    fill="none" stroke="FRAME_COLOR" stroke-width="0.8" stroke-linejoin="round"/>
+</svg>`,
+  },
+
+  /* ─────────────────── 12. Shield ──────────────────────────── */
+  {
+    id: 'shield',
+    name: 'Shield',
+    category: 'classic',
+    textPadding: { x: 0.22, y: 0.22 },
+    svg: `<svg viewBox="0 0 400 200" xmlns="http://www.w3.org/2000/svg">
+  <path d="M200,8 L370,30 L370,120 C370,160 200,196 200,196 C200,196 30,160 30,120 L30,30 Z"
+    fill="none" stroke="FRAME_COLOR" stroke-width="2.5" stroke-linejoin="round"/>
+  <path d="M200,22 L356,42 L356,120 C356,154 200,182 200,182 C200,182 44,154 44,120 L44,42 Z"
+    fill="none" stroke="FRAME_COLOR" stroke-width="0.8" stroke-linejoin="round"/>
+  <!-- Crest line -->
+  <line x1="30" y1="60" x2="370" y2="60" stroke="FRAME_COLOR" stroke-width="1"/>
+  <!-- Top accent -->
+  <circle cx="200" cy="8"  r="4"   fill="FRAME_COLOR"/>
+  <circle cx="30"  cy="30" r="3.5" fill="FRAME_COLOR"/>
+  <circle cx="370" cy="30" r="3.5" fill="FRAME_COLOR"/>
+</svg>`,
+  },
+
+  /* ─────────────────── 13. Hexagon ─────────────────────────── */
+  {
+    id: 'hexagon',
+    name: 'Hexagon',
+    category: 'geometric',
+    textPadding: { x: 0.22, y: 0.22 },
+    svg: `<svg viewBox="0 0 400 200" xmlns="http://www.w3.org/2000/svg">
+  <polygon points="200,6 374,54 374,146 200,194 26,146 26,54" fill="none" stroke="FRAME_COLOR" stroke-width="2.5"/>
+  <polygon points="200,18 362,60 362,140 200,182 38,140 38,60" fill="none" stroke="FRAME_COLOR" stroke-width="0.8"/>
+  <circle cx="200" cy="6"   r="4" fill="FRAME_COLOR"/>
+  <circle cx="374" cy="54"  r="4" fill="FRAME_COLOR"/>
+  <circle cx="374" cy="146" r="4" fill="FRAME_COLOR"/>
+  <circle cx="200" cy="194" r="4" fill="FRAME_COLOR"/>
+  <circle cx="26"  cy="146" r="4" fill="FRAME_COLOR"/>
+  <circle cx="26"  cy="54"  r="4" fill="FRAME_COLOR"/>
+</svg>`,
+  },
+
+  /* ─────────────────── 14. Arch ────────────────────────────── */
+  {
+    id: 'arch',
+    name: 'Arch',
+    category: 'classic',
+    textPadding: { x: 0.16, y: 0.18 },
+    svg: `<svg viewBox="0 0 400 200" xmlns="http://www.w3.org/2000/svg">
+  <path d="M20,192 L20,100 C20,44 380,44 380,100 L380,192 Z" fill="none" stroke="FRAME_COLOR" stroke-width="2.5"/>
+  <path d="M32,192 L32,102 C32,56 368,56 368,102 L368,192 Z" fill="none" stroke="FRAME_COLOR" stroke-width="0.8"/>
+  <line x1="20" y1="192" x2="380" y2="192" stroke="FRAME_COLOR" stroke-width="2.5"/>
+  <line x1="20" y1="184" x2="380" y2="184" stroke="FRAME_COLOR" stroke-width="0.8"/>
+  <!-- Keystone at arch apex -->
+  <circle cx="200" cy="44" r="5" fill="none" stroke="FRAME_COLOR" stroke-width="1.8"/>
+  <circle cx="200" cy="44" r="2" fill="FRAME_COLOR"/>
+  <!-- Column bases -->
+  <rect x="8"  y="184" width="24" height="8" rx="1" fill="none" stroke="FRAME_COLOR" stroke-width="1.5"/>
+  <rect x="368" y="184" width="24" height="8" rx="1" fill="none" stroke="FRAME_COLOR" stroke-width="1.5"/>
+</svg>`,
+  },
+
+  /* ─────────────────── 15. Banner Ribbon ───────────────────── */
+  {
+    id: 'banner',
+    name: 'Banner',
+    category: 'ornate',
+    textPadding: { x: 0.14, y: 0.28 },
+    svg: `<svg viewBox="0 0 400 200" xmlns="http://www.w3.org/2000/svg">
+  <!-- Main ribbon -->
+  <path d="M6,50 L30,65 L30,150 L6,165 L6,50 Z" fill="none" stroke="FRAME_COLOR" stroke-width="1.5"/>
+  <path d="M394,50 L370,65 L370,150 L394,165 L394,50 Z" fill="none" stroke="FRAME_COLOR" stroke-width="1.5"/>
+  <rect x="30" y="60" width="340" height="80" rx="2" fill="none" stroke="FRAME_COLOR" stroke-width="2.5"/>
+  <rect x="36" y="66" width="328" height="68" rx="1" fill="none" stroke="FRAME_COLOR" stroke-width="0.8"/>
+  <!-- V-cuts on sides -->
+  <path d="M6,107 L30,95 M6,107 L30,120" fill="none" stroke="FRAME_COLOR" stroke-width="1"/>
+  <path d="M394,107 L370,95 M394,107 L370,120" fill="none" stroke="FRAME_COLOR" stroke-width="1"/>
+  <!-- Top and bottom decorative lines -->
+  <line x1="30" y1="50" x2="370" y2="50" stroke="FRAME_COLOR" stroke-width="1.5"/>
+  <line x1="30" y1="150" x2="370" y2="150" stroke="FRAME_COLOR" stroke-width="1.5"/>
+  <!-- Corner rosettes -->
+  <circle cx="30"  cy="60"  r="4" fill="FRAME_COLOR"/>
+  <circle cx="370" cy="60"  r="4" fill="FRAME_COLOR"/>
+  <circle cx="30"  cy="140" r="4" fill="FRAME_COLOR"/>
+  <circle cx="370" cy="140" r="4" fill="FRAME_COLOR"/>
+</svg>`,
+  },
+
+  /* ─────────────────── 16. Vintage Scroll ──────────────────── */
+  {
+    id: 'vintage-scroll',
+    name: 'Vintage Scroll',
+    category: 'ornate',
+    textPadding: { x: 0.20, y: 0.24 },
+    svg: `<svg viewBox="0 0 400 200" xmlns="http://www.w3.org/2000/svg">
+  <rect x="30" y="22" width="340" height="156" rx="3" fill="none" stroke="FRAME_COLOR" stroke-width="2"/>
+  <rect x="36" y="28" width="328" height="144" rx="2" fill="none" stroke="FRAME_COLOR" stroke-width="0.8"/>
+  <!-- Scroll corners TL -->
+  <path d="M30,22 C22,22 16,28 16,36 C16,44 22,50 30,50 C38,50 44,44 44,36 L44,22 Z" fill="none" stroke="FRAME_COLOR" stroke-width="1.8"/>
+  <path d="M30,30 C25,30 22,33 22,38 C22,43 25,46 30,46" fill="none" stroke="FRAME_COLOR" stroke-width="1"/>
+  <!-- TR -->
+  <path d="M370,22 C378,22 384,28 384,36 C384,44 378,50 370,50 C362,50 356,44 356,36 L356,22 Z" fill="none" stroke="FRAME_COLOR" stroke-width="1.8"/>
+  <path d="M370,30 C375,30 378,33 378,38 C378,43 375,46 370,46" fill="none" stroke="FRAME_COLOR" stroke-width="1"/>
+  <!-- BL -->
+  <path d="M30,178 C22,178 16,172 16,164 C16,156 22,150 30,150 C38,150 44,156 44,164 L44,178 Z" fill="none" stroke="FRAME_COLOR" stroke-width="1.8"/>
+  <path d="M30,170 C25,170 22,167 22,162 C22,157 25,154 30,154" fill="none" stroke="FRAME_COLOR" stroke-width="1"/>
+  <!-- BR -->
+  <path d="M370,178 C378,178 384,172 384,164 C384,156 378,150 370,150 C362,150 356,156 356,164 L356,178 Z" fill="none" stroke="FRAME_COLOR" stroke-width="1.8"/>
+  <path d="M370,170 C375,170 378,167 378,162 C378,157 375,154 370,154" fill="none" stroke="FRAME_COLOR" stroke-width="1"/>
+  <!-- Center top/bottom ornaments -->
+  <path d="M185,22 L185,28 M200,22 L200,28 M215,22 L215,28" stroke="FRAME_COLOR" stroke-width="1.5"/>
+  <path d="M185,172 L185,178 M200,172 L200,178 M215,172 L215,178" stroke="FRAME_COLOR" stroke-width="1.5"/>
+  <path d="M190,22 C194,16 206,16 210,22" fill="none" stroke="FRAME_COLOR" stroke-width="1.2"/>
+  <path d="M190,178 C194,184 206,184 210,178" fill="none" stroke="FRAME_COLOR" stroke-width="1.2"/>
+</svg>`,
+  },
+
+  /* ─────────────────── 17. Minimalist Lines ────────────────── */
+  {
+    id: 'minimalist',
+    name: 'Min. Lines',
+    category: 'simple',
+    textPadding: { x: 0.08, y: 0.20 },
+    svg: `<svg viewBox="0 0 400 200" xmlns="http://www.w3.org/2000/svg">
+  <line x1="20" y1="22"  x2="380" y2="22"  stroke="FRAME_COLOR" stroke-width="2"/>
+  <line x1="20" y1="30"  x2="380" y2="30"  stroke="FRAME_COLOR" stroke-width="0.6"/>
+  <line x1="20" y1="170" x2="380" y2="170" stroke="FRAME_COLOR" stroke-width="0.6"/>
+  <line x1="20" y1="178" x2="380" y2="178" stroke="FRAME_COLOR" stroke-width="2"/>
+  <!-- Left end stops -->
+  <line x1="20" y1="16" x2="20" y2="184" stroke="FRAME_COLOR" stroke-width="1.5"/>
+  <!-- Right end stops -->
+  <line x1="380" y1="16" x2="380" y2="184" stroke="FRAME_COLOR" stroke-width="1.5"/>
+  <!-- Center diamond accent -->
+  <path d="M195,26 L200,20 L205,26 L200,32 Z" fill="FRAME_COLOR"/>
+  <path d="M195,168 L200,162 L205,168 L200,174 Z" fill="FRAME_COLOR"/>
+</svg>`,
+  },
+
+  /* ─────────────────── 18. Crown Frame ─────────────────────── */
+  {
+    id: 'crown',
+    name: 'Crown Frame',
+    category: 'royal',
+    textPadding: { x: 0.16, y: 0.24 },
+    svg: `<svg viewBox="0 0 400 200" xmlns="http://www.w3.org/2000/svg">
+  <!-- Main rect -->
+  <rect x="14" y="62" width="372" height="126" rx="2" fill="none" stroke="FRAME_COLOR" stroke-width="2"/>
+  <rect x="20" y="68" width="360" height="114" rx="1" fill="none" stroke="FRAME_COLOR" stroke-width="0.8"/>
+  <!-- Crown top -->
+  <path d="M14,62 L14,20 L76,44 L140,6 L200,36 L260,6 L324,44 L386,20 L386,62 Z" fill="none" stroke="FRAME_COLOR" stroke-width="2" stroke-linejoin="round"/>
+  <!-- Crown jewels -->
+  <circle cx="14"  cy="20" r="4.5" fill="FRAME_COLOR"/>
+  <circle cx="140" cy="6"  r="5.5" fill="FRAME_COLOR"/>
+  <circle cx="200" cy="36" r="4"   fill="none" stroke="FRAME_COLOR" stroke-width="1.5"/>
+  <circle cx="200" cy="36" r="2"   fill="FRAME_COLOR"/>
+  <circle cx="260" cy="6"  r="5.5" fill="FRAME_COLOR"/>
+  <circle cx="386" cy="20" r="4.5" fill="FRAME_COLOR"/>
+  <!-- Base band -->
+  <line x1="14" y1="72" x2="386" y2="72" stroke="FRAME_COLOR" stroke-width="1"/>
+  <!-- Bottom accent -->
+  <line x1="14"  y1="182" x2="386" y2="182" stroke="FRAME_COLOR" stroke-width="1"/>
+  <circle cx="14"  cy="188" r="3" fill="FRAME_COLOR"/>
+  <circle cx="386" cy="188" r="3" fill="FRAME_COLOR"/>
+  <circle cx="200" cy="188" r="3" fill="FRAME_COLOR"/>
+</svg>`,
+  },
+
+  /* ─────────────────── 19. Star Frame ──────────────────────── */
+  {
+    id: 'star-frame',
+    name: 'Star Frame',
+    category: 'ornate',
+    textPadding: { x: 0.22, y: 0.22 },
+    svg: `<svg viewBox="0 0 400 200" xmlns="http://www.w3.org/2000/svg">
+  <!-- Star/sunburst outer ring -->
+  <ellipse cx="200" cy="100" rx="186" ry="90" fill="none" stroke="FRAME_COLOR" stroke-width="1.5"/>
+  <ellipse cx="200" cy="100" rx="176" ry="80" fill="none" stroke="FRAME_COLOR" stroke-width="0.6"/>
+  <!-- Starburst rays (16 rays) -->
+  <line x1="200" y1="8"   x2="200" y2="20"  stroke="FRAME_COLOR" stroke-width="2.5"/>
+  <line x1="200" y1="180" x2="200" y2="192" stroke="FRAME_COLOR" stroke-width="2.5"/>
+  <line x1="12"  y1="100" x2="24"  y2="100" stroke="FRAME_COLOR" stroke-width="2.5"/>
+  <line x1="376" y1="100" x2="388" y2="100" stroke="FRAME_COLOR" stroke-width="2.5"/>
+  <!-- Diagonal long rays -->
+  <line x1="64"  y1="26"  x2="72"  y2="36"  stroke="FRAME_COLOR" stroke-width="2"/>
+  <line x1="328" y1="164" x2="336" y2="174" stroke="FRAME_COLOR" stroke-width="2"/>
+  <line x1="336" y1="26"  x2="328" y2="36"  stroke="FRAME_COLOR" stroke-width="2"/>
+  <line x1="72"  y1="164" x2="64"  y2="174" stroke="FRAME_COLOR" stroke-width="2"/>
+  <!-- Mid-diagonal medium rays -->
+  <line x1="30"  y1="55"  x2="38"  y2="63"  stroke="FRAME_COLOR" stroke-width="1.5"/>
+  <line x1="362" y1="137" x2="370" y2="145" stroke="FRAME_COLOR" stroke-width="1.5"/>
+  <line x1="370" y1="55"  x2="362" y2="63"  stroke="FRAME_COLOR" stroke-width="1.5"/>
+  <line x1="38"  y1="137" x2="30"  y2="145" stroke="FRAME_COLOR" stroke-width="1.5"/>
+  <!-- Corner dots -->
+  <circle cx="200" cy="8"   r="3.5" fill="FRAME_COLOR"/>
+  <circle cx="200" cy="192" r="3.5" fill="FRAME_COLOR"/>
+  <circle cx="12"  cy="100" r="3.5" fill="FRAME_COLOR"/>
+  <circle cx="388" cy="100" r="3.5" fill="FRAME_COLOR"/>
+</svg>`,
+  },
+
+  /* ─────────────────── 20. Leafy Border ────────────────────── */
+  {
+    id: 'leafy-border',
+    name: 'Leafy Border',
+    category: 'nature',
+    textPadding: { x: 0.20, y: 0.26 },
+    svg: `<svg viewBox="0 0 400 200" xmlns="http://www.w3.org/2000/svg">
+  <!-- Horizontal stems -->
+  <line x1="20" y1="26"  x2="380" y2="26"  stroke="FRAME_COLOR" stroke-width="1.2"/>
+  <line x1="20" y1="174" x2="380" y2="174" stroke="FRAME_COLOR" stroke-width="1.2"/>
+  <!-- Vertical stems -->
+  <line x1="20"  y1="26"  x2="20"  y2="174" stroke="FRAME_COLOR" stroke-width="1.2"/>
+  <line x1="380" y1="26"  x2="380" y2="174" stroke="FRAME_COLOR" stroke-width="1.2"/>
+  <!-- Top leaves (9 pairs) -->
+  <ellipse cx="60"  cy="20" rx="8" ry="4" transform="rotate(-20 60 20)"  fill="FRAME_COLOR" opacity="0.85"/>
+  <ellipse cx="60"  cy="32" rx="8" ry="4" transform="rotate(20 60 32)"   fill="FRAME_COLOR" opacity="0.85"/>
+  <ellipse cx="100" cy="20" rx="8" ry="4" transform="rotate(-20 100 20)" fill="FRAME_COLOR" opacity="0.85"/>
+  <ellipse cx="100" cy="32" rx="8" ry="4" transform="rotate(20 100 32)"  fill="FRAME_COLOR" opacity="0.85"/>
+  <ellipse cx="140" cy="20" rx="8" ry="4" transform="rotate(-20 140 20)" fill="FRAME_COLOR" opacity="0.85"/>
+  <ellipse cx="140" cy="32" rx="8" ry="4" transform="rotate(20 140 32)"  fill="FRAME_COLOR" opacity="0.85"/>
+  <ellipse cx="200" cy="18" rx="8" ry="4" transform="rotate(-10 200 18)" fill="FRAME_COLOR" opacity="0.85"/>
+  <ellipse cx="200" cy="34" rx="8" ry="4" transform="rotate(10 200 34)"  fill="FRAME_COLOR" opacity="0.85"/>
+  <ellipse cx="260" cy="20" rx="8" ry="4" transform="rotate(20 260 20)"  fill="FRAME_COLOR" opacity="0.85"/>
+  <ellipse cx="260" cy="32" rx="8" ry="4" transform="rotate(-20 260 32)" fill="FRAME_COLOR" opacity="0.85"/>
+  <ellipse cx="300" cy="20" rx="8" ry="4" transform="rotate(20 300 20)"  fill="FRAME_COLOR" opacity="0.85"/>
+  <ellipse cx="300" cy="32" rx="8" ry="4" transform="rotate(-20 300 32)" fill="FRAME_COLOR" opacity="0.85"/>
+  <ellipse cx="340" cy="20" rx="8" ry="4" transform="rotate(20 340 20)"  fill="FRAME_COLOR" opacity="0.85"/>
+  <ellipse cx="340" cy="32" rx="8" ry="4" transform="rotate(-20 340 32)" fill="FRAME_COLOR" opacity="0.85"/>
+  <!-- Bottom leaves (mirrored) -->
+  <ellipse cx="60"  cy="168" rx="8" ry="4" transform="rotate(20 60 168)"   fill="FRAME_COLOR" opacity="0.85"/>
+  <ellipse cx="60"  cy="180" rx="8" ry="4" transform="rotate(-20 60 180)"  fill="FRAME_COLOR" opacity="0.85"/>
+  <ellipse cx="100" cy="168" rx="8" ry="4" transform="rotate(20 100 168)"  fill="FRAME_COLOR" opacity="0.85"/>
+  <ellipse cx="100" cy="180" rx="8" ry="4" transform="rotate(-20 100 180)" fill="FRAME_COLOR" opacity="0.85"/>
+  <ellipse cx="140" cy="168" rx="8" ry="4" transform="rotate(20 140 168)"  fill="FRAME_COLOR" opacity="0.85"/>
+  <ellipse cx="140" cy="180" rx="8" ry="4" transform="rotate(-20 140 180)" fill="FRAME_COLOR" opacity="0.85"/>
+  <ellipse cx="200" cy="166" rx="8" ry="4" transform="rotate(10 200 166)"  fill="FRAME_COLOR" opacity="0.85"/>
+  <ellipse cx="200" cy="182" rx="8" ry="4" transform="rotate(-10 200 182)" fill="FRAME_COLOR" opacity="0.85"/>
+  <ellipse cx="260" cy="168" rx="8" ry="4" transform="rotate(-20 260 168)" fill="FRAME_COLOR" opacity="0.85"/>
+  <ellipse cx="260" cy="180" rx="8" ry="4" transform="rotate(20 260 180)"  fill="FRAME_COLOR" opacity="0.85"/>
+  <ellipse cx="300" cy="168" rx="8" ry="4" transform="rotate(-20 300 168)" fill="FRAME_COLOR" opacity="0.85"/>
+  <ellipse cx="300" cy="180" rx="8" ry="4" transform="rotate(20 300 180)"  fill="FRAME_COLOR" opacity="0.85"/>
+  <ellipse cx="340" cy="168" rx="8" ry="4" transform="rotate(-20 340 168)" fill="FRAME_COLOR" opacity="0.85"/>
+  <ellipse cx="340" cy="180" rx="8" ry="4" transform="rotate(20 340 180)"  fill="FRAME_COLOR" opacity="0.85"/>
+  <!-- Left side leaves -->
+  <ellipse cx="14"  cy="70"  rx="4" ry="7" transform="rotate(-80 14 70)"  fill="FRAME_COLOR" opacity="0.85"/>
+  <ellipse cx="26"  cy="70"  rx="4" ry="7" transform="rotate(80 26 70)"   fill="FRAME_COLOR" opacity="0.85"/>
+  <ellipse cx="14"  cy="100" rx="4" ry="7" transform="rotate(-80 14 100)" fill="FRAME_COLOR" opacity="0.85"/>
+  <ellipse cx="26"  cy="100" rx="4" ry="7" transform="rotate(80 26 100)"  fill="FRAME_COLOR" opacity="0.85"/>
+  <ellipse cx="14"  cy="130" rx="4" ry="7" transform="rotate(-80 14 130)" fill="FRAME_COLOR" opacity="0.85"/>
+  <ellipse cx="26"  cy="130" rx="4" ry="7" transform="rotate(80 26 130)"  fill="FRAME_COLOR" opacity="0.85"/>
+  <!-- Right side leaves -->
+  <ellipse cx="374" cy="70"  rx="4" ry="7" transform="rotate(80 374 70)"   fill="FRAME_COLOR" opacity="0.85"/>
+  <ellipse cx="386" cy="70"  rx="4" ry="7" transform="rotate(-80 386 70)"  fill="FRAME_COLOR" opacity="0.85"/>
+  <ellipse cx="374" cy="100" rx="4" ry="7" transform="rotate(80 374 100)"  fill="FRAME_COLOR" opacity="0.85"/>
+  <ellipse cx="386" cy="100" rx="4" ry="7" transform="rotate(-80 386 100)" fill="FRAME_COLOR" opacity="0.85"/>
+  <ellipse cx="374" cy="130" rx="4" ry="7" transform="rotate(80 374 130)"  fill="FRAME_COLOR" opacity="0.85"/>
+  <ellipse cx="386" cy="130" rx="4" ry="7" transform="rotate(-80 386 130)" fill="FRAME_COLOR" opacity="0.85"/>
+</svg>`,
+  },
+
+  /* ─────────────────── 21. Elegant Swirl ───────────────────── */
+  {
+    id: 'elegant-swirl',
+    name: 'Elegant Swirl',
+    category: 'ornate',
+    textPadding: { x: 0.18, y: 0.24 },
+    svg: `<svg viewBox="0 0 400 200" xmlns="http://www.w3.org/2000/svg">
+  <!-- Central oval -->
+  <ellipse cx="200" cy="100" rx="155" ry="72" fill="none" stroke="FRAME_COLOR" stroke-width="1.5"/>
+  <!-- Left large swirl -->
+  <path d="M44,100 C44,70 60,50 80,50 C100,50 110,65 105,80 C100,95 85,95 78,88 C71,81 76,72 84,74" fill="none" stroke="FRAME_COLOR" stroke-width="1.8"/>
+  <path d="M44,100 C44,130 60,150 80,150 C100,150 110,135 105,120 C100,105 85,105 78,112 C71,119 76,128 84,126" fill="none" stroke="FRAME_COLOR" stroke-width="1.8"/>
+  <!-- Left connector -->
+  <path d="M44,100 C44,100 20,100 12,100" fill="none" stroke="FRAME_COLOR" stroke-width="1.8"/>
+  <circle cx="8" cy="100" r="4" fill="FRAME_COLOR"/>
+  <!-- Right large swirl (mirrored) -->
+  <path d="M356,100 C356,70 340,50 320,50 C300,50 290,65 295,80 C300,95 315,95 322,88 C329,81 324,72 316,74" fill="none" stroke="FRAME_COLOR" stroke-width="1.8"/>
+  <path d="M356,100 C356,130 340,150 320,150 C300,150 290,135 295,120 C300,105 315,105 322,112 C329,119 324,128 316,126" fill="none" stroke="FRAME_COLOR" stroke-width="1.8"/>
+  <!-- Right connector -->
+  <path d="M356,100 C356,100 380,100 388,100" fill="none" stroke="FRAME_COLOR" stroke-width="1.8"/>
+  <circle cx="392" cy="100" r="4" fill="FRAME_COLOR"/>
+  <!-- Top center flourish -->
+  <path d="M175,28 C185,16 215,16 225,28" fill="none" stroke="FRAME_COLOR" stroke-width="1.5"/>
+  <circle cx="200" cy="26" r="3" fill="FRAME_COLOR"/>
+  <!-- Bottom center flourish -->
+  <path d="M175,172 C185,184 215,184 225,172" fill="none" stroke="FRAME_COLOR" stroke-width="1.5"/>
+  <circle cx="200" cy="174" r="3" fill="FRAME_COLOR"/>
+</svg>`,
+  },
+
+  /* ─────────────────── 22. Infinity Loop ───────────────────── */
+  {
+    id: 'infinity',
+    name: 'Infinity',
+    category: 'geometric',
+    textPadding: { x: 0.10, y: 0.22 },
+    svg: `<svg viewBox="0 0 400 200" xmlns="http://www.w3.org/2000/svg">
+  <!-- Infinity shape (thick) -->
+  <path d="M200,100 C200,68 224,44 256,44 C288,44 312,68 312,100 C312,132 288,156 256,156 C224,156 200,132 200,100 C200,68 176,44 144,44 C112,44 88,68 88,100 C88,132 112,156 144,156 C176,156 200,132 200,100 Z"
+    fill="none" stroke="FRAME_COLOR" stroke-width="2.5"/>
+  <!-- Inner thinner line -->
+  <path d="M200,100 C200,72 222,52 252,52 C282,52 304,72 304,100 C304,128 282,148 252,148 C222,148 200,128 200,100 C200,72 178,52 148,52 C118,52 96,72 96,100 C96,128 118,148 148,148 C178,148 200,128 200,100 Z"
+    fill="none" stroke="FRAME_COLOR" stroke-width="0.8"/>
+  <!-- Top/bottom accent dots at tips -->
+  <circle cx="200" cy="44" r="4" fill="FRAME_COLOR"/>
+  <circle cx="200" cy="156" r="4" fill="FRAME_COLOR"/>
+</svg>`,
+  },
+
+  /* ─────────────────── 23. Chandelier ──────────────────────── */
+  {
+    id: 'chandelier',
+    name: 'Chandelier',
+    category: 'ornate',
+    textPadding: { x: 0.18, y: 0.28 },
+    svg: `<svg viewBox="0 0 400 200" xmlns="http://www.w3.org/2000/svg">
+  <!-- Base horizontal line -->
+  <line x1="20" y1="170" x2="380" y2="170" stroke="FRAME_COLOR" stroke-width="2"/>
+  <line x1="20" y1="178" x2="380" y2="178" stroke="FRAME_COLOR" stroke-width="0.8"/>
+  <!-- End ornaments -->
+  <circle cx="20"  cy="174" r="5" fill="none" stroke="FRAME_COLOR" stroke-width="1.5"/>
+  <circle cx="380" cy="174" r="5" fill="none" stroke="FRAME_COLOR" stroke-width="1.5"/>
+  <!-- Vertical drops -->
+  <line x1="200" y1="6"   x2="200" y2="40"  stroke="FRAME_COLOR" stroke-width="2"/>
+  <line x1="150" y1="30"  x2="150" y2="60"  stroke="FRAME_COLOR" stroke-width="1.5"/>
+  <line x1="250" y1="30"  x2="250" y2="60"  stroke="FRAME_COLOR" stroke-width="1.5"/>
+  <line x1="100" y1="50"  x2="100" y2="80"  stroke="FRAME_COLOR" stroke-width="1.2"/>
+  <line x1="300" y1="50"  x2="300" y2="80"  stroke="FRAME_COLOR" stroke-width="1.2"/>
+  <line x1="60"  y1="90"  x2="60"  y2="120" stroke="FRAME_COLOR" stroke-width="1"/>
+  <line x1="340" y1="90"  x2="340" y2="120" stroke="FRAME_COLOR" stroke-width="1"/>
+  <!-- Horizontal connector bars -->
+  <line x1="150" y1="30"  x2="250" y2="30"  stroke="FRAME_COLOR" stroke-width="1.5"/>
+  <line x1="100" y1="50"  x2="300" y2="50"  stroke="FRAME_COLOR" stroke-width="1.2"/>
+  <line x1="60"  y1="90"  x2="340" y2="90"  stroke="FRAME_COLOR" stroke-width="1"/>
+  <line x1="20"  y1="130" x2="380" y2="130" stroke="FRAME_COLOR" stroke-width="1"/>
+  <!-- Crystal teardrop pendants -->
+  <ellipse cx="200" cy="46" rx="5"   ry="8"   fill="none" stroke="FRAME_COLOR" stroke-width="1.5"/>
+  <ellipse cx="150" cy="66" rx="4"   ry="7"   fill="none" stroke="FRAME_COLOR" stroke-width="1.2"/>
+  <ellipse cx="250" cy="66" rx="4"   ry="7"   fill="none" stroke="FRAME_COLOR" stroke-width="1.2"/>
+  <ellipse cx="100" cy="88" rx="3.5" ry="6"   fill="none" stroke="FRAME_COLOR" stroke-width="1"/>
+  <ellipse cx="300" cy="88" rx="3.5" ry="6"   fill="none" stroke="FRAME_COLOR" stroke-width="1"/>
+  <ellipse cx="60"  cy="126" rx="3"  ry="5.5" fill="none" stroke="FRAME_COLOR" stroke-width="1"/>
+  <ellipse cx="340" cy="126" rx="3"  ry="5.5" fill="none" stroke="FRAME_COLOR" stroke-width="1"/>
+  <ellipse cx="200" cy="140" rx="3"  ry="5"   fill="none" stroke="FRAME_COLOR" stroke-width="1"/>
+  <ellipse cx="130" cy="138" rx="2.5" ry="4.5" fill="none" stroke="FRAME_COLOR" stroke-width="0.8"/>
+  <ellipse cx="270" cy="138" rx="2.5" ry="4.5" fill="none" stroke="FRAME_COLOR" stroke-width="0.8"/>
+  <!-- Top chain attachment -->
+  <circle cx="200" cy="8" r="5" fill="none" stroke="FRAME_COLOR" stroke-width="1.8"/>
+</svg>`,
+  },
+
+  /* ─────────────────── 24. Geometric Mosaic ────────────────── */
+  {
+    id: 'geometric-mosaic',
+    name: 'Geo. Mosaic',
+    category: 'geometric',
+    textPadding: { x: 0.18, y: 0.22 },
+    svg: `<svg viewBox="0 0 400 200" xmlns="http://www.w3.org/2000/svg">
+  <!-- Outer frame -->
+  <rect x="6" y="6" width="388" height="188" fill="none" stroke="FRAME_COLOR" stroke-width="2"/>
+  <!-- Inner frame -->
+  <rect x="18" y="18" width="364" height="164" fill="none" stroke="FRAME_COLOR" stroke-width="0.8"/>
+  <!-- Corner triangles TL -->
+  <polygon points="6,6 50,6 6,50" fill="none" stroke="FRAME_COLOR" stroke-width="1.5"/>
+  <polygon points="6,6 34,6 6,34" fill="FRAME_COLOR" opacity="0.25"/>
+  <!-- TR -->
+  <polygon points="350,6 394,6 394,50" fill="none" stroke="FRAME_COLOR" stroke-width="1.5"/>
+  <polygon points="366,6 394,6 394,34" fill="FRAME_COLOR" opacity="0.25"/>
+  <!-- BL -->
+  <polygon points="6,150 6,194 50,194" fill="none" stroke="FRAME_COLOR" stroke-width="1.5"/>
+  <polygon points="6,166 6,194 34,194" fill="FRAME_COLOR" opacity="0.25"/>
+  <!-- BR -->
+  <polygon points="394,150 394,194 350,194" fill="none" stroke="FRAME_COLOR" stroke-width="1.5"/>
+  <polygon points="394,166 394,194 366,194" fill="FRAME_COLOR" opacity="0.25"/>
+  <!-- Top center geometric accent -->
+  <polygon points="200,6 218,18 200,30 182,18" fill="none" stroke="FRAME_COLOR" stroke-width="1.5"/>
+  <circle cx="200" cy="18" r="3" fill="FRAME_COLOR"/>
+  <!-- Bottom center -->
+  <polygon points="200,170 218,182 200,194 182,182" fill="none" stroke="FRAME_COLOR" stroke-width="1.5"/>
+  <circle cx="200" cy="182" r="3" fill="FRAME_COLOR"/>
+  <!-- Side diamonds -->
+  <polygon points="6,88 18,100 6,112 " fill="none" stroke="FRAME_COLOR" stroke-width="1.5"/>
+  <polygon points="394,88 382,100 394,112" fill="none" stroke="FRAME_COLOR" stroke-width="1.5"/>
+  <!-- Mid-side squares -->
+  <rect x="6"   y="88"  width="12" height="24" fill="none" stroke="FRAME_COLOR" stroke-width="1"/>
+  <rect x="382" y="88"  width="12" height="24" fill="none" stroke="FRAME_COLOR" stroke-width="1"/>
+  <!-- Top/bottom strip pattern -->
+  <line x1="60"  y1="6"  x2="60"  y2="18"  stroke="FRAME_COLOR" stroke-width="1"/>
+  <line x1="90"  y1="6"  x2="90"  y2="18"  stroke="FRAME_COLOR" stroke-width="1"/>
+  <line x1="120" y1="6"  x2="120" y2="18"  stroke="FRAME_COLOR" stroke-width="1"/>
+  <line x1="280" y1="6"  x2="280" y2="18"  stroke="FRAME_COLOR" stroke-width="1"/>
+  <line x1="310" y1="6"  x2="310" y2="18"  stroke="FRAME_COLOR" stroke-width="1"/>
+  <line x1="340" y1="6"  x2="340" y2="18"  stroke="FRAME_COLOR" stroke-width="1"/>
+  <line x1="60"  y1="182" x2="60"  y2="194" stroke="FRAME_COLOR" stroke-width="1"/>
+  <line x1="90"  y1="182" x2="90"  y2="194" stroke="FRAME_COLOR" stroke-width="1"/>
+  <line x1="120" y1="182" x2="120" y2="194" stroke="FRAME_COLOR" stroke-width="1"/>
+  <line x1="280" y1="182" x2="280" y2="194" stroke="FRAME_COLOR" stroke-width="1"/>
+  <line x1="310" y1="182" x2="310" y2="194" stroke="FRAME_COLOR" stroke-width="1"/>
+  <line x1="340" y1="182" x2="340" y2="194" stroke="FRAME_COLOR" stroke-width="1"/>
+</svg>`,
+  },
+
+];
+
+/* ================================================================
+   SVG → Canvas image cache
+   Key: `${frameId}::${color}`, Value: HTMLImageElement
+================================================================ */
+const _frameImageCache = new Map();
+
+/**
+ * Render a frame SVG to an HTMLImageElement, cached per id+color.
+ * Returns a Promise<HTMLImageElement>.
+ */
+function getFrameImage(frameId, color) {
+  const cacheKey = `${frameId}::${color}`;
+  if (_frameImageCache.has(cacheKey)) {
+    return Promise.resolve(_frameImageCache.get(cacheKey));
+  }
+
+  const template = FRAME_TEMPLATES.find(f => f.id === frameId);
+  if (!template || !template.svg) return Promise.resolve(null);
+
+  const coloredSvg = template.svg.split('FRAME_COLOR').join(color);
+  const dataUrl = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(coloredSvg);
+
+  return new Promise((resolve) => {
+    const img = new Image();
+    img.onload = () => {
+      _frameImageCache.set(cacheKey, img);
+      resolve(img);
+    };
+    img.onerror = () => resolve(null);
+    img.src = dataUrl;
+  });
+}
+
+/**
+ * Clear the image cache (call when switching events or on memory pressure).
+ */
+function clearFrameCache() {
+  _frameImageCache.clear();
+}
+
+/* Export to window */
+window.FrameTemplates = {
+  templates: FRAME_TEMPLATES,
+  getImage:  getFrameImage,
+  clearCache: clearFrameCache,
+};
