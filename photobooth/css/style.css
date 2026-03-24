@@ -1017,6 +1017,66 @@ h1, h2, h3 {
 }
 
 /* ---- Review Download ---- */
+.review-print-preview {
+  margin: 1.5rem 0;
+  text-align: center;
+}
+
+.review-print-layout {
+  display: inline-block;
+  position: relative;
+  border: 2px solid var(--border);
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+  background-color: #333;
+  background-size: cover;
+  background-position: center;
+}
+
+/* 4x6 layout: landscape */
+.review-print-layout--4x6 {
+  width: 420px;
+  height: 280px;
+}
+
+/* 2x6 strip layout */
+.review-print-layout--2x6 {
+  width: 180px;
+  height: 540px;
+}
+
+.review-print-layout .photo-placeholder {
+  background: rgba(255,255,255,0.15);
+  border: 2px dashed rgba(255,255,255,0.4);
+  border-radius: 4px;
+  position: absolute;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: rgba(255,255,255,0.5);
+  font-size: 0.7rem;
+  font-family: 'Cinzel', serif;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.review-print-layout .monogram-placeholder {
+  position: absolute;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.review-print-layout .monogram-placeholder canvas {
+  max-width: 100%;
+  max-height: 100%;
+}
+
+@media (max-width: 700px) {
+  .review-print-layout--4x6 { width: 300px; height: 200px; }
+  .review-print-layout--2x6 { width: 140px; height: 420px; }
+}
+
 .review-download {
   display: flex;
   justify-content: center;

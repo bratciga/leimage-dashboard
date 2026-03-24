@@ -547,6 +547,95 @@ function populateReview() {
       ctx.drawImage(srcCanvas, 0, 0, thumbCanvas.width, thumbCanvas.height);
     }
   }
+
+  // Print layout preview with backdrop + photo placeholders + monogram
+  buildPrintLayoutPreview();
+}
+
+function buildPrintLayoutPreview() {
+  const container = document.getElementById('review-print-layout');
+  if (!container) return;
+  container.innerHTML = '';
+  container.className = 'review-print-layout';
+
+  const printSize = WizardState.printSize || '4x6';
+  const is2x6 = printSize === '2x6';
+
+  // Set layout class
+  container.classList.add(is2x6 ? 'review-print-layout--2x6' : 'review-print-layout--4x6');
+
+  // Set backdrop background
+  const backdrop = WizardState.backdrop;
+  if (backdrop) {
+    // Find the backdrop image from the card
+    const backdropCard = document.querySelector(`.toggle-selectable[data-value="${backdrop}"]`);
+    const backdropImg = backdropCard?.querySelector('img');
+    if (backdropImg) {
+      container.style.backgroundImage = `url('${backdropImg.src}')`;
+    }
+  } else {
+    container.style.backgroundImage = 'none';
+    container.style.backgroundColor = '#333';
+  }
+
+  if (is2x6) {
+    // 2x6 strip: 3 photo slots stacked vertically, monogram at bottom
+    // Layout: photos take top 75%, monogram bottom 25%
+    const photoH = 22; // % each
+    for (let i = 0; i < 3; i++) {
+      const ph = document.createElement('div');
+      ph.className = 'photo-placeholder';
+      ph.style.cssText = `left:8%; top:${2 + i * 24}%; width:84%; height:${photoH}%;`;
+      ph.textContent = `Photo ${i + 1}`;
+      container.appendChild(ph);
+    }
+    // Monogram area at bottom
+    const mono = document.createElement('div');
+    mono.className = 'monogram-placeholder';
+    mono.style.cssText = 'left:15%; top:74%; width:70%; height:24%;';
+    addMonogramToPlaceholder(mono);
+    container.appendChild(mono);
+  } else {
+    // 4x6: 2 photos on left, monogram on right (or 2 photos top, monogram bottom)
+    // Common layout: 2 photos stacked on left half, monogram on right half
+    const ph1 = document.createElement('div');
+    ph1.className = 'photo-placeholder';
+    ph1.style.cssText = 'left:3%; top:3%; width:45%; height:45%;';
+    ph1.textContent = 'Photo 1';
+    container.appendChild(ph1);
+
+    const ph2 = document.createElement('div');
+    ph2.className = 'photo-placeholder';
+    ph2.style.cssText = 'left:3%; top:52%; width:45%; height:45%;';
+    ph2.textContent = 'Photo 2';
+    container.appendChild(ph2);
+
+    // Monogram on right side
+    const mono = document.createElement('div');
+    mono.className = 'monogram-placeholder';
+    mono.style.cssText = 'left:52%; top:10%; width:44%; height:80%;';
+    addMonogramToPlaceholder(mono);
+    container.appendChild(mono);
+  }
+}
+
+function addMonogramToPlaceholder(container) {
+  const srcCanvas = window.MonogramBuilder?.state?.canvas;
+  if (!srcCanvas || srcCanvas.width === 0) {
+    container.style.color = 'rgba(255,255,255,0.4)';
+    container.style.fontSize = '0.65rem';
+    container.textContent = 'Monogram';
+    return;
+  }
+
+  const miniCanvas = document.createElement('canvas');
+  const aspect = srcCanvas.width / srcCanvas.height;
+  // Fit inside the placeholder
+  miniCanvas.width = 200;
+  miniCanvas.height = Math.round(200 / aspect);
+  const ctx = miniCanvas.getContext('2d');
+  ctx.drawImage(srcCanvas, 0, 0, miniCanvas.width, miniCanvas.height);
+  container.appendChild(miniCanvas);
 }
 
 /* ================================================================
