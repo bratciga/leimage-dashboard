@@ -5,19 +5,16 @@
    Color palette:
      --bg-deep:     #0d0d1a   (page background)
      --bg-card:     #12122a   (card / section background)
-     --bg-card-alt: #1a1a35   (slightly lighter card)
-     --gold:        #c9a84c   (primary accent — champagne gold)
-     --gold-light:  #e4c97a   (hover / highlight)
-     --text:        #e8e0d0   (body text)
-     --text-muted:  #8a8098   (secondary text)
-     --border:      #2a2a45   (subtle borders)
-     --error:       #e05a6a   (validation errors)
-     --success:     #5ab88a   (success messages)
+     --bg-card-alt: #1a1a35
+     --gold:        #c9a84c
+     --gold-light:  #e4c97a
+     --text:        #e8e0d0
+     --text-muted:  #8a8098
+     --border:      #2a2a45
+     --error:       #e05a6a
+     --success:     #5ab88a
 ================================================================ */
 
-/* ----------------------------------------------------------------
-   CSS Custom Properties
----------------------------------------------------------------- */
 :root {
   --bg-deep:      #0d0d1a;
   --bg-card:      #12122a;
@@ -41,15 +38,8 @@
 /* ----------------------------------------------------------------
    Reset & Base
 ---------------------------------------------------------------- */
-*, *::before, *::after {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
-}
-
-html {
-  scroll-behavior: smooth;
-}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
 
 body {
   background: var(--bg-deep);
@@ -60,18 +50,9 @@ body {
   min-height: 100vh;
 }
 
-a {
-  color: var(--gold);
-  text-decoration: none;
-}
-a:hover {
-  color: var(--gold-light);
-}
-
-strong {
-  font-weight: 600;
-  color: var(--gold-light);
-}
+a { color: var(--gold); text-decoration: none; }
+a:hover { color: var(--gold-light); }
+strong { font-weight: 600; color: var(--gold-light); }
 
 /* ----------------------------------------------------------------
    Typography
@@ -107,9 +88,7 @@ h1, h2, h3 {
   padding: 2rem 1rem 4rem;
 }
 
-.admin-container {
-  max-width: 1100px;
-}
+.admin-container { max-width: 1100px; }
 
 /* ----------------------------------------------------------------
    Header
@@ -132,9 +111,7 @@ h1, h2, h3 {
   gap: 1rem;
 }
 
-.admin-page .header-inner {
-  max-width: 1100px;
-}
+.admin-page .header-inner { max-width: 1100px; }
 
 .brand {
   font-family: 'Cinzel', Georgia, serif;
@@ -172,6 +149,116 @@ h1, h2, h3 {
   margin-left: 0.4rem;
 }
 
+/* ================================================================
+   WIZARD PROGRESS BAR
+================================================================ */
+.wizard-progress-bar {
+  background: var(--bg-card);
+  border-bottom: 1px solid var(--border);
+  padding: 1rem 1.25rem 0.6rem;
+  position: sticky;
+  top: 57px; /* below header */
+  z-index: 90;
+  backdrop-filter: blur(6px);
+}
+
+.wizard-steps-track {
+  max-width: 860px;
+  margin: 0 auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  position: relative;
+}
+
+.wizard-fill-track {
+  max-width: 760px;
+  margin: 0.5rem auto 0;
+  height: 3px;
+  background: var(--border);
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.wizard-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--gold-dim), var(--gold));
+  width: 0%;
+  transition: width 0.4s ease;
+  border-radius: 2px;
+}
+
+.wizard-step {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.3rem;
+  flex: 1;
+  cursor: default;
+  transition: all var(--transition);
+}
+
+.step-bubble {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background: var(--bg-card-alt);
+  border: 2px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Cinzel', serif;
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  transition: all var(--transition);
+}
+
+.step-label {
+  font-family: 'Cinzel', serif;
+  font-size: 0.58rem;
+  letter-spacing: 0.04em;
+  color: var(--text-muted);
+  text-align: center;
+  transition: color var(--transition);
+  white-space: nowrap;
+}
+
+/* Completed step */
+.wizard-step.completed .step-bubble {
+  background: var(--gold-dim);
+  border-color: var(--gold);
+  color: #fff;
+}
+.wizard-step.completed .step-label {
+  color: var(--gold-dim);
+}
+
+/* Active step */
+.wizard-step.active .step-bubble {
+  background: linear-gradient(135deg, var(--gold-dim), var(--gold));
+  border-color: var(--gold-light);
+  color: #0d0d1a;
+  box-shadow: 0 0 0 3px rgba(201,168,76,0.22);
+  font-weight: 700;
+}
+.wizard-step.active .step-label {
+  color: var(--gold);
+  font-weight: 600;
+}
+
+/* ================================================================
+   WIZARD STEP PANELS
+================================================================ */
+.wizard-step-panel {
+  animation: stepFadeIn 0.28s ease forwards;
+}
+
+@keyframes stepFadeIn {
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
 /* ----------------------------------------------------------------
    Card / Section
 ---------------------------------------------------------------- */
@@ -184,18 +271,23 @@ h1, h2, h3 {
   transition: border-color var(--transition);
 }
 
-.card:hover {
-  border-color: var(--border-hover);
-}
-
-.card--submit {
-  text-align: center;
-  background: linear-gradient(135deg, var(--bg-card), #1a1a35);
-}
+.card:hover { border-color: var(--border-hover); }
 
 /* ----------------------------------------------------------------
-   Photo Grid (section A)
+   Wizard Navigation Row
 ---------------------------------------------------------------- */
+.wizard-nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 2rem;
+  padding-top: 1.25rem;
+  border-top: 1px solid var(--border);
+}
+
+/* ================================================================
+   PHOTO GRID (Step 1)
+================================================================ */
 .photo-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
@@ -203,122 +295,66 @@ h1, h2, h3 {
   margin-top: 1rem;
 }
 
+.photo-slot {
+  position: relative;
+  cursor: zoom-in;
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+}
+
 .photo-slot img {
   width: 100%;
   border-radius: var(--radius-sm);
   aspect-ratio: 4/3;
   object-fit: cover;
-  transition: transform var(--transition);
+  transition: transform 0.25s ease;
+  display: block;
 }
 
-.photo-slot img:hover {
-  transform: scale(1.02);
-}
+.photo-slot:hover img { transform: scale(1.04); }
 
-.photo-placeholder {
-  background: var(--bg-card-alt);
-  border: 2px dashed var(--border);
-  border-radius: var(--radius-sm);
-  aspect-ratio: 4/3;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: var(--text-muted);
-  font-size: 0.8rem;
-  text-align: center;
-  padding: 0.5rem;
-  transition: border-color var(--transition);
-}
-
-.photo-placeholder:hover {
-  border-color: var(--gold-dim);
-}
-
-/* ----------------------------------------------------------------
-   Radio Group (parking)
----------------------------------------------------------------- */
-.radio-group {
+/* ================================================================
+   TOGGLE CARD GROUP (Parking — Step 2)
+================================================================ */
+.toggle-card-group {
   display: flex;
   gap: 1rem;
   flex-wrap: wrap;
 }
 
-.radio-card {
+.toggle-card {
   display: flex;
+  flex-direction: column;
   align-items: center;
-  gap: 0.6rem;
+  gap: 0.5rem;
   background: var(--bg-card-alt);
   border: 2px solid var(--border);
   border-radius: var(--radius-sm);
-  padding: 0.75rem 1.5rem;
+  padding: 1.25rem 2rem;
   cursor: pointer;
-  transition: border-color var(--transition), background var(--transition);
+  transition: border-color var(--transition), background var(--transition), transform var(--transition);
   user-select: none;
-}
-
-.radio-card:hover {
-  border-color: var(--gold-dim);
-  background: #1e1e38;
-}
-
-.radio-card input[type="radio"] {
-  accent-color: var(--gold);
-  width: 18px;
-  height: 18px;
-}
-
-.radio-card:has(input:checked) {
-  border-color: var(--gold);
-  background: rgba(201, 168, 76, 0.08);
-}
-
-.radio-label {
-  font-size: 1rem;
+  min-width: 100px;
   font-family: 'Cinzel', serif;
-  letter-spacing: 0.04em;
 }
 
-/* ----------------------------------------------------------------
-   Checkbox Card (disclaimer)
----------------------------------------------------------------- */
-.checkbox-card {
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-  background: var(--bg-card-alt);
-  border: 2px solid var(--border);
-  border-radius: var(--radius-sm);
-  padding: 1rem 1.25rem;
-  cursor: pointer;
-  transition: border-color var(--transition), background var(--transition);
-  user-select: none;
-}
-
-.checkbox-card:hover {
+.toggle-card:hover {
   border-color: var(--gold-dim);
+  transform: translateY(-2px);
 }
 
-.checkbox-card:has(input:checked) {
+.toggle-card.selected {
   border-color: var(--gold);
-  background: rgba(201, 168, 76, 0.08);
+  background: rgba(201,168,76,0.09);
+  box-shadow: 0 0 0 3px rgba(201,168,76,0.2);
 }
 
-.checkbox-card input[type="checkbox"] {
-  accent-color: var(--gold);
-  width: 20px;
-  height: 20px;
-  flex-shrink: 0;
-}
+.toggle-card-icon { font-size: 1.75rem; line-height: 1; }
+.toggle-card-label { font-size: 0.9rem; letter-spacing: 0.05em; color: var(--text); }
 
-.checkbox-label {
-  font-size: 1rem;
-  font-family: 'Cinzel', serif;
-  letter-spacing: 0.04em;
-}
-
-/* ----------------------------------------------------------------
-   Backdrop Grid (section D)
----------------------------------------------------------------- */
+/* ================================================================
+   BACKDROP GRID (Step 3)
+================================================================ */
 .backdrop-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
@@ -341,22 +377,16 @@ h1, h2, h3 {
   transform: translateY(-2px);
 }
 
-.backdrop-card:has(input:checked) {
+.backdrop-card.selected {
   border-color: var(--gold);
   box-shadow: 0 0 0 3px rgba(201,168,76,0.2);
-}
-
-.backdrop-card input[type="radio"] {
-  /* Hidden — selection shown via border/checkmark */
-  position: absolute;
-  opacity: 0;
-  pointer-events: none;
 }
 
 .backdrop-img-wrap {
   width: 100%;
   aspect-ratio: 1;
   overflow: hidden;
+  cursor: zoom-in;
 }
 
 .backdrop-img {
@@ -366,9 +396,7 @@ h1, h2, h3 {
   transition: transform var(--transition);
 }
 
-.backdrop-card:hover .backdrop-img {
-  transform: scale(1.05);
-}
+.backdrop-card:hover .backdrop-img { transform: scale(1.05); }
 
 .backdrop-placeholder {
   width: 100%;
@@ -407,9 +435,11 @@ h1, h2, h3 {
 .backdrop-card--own .backdrop-img-wrap {
   aspect-ratio: auto;
   min-height: 80px;
+  cursor: default;
 }
 
-.backdrop-card .check-mark {
+.backdrop-card .check-mark,
+.print-card .check-mark {
   display: none;
   position: absolute;
   top: 6px;
@@ -424,15 +454,17 @@ h1, h2, h3 {
   font-size: 0.7rem;
   font-weight: bold;
   box-shadow: var(--shadow);
+  pointer-events: none;
 }
 
-.backdrop-card:has(input:checked) .check-mark {
+.backdrop-card.selected .check-mark,
+.print-card.selected .check-mark {
   display: block;
 }
 
-/* ----------------------------------------------------------------
-   Print Size (section E)
----------------------------------------------------------------- */
+/* ================================================================
+   PRINT SIZE (Step 4)
+================================================================ */
 .print-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
@@ -459,15 +491,9 @@ h1, h2, h3 {
   transform: translateY(-2px);
 }
 
-.print-card:has(input:checked) {
+.print-card.selected {
   border-color: var(--gold);
   box-shadow: 0 0 0 3px rgba(201,168,76,0.2);
-}
-
-.print-card input[type="radio"] {
-  position: absolute;
-  opacity: 0;
-  pointer-events: none;
 }
 
 .print-preview {
@@ -478,6 +504,7 @@ h1, h2, h3 {
   align-items: center;
   justify-content: center;
   overflow: hidden;
+  cursor: zoom-in;
 }
 
 .print-img {
@@ -487,38 +514,10 @@ h1, h2, h3 {
   transition: transform var(--transition);
 }
 
-.print-card:hover .print-img {
-  transform: scale(1.05);
-}
+.print-card:hover .print-img { transform: scale(1.05); }
 
-.print-preview--4x6 {
-  width: 180px;
-  height: 240px;
-}
-
-.print-preview--2x6 {
-  width: 100px;
-  height: 240px;
-}
-
-.print-placeholder {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 4px;
-}
-
-.print-dim {
-  font-family: 'Cinzel', serif;
-  font-size: 1rem;
-  color: var(--gold);
-}
-
-.print-orient {
-  font-size: 0.65rem;
-  color: var(--text-muted);
-  letter-spacing: 0.04em;
-}
+.print-preview--4x6 { width: 180px; height: 240px; }
+.print-preview--2x6 { width: 100px; height: 240px; }
 
 .print-name {
   font-family: 'Cinzel', serif;
@@ -527,29 +526,77 @@ h1, h2, h3 {
   letter-spacing: 0.04em;
 }
 
-.print-card .check-mark {
+/* ================================================================
+   PROPS (Step 5)
+================================================================ */
+.props-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+  gap: 0.85rem;
+}
+
+.prop-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.4rem;
+  background: var(--bg-card-alt);
+  border: 2px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 1rem 0.5rem;
+  cursor: pointer;
+  transition: border-color var(--transition), transform var(--transition);
+  user-select: none;
+}
+
+.prop-card:hover {
+  border-color: var(--gold-dim);
+  transform: translateY(-2px);
+}
+
+.prop-card:has(input:checked) {
+  border-color: var(--gold);
+  background: rgba(201,168,76,0.06);
+}
+
+.prop-card input[type="checkbox"] {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.prop-emoji { font-size: 2rem; line-height: 1; }
+
+.prop-name {
+  font-family: 'Cinzel', serif;
+  font-size: 0.72rem;
+  letter-spacing: 0.04em;
+  color: var(--text);
+  text-align: center;
+}
+
+.prop-card .check-mark {
   display: none;
   position: absolute;
-  top: 8px;
-  right: 10px;
+  top: 6px;
+  right: 8px;
   background: var(--gold);
   color: #0d0d1a;
   border-radius: 50%;
-  width: 22px;
-  height: 22px;
-  line-height: 22px;
+  width: 20px;
+  height: 20px;
+  line-height: 20px;
   text-align: center;
-  font-size: 0.7rem;
+  font-size: 0.65rem;
   font-weight: bold;
 }
 
-.print-card:has(input:checked) .check-mark {
-  display: block;
-}
+.prop-card:has(input:checked) .check-mark { display: block; }
 
-/* ----------------------------------------------------------------
-   Monogram Builder (section F)
----------------------------------------------------------------- */
+/* ================================================================
+   MONOGRAM BUILDER (Step 7)
+================================================================ */
 .monogram-layout {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -557,9 +604,7 @@ h1, h2, h3 {
 }
 
 @media (max-width: 700px) {
-  .monogram-layout {
-    grid-template-columns: 1fr;
-  }
+  .monogram-layout { grid-template-columns: 1fr; }
 }
 
 .monogram-controls {
@@ -634,7 +679,6 @@ h1, h2, h3 {
   line-height: 1.6;
 }
 
-/* Font preview strip */
 .font-preview-strip {
   padding: 0.5rem 0.85rem;
   background: var(--bg-card-alt);
@@ -646,7 +690,6 @@ h1, h2, h3 {
   transition: font-family 0.2s;
 }
 
-/* Color pickers */
 .color-picker-wrap {
   display: flex;
   align-items: center;
@@ -669,23 +712,53 @@ h1, h2, h3 {
   color: var(--text-muted);
 }
 
-.toggle-wrap {
-  display: flex;
-  align-items: center;
+/* ---- Flourish Picker ---- */
+.flourish-picker-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(108px, 1fr));
   gap: 0.5rem;
+  margin-top: 0.25rem;
+}
+
+.flourish-option {
+  background: var(--bg-card-alt);
+  border: 2px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 0.4rem 0.3rem 0.3rem;
   cursor: pointer;
-  font-size: 0.85rem;
-  color: var(--text-muted);
+  transition: border-color var(--transition), transform var(--transition);
   user-select: none;
 }
 
-.toggle-wrap input[type="checkbox"] {
-  accent-color: var(--gold);
-  width: 16px;
-  height: 16px;
+.flourish-option:hover {
+  border-color: var(--gold-dim);
+  transform: translateY(-1px);
 }
 
-/* Canvas preview */
+.flourish-option.selected {
+  border-color: var(--gold);
+  background: rgba(201,168,76,0.07);
+  box-shadow: 0 0 0 2px rgba(201,168,76,0.18);
+}
+
+.flourish-option canvas {
+  border-radius: 3px;
+}
+
+.flourish-option-label {
+  font-family: 'Cinzel', serif;
+  font-size: 0.6rem;
+  letter-spacing: 0.04em;
+  color: var(--text-muted);
+  text-align: center;
+  margin-top: 0.25rem;
+}
+
+.flourish-option.selected .flourish-option-label {
+  color: var(--gold);
+}
+
+/* ---- Canvas area ---- */
 .monogram-preview-wrap {
   display: flex;
   flex-direction: column;
@@ -699,23 +772,24 @@ h1, h2, h3 {
   letter-spacing: 0.08em;
   color: var(--text-muted);
   text-transform: uppercase;
+  align-self: flex-start;
 }
 
 .canvas-outer {
-  background: #0a0a18;
+  background: repeating-conic-gradient(#1a1a2e 0% 25%, #12122a 0% 50%) 0 0 / 16px 16px;
   border: 1.5px solid var(--border);
   border-radius: var(--radius-sm);
   overflow: hidden;
   display: flex;
   align-items: center;
   justify-content: center;
-  min-height: 200px;
+  min-height: 180px;
   width: 100%;
 }
 
 .canvas-outer canvas {
   max-width: 100%;
-  max-height: 400px;
+  max-height: 380px;
   display: block;
 }
 
@@ -724,6 +798,35 @@ h1, h2, h3 {
   color: var(--text-muted);
   font-style: italic;
   text-align: center;
+  align-self: center;
+}
+
+.print-mock-section {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.4rem;
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--border);
+}
+
+.print-mock-section .canvas-label {
+  align-self: center;
+}
+
+.print-mock-wrap {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+}
+
+.print-mock-wrap canvas {
+  display: block;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border);
+  max-width: 100%;
 }
 
 .monogram-actions {
@@ -732,82 +835,67 @@ h1, h2, h3 {
   flex-wrap: wrap;
 }
 
-/* ----------------------------------------------------------------
-   Props Grid (section G)
----------------------------------------------------------------- */
-.props-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
-  gap: 0.85rem;
-}
-
-.prop-card {
-  position: relative;
+/* ================================================================
+   REVIEW (Step 8)
+================================================================ */
+.review-grid {
   display: flex;
   flex-direction: column;
+  gap: 0.6rem;
+  margin-bottom: 2rem;
+}
+
+.review-row {
+  display: grid;
+  grid-template-columns: 140px 1fr auto;
   align-items: center;
-  gap: 0.4rem;
+  gap: 1rem;
+  padding: 0.9rem 1.1rem;
   background: var(--bg-card-alt);
-  border: 2px solid var(--border);
+  border: 1px solid var(--border);
   border-radius: var(--radius-sm);
-  padding: 1rem 0.5rem;
-  cursor: pointer;
-  transition: border-color var(--transition), transform var(--transition);
-  user-select: none;
+  transition: border-color var(--transition);
 }
 
-.prop-card:hover {
-  border-color: var(--gold-dim);
-  transform: translateY(-2px);
-}
+.review-row:hover { border-color: var(--border-hover); }
 
-.prop-card:has(input:checked) {
-  border-color: var(--gold);
-  background: rgba(201,168,76,0.06);
-}
-
-.prop-card input[type="checkbox"] {
-  position: absolute;
-  opacity: 0;
-  pointer-events: none;
-}
-
-.prop-emoji {
-  font-size: 2rem;
-  line-height: 1;
-}
-
-.prop-name {
+.review-label {
   font-family: 'Cinzel', serif;
-  font-size: 0.72rem;
-  letter-spacing: 0.04em;
+  font-size: 0.78rem;
+  letter-spacing: 0.05em;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  flex-shrink: 0;
+}
+
+.review-value {
   color: var(--text);
-  text-align: center;
+  font-size: 0.95rem;
 }
 
-.prop-card .check-mark {
-  display: none;
-  position: absolute;
-  top: 6px;
-  right: 8px;
-  background: var(--gold);
-  color: #0d0d1a;
-  border-radius: 50%;
-  width: 20px;
-  height: 20px;
-  line-height: 20px;
-  text-align: center;
-  font-size: 0.65rem;
-  font-weight: bold;
-}
+.review-row--monogram { align-items: flex-start; }
 
-.prop-card:has(input:checked) .check-mark {
+.review-monogram-thumb {
   display: block;
+  margin-top: 0.5rem;
+  border-radius: 4px;
+  border: 1px solid var(--border);
+  background: repeating-conic-gradient(#1a1a2e 0% 25%, #12122a 0% 50%) 0 0 / 10px 10px;
+  max-width: 120px;
 }
 
-/* ----------------------------------------------------------------
-   Buttons
----------------------------------------------------------------- */
+.card--submit-inner {
+  text-align: center;
+  background: linear-gradient(135deg, var(--bg-card), #1a1a35);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 2rem 1.5rem;
+  margin-bottom: 1rem;
+}
+
+/* ================================================================
+   BUTTONS
+================================================================ */
 .btn {
   font-family: 'Cinzel', serif;
   font-size: 0.85rem;
@@ -857,15 +945,8 @@ h1, h2, h3 {
   border-color: var(--border-hover);
 }
 
-.btn-sm {
-  padding: 0.4rem 0.85rem;
-  font-size: 0.75rem;
-}
-
-.btn-large {
-  padding: 1rem 3rem;
-  font-size: 1rem;
-}
+.btn-sm { padding: 0.4rem 0.85rem; font-size: 0.75rem; }
+.btn-large { padding: 1rem 3rem; font-size: 1rem; }
 
 .btn:disabled {
   opacity: 0.5;
@@ -874,7 +955,7 @@ h1, h2, h3 {
 }
 
 /* ----------------------------------------------------------------
-   Submit Section
+   Submit section
 ---------------------------------------------------------------- */
 .submit-note {
   font-size: 0.85rem;
@@ -892,21 +973,13 @@ h1, h2, h3 {
   min-height: 1.5rem;
 }
 
-.submit-status.error {
-  color: var(--error);
-}
+.submit-status.error   { color: var(--error); }
+.submit-status.success { color: var(--success); }
+.submit-status.loading { color: var(--gold); }
 
-.submit-status.success {
-  color: var(--success);
-}
-
-.submit-status.loading {
-  color: var(--gold);
-}
-
-/* ----------------------------------------------------------------
-   Field Errors
----------------------------------------------------------------- */
+/* ================================================================
+   FIELD ERRORS
+================================================================ */
 .field-error {
   color: var(--error);
   font-size: 0.8rem;
@@ -915,9 +988,76 @@ h1, h2, h3 {
   font-style: italic;
 }
 
-/* ----------------------------------------------------------------
-   Success Overlay
----------------------------------------------------------------- */
+/* ================================================================
+   LIGHTBOX
+================================================================ */
+.lightbox {
+  position: fixed;
+  inset: 0;
+  z-index: 500;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+}
+
+.lightbox.hidden { display: none; }
+
+.lightbox-backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(5, 5, 18, 0.92);
+  backdrop-filter: blur(6px);
+  cursor: zoom-out;
+}
+
+.lightbox-box {
+  position: relative;
+  z-index: 1;
+  max-width: min(90vw, 900px);
+  max-height: 90vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.lightbox-img {
+  max-width: 100%;
+  max-height: 88vh;
+  border-radius: var(--radius-sm);
+  box-shadow: 0 12px 60px rgba(0,0,0,0.8);
+  object-fit: contain;
+  display: block;
+}
+
+.lightbox-close {
+  position: absolute;
+  top: -14px;
+  right: -14px;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  color: var(--text-muted);
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: all var(--transition);
+  z-index: 2;
+}
+
+.lightbox-close:hover {
+  background: var(--bg-card-alt);
+  color: var(--text);
+  border-color: var(--border-hover);
+}
+
+/* ================================================================
+   SUCCESS OVERLAY
+================================================================ */
 .success-overlay {
   position: fixed;
   inset: 0;
@@ -930,9 +1070,7 @@ h1, h2, h3 {
   padding: 1rem;
 }
 
-.success-overlay.hidden {
-  display: none;
-}
+.success-overlay.hidden { display: none; }
 
 .success-box {
   background: var(--bg-card);
@@ -967,9 +1105,9 @@ h1, h2, h3 {
   font-style: normal !important;
 }
 
-/* ----------------------------------------------------------------
-   Footer
----------------------------------------------------------------- */
+/* ================================================================
+   FOOTER
+================================================================ */
 .site-footer {
   border-top: 1px solid var(--border);
   padding: 1.5rem 1rem;
@@ -982,8 +1120,6 @@ h1, h2, h3 {
 /* ================================================================
    ADMIN PAGE STYLES
 ================================================================ */
-
-/* Login Gate */
 .login-gate {
   min-height: 100vh;
   display: flex;
@@ -1003,25 +1139,10 @@ h1, h2, h3 {
   text-align: center;
 }
 
-.login-box .brand {
-  font-size: 2rem;
-  margin-bottom: 0.3rem;
-}
+.login-box .brand { font-size: 2rem; margin-bottom: 0.3rem; }
+.login-sub { color: var(--text-muted); font-style: italic; margin-bottom: 2rem; font-size: 0.95rem; }
 
-.login-sub {
-  color: var(--text-muted);
-  font-style: italic;
-  margin-bottom: 2rem;
-  font-size: 0.95rem;
-}
-
-/* Stats bar */
-.stats-bar {
-  display: flex;
-  gap: 1rem;
-  margin-bottom: 1.5rem;
-  flex-wrap: wrap;
-}
+.stats-bar { display: flex; gap: 1rem; margin-bottom: 1.5rem; flex-wrap: wrap; }
 
 .stat-item {
   background: var(--bg-card);
@@ -1034,47 +1155,14 @@ h1, h2, h3 {
   min-width: 120px;
 }
 
-.stat-value {
-  font-family: 'Cinzel', serif;
-  font-size: 1.75rem;
-  color: var(--gold);
-  line-height: 1;
-}
+.stat-value { font-family: 'Cinzel', serif; font-size: 1.75rem; color: var(--gold); line-height: 1; }
+.stat-label { font-size: 0.72rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.06em; margin-top: 0.3rem; }
 
-.stat-label {
-  font-size: 0.72rem;
-  color: var(--text-muted);
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
-  margin-top: 0.3rem;
-}
+.admin-toolbar { display: flex; gap: 0.75rem; margin-bottom: 1.5rem; flex-wrap: wrap; }
+.search-input { flex: 1; min-width: 200px; }
 
-/* Admin toolbar */
-.admin-toolbar {
-  display: flex;
-  gap: 0.75rem;
-  margin-bottom: 1.5rem;
-  flex-wrap: wrap;
-}
-
-.search-input {
-  flex: 1;
-  min-width: 200px;
-}
-
-/* Submissions list */
-.submissions-list {
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-}
-
-.loading-state {
-  text-align: center;
-  color: var(--text-muted);
-  font-style: italic;
-  padding: 3rem;
-}
+.submissions-list { display: flex; flex-direction: column; gap: 1rem; }
+.loading-state { text-align: center; color: var(--text-muted); font-style: italic; padding: 3rem; }
 
 .submission-card {
   background: var(--bg-card);
@@ -1089,13 +1177,10 @@ h1, h2, h3 {
   cursor: pointer;
 }
 
-.submission-card:hover {
-  border-color: var(--border-hover);
-}
+.submission-card:hover { border-color: var(--border-hover); }
 
 .submission-thumb {
-  width: 80px;
-  height: 80px;
+  width: 80px; height: 80px;
   border-radius: var(--radius-sm);
   background: var(--bg-card-alt);
   border: 1px solid var(--border);
@@ -1103,16 +1188,9 @@ h1, h2, h3 {
   flex-shrink: 0;
 }
 
-.submission-thumb img,
-.submission-thumb canvas {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
+.submission-thumb img, .submission-thumb canvas { width: 100%; height: 100%; object-fit: cover; }
 
-.submission-info {
-  min-width: 0;
-}
+.submission-info { min-width: 0; }
 
 .submission-event {
   font-family: 'Cinzel', serif;
@@ -1124,18 +1202,9 @@ h1, h2, h3 {
   text-overflow: ellipsis;
 }
 
-.submission-date {
-  font-size: 0.8rem;
-  color: var(--text-muted);
-  margin-bottom: 0.5rem;
-  font-style: italic;
-}
+.submission-date { font-size: 0.8rem; color: var(--text-muted); margin-bottom: 0.5rem; font-style: italic; }
 
-.submission-tags {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.4rem;
-}
+.submission-tags { display: flex; flex-wrap: wrap; gap: 0.4rem; }
 
 .tag {
   background: var(--bg-card-alt);
@@ -1147,28 +1216,12 @@ h1, h2, h3 {
   white-space: nowrap;
 }
 
-.submission-actions {
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-  align-items: flex-end;
-  flex-shrink: 0;
-}
+.submission-actions { display: flex; flex-direction: column; gap: 0.5rem; align-items: flex-end; flex-shrink: 0; }
 
-/* Empty state */
-.empty-state {
-  text-align: center;
-  padding: 4rem 2rem;
-  color: var(--text-muted);
-}
+.empty-state { text-align: center; padding: 4rem 2rem; color: var(--text-muted); }
+.empty-icon { font-size: 2.5rem; color: var(--gold-dim); margin-bottom: 1rem; }
 
-.empty-icon {
-  font-size: 2.5rem;
-  color: var(--gold-dim);
-  margin-bottom: 1rem;
-}
-
-/* Modal */
+/* Admin modal */
 .modal {
   position: fixed;
   inset: 0;
@@ -1179,9 +1232,7 @@ h1, h2, h3 {
   padding: 1rem;
 }
 
-.modal.hidden {
-  display: none;
-}
+.modal.hidden { display: none; }
 
 .modal-backdrop {
   position: absolute;
@@ -1214,10 +1265,7 @@ h1, h2, h3 {
   z-index: 1;
 }
 
-.modal-header h2 {
-  font-size: 1.1rem;
-  color: var(--gold);
-}
+.modal-header h2 { font-size: 1.1rem; color: var(--gold); }
 
 .modal-close {
   background: none;
@@ -1229,18 +1277,11 @@ h1, h2, h3 {
   transition: color var(--transition);
 }
 
-.modal-close:hover {
-  color: var(--text);
-}
+.modal-close:hover { color: var(--text); }
 
-.modal-body {
-  padding: 1.75rem;
-}
+.modal-body { padding: 1.75rem; }
 
-/* Modal detail rows */
-.detail-section {
-  margin-bottom: 1.5rem;
-}
+.detail-section { margin-bottom: 1.5rem; }
 
 .detail-section-title {
   font-family: 'Cinzel', serif;
@@ -1253,21 +1294,9 @@ h1, h2, h3 {
   border-bottom: 1px solid var(--border);
 }
 
-.detail-row {
-  display: grid;
-  grid-template-columns: 140px 1fr;
-  gap: 0.5rem;
-  padding: 0.3rem 0;
-  font-size: 0.9rem;
-}
-
-.detail-key {
-  color: var(--text-muted);
-}
-
-.detail-val {
-  color: var(--text);
-}
+.detail-row { display: grid; grid-template-columns: 140px 1fr; gap: 0.5rem; padding: 0.3rem 0; font-size: 0.9rem; }
+.detail-key { color: var(--text-muted); }
+.detail-val { color: var(--text); }
 
 .detail-monogram-preview {
   max-width: 280px;
@@ -1280,53 +1309,28 @@ h1, h2, h3 {
    RESPONSIVE
 ================================================================ */
 @media (max-width: 600px) {
-  .container {
-    padding: 1rem 0.75rem 3rem;
-  }
-
-  .card {
-    padding: 1.25rem;
-  }
-
-  .backdrop-grid {
-    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
-  }
-
-  .print-grid {
-    grid-template-columns: 1fr 1fr;
-  }
-
-  .header-inner {
-    padding: 0.75rem 1rem;
-  }
-
-  .brand {
-    font-size: 1.25rem;
-  }
-
-  .submission-card {
-    grid-template-columns: 1fr;
-  }
-
-  .submission-thumb {
-    width: 60px;
-    height: 60px;
-  }
-
-  .submission-actions {
-    flex-direction: row;
-    align-items: center;
-  }
+  .container { padding: 1rem 0.75rem 3rem; }
+  .card { padding: 1.25rem; }
+  .backdrop-grid { grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); }
+  .print-grid { grid-template-columns: 1fr 1fr; }
+  .header-inner { padding: 0.75rem 1rem; }
+  .brand { font-size: 1.25rem; }
+  .submission-card { grid-template-columns: 1fr; }
+  .submission-thumb { width: 60px; height: 60px; }
+  .submission-actions { flex-direction: row; align-items: center; }
+  .wizard-steps-track { gap: 0; }
+  .step-label { display: none; }
+  .review-row { grid-template-columns: 100px 1fr auto; gap: 0.6rem; }
+  .flourish-picker-grid { grid-template-columns: repeat(auto-fill, minmax(90px, 1fr)); }
 }
 
-/* ----------------------------------------------------------------
-   Utility
----------------------------------------------------------------- */
-.hidden {
-  display: none !important;
+@media (max-width: 420px) {
+  .wizard-progress-bar { padding: 0.75rem 0.6rem 0.5rem; }
+  .step-bubble { width: 24px; height: 24px; font-size: 0.65rem; }
 }
 
-/* Smooth scroll into view for errors */
-.has-error {
-  scroll-margin-top: 80px;
-}
+/* ================================================================
+   UTILITY
+================================================================ */
+.hidden { display: none !important; }
+.has-error { scroll-margin-top: 120px; }

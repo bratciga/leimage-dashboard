@@ -5,7 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Le Image — Photo Booth Configurator</title>
 
-  <!-- Google Fonts — Preloaded set for quick access -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600&family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300&display=swap" rel="stylesheet" />
@@ -24,369 +23,442 @@
     </div>
   </header>
 
-  <!-- ============================================================
-       EVENT BANNER
-  ============================================================ -->
+  <!-- EVENT BANNER -->
   <div class="event-banner">
     <span class="event-label">Event:</span>
     <span id="event-name" class="event-slug">Loading…</span>
   </div>
 
   <!-- ============================================================
-       MAIN FORM
+       WIZARD PROGRESS BAR
   ============================================================ -->
-  <main class="container">
-    <form id="configurator-form" novalidate>
+  <div class="wizard-progress-bar" id="wizard-progress-bar" role="navigation" aria-label="Wizard steps">
+    <div class="wizard-steps-track">
+      <div class="wizard-step" data-step="1">
+        <div class="step-bubble">1</div>
+        <div class="step-label">Setup</div>
+      </div>
+      <div class="wizard-step" data-step="2">
+        <div class="step-bubble">2</div>
+        <div class="step-label">Parking</div>
+      </div>
+      <div class="wizard-step" data-step="3">
+        <div class="step-bubble">3</div>
+        <div class="step-label">Backdrop</div>
+      </div>
+      <div class="wizard-step" data-step="4">
+        <div class="step-bubble">4</div>
+        <div class="step-label">Print Size</div>
+      </div>
+      <div class="wizard-step" data-step="5">
+        <div class="step-bubble">5</div>
+        <div class="step-label">Props</div>
+      </div>
+      <div class="wizard-step" data-step="6">
+        <div class="step-bubble">6</div>
+        <div class="step-label">Notes</div>
+      </div>
+      <div class="wizard-step" data-step="7">
+        <div class="step-bubble">7</div>
+        <div class="step-label">Monogram</div>
+      </div>
+      <div class="wizard-step" data-step="8">
+        <div class="step-bubble">8</div>
+        <div class="step-label">Review</div>
+      </div>
+    </div>
+    <div class="wizard-fill-track">
+      <div class="wizard-fill" id="wizard-fill"></div>
+    </div>
+  </div>
 
-      <!-- --------------------------------------------------------
-           A. PHOTO BOOTH INFO
-      -------------------------------------------------------- -->
-      <section class="card" id="section-info">
-        <h2 class="section-title">Photo Booth Setup</h2>
-        <p class="section-desc">
-          We typically need about a <strong>10 by 10-foot space</strong> for the setup.
-          The dimensions of our photo booth backdrop are <strong>7 by 7 feet</strong>,
-          and the size is not adjustable.
-        </p>
+  <!-- ============================================================
+       MAIN WIZARD
+  ============================================================ -->
+  <main class="container wizard-container" id="wizard-main">
 
-        <div class="photo-grid">
-          <div class="photo-slot">
-            <img src="assets/images/booth-setup/booth-action-props.jpg" alt="Photo booth in action with props" />
-          </div>
-          <div class="photo-slot">
-            <img src="assets/images/booth-setup/booth-setup-gold.jpg" alt="Photo booth setup with gold backdrop" />
-          </div>
-          <div class="photo-slot">
-            <img src="assets/images/booth-setup/booth-props-table.jpg" alt="Photo booth props table" />
-          </div>
-          <div class="photo-slot">
-            <img src="assets/images/booth-setup/booth-ballroom.jpg" alt="Photo booth setup in ballroom" />
-          </div>
+    <!-- ============================================================
+         STEP 1: PHOTO BOOTH INFO
+    ============================================================ -->
+    <section class="wizard-step-panel card" id="step-panel-1" data-step="1">
+      <h2 class="section-title">Photo Booth Setup</h2>
+      <p class="section-desc">
+        We typically need about a <strong>10 by 10-foot space</strong> for the setup.
+        The dimensions of our photo booth backdrop are <strong>7 by 7 feet</strong>,
+        and the size is not adjustable.
+      </p>
+
+      <div class="photo-grid">
+        <div class="photo-slot lightbox-trigger" data-src="assets/images/booth-setup/booth-action-props.jpg" data-alt="Photo booth in action with props">
+          <img src="assets/images/booth-setup/booth-action-props.jpg" alt="Photo booth in action with props" />
         </div>
-      </section>
-
-      <!-- --------------------------------------------------------
-           B. PARKING
-      -------------------------------------------------------- -->
-      <section class="card" id="section-parking">
-        <h2 class="section-title">Parking</h2>
-        <p class="section-desc">
-          The client is responsible for providing parking for the photo booth.
-          Do you have parking arranged with your venue or a nearby lot?
-        </p>
-
-        <div class="radio-group">
-          <label class="radio-card">
-            <input type="radio" name="parking" value="yes" required />
-            <span class="radio-label">Yes</span>
-          </label>
-          <label class="radio-card">
-            <input type="radio" name="parking" value="no" />
-            <span class="radio-label">No</span>
-          </label>
+        <div class="photo-slot lightbox-trigger" data-src="assets/images/booth-setup/booth-setup-gold.jpg" data-alt="Photo booth setup with gold backdrop">
+          <img src="assets/images/booth-setup/booth-setup-gold.jpg" alt="Photo booth setup with gold backdrop" />
         </div>
-        <div class="field-error" id="error-parking" aria-live="polite"></div>
-      </section>
+        <div class="photo-slot lightbox-trigger" data-src="assets/images/booth-setup/booth-props-table.jpg" data-alt="Photo booth props table">
+          <img src="assets/images/booth-setup/booth-props-table.jpg" alt="Photo booth props table" />
+        </div>
+        <div class="photo-slot lightbox-trigger" data-src="assets/images/booth-setup/booth-ballroom.jpg" data-alt="Photo booth setup in ballroom">
+          <img src="assets/images/booth-setup/booth-ballroom.jpg" alt="Photo booth setup in ballroom" />
+        </div>
+      </div>
 
-      <!-- --------------------------------------------------------
-           C. QUALITY DISCLAIMER
-      -------------------------------------------------------- -->
-      <section class="card" id="section-disclaimer">
-        <h2 class="section-title">Quality Disclaimer</h2>
-        <p class="section-desc">
-          We strive to maintain the highest standards of quality in our services,
-          but we cannot guarantee the same level of quality when using external
-          monograms and backdrops. These elements may not be optimized for our
-          equipment and may lead to variations in image quality, lighting, and
-          overall aesthetics.
-        </p>
+      <div class="wizard-nav">
+        <div></div><!-- empty left slot -->
+        <button type="button" class="btn btn-primary wizard-next" data-next="2">Next →</button>
+      </div>
+    </section>
 
-        <label class="checkbox-card">
-          <input type="checkbox" id="disclaimer-check" name="disclaimer" required />
-          <span class="checkbox-label">I understand</span>
+    <!-- ============================================================
+         STEP 2: PARKING
+    ============================================================ -->
+    <section class="wizard-step-panel card hidden" id="step-panel-2" data-step="2">
+      <h2 class="section-title">Parking</h2>
+      <p class="section-desc">
+        The client is responsible for providing parking for the photo booth attendant.
+        Do you have parking arranged with your venue or a nearby lot?
+      </p>
+
+      <div class="toggle-card-group">
+        <button type="button" class="toggle-card" data-group="parking" data-value="yes">
+          <span class="toggle-card-icon">🅿️</span>
+          <span class="toggle-card-label">Yes</span>
+        </button>
+        <button type="button" class="toggle-card" data-group="parking" data-value="no">
+          <span class="toggle-card-icon">🚫</span>
+          <span class="toggle-card-label">No</span>
+        </button>
+      </div>
+      <input type="hidden" id="parking-value" name="parking" />
+      <div class="field-error" id="error-parking" aria-live="polite"></div>
+
+      <div class="wizard-nav">
+        <button type="button" class="btn btn-ghost wizard-back" data-back="1">← Back</button>
+        <button type="button" class="btn btn-primary wizard-next" data-next="3">Next →</button>
+      </div>
+    </section>
+
+    <!-- ============================================================
+         STEP 3: BACKDROP COLOR
+    ============================================================ -->
+    <section class="wizard-step-panel card hidden" id="step-panel-3" data-step="3">
+      <h2 class="section-title">Backdrop Color</h2>
+      <p class="section-desc">Select the backdrop that best fits your event. Click an image to preview it larger. Click the selected backdrop again to deselect.</p>
+
+      <div class="backdrop-grid" role="group" aria-label="Backdrop selection">
+
+        <div class="backdrop-card toggle-selectable" data-group="backdrop" data-value="Marble White">
+          <div class="backdrop-img-wrap lightbox-trigger" data-src="assets/images/backdrops/marble-white.jpg" data-alt="Marble White backdrop">
+            <img src="assets/images/backdrops/marble-white.jpg" alt="Marble White backdrop" class="backdrop-img" />
+          </div>
+          <span class="backdrop-name">Marble White</span>
+          <span class="check-mark">✓</span>
+        </div>
+
+        <div class="backdrop-card toggle-selectable" data-group="backdrop" data-value="Marble Black">
+          <div class="backdrop-img-wrap lightbox-trigger" data-src="assets/images/backdrops/marble-black.jpg" data-alt="Marble Black backdrop">
+            <img src="assets/images/backdrops/marble-black.jpg" alt="Marble Black backdrop" class="backdrop-img" />
+          </div>
+          <span class="backdrop-name">Marble Black</span>
+          <span class="check-mark">✓</span>
+        </div>
+
+        <div class="backdrop-card toggle-selectable" data-group="backdrop" data-value="Lollipop">
+          <div class="backdrop-img-wrap lightbox-trigger" data-src="assets/images/backdrops/lollipop.jpg" data-alt="Lollipop backdrop">
+            <img src="assets/images/backdrops/lollipop.jpg" alt="Lollipop backdrop" class="backdrop-img" />
+          </div>
+          <span class="backdrop-name">Lollipop</span>
+          <span class="check-mark">✓</span>
+        </div>
+
+        <div class="backdrop-card toggle-selectable" data-group="backdrop" data-value="Romb">
+          <div class="backdrop-img-wrap lightbox-trigger" data-src="assets/images/backdrops/romb.jpg" data-alt="Romb backdrop">
+            <img src="assets/images/backdrops/romb.jpg" alt="Romb backdrop" class="backdrop-img" />
+          </div>
+          <span class="backdrop-name">Romb</span>
+          <span class="check-mark">✓</span>
+        </div>
+
+        <div class="backdrop-card toggle-selectable" data-group="backdrop" data-value="Red">
+          <div class="backdrop-img-wrap lightbox-trigger" data-src="assets/images/backdrops/red.jpg" data-alt="Red backdrop">
+            <img src="assets/images/backdrops/red.jpg" alt="Red backdrop" class="backdrop-img" />
+          </div>
+          <span class="backdrop-name">Red</span>
+          <span class="check-mark">✓</span>
+        </div>
+
+        <div class="backdrop-card toggle-selectable" data-group="backdrop" data-value="Silver">
+          <div class="backdrop-img-wrap lightbox-trigger" data-src="assets/images/backdrops/silver.jpg" data-alt="Silver backdrop">
+            <img src="assets/images/backdrops/silver.jpg" alt="Silver backdrop" class="backdrop-img" />
+          </div>
+          <span class="backdrop-name">Silver</span>
+          <span class="check-mark">✓</span>
+        </div>
+
+        <div class="backdrop-card toggle-selectable" data-group="backdrop" data-value="Pink">
+          <div class="backdrop-img-wrap lightbox-trigger" data-src="assets/images/backdrops/pink.jpg" data-alt="Pink backdrop">
+            <img src="assets/images/backdrops/pink.jpg" alt="Pink backdrop" class="backdrop-img" />
+          </div>
+          <span class="backdrop-name">Pink</span>
+          <span class="check-mark">✓</span>
+        </div>
+
+        <div class="backdrop-card toggle-selectable" data-group="backdrop" data-value="Gold">
+          <div class="backdrop-img-wrap lightbox-trigger" data-src="assets/images/backdrops/gold.jpg" data-alt="Gold backdrop">
+            <img src="assets/images/backdrops/gold.jpg" alt="Gold backdrop" class="backdrop-img" />
+          </div>
+          <span class="backdrop-name">Gold</span>
+          <span class="check-mark">✓</span>
+        </div>
+
+        <div class="backdrop-card backdrop-card--own toggle-selectable" data-group="backdrop" data-value="Own Backdrop">
+          <div class="backdrop-img-wrap">
+            <div class="backdrop-placeholder" style="background: linear-gradient(135deg, #2c3e50, #4a5568);">
+              <span>✦</span>
+            </div>
+          </div>
+          <span class="backdrop-name">I will provide my own</span>
+          <span class="backdrop-note">The studio will reach out regarding backdrop requirements.</span>
+          <span class="check-mark">✓</span>
+        </div>
+
+      </div>
+      <input type="hidden" id="backdrop-value" name="backdrop" />
+      <div class="field-error" id="error-backdrop" aria-live="polite"></div>
+
+      <div class="wizard-nav">
+        <button type="button" class="btn btn-ghost wizard-back" data-back="2">← Back</button>
+        <button type="button" class="btn btn-primary wizard-next" data-next="4">Next →</button>
+      </div>
+    </section>
+
+    <!-- ============================================================
+         STEP 4: PRINT SIZE
+    ============================================================ -->
+    <section class="wizard-step-panel card hidden" id="step-panel-4" data-step="4">
+      <h2 class="section-title">Print Size</h2>
+      <p class="section-desc">Select your preferred print size. Click to select, click again to deselect.</p>
+
+      <div class="print-grid" role="group" aria-label="Print size selection">
+
+        <div class="print-card toggle-selectable" data-group="print_size" data-value="4x6">
+          <div class="print-preview print-preview--4x6 lightbox-trigger" data-src="assets/images/prints/4x6-sample.jpg" data-alt="4×6 print sample">
+            <img src="assets/images/prints/4x6-sample.jpg" alt="4×6 print sample" class="print-img" />
+          </div>
+          <span class="print-name">4×6 Print</span>
+          <span class="check-mark">✓</span>
+        </div>
+
+        <div class="print-card toggle-selectable" data-group="print_size" data-value="2x6">
+          <div class="print-preview print-preview--2x6 lightbox-trigger" data-src="assets/images/prints/2x6-sample.jpg" data-alt="2×6 strip sample">
+            <img src="assets/images/prints/2x6-sample.jpg" alt="2×6 strip sample" class="print-img" />
+          </div>
+          <span class="print-name">2×6 Strip</span>
+          <span class="check-mark">✓</span>
+        </div>
+
+      </div>
+      <input type="hidden" id="print-size-value" name="print_size" />
+      <div class="field-error" id="error-print" aria-live="polite"></div>
+
+      <div class="wizard-nav">
+        <button type="button" class="btn btn-ghost wizard-back" data-back="3">← Back</button>
+        <button type="button" class="btn btn-primary wizard-next" data-next="5">Next →</button>
+      </div>
+    </section>
+
+    <!-- ============================================================
+         STEP 5: PROPS
+    ============================================================ -->
+    <section class="wizard-step-panel card hidden" id="step-panel-5" data-step="5">
+      <h2 class="section-title">Props</h2>
+      <p class="section-desc">Choose one or more prop themes for your event. You can select multiple.</p>
+
+      <div class="props-grid">
+        <label class="prop-card">
+          <input type="checkbox" name="props" value="Wedding" />
+          <span class="prop-emoji">🎊</span>
+          <span class="prop-name">Wedding</span>
+          <span class="check-mark">✓</span>
         </label>
-        <div class="field-error" id="error-disclaimer" aria-live="polite"></div>
-      </section>
+        <label class="prop-card">
+          <input type="checkbox" name="props" value="Birthday" />
+          <span class="prop-emoji">🎂</span>
+          <span class="prop-name">Birthday</span>
+          <span class="check-mark">✓</span>
+        </label>
+        <label class="prop-card">
+          <input type="checkbox" name="props" value="Bar/Bat Mitzvah" />
+          <span class="prop-emoji">✡️</span>
+          <span class="prop-name">Bar/Bat Mitzvah</span>
+          <span class="check-mark">✓</span>
+        </label>
+        <label class="prop-card">
+          <input type="checkbox" name="props" value="Graduation" />
+          <span class="prop-emoji">🎓</span>
+          <span class="prop-name">Graduation</span>
+          <span class="check-mark">✓</span>
+        </label>
+        <label class="prop-card">
+          <input type="checkbox" name="props" value="General Party" />
+          <span class="prop-emoji">🎉</span>
+          <span class="prop-name">General Party</span>
+          <span class="check-mark">✓</span>
+        </label>
+      </div>
 
-      <!-- --------------------------------------------------------
-           D. BACKDROP COLOR
-      -------------------------------------------------------- -->
-      <section class="card" id="section-backdrop">
-        <h2 class="section-title">Backdrop Color</h2>
-        <p class="section-desc">Select the backdrop that best fits your event.</p>
+      <div class="wizard-nav">
+        <button type="button" class="btn btn-ghost wizard-back" data-back="4">← Back</button>
+        <button type="button" class="btn btn-primary wizard-next" data-next="6">Next →</button>
+      </div>
+    </section>
 
-        <div class="backdrop-grid" role="radiogroup" aria-label="Backdrop selection">
-          <!-- Each backdrop card — add a real image to .backdrop-img src when available -->
+    <!-- ============================================================
+         STEP 6: SPECIAL INSTRUCTIONS
+    ============================================================ -->
+    <section class="wizard-step-panel card hidden" id="step-panel-6" data-step="6">
+      <h2 class="section-title">Special Instructions</h2>
+      <p class="section-desc">Anything else we should know about your event?</p>
+      <textarea
+        id="special-instructions"
+        name="special_instructions"
+        class="textarea-input"
+        rows="6"
+        placeholder="Any special requests, venue details, accessibility needs, allergies, etc."
+      ></textarea>
 
-          <label class="backdrop-card">
-            <input type="radio" name="backdrop" value="Marble White" required />
-            <div class="backdrop-img-wrap">
-              <img src="assets/images/backdrops/marble-white.jpg" alt="Marble White backdrop" class="backdrop-img" />
-            </div>
-            <span class="backdrop-name">Marble White</span>
-            <span class="check-mark">✓</span>
-          </label>
+      <div class="wizard-nav">
+        <button type="button" class="btn btn-ghost wizard-back" data-back="5">← Back</button>
+        <button type="button" class="btn btn-primary wizard-next" data-next="7">Next →</button>
+      </div>
+    </section>
 
-          <label class="backdrop-card">
-            <input type="radio" name="backdrop" value="Marble Black" />
-            <div class="backdrop-img-wrap">
-              <img src="assets/images/backdrops/marble-black.jpg" alt="Marble Black backdrop" class="backdrop-img" />
-            </div>
-            <span class="backdrop-name">Marble Black</span>
-            <span class="check-mark">✓</span>
-          </label>
+    <!-- ============================================================
+         STEP 7: MONOGRAM BUILDER
+    ============================================================ -->
+    <section class="wizard-step-panel card hidden" id="step-panel-7" data-step="7">
+      <h2 class="section-title">Monogram Builder ✦</h2>
+      <p class="section-desc">
+        Design your monogram — it will appear at the bottom of every print.
+        The final PNG is production-ready with a transparent background.
+      </p>
 
-          <label class="backdrop-card">
-            <input type="radio" name="backdrop" value="Lollipop" />
-            <div class="backdrop-img-wrap">
-              <img src="assets/images/backdrops/lollipop.jpg" alt="Lollipop backdrop" class="backdrop-img" />
-            </div>
-            <span class="backdrop-name">Lollipop</span>
-            <span class="check-mark">✓</span>
-          </label>
+      <div class="monogram-layout">
 
-          <label class="backdrop-card">
-            <input type="radio" name="backdrop" value="Romb" />
-            <div class="backdrop-img-wrap">
-              <img src="assets/images/backdrops/romb.jpg" alt="Romb backdrop" class="backdrop-img" />
-            </div>
-            <span class="backdrop-name">Romb</span>
-            <span class="check-mark">✓</span>
-          </label>
+        <!-- Controls -->
+        <div class="monogram-controls">
 
-          <label class="backdrop-card">
-            <input type="radio" name="backdrop" value="Red" />
-            <div class="backdrop-img-wrap">
-              <img src="assets/images/backdrops/red.jpg" alt="Red backdrop" class="backdrop-img" />
-            </div>
-            <span class="backdrop-name">Red</span>
-            <span class="check-mark">✓</span>
-          </label>
-
-          <label class="backdrop-card">
-            <input type="radio" name="backdrop" value="Silver" />
-            <div class="backdrop-img-wrap">
-              <img src="assets/images/backdrops/silver.jpg" alt="Silver backdrop" class="backdrop-img" />
-            </div>
-            <span class="backdrop-name">Silver</span>
-            <span class="check-mark">✓</span>
-          </label>
-
-          <label class="backdrop-card">
-            <input type="radio" name="backdrop" value="Pink" />
-            <div class="backdrop-img-wrap">
-              <img src="assets/images/backdrops/pink.jpg" alt="Pink backdrop" class="backdrop-img" />
-            </div>
-            <span class="backdrop-name">Pink</span>
-            <span class="check-mark">✓</span>
-          </label>
-
-          <label class="backdrop-card">
-            <input type="radio" name="backdrop" value="Gold" />
-            <div class="backdrop-img-wrap">
-              <img src="assets/images/backdrops/gold.jpg" alt="Gold backdrop" class="backdrop-img" />
-            </div>
-            <span class="backdrop-name">Gold</span>
-            <span class="check-mark">✓</span>
-          </label>
-
-          <label class="backdrop-card backdrop-card--own">
-            <input type="radio" name="backdrop" value="Own Backdrop" />
-            <div class="backdrop-img-wrap">
-              <div class="backdrop-placeholder" style="background: linear-gradient(135deg, #2c3e50, #4a5568);">
-                <span>✦</span>
-              </div>
-            </div>
-            <span class="backdrop-name">I will provide my own backdrop</span>
-            <span class="backdrop-note">The studio will reach out regarding backdrop requirements.</span>
-            <span class="check-mark">✓</span>
-          </label>
-
-        </div>
-        <div class="field-error" id="error-backdrop" aria-live="polite"></div>
-      </section>
-
-      <!-- --------------------------------------------------------
-           E. PRINT SIZE
-      -------------------------------------------------------- -->
-      <section class="card" id="section-print">
-        <h2 class="section-title">Print Size</h2>
-        <p class="section-desc">Select your preferred print size. This also determines the monogram layout below.</p>
-
-        <div class="print-grid" role="radiogroup" aria-label="Print size selection">
-
-          <label class="print-card">
-            <input type="radio" name="print_size" value="4x6" required />
-            <div class="print-preview print-preview--4x6">
-              <img src="assets/images/prints/4x6-sample.jpg" alt="4×6 print sample" class="print-img" />
-            </div>
-            <span class="print-name">4×6 Print</span>
-            <span class="check-mark">✓</span>
-          </label>
-
-          <label class="print-card">
-            <input type="radio" name="print_size" value="2x6" />
-            <div class="print-preview print-preview--2x6">
-              <img src="assets/images/prints/2x6-sample.jpg" alt="2×6 strip sample" class="print-img" />
-            </div>
-            <span class="print-name">2×6 Strip</span>
-            <span class="check-mark">✓</span>
-          </label>
-
-        </div>
-        <div class="field-error" id="error-print" aria-live="polite"></div>
-      </section>
-
-      <!-- --------------------------------------------------------
-           F. MONOGRAM BUILDER
-      -------------------------------------------------------- -->
-      <section class="card" id="section-monogram">
-        <h2 class="section-title">Monogram Builder ✦</h2>
-        <p class="section-desc">
-          Design your monogram — it will appear at the bottom of every print.
-          Customize the text, font, and colors below. The preview updates live.
-        </p>
-
-        <div class="monogram-layout">
-
-          <!-- Controls column -->
-          <div class="monogram-controls">
-
-            <div class="field-group">
-              <label class="field-label" for="mono-line1">Line 1 <span class="field-hint">(e.g. "J &amp; M" or "Jessica &amp; Michael")</span></label>
-              <input type="text" id="mono-line1" class="text-input" placeholder="J & M" maxlength="60" />
-            </div>
-
-            <div class="field-group">
-              <label class="field-label" for="mono-line2">Line 2 <span class="field-hint">(e.g. "April 15, 2026")</span></label>
-              <input type="text" id="mono-line2" class="text-input" placeholder="April 15, 2026" maxlength="60" />
-            </div>
-
-            <div class="field-group">
-              <label class="field-label" for="mono-font">Font</label>
-              <select id="mono-font" class="select-input">
-                <!-- Options injected by monogram.js so font names stay in one place -->
-              </select>
-              <!-- Live font preview strip -->
-              <div id="font-preview-strip" class="font-preview-strip">Font Preview</div>
-            </div>
-
-            <div class="field-row">
-              <div class="field-group">
-                <label class="field-label" for="mono-text-color">Text Color</label>
-                <div class="color-picker-wrap">
-                  <input type="color" id="mono-text-color" class="color-input" value="#ffffff" />
-                  <span id="mono-text-color-hex" class="color-hex">#ffffff</span>
-                </div>
-              </div>
-
-              <div class="field-group">
-                <label class="field-label" for="mono-bg-color">Background</label>
-                <div class="color-picker-wrap">
-                  <input type="color" id="mono-bg-color" class="color-input" value="#000000" />
-                  <span id="mono-bg-color-hex" class="color-hex">#000000</span>
-                </div>
-                <label class="toggle-wrap">
-                  <input type="checkbox" id="mono-bg-transparent" checked />
-                  <span>Transparent background</span>
-                </label>
-              </div>
-            </div>
-
-            <div class="field-group">
-              <label class="toggle-wrap">
-                <input type="checkbox" id="mono-flourish" checked />
-                <span>Show decorative flourish lines</span>
-              </label>
-            </div>
-
-            <div class="monogram-actions">
-              <button type="button" id="btn-download-preview" class="btn btn-secondary">
-                ↓ Download Preview
-              </button>
-            </div>
-
-          </div><!-- /monogram-controls -->
-
-          <!-- Canvas preview column -->
-          <div class="monogram-preview-wrap">
-            <div class="canvas-label">Live Preview</div>
-            <div class="canvas-outer" id="canvas-outer">
-              <!-- Canvas injected by monogram.js -->
-            </div>
-            <div class="canvas-note">Preview is scaled to fit. Final export is full resolution.</div>
+          <div class="field-group">
+            <label class="field-label" for="mono-line1">Line 1 <span class="field-hint">(e.g. "J &amp; M" or "Jessica &amp; Michael")</span></label>
+            <input type="text" id="mono-line1" class="text-input" placeholder="J & M" maxlength="60" />
           </div>
 
-        </div><!-- /monogram-layout -->
-        <div class="field-error" id="error-monogram" aria-live="polite"></div>
-      </section>
+          <div class="field-group">
+            <label class="field-label" for="mono-line2">Line 2 <span class="field-hint">(e.g. "April 15, 2026")</span></label>
+            <input type="text" id="mono-line2" class="text-input" placeholder="April 15, 2026" maxlength="60" />
+          </div>
 
-      <!-- --------------------------------------------------------
-           G. PROPS
-      -------------------------------------------------------- -->
-      <section class="card" id="section-props">
-        <h2 class="section-title">Props</h2>
-        <p class="section-desc">Choose a prop theme for your event:</p>
+          <div class="field-group">
+            <label class="field-label" for="mono-font">Font</label>
+            <select id="mono-font" class="select-input"></select>
+            <div id="font-preview-strip" class="font-preview-strip">Font Preview</div>
+          </div>
 
-        <div class="props-grid">
-          <!-- Add new props here — just copy a label block -->
-          <label class="prop-card">
-            <input type="checkbox" name="props" value="Wedding" />
-            <span class="prop-emoji">🎊</span>
-            <span class="prop-name">Wedding</span>
-            <span class="check-mark">✓</span>
-          </label>
+          <div class="field-group">
+            <label class="field-label" for="mono-text-color">Text Color</label>
+            <div class="color-picker-wrap">
+              <input type="color" id="mono-text-color" class="color-input" value="#ffffff" />
+              <span id="mono-text-color-hex" class="color-hex">#ffffff</span>
+            </div>
+          </div>
 
-          <label class="prop-card">
-            <input type="checkbox" name="props" value="Birthday" />
-            <span class="prop-emoji">🎂</span>
-            <span class="prop-name">Birthday</span>
-            <span class="check-mark">✓</span>
-          </label>
+          <div class="field-group">
+            <label class="field-label">Flourish Style</label>
+            <div id="flourish-picker-grid" class="flourish-picker-grid"></div>
+          </div>
 
-          <label class="prop-card">
-            <input type="checkbox" name="props" value="Bar/Bat Mitzvah" />
-            <span class="prop-emoji">✡️</span>
-            <span class="prop-name">Bar/Bat Mitzvah</span>
-            <span class="check-mark">✓</span>
-          </label>
+          <div class="monogram-actions">
+            <button type="button" id="btn-download-preview" class="btn btn-secondary">
+              ↓ Download PNG
+            </button>
+          </div>
+          <div class="field-error" id="error-monogram" aria-live="polite"></div>
 
-          <label class="prop-card">
-            <input type="checkbox" name="props" value="Graduation" />
-            <span class="prop-emoji">🎓</span>
-            <span class="prop-name">Graduation</span>
-            <span class="check-mark">✓</span>
-          </label>
+        </div><!-- /monogram-controls -->
 
-          <label class="prop-card">
-            <input type="checkbox" name="props" value="General Party" />
-            <span class="prop-emoji">🎉</span>
-            <span class="prop-name">General Party</span>
-            <span class="check-mark">✓</span>
-          </label>
+        <!-- Preview column -->
+        <div class="monogram-preview-wrap">
+          <div class="canvas-label">Live Preview (scaled)</div>
+          <div class="canvas-outer" id="canvas-outer"></div>
+          <div class="canvas-note">Transparent background · Full resolution on export</div>
+
+          <div class="print-mock-section">
+            <div class="canvas-label">Print Layout Preview</div>
+            <div id="print-mock-canvas-wrap" class="print-mock-wrap"></div>
+            <div class="canvas-note">How it looks on your actual print</div>
+          </div>
         </div>
-      </section>
 
-      <!-- --------------------------------------------------------
-           H. SPECIAL INSTRUCTIONS
-      -------------------------------------------------------- -->
-      <section class="card" id="section-notes">
-        <h2 class="section-title">Special Instructions</h2>
-        <p class="section-desc">Anything else we should know about your event?</p>
-        <textarea
-          id="special-instructions"
-          name="special_instructions"
-          class="textarea-input"
-          rows="5"
-          placeholder="Any special requests, venue details, allergies, accessibility needs, etc."
-        ></textarea>
-      </section>
+      </div><!-- /monogram-layout -->
 
-      <!-- --------------------------------------------------------
-           I. SUBMIT
-      -------------------------------------------------------- -->
-      <section class="card card--submit" id="section-submit">
-        <button type="submit" id="submit-btn" class="btn btn-primary btn-large">
+      <div class="wizard-nav">
+        <button type="button" class="btn btn-ghost wizard-back" data-back="6">← Back</button>
+        <button type="button" class="btn btn-primary wizard-next" data-next="8">Next: Review →</button>
+      </div>
+    </section>
+
+    <!-- ============================================================
+         STEP 8: REVIEW & SUBMIT
+    ============================================================ -->
+    <section class="wizard-step-panel card hidden" id="step-panel-8" data-step="8">
+      <h2 class="section-title">Review &amp; Submit</h2>
+      <p class="section-desc">Please review your selections below. Click "Edit" to change anything.</p>
+
+      <div class="review-grid">
+
+        <div class="review-row">
+          <div class="review-label">Parking</div>
+          <div class="review-value" id="review-parking">—</div>
+          <button type="button" class="btn btn-sm btn-ghost review-edit" data-goto="2">Edit</button>
+        </div>
+
+        <div class="review-row">
+          <div class="review-label">Backdrop</div>
+          <div class="review-value" id="review-backdrop">—</div>
+          <button type="button" class="btn btn-sm btn-ghost review-edit" data-goto="3">Edit</button>
+        </div>
+
+        <div class="review-row">
+          <div class="review-label">Print Size</div>
+          <div class="review-value" id="review-print-size">—</div>
+          <button type="button" class="btn btn-sm btn-ghost review-edit" data-goto="4">Edit</button>
+        </div>
+
+        <div class="review-row">
+          <div class="review-label">Props</div>
+          <div class="review-value" id="review-props">—</div>
+          <button type="button" class="btn btn-sm btn-ghost review-edit" data-goto="5">Edit</button>
+        </div>
+
+        <div class="review-row">
+          <div class="review-label">Special Instructions</div>
+          <div class="review-value" id="review-notes">—</div>
+          <button type="button" class="btn btn-sm btn-ghost review-edit" data-goto="6">Edit</button>
+        </div>
+
+        <div class="review-row review-row--monogram">
+          <div class="review-label">Monogram</div>
+          <div class="review-value">
+            <div id="review-monogram-text">—</div>
+            <canvas id="review-monogram-canvas" class="review-monogram-thumb" width="120" height="80"></canvas>
+          </div>
+          <button type="button" class="btn btn-sm btn-ghost review-edit" data-goto="7">Edit</button>
+        </div>
+
+      </div>
+
+      <div class="card--submit-inner">
+        <button type="button" id="submit-btn" class="btn btn-primary btn-large">
           Submit Configuration
         </button>
         <p class="submit-note">
@@ -394,10 +466,26 @@
           Our team will review your configuration and reach out if needed.
         </p>
         <div id="submit-status" class="submit-status" aria-live="polite"></div>
-      </section>
+      </div>
 
-    </form>
+      <div class="wizard-nav">
+        <button type="button" class="btn btn-ghost wizard-back" data-back="7">← Back</button>
+        <div></div>
+      </div>
+    </section>
+
   </main>
+
+  <!-- ============================================================
+       LIGHTBOX
+  ============================================================ -->
+  <div id="lightbox" class="lightbox hidden" role="dialog" aria-modal="true" aria-label="Image preview">
+    <div class="lightbox-backdrop" id="lightbox-backdrop"></div>
+    <div class="lightbox-box">
+      <button class="lightbox-close" id="lightbox-close" aria-label="Close">✕</button>
+      <img id="lightbox-img" src="" alt="" class="lightbox-img" />
+    </div>
+  </div>
 
   <!-- ============================================================
        SUCCESS OVERLAY
@@ -422,7 +510,6 @@
     <p>© <span id="footer-year"></span> Le Image Photography Studio. All rights reserved.</p>
   </footer>
 
-  <!-- Scripts — order matters: monogram first, then app -->
   <script src="js/monogram.js"></script>
   <script src="js/app.js"></script>
 
