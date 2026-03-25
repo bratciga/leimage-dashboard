@@ -321,7 +321,7 @@ h1, h2, h3 {
 .zoom-icon-overlay {
   position: absolute;
   top: 6px;
-  right: 6px;
+  left: 6px;
   background: rgba(0,0,0,0.6);
   color: #fff;
   border: none;
@@ -2256,8 +2256,8 @@ h1, h2, h3 {
 /* ----------------------------------------------------------------
    Prevent horizontal overflow globally
 ---------------------------------------------------------------- */
-html, body {
-  overflow-x: hidden;
+body {
+  overflow-x: clip;
   max-width: 100%;
 }
 

@@ -183,8 +183,8 @@ function goToStep(step) {
   // Update progress bar
   updateProgressBar(step);
 
-  // If entering step 6 (monogram), sync print size & backdrop
-  if (step === 6) {
+  // If entering step 7 (monogram), sync print size & backdrop
+  if (step === 7) {
     const printSize = document.getElementById('print-size-value')?.value;
     if (printSize) window.MonogramBuilder.updatePrintSize(printSize);
     const backdrop = document.getElementById('backdrop-value')?.value;
@@ -226,28 +226,28 @@ function updateProgressBar(currentStep) {
 function validateStep(step) {
   clearStepErrors(step);
 
-  if (step === 2) {
+  if (step === 4) {
     if (!WizardState.parking) {
       showError('error-parking', 'Please indicate whether parking is arranged.');
       return false;
     }
   }
 
-  if (step === 3) {
+  if (step === 5) {
     if (!WizardState.backdrop) {
       showError('error-backdrop', 'Please select a backdrop color.');
       return false;
     }
   }
 
-  if (step === 4) {
+  if (step === 6) {
     if (!WizardState.printSize) {
       showError('error-print', 'Please select a print size.');
       return false;
     }
   }
 
-  if (step === 6) {
+  if (step === 7) {
     const mono = window.MonogramBuilder.state;
     if (!mono.line1.trim() && !mono.line2.trim()) {
       showError('error-monogram', 'Please enter at least one line of monogram text.');
@@ -279,8 +279,14 @@ function clearStepErrors(step) {
 function initToggleSelections() {
   // Generic toggle-selectable cards (backdrop, print size)
   // Single click = select/deselect. Double-click on image = lightbox (handled separately).
+  // Debounce: ignore rapid second click (prevents dblclick from deselecting)
+  let lastToggleTime = 0;
   document.querySelectorAll('.toggle-selectable').forEach(card => {
     card.addEventListener('click', (e) => {
+      const now = Date.now();
+      if (now - lastToggleTime < 400) return; // ignore second click of dblclick
+      lastToggleTime = now;
+
       const group = card.dataset.group;
       const value = card.dataset.value;
 
@@ -324,7 +330,7 @@ function setGroupValue(group, value) {
     WizardState.backdrop = value;
     const hidden = document.getElementById('backdrop-value');
     if (hidden) hidden.value = value || '';
-    // Update monogram backdrop if we're already on step 7
+    // Update monogram backdrop if we're already on monogram step
     if (WizardState.currentStep === 7) {
       window.MonogramBuilder.updateBackdropColor(value);
     }

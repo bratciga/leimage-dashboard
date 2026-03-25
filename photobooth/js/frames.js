@@ -1016,11 +1016,23 @@ function getFrameImage(frameId, color) {
     });
   };
 
-  // External SVG file (botanical frames)
+  // External SVG file (botanical frames) — fixed color, independent of text color
   if (template.svgFile) {
+    const fixedColor = '#3a3a3a';
+    const fixedKey = `${frameId}::FIXED`;
+    if (_frameImageCache.has(fixedKey)) {
+      return Promise.resolve(_frameImageCache.get(fixedKey));
+    }
     return _fetchSvgText(template.svgFile).then(text => {
       if (!text) return null;
-      return makeImageFromSvg(text);
+      let colored = text.split('FRAME_COLOR').join(fixedColor);
+      return new Promise((resolve) => {
+        const dataUrl = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(colored);
+        const img = new Image();
+        img.onload = () => { _frameImageCache.set(fixedKey, img); resolve(img); };
+        img.onerror = () => resolve(null);
+        img.src = dataUrl;
+      });
     });
   }
 

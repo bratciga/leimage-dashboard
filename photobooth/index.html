@@ -40,27 +40,27 @@
       </div>
       <div class="wizard-step" data-step="2">
         <div class="step-bubble">2</div>
-        <div class="step-label">Parking</div>
+        <div class="step-label">Props</div>
       </div>
       <div class="wizard-step" data-step="3">
         <div class="step-bubble">3</div>
-        <div class="step-label">Backdrop</div>
+        <div class="step-label">Notes</div>
       </div>
       <div class="wizard-step" data-step="4">
         <div class="step-bubble">4</div>
-        <div class="step-label">Print Size</div>
+        <div class="step-label">Parking</div>
       </div>
       <div class="wizard-step" data-step="5">
         <div class="step-bubble">5</div>
-        <div class="step-label">Props</div>
+        <div class="step-label">Backdrop</div>
       </div>
       <div class="wizard-step" data-step="6">
         <div class="step-bubble">6</div>
-        <div class="step-label">Monogram</div>
+        <div class="step-label">Print Size</div>
       </div>
       <div class="wizard-step" data-step="7">
         <div class="step-bubble">7</div>
-        <div class="step-label">Notes</div>
+        <div class="step-label">Monogram</div>
       </div>
       <div class="wizard-step" data-step="8">
         <div class="step-bubble">8</div>
@@ -107,9 +107,78 @@
     </section>
 
     <!-- ============================================================
-         STEP 2: PARKING
+         STEP 2: PROPS
+    ============================================================ -->
+    <!-- ============================================================
+         STEP 2: PROPS
     ============================================================ -->
     <section class="wizard-step-panel card hidden" id="step-panel-2" data-step="2">
+      <h2 class="section-title">Props</h2>
+      <p class="section-desc">Choose one or more prop themes for your event. You can select multiple.</p>
+
+      <div class="props-grid">
+        <label class="prop-card">
+          <input type="checkbox" name="props" value="Wedding" />
+          <span class="prop-emoji">🎊</span>
+          <span class="prop-name">Wedding</span>
+          <span class="check-mark">✓</span>
+        </label>
+        <label class="prop-card">
+          <input type="checkbox" name="props" value="Birthday" />
+          <span class="prop-emoji">🎂</span>
+          <span class="prop-name">Birthday</span>
+          <span class="check-mark">✓</span>
+        </label>
+        <label class="prop-card">
+          <input type="checkbox" name="props" value="Bar/Bat Mitzvah" />
+          <span class="prop-emoji">✡️</span>
+          <span class="prop-name">Bar/Bat Mitzvah</span>
+          <span class="check-mark">✓</span>
+        </label>
+        <label class="prop-card">
+          <input type="checkbox" name="props" value="Graduation" />
+          <span class="prop-emoji">🎓</span>
+          <span class="prop-name">Graduation</span>
+          <span class="check-mark">✓</span>
+        </label>
+        <label class="prop-card">
+          <input type="checkbox" name="props" value="General Party" />
+          <span class="prop-emoji">🎉</span>
+          <span class="prop-name">General Party</span>
+          <span class="check-mark">✓</span>
+        </label>
+      </div>
+
+      <div class="wizard-nav">
+        <button type="button" class="btn btn-ghost wizard-back" data-back="1">← Back</button>
+        <button type="button" class="btn btn-primary wizard-next" data-next="3">Next →</button>
+      </div>
+    </section>
+
+    <!-- ============================================================
+         STEP 3: SPECIAL INSTRUCTIONS
+    ============================================================ -->
+    <section class="wizard-step-panel card hidden" id="step-panel-3" data-step="3">
+      <h2 class="section-title">Special Instructions</h2>
+      <p class="section-desc">Anything else we should know about your event?</p>
+      <textarea
+        id="special-instructions"
+        name="special_instructions"
+        class="textarea-input"
+        rows="6"
+        placeholder="Any special requests, venue details, etc."
+      ></textarea>
+
+      <div class="wizard-nav">
+        <button type="button" class="btn btn-ghost wizard-back" data-back="2">← Back</button>
+        <button type="button" class="btn btn-primary wizard-next" data-next="4">Next →</button>
+      </div>
+    </section>
+
+    <!-- ============================================================
+         STEP 4: PARKING
+    ============================================================ -->
+    <section class="wizard-step-panel card hidden" id="step-panel-4" data-step="4">
       <h2 class="section-title">Parking</h2>
       <p class="section-desc">
         The client is responsible for providing parking for the photo booth attendant.
@@ -130,15 +199,15 @@
       <div class="field-error" id="error-parking" aria-live="polite"></div>
 
       <div class="wizard-nav">
-        <button type="button" class="btn btn-ghost wizard-back" data-back="1">← Back</button>
-        <button type="button" class="btn btn-primary wizard-next" data-next="3">Next →</button>
+        <button type="button" class="btn btn-ghost wizard-back" data-back="3">← Back</button>
+        <button type="button" class="btn btn-primary wizard-next" data-next="5">Next →</button>
       </div>
     </section>
 
     <!-- ============================================================
-         STEP 3: BACKDROP COLOR
+         STEP 5: BACKDROP COLOR
     ============================================================ -->
-    <section class="wizard-step-panel card hidden" id="step-panel-3" data-step="3">
+    <section class="wizard-step-panel card hidden" id="step-panel-5" data-step="5">
       <h2 class="section-title">Backdrop Color</h2>
       <p class="section-desc">Select the backdrop that best fits your event. Double-click any image to preview it full size. Click the selected backdrop again to deselect.</p>
 
@@ -224,15 +293,15 @@
       <div class="field-error" id="error-backdrop" aria-live="polite"></div>
 
       <div class="wizard-nav">
-        <button type="button" class="btn btn-ghost wizard-back" data-back="2">← Back</button>
-        <button type="button" class="btn btn-primary wizard-next" data-next="4">Next →</button>
+        <button type="button" class="btn btn-ghost wizard-back" data-back="4">← Back</button>
+        <button type="button" class="btn btn-primary wizard-next" data-next="6">Next →</button>
       </div>
     </section>
 
     <!-- ============================================================
-         STEP 4: PRINT SIZE
+         STEP 6: PRINT SIZE
     ============================================================ -->
-    <section class="wizard-step-panel card hidden" id="step-panel-4" data-step="4">
+    <section class="wizard-step-panel card hidden" id="step-panel-6" data-step="6">
       <h2 class="section-title">Print Size</h2>
       <p class="section-desc">Select your preferred print size. Click to select, click again to deselect.</p>
 
@@ -259,61 +328,15 @@
       <div class="field-error" id="error-print" aria-live="polite"></div>
 
       <div class="wizard-nav">
-        <button type="button" class="btn btn-ghost wizard-back" data-back="3">← Back</button>
-        <button type="button" class="btn btn-primary wizard-next" data-next="5">Next →</button>
+        <button type="button" class="btn btn-ghost wizard-back" data-back="5">← Back</button>
+        <button type="button" class="btn btn-primary wizard-next" data-next="7">Next →</button>
       </div>
     </section>
 
     <!-- ============================================================
-         STEP 5: PROPS
+         STEP 7: MONOGRAM BUILDER
     ============================================================ -->
-    <section class="wizard-step-panel card hidden" id="step-panel-5" data-step="5">
-      <h2 class="section-title">Props</h2>
-      <p class="section-desc">Choose one or more prop themes for your event. You can select multiple.</p>
-
-      <div class="props-grid">
-        <label class="prop-card">
-          <input type="checkbox" name="props" value="Wedding" />
-          <span class="prop-emoji">🎊</span>
-          <span class="prop-name">Wedding</span>
-          <span class="check-mark">✓</span>
-        </label>
-        <label class="prop-card">
-          <input type="checkbox" name="props" value="Birthday" />
-          <span class="prop-emoji">🎂</span>
-          <span class="prop-name">Birthday</span>
-          <span class="check-mark">✓</span>
-        </label>
-        <label class="prop-card">
-          <input type="checkbox" name="props" value="Bar/Bat Mitzvah" />
-          <span class="prop-emoji">✡️</span>
-          <span class="prop-name">Bar/Bat Mitzvah</span>
-          <span class="check-mark">✓</span>
-        </label>
-        <label class="prop-card">
-          <input type="checkbox" name="props" value="Graduation" />
-          <span class="prop-emoji">🎓</span>
-          <span class="prop-name">Graduation</span>
-          <span class="check-mark">✓</span>
-        </label>
-        <label class="prop-card">
-          <input type="checkbox" name="props" value="General Party" />
-          <span class="prop-emoji">🎉</span>
-          <span class="prop-name">General Party</span>
-          <span class="check-mark">✓</span>
-        </label>
-      </div>
-
-      <div class="wizard-nav">
-        <button type="button" class="btn btn-ghost wizard-back" data-back="4">← Back</button>
-        <button type="button" class="btn btn-primary wizard-next" data-next="6">Next →</button>
-      </div>
-    </section>
-
-    <!-- ============================================================
-         STEP 6: MONOGRAM BUILDER
-    ============================================================ -->
-    <section class="wizard-step-panel card hidden" id="step-panel-6" data-step="6">
+    <section class="wizard-step-panel card hidden" id="step-panel-7" data-step="7">
       <h2 class="section-title">Monogram Builder ✦</h2>
       <p class="section-desc">
         Design your monogram — it will appear at the bottom of every print.
@@ -392,26 +415,6 @@
       </div><!-- /monogram-layout -->
 
       <div class="wizard-nav">
-        <button type="button" class="btn btn-ghost wizard-back" data-back="5">← Back</button>
-        <button type="button" class="btn btn-primary wizard-next" data-next="7">Next →</button>
-      </div>
-    </section>
-
-    <!-- ============================================================
-         STEP 7: SPECIAL INSTRUCTIONS
-    ============================================================ -->
-    <section class="wizard-step-panel card hidden" id="step-panel-7" data-step="7">
-      <h2 class="section-title">Special Instructions</h2>
-      <p class="section-desc">Anything else we should know about your event?</p>
-      <textarea
-        id="special-instructions"
-        name="special_instructions"
-        class="textarea-input"
-        rows="6"
-        placeholder="Any special requests, venue details, etc."
-      ></textarea>
-
-      <div class="wizard-nav">
         <button type="button" class="btn btn-ghost wizard-back" data-back="6">← Back</button>
         <button type="button" class="btn btn-primary wizard-next" data-next="8">Next: Review →</button>
       </div>
@@ -427,27 +430,33 @@
       <div class="review-grid">
 
         <div class="review-row">
+          <div class="review-label">Props</div>
+          <div class="review-value" id="review-props">—</div>
+          <button type="button" class="btn btn-sm btn-ghost review-edit" data-goto="2">Edit</button>
+        </div>
+
+        <div class="review-row">
+          <div class="review-label">Special Instructions</div>
+          <div class="review-value" id="review-notes">—</div>
+          <button type="button" class="btn btn-sm btn-ghost review-edit" data-goto="3">Edit</button>
+        </div>
+
+        <div class="review-row">
           <div class="review-label">Parking</div>
           <div class="review-value" id="review-parking">—</div>
-          <button type="button" class="btn btn-sm btn-ghost review-edit" data-goto="2">Edit</button>
+          <button type="button" class="btn btn-sm btn-ghost review-edit" data-goto="4">Edit</button>
         </div>
 
         <div class="review-row">
           <div class="review-label">Backdrop</div>
           <div class="review-value" id="review-backdrop">—</div>
-          <button type="button" class="btn btn-sm btn-ghost review-edit" data-goto="3">Edit</button>
+          <button type="button" class="btn btn-sm btn-ghost review-edit" data-goto="5">Edit</button>
         </div>
 
         <div class="review-row">
           <div class="review-label">Print Size</div>
           <div class="review-value" id="review-print-size">—</div>
-          <button type="button" class="btn btn-sm btn-ghost review-edit" data-goto="4">Edit</button>
-        </div>
-
-        <div class="review-row">
-          <div class="review-label">Props</div>
-          <div class="review-value" id="review-props">—</div>
-          <button type="button" class="btn btn-sm btn-ghost review-edit" data-goto="5">Edit</button>
+          <button type="button" class="btn btn-sm btn-ghost review-edit" data-goto="6">Edit</button>
         </div>
 
         <div class="review-row review-row--monogram">
@@ -456,12 +465,6 @@
             <div id="review-monogram-text">—</div>
             <canvas id="review-monogram-canvas" class="review-monogram-thumb" width="120" height="80"></canvas>
           </div>
-          <button type="button" class="btn btn-sm btn-ghost review-edit" data-goto="6">Edit</button>
-        </div>
-
-        <div class="review-row">
-          <div class="review-label">Special Instructions</div>
-          <div class="review-value" id="review-notes">—</div>
           <button type="button" class="btn btn-sm btn-ghost review-edit" data-goto="7">Edit</button>
         </div>
 
@@ -502,6 +505,7 @@
 
       <div class="wizard-nav">
         <button type="button" class="btn btn-ghost wizard-back" data-back="7">← Back</button>
+        <!-- Review back goes to Monogram (step 7) -->
         <div></div>
       </div>
     </section>
