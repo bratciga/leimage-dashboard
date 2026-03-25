@@ -108,6 +108,18 @@ const FRAME_TEMPLATES = [
     viewBoxH: 2923.3,
   },
 
+  {
+    id: 'classic-wreath',
+    name: 'Classic Wreath',
+    category: 'botanical',
+    textPadding: { x: 0.25, y: 0.25 },
+    textZone: { left: 0.25, top: 0.30, right: 0.75, bottom: 0.70 },
+    svg: null,
+    svgFile: 'assets/frames/classic-wreath.svg',
+    viewBoxW: 432,
+    viewBoxH: 432,
+  },
+
   /* ─────────────────── 2. Classic Oval ─────────────────────── */
   {
     id: 'classic-oval',
