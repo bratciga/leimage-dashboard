@@ -1745,25 +1745,524 @@ h1, h2, h3 {
 /* ================================================================
    RESPONSIVE
 ================================================================ */
-@media (max-width: 600px) {
-  .container { padding: 1rem 0.75rem 3rem; }
-  .card { padding: 1.25rem; }
-  .backdrop-grid { grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); }
-  .print-grid { grid-template-columns: 1fr 1fr; }
-  .header-inner { padding: 0.75rem 1rem; }
-  .brand { font-size: 1.25rem; }
-  .submission-card { grid-template-columns: 1fr; }
-  .submission-thumb { width: 60px; height: 60px; }
-  .submission-actions { flex-direction: row; align-items: center; }
-  .wizard-steps-track { gap: 0; }
-  .step-label { display: none; }
-  .review-row { grid-template-columns: 100px 1fr auto; gap: 0.6rem; }
-  .frame-category-grid { grid-template-columns: repeat(2, 1fr); }
+
+/* ----------------------------------------------------------------
+   Tablet: 600px – 900px
+---------------------------------------------------------------- */
+@media (max-width: 900px) {
+  /* Header */
+  .header-inner {
+    flex-wrap: wrap;
+    gap: 0.4rem;
+  }
+
+  .header-sub {
+    font-size: 0.85rem;
+  }
+
+  /* Container tighter */
+  .container {
+    max-width: 100%;
+    padding: 1.5rem 1rem 3rem;
+  }
+
+  /* Progress bar */
+  .wizard-steps-track {
+    gap: 0;
+  }
+
+  /* Monogram: 2-col but narrower ratio */
+  .monogram-layout {
+    grid-template-columns: 1fr 1.5fr;
+    gap: 1.25rem;
+  }
+
+  /* Print grid stays 2-col on tablet */
+  .print-grid {
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+  }
+
+  /* Review print layouts scale down */
+  .review-print-layout--4x6 {
+    width: 380px;
+    height: 256px;
+  }
+  .review-print-layout--2x6 {
+    width: 160px;
+    height: 476px;
+  }
 }
 
+/* ----------------------------------------------------------------
+   Mobile: < 600px
+---------------------------------------------------------------- */
+@media (max-width: 600px) {
+  /* ---- Base / body ---- */
+  body {
+    font-size: 15px;
+  }
+
+  /* ---- Container / Cards ---- */
+  .container {
+    padding: 0.75rem 0.6rem 3rem;
+  }
+
+  .card {
+    padding: 1.1rem 1rem;
+    border-radius: 8px;
+  }
+
+  /* ---- Section titles ---- */
+  .section-title {
+    font-size: 1.05rem;
+  }
+
+  .section-desc {
+    font-size: 0.88rem;
+  }
+
+  /* ---- Header ---- */
+  .header-inner {
+    padding: 0.65rem 0.85rem;
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 0.25rem 0.6rem;
+  }
+
+  .brand {
+    font-size: 1.15rem;
+  }
+
+  .header-sub {
+    font-size: 0.78rem;
+    flex-basis: 100%;
+    /* Optionally hide on very small — see 420px below */
+  }
+
+  /* ---- Event Banner ---- */
+  .event-banner {
+    font-size: 0.78rem;
+    padding: 0.5rem 0.85rem;
+    white-space: normal;
+    word-break: break-word;
+  }
+
+  /* ---- Wizard progress bar ---- */
+  .wizard-progress-bar {
+    padding: 0.65rem 0.6rem 0.45rem;
+  }
+
+  .wizard-steps-track {
+    gap: 0;
+  }
+
+  .step-label {
+    display: none;
+  }
+
+  .step-bubble {
+    width: 26px;
+    height: 26px;
+    font-size: 0.68rem;
+  }
+
+  .wizard-fill-track {
+    margin-top: 0.4rem;
+  }
+
+  /* ---- Wizard nav buttons ---- */
+  .wizard-nav {
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 0.6rem;
+    margin-top: 1.25rem;
+    padding-top: 1rem;
+  }
+
+  .wizard-nav .btn {
+    flex: 1;
+    justify-content: center;
+    min-height: 44px;
+    padding: 0.7rem 1rem;
+    font-size: 0.82rem;
+  }
+
+  /* Make sure empty left slot (step 1 / step 8 back) doesn't squash button */
+  .wizard-nav > div:empty {
+    display: none;
+  }
+
+  /* ---- Buttons in general — touch-friendly ---- */
+  .btn {
+    min-height: 40px;
+  }
+
+  .btn-large {
+    padding: 0.85rem 2rem;
+    font-size: 0.9rem;
+  }
+
+  /* ---- Step 1: Photo Grid ---- */
+  .photo-grid {
+    grid-template-columns: 1fr;
+    gap: 0.75rem;
+  }
+
+  /* ---- Step 2: Parking toggle cards ---- */
+  .toggle-card-group {
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  .toggle-card {
+    flex-direction: row;
+    padding: 1rem 1.25rem;
+    justify-content: flex-start;
+    gap: 0.75rem;
+    min-height: 52px;
+  }
+
+  .toggle-card-icon {
+    font-size: 1.5rem;
+  }
+
+  .toggle-card-label {
+    font-size: 0.95rem;
+  }
+
+  /* ---- Step 3: Backdrops ---- */
+  .backdrop-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.65rem;
+  }
+
+  .backdrop-name {
+    font-size: 0.72rem;
+  }
+
+  /* ---- Step 4: Print Size ---- */
+  .print-grid {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+    max-width: 320px;
+  }
+
+  .print-card {
+    flex-direction: row;
+    align-items: center;
+    padding: 0.9rem 1rem;
+    gap: 1rem;
+  }
+
+  .print-preview {
+    width: auto;
+    flex-shrink: 0;
+  }
+
+  .print-preview--4x6 {
+    max-width: 90px;
+  }
+
+  .print-preview--2x6 {
+    max-width: 50px;
+    max-height: 150px;
+    overflow: hidden;
+  }
+
+  .print-name {
+    font-size: 0.9rem;
+  }
+
+  /* ---- Step 5: Props ---- */
+  .props-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.6rem;
+  }
+
+  .prop-card {
+    padding: 0.85rem 0.4rem;
+    min-height: 80px;
+  }
+
+  .prop-emoji {
+    font-size: 1.6rem;
+  }
+
+  .prop-name {
+    font-size: 0.68rem;
+  }
+
+  /* ---- Step 6: Monogram — THE BIG ONE ---- */
+  .monogram-layout {
+    grid-template-columns: 1fr;
+    gap: 1.25rem;
+  }
+
+  /* Preview comes AFTER controls on mobile (DOM order: controls first, then preview) */
+  .monogram-preview-wrap {
+    /* Disable sticky on mobile — just flow */
+    position: static;
+    top: auto;
+    align-self: auto;
+    width: 100%;
+  }
+
+  /* Canvas full width */
+  .canvas-outer {
+    width: 100%;
+  }
+
+  /* Font selector full width */
+  #mono-font,
+  .select-input {
+    width: 100%;
+  }
+
+  /* Color pickers: keep inline, but stack if tight */
+  .dual-color-row {
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  .color-col {
+    min-width: 80px;
+  }
+
+  /* Frame category grid: 2 cols on mobile */
+  .frame-category-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.5rem;
+  }
+
+  /* Field rows (e.g. date inputs side by side): stack on mobile */
+  .field-row {
+    grid-template-columns: 1fr;
+    gap: 0.75rem;
+  }
+
+  /* Monogram actions: full-width buttons */
+  .monogram-actions {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .monogram-actions .btn {
+    width: 100%;
+    justify-content: center;
+    min-height: 44px;
+  }
+
+  /* ---- Step 7: Special Instructions ---- */
+  .textarea-input {
+    width: 100%;
+    font-size: 0.95rem;
+  }
+
+  /* ---- Step 8: Review ---- */
+  .review-row {
+    grid-template-columns: 90px 1fr auto;
+    gap: 0.5rem;
+    padding: 0.75rem 0.85rem;
+  }
+
+  .review-label {
+    font-size: 0.7rem;
+  }
+
+  .review-value {
+    font-size: 0.88rem;
+  }
+
+  /* Review print layout: scale down */
+  .review-print-layout--4x6 {
+    width: 300px;
+    height: 202px;
+  }
+
+  .review-print-layout--2x6 {
+    width: 130px;
+    height: 386px;
+  }
+
+  /* Review action buttons: stack */
+  .review-actions {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.6rem;
+  }
+
+  .review-actions .btn {
+    width: 100%;
+    justify-content: center;
+    min-height: 44px;
+  }
+
+  /* Submit card inner */
+  .card--submit-inner {
+    padding: 1.5rem 1rem;
+  }
+
+  /* ---- Admin page ---- */
+  .submission-card {
+    grid-template-columns: 1fr;
+  }
+
+  .submission-thumb {
+    width: 60px;
+    height: 60px;
+  }
+
+  .submission-actions {
+    flex-direction: row;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+}
+
+/* ----------------------------------------------------------------
+   Small mobile: < 420px
+---------------------------------------------------------------- */
 @media (max-width: 420px) {
-  .wizard-progress-bar { padding: 0.75rem 0.6rem 0.5rem; }
-  .step-bubble { width: 24px; height: 24px; font-size: 0.65rem; }
+  /* ---- Base ---- */
+  body {
+    font-size: 14px;
+  }
+
+  /* ---- Container ---- */
+  .container {
+    padding: 0.6rem 0.5rem 2.5rem;
+  }
+
+  .card {
+    padding: 0.9rem 0.75rem;
+  }
+
+  /* ---- Header ---- */
+  .header-inner {
+    padding: 0.55rem 0.65rem;
+  }
+
+  .brand {
+    font-size: 1rem;
+  }
+
+  /* Hide header subtitle on very small screens */
+  .header-sub {
+    display: none;
+  }
+
+  /* ---- Event banner ---- */
+  .event-banner {
+    font-size: 0.72rem;
+  }
+
+  /* ---- Progress bar ---- */
+  .wizard-progress-bar {
+    padding: 0.55rem 0.4rem 0.4rem;
+  }
+
+  .step-bubble {
+    width: 22px;
+    height: 22px;
+    font-size: 0.6rem;
+  }
+
+  /* ---- Section title ---- */
+  .section-title {
+    font-size: 0.95rem;
+  }
+
+  /* ---- Backdrop grid: stays 2 cols ---- */
+  .backdrop-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.5rem;
+  }
+
+  .backdrop-name {
+    font-size: 0.65rem;
+    padding: 0.3rem 0.2rem 0.2rem;
+  }
+
+  /* ---- Props: 2 cols ---- */
+  .props-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  /* ---- Print grid: single col centered ---- */
+  .print-grid {
+    max-width: 260px;
+  }
+
+  /* ---- Review row: stack label above value on very small ---- */
+  .review-row {
+    grid-template-columns: 1fr auto;
+    grid-template-rows: auto auto;
+  }
+
+  .review-label {
+    grid-column: 1;
+    grid-row: 1;
+  }
+
+  .review-value {
+    grid-column: 1;
+    grid-row: 2;
+  }
+
+  .review-row .btn {
+    grid-column: 2;
+    grid-row: 1 / 3;
+    align-self: center;
+  }
+
+  /* ---- Review print layout: further scale ---- */
+  .review-print-layout--4x6 {
+    width: 240px;
+    height: 161px;
+  }
+
+  .review-print-layout--2x6 {
+    width: 110px;
+    height: 327px;
+  }
+
+  /* ---- Wizard nav: always full-width ---- */
+  .wizard-nav .btn {
+    font-size: 0.78rem;
+    padding: 0.65rem 0.75rem;
+  }
+
+  /* ---- Frame grid ---- */
+  .frame-category-grid {
+    gap: 0.35rem;
+  }
+
+  .flourish-option-label {
+    font-size: 0.5rem;
+  }
+
+  /* ---- Color pickers: tighten ---- */
+  .color-input {
+    width: 34px;
+    height: 32px;
+  }
+
+  .color-hex {
+    font-size: 0.75rem;
+  }
+}
+
+/* ----------------------------------------------------------------
+   Prevent horizontal overflow globally
+---------------------------------------------------------------- */
+html, body {
+  overflow-x: hidden;
+  max-width: 100%;
+}
+
+img, canvas, iframe, video {
+  max-width: 100%;
 }
 
 /* ================================================================
