@@ -618,7 +618,7 @@ function buildPrintLayoutPreview() {
     // Bottom-right photo
     container.appendChild(makePhotoSlot(50.5, 51, halfW, halfH, 'Photo 3'));
 
-    // Monogram bottom-left
+    // Monogram bottom-left — force square
     const mono = document.createElement('div');
     mono.className = 'monogram-placeholder';
     mono.style.cssText = 'left:1.5%; top:51%; width:48%; height:47%;';
