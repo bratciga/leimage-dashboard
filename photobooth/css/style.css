@@ -2355,10 +2355,8 @@ img, canvas, iframe, video {
   border-color: var(--navy);
 }
 
-.color-link-row {
-  display: flex;
-  justify-content: center;
-  margin: -0.3rem 0;
+.text-color-row .color-link-btn {
+  flex-shrink: 0;
 }
 
 /* ================================================================

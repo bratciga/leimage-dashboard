@@ -903,6 +903,7 @@ async function initMonogramBuilder() {
   const color2Input = document.getElementById('mono-color2');
   const color2Hex   = document.getElementById('mono-color2-hex');
   const linkBtn     = document.getElementById('color-link-toggle');
+  const linkBtn2    = document.getElementById('color-link-toggle-2');
   const matchToDate  = document.getElementById('match-to-date');
   const matchToNames = document.getElementById('match-to-names');
   const warn1 = document.getElementById('color1-warning');
@@ -950,20 +951,26 @@ async function initMonogramBuilder() {
     });
   }
 
-  if (linkBtn) {
-    linkBtn.addEventListener('click', () => {
-      MonogramState.colorsLinked = !MonogramState.colorsLinked;
-      linkBtn.classList.toggle('linked', MonogramState.colorsLinked);
-      linkBtn.textContent = MonogramState.colorsLinked ? '🔗' : '🔓';
-      if (MonogramState.colorsLinked) {
-        MonogramState.textColor2 = MonogramState.textColor1;
-        if (color2Input) color2Input.value = MonogramState.textColor1;
-        if (color2Hex)   color2Hex.textContent = MonogramState.textColor1;
+  function toggleColorLink() {
+    MonogramState.colorsLinked = !MonogramState.colorsLinked;
+    const icon = MonogramState.colorsLinked ? '🔗' : '🔓';
+    [linkBtn, linkBtn2].forEach(btn => {
+      if (btn) {
+        btn.classList.toggle('linked', MonogramState.colorsLinked);
+        btn.textContent = icon;
       }
-      updateMatchButtons();
-      scheduleRender();
     });
+    if (MonogramState.colorsLinked) {
+      MonogramState.textColor2 = MonogramState.textColor1;
+      if (color2Input) color2Input.value = MonogramState.textColor1;
+      if (color2Hex)   color2Hex.textContent = MonogramState.textColor1;
+    }
+    updateMatchButtons();
+    scheduleRender();
   }
+
+  if (linkBtn) linkBtn.addEventListener('click', toggleColorLink);
+  if (linkBtn2) linkBtn2.addEventListener('click', toggleColorLink);
 
   if (matchToDate) {
     matchToDate.addEventListener('click', () => {

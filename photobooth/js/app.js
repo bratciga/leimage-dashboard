@@ -1018,7 +1018,7 @@ function loadProject() {
       if (m.fontFamily) { mono.fontFamily = m.fontFamily; const el = document.getElementById('mono-font'); if (el) el.value = m.fontFamily; }
       if (m.textColor1) { mono.textColor1 = m.textColor1; const el = document.getElementById('mono-color1'); if (el) el.value = m.textColor1; }
       if (m.textColor2) { mono.textColor2 = m.textColor2; const el = document.getElementById('mono-color2'); if (el) el.value = m.textColor2; }
-      if (m.colorsLinked !== undefined) { mono.colorsLinked = m.colorsLinked; const btn = document.getElementById('color-link-toggle'); if (btn) { btn.classList.toggle('linked', m.colorsLinked); btn.textContent = m.colorsLinked ? '🔗' : '🔓'; } }
+      if (m.colorsLinked !== undefined) { mono.colorsLinked = m.colorsLinked; ['color-link-toggle','color-link-toggle-2'].forEach(id => { const btn = document.getElementById(id); if (btn) { btn.classList.toggle('linked', m.colorsLinked); btn.textContent = m.colorsLinked ? '🔗' : '🔓'; } }); }
       if (m.frame) { mono.frame = m.frame; mono.flourish = m.frame; }
       if (m.frameColor) { mono.frameColor = m.frameColor; }
     }
