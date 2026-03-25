@@ -1032,15 +1032,15 @@ h1, h2, h3 {
   box-shadow: 0 4px 20px rgba(0,0,0,0.25);
 }
 
-/* 4x6 layout: landscape */
+/* 4x6 layout: 1280×861 ratio */
 .review-print-layout--4x6 {
   width: 450px;
-  height: 300px;
+  height: 303px;
 }
 
-/* 2x6 strip layout */
+/* 2x6 strip layout: 430×1280 ratio */
 .review-print-layout--2x6 {
-  width: 180px;
+  width: 181px;
   height: 540px;
 }
 
