@@ -65,8 +65,8 @@ const MONOGRAM_FONTS = [
    CANVAS SPECS
 ================================================================ */
 const CANVAS_SPECS = {
-  '4x6': { w: 1000, h: 1000 },
-  '2x6': { w: 1000, h: 1000 },
+  '4x6': { w: 1200, h: 800 },
+  '2x6': { w: 1200, h: 800 },
 };
 
 const MONOGRAM_ZONE_HEIGHT_RATIO = 0.85;
