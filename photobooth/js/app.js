@@ -639,74 +639,31 @@ function addMonogramToPlaceholder(container) {
     return;
   }
 
-  // Wait a tick for the container to have dimensions, then render at slot size
-  requestAnimationFrame(() => {
-    const slotW = container.offsetWidth || 300;
-    const slotH = container.offsetHeight || 150;
-    // Render at 2x for sharpness
-    const scale = 2;
-    const cw = slotW * scale;
-    const ch = slotH * scale;
+  // Use the actual monogram canvas — it already has frame + text rendered
+  const srcCanvas = state.canvas;
+  if (!srcCanvas || srcCanvas.width === 0) {
+    container.style.color = 'rgba(0,0,0,0.25)';
+    container.style.fontSize = '0.65rem';
+    container.style.fontFamily = "'Cinzel', serif";
+    container.textContent = 'Monogram';
+    return;
+  }
 
-    const miniCanvas = document.createElement('canvas');
-    miniCanvas.width = cw;
-    miniCanvas.height = ch;
-    miniCanvas.style.width = '100%';
-    miniCanvas.style.height = '100%';
+  const miniCanvas = document.createElement('canvas');
+  miniCanvas.style.maxWidth = '100%';
+  miniCanvas.style.maxHeight = '100%';
 
-    const ctx = miniCanvas.getContext('2d');
-    ctx.fillStyle = '#ffffff';
-    ctx.fillRect(0, 0, cw, ch);
+  // Crop to the monogram zone (centered 85%) to remove blank edges
+  const zoneRatio = 0.85;
+  const zoneH = srcCanvas.height * zoneRatio;
+  const zoneY = (srcCanvas.height - zoneH) / 2;
 
-    // Draw monogram text directly at slot dimensions
-    const font = state.fontFamily;
-    const line1 = state.line1.trim();
-    const line2 = state.line2.trim();
-    const color1 = state.textColor1;
-    const color2 = state.textColor2;
+  miniCanvas.width = srcCanvas.width;
+  miniCanvas.height = Math.round(zoneH);
+  const ctx = miniCanvas.getContext('2d');
+  ctx.drawImage(srcCanvas, 0, zoneY, srcCanvas.width, zoneH, 0, 0, miniCanvas.width, miniCanvas.height);
 
-    const padding = cw * 0.08;
-    const maxW = cw - padding * 2;
-    const centerX = cw / 2;
-
-    // Fit text to available width
-    function fitFont(text, family, maxWidth, maxSize) {
-      let size = maxSize;
-      ctx.font = `${size}px "${family}"`;
-      while (size > 12 && ctx.measureText(text).width > maxWidth) {
-        size--;
-        ctx.font = `${size}px "${family}"`;
-      }
-      return size;
-    }
-
-    const maxSize1 = Math.floor(ch * (line2 ? 0.45 : 0.55));
-    const maxSize2 = Math.floor(ch * (line1 ? 0.30 : 0.55));
-
-    const size1 = line1 ? fitFont(line1, font, maxW, maxSize1) : 0;
-    const size2 = line2 ? fitFont(line2, font, maxW, maxSize2) : 0;
-
-    const gap = ch * 0.06;
-    const totalH = (line1 ? size1 : 0) + (line2 ? size2 + gap : 0);
-    let cursor = (ch - totalH) / 2;
-
-    ctx.textAlign = 'center';
-    ctx.textBaseline = 'alphabetic';
-
-    if (line1) {
-      ctx.fillStyle = color1;
-      ctx.font = `${size1}px "${font}"`;
-      ctx.fillText(line1, centerX, cursor + size1 * 0.82);
-      cursor += size1 + gap;
-    }
-    if (line2) {
-      ctx.fillStyle = color2;
-      ctx.font = `${size2}px "${font}"`;
-      ctx.fillText(line2, centerX, cursor + size2 * 0.82);
-    }
-
-    container.appendChild(miniCanvas);
-  });
+  container.appendChild(miniCanvas);
 }
 
 /* ================================================================
