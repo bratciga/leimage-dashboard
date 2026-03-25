@@ -981,7 +981,10 @@ function _fetchSvgText(svgFile) {
  * Returns a Promise<HTMLImageElement>.
  */
 function getFrameImage(frameId, color) {
-  const cacheKey = `${frameId}::${color}`;
+  // All frames use a fixed color — never the user's text color
+  const FIXED_COLOR = '#3a3a3a';
+  const cacheKey = `${frameId}::FIXED`;
+
   if (_frameImageCache.has(cacheKey)) {
     return Promise.resolve(_frameImageCache.get(cacheKey));
   }
@@ -989,65 +992,36 @@ function getFrameImage(frameId, color) {
   const template = FRAME_TEMPLATES.find(f => f.id === frameId);
   if (!template) return Promise.resolve(null);
 
-  const makeImageFromSvg = (svgText, overrideColor) => {
-    const useColor = overrideColor || color;
+  const makeImageFromSvg = (svgText) => {
     return new Promise((resolve) => {
       let coloredSvg;
       if (svgText.includes('FRAME_COLOR')) {
-        // Standard placeholder replacement
-        coloredSvg = svgText.split('FRAME_COLOR').join(useColor);
+        coloredSvg = svgText.split('FRAME_COLOR').join(FIXED_COLOR);
       } else {
-        // No placeholder found: inject fill on the root <svg> element
         coloredSvg = svgText.replace(/<svg([^>]*)>/, (match, attrs) => {
-          // Only add fill if not already present
-          if (/fill=/.test(attrs)) {
-            return match;
-          }
-          return `<svg${attrs} fill="${color}">`;
+          if (/fill=/.test(attrs)) return match;
+          return `<svg${attrs} fill="${FIXED_COLOR}">`;
         });
       }
       const dataUrl = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(coloredSvg);
       const img = new Image();
-      img.onload = () => {
-        _frameImageCache.set(cacheKey, img);
-        resolve(img);
-      };
+      img.onload = () => { _frameImageCache.set(cacheKey, img); resolve(img); };
       img.onerror = () => resolve(null);
       img.src = dataUrl;
     });
   };
 
-  // External SVG file (botanical frames) — fixed color, independent of text color
+  // External SVG file (botanical frames)
   if (template.svgFile) {
-    const fixedColor = '#3a3a3a';
-    const fixedKey = `${frameId}::FIXED`;
-    if (_frameImageCache.has(fixedKey)) {
-      return Promise.resolve(_frameImageCache.get(fixedKey));
-    }
     return _fetchSvgText(template.svgFile).then(text => {
       if (!text) return null;
-      let colored = text.split('FRAME_COLOR').join(fixedColor);
-      return new Promise((resolve) => {
-        const dataUrl = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(colored);
-        const img = new Image();
-        img.onload = () => { _frameImageCache.set(fixedKey, img); resolve(img); };
-        img.onerror = () => resolve(null);
-        img.src = dataUrl;
-      });
+      return makeImageFromSvg(text);
     });
   }
 
-  // Inline SVG string — use fixed dark color, not user's text color
+  // Inline SVG string
   if (!template.svg) return Promise.resolve(null);
-  const fixedInlineColor = '#3a3a3a';
-  const fixedInlineKey = `${frameId}::FIXED`;
-  if (_frameImageCache.has(fixedInlineKey)) {
-    return Promise.resolve(_frameImageCache.get(fixedInlineKey));
-  }
-  return makeImageFromSvg(template.svg, fixedInlineColor).then(img => {
-    if (img) _frameImageCache.set(fixedInlineKey, img);
-    return img;
-  });
+  return makeImageFromSvg(template.svg);
 }
 
 /**
