@@ -336,6 +336,43 @@ function initFramePicker() {
   customGroup.appendChild(customHex);
   swatchWrap.appendChild(customGroup);
 
+  // Eyedropper (EyeDropper API — Chrome/Edge)
+  if (window.EyeDropper) {
+    const eyedropperGroup = document.createElement('div');
+    eyedropperGroup.className = 'frame-color-swatch-group';
+
+    const eyedropperBtn = document.createElement('button');
+    eyedropperBtn.type = 'button';
+    eyedropperBtn.className = 'frame-color-eyedropper';
+    eyedropperBtn.title = 'Pick color from screen';
+    eyedropperBtn.textContent = '💉';
+
+    const eyedropperLabel = document.createElement('span');
+    eyedropperLabel.className = 'frame-color-swatch-label';
+    eyedropperLabel.textContent = 'Pick';
+
+    eyedropperBtn.addEventListener('click', async () => {
+      try {
+        const dropper = new EyeDropper();
+        const result = await dropper.open();
+        const pickedColor = result.sRGBHex;
+        MonogramState.frameColor = pickedColor;
+        window.FrameTemplates.clearCache();
+        colorRow.querySelectorAll('.frame-color-swatch').forEach(s => s.classList.remove('active'));
+        customInput.value = pickedColor;
+        customHex.textContent = pickedColor;
+        updateFramePreviewColors();
+        renderMonogram();
+      } catch (e) {
+        // User cancelled the eyedropper
+      }
+    });
+
+    eyedropperGroup.appendChild(eyedropperBtn);
+    eyedropperGroup.appendChild(eyedropperLabel);
+    swatchWrap.appendChild(eyedropperGroup);
+  }
+
   colorRow.appendChild(swatchWrap);
   grid.appendChild(colorRow);
 

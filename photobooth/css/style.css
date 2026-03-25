@@ -1020,6 +1020,10 @@ h1, h2, h3 {
   border: 1px solid var(--border);
   border-radius: var(--radius);
   margin-bottom: 0.5rem;
+  position: sticky;
+  top: 110px;
+  z-index: 80;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
 }
 
 .frame-color-label {
@@ -1093,6 +1097,30 @@ h1, h2, h3 {
 .frame-color-hex {
   font-family: monospace;
   font-size: 0.58rem;
+}
+
+.frame-color-eyedropper {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  border: 2.5px solid var(--border);
+  background: #fff;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.85rem;
+  transition: all 0.15s ease;
+  padding: 0;
+}
+
+.frame-color-eyedropper:hover {
+  transform: scale(1.1);
+  border-color: var(--text-muted);
+}
+
+.frame-color-eyedropper.hidden {
+  display: none;
 }
 
 .frame-category-label:first-child {
