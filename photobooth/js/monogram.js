@@ -69,7 +69,7 @@ const CANVAS_SPECS = {
   '2x6': { w: 1240, h: 1844 },
 };
 
-const MONOGRAM_ZONE_HEIGHT_RATIO = 0.28;
+const MONOGRAM_ZONE_HEIGHT_RATIO = 0.70;
 const PADDING_RATIO = 0.06;
 
 /* ================================================================

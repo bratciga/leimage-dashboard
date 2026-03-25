@@ -637,8 +637,8 @@ function addMonogramToPlaceholder(container) {
     return;
   }
 
-  // Crop to just the monogram zone (bottom 28% of canvas) so it fills the preview
-  const zoneRatio = 0.28;
+  // Crop to just the monogram zone so it fills the preview
+  const zoneRatio = 0.70;
   const srcY = Math.round(srcCanvas.height * (1 - zoneRatio));
   const srcH = Math.round(srcCanvas.height * zoneRatio);
   const srcW = srcCanvas.width;
