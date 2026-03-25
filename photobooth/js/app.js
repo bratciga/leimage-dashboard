@@ -99,6 +99,16 @@ async function initApp() {
 
   // Show step 1
   goToStep(1);
+
+  // Load saved project if exists
+  const loaded = loadProject();
+  if (loaded) {
+    showToast('Welcome back! Your progress has been restored.');
+  }
+
+  // Save button
+  const saveBtn = document.getElementById('save-project-btn');
+  if (saveBtn) saveBtn.addEventListener('click', saveProject);
 }
 
 /* ================================================================
@@ -909,4 +919,129 @@ function showSuccessOverlay(eventSlug) {
   const nameEl  = document.getElementById('success-event-name');
   if (nameEl) nameEl.textContent = eventSlug;
   if (overlay) overlay.classList.remove('hidden');
+}
+
+/* ================================================================
+   SAVE / LOAD PROJECT
+================================================================ */
+function saveProject() {
+  const mono = window.MonogramBuilder.state;
+  const props = Array.from(document.querySelectorAll('input[name="props"]:checked')).map(el => el.value);
+  const project = {
+    version: 1,
+    savedAt: new Date().toISOString(),
+    eventSlug: getEventSlug(),
+    currentStep: WizardState.currentStep,
+    parking: WizardState.parking,
+    backdrop: WizardState.backdrop,
+    printSize: WizardState.printSize,
+    props,
+    specialInstructions: document.getElementById('special-instructions')?.value || '',
+    monogram: {
+      line1: mono.line1,
+      line2: mono.line2,
+      fontFamily: mono.fontFamily,
+      textColor1: mono.textColor1,
+      textColor2: mono.textColor2,
+      colorsLinked: mono.colorsLinked,
+      frame: mono.frame,
+      frameColor: mono.frameColor,
+    },
+  };
+  const key = `leimage_pb_project_${project.eventSlug}`;
+  localStorage.setItem(key, JSON.stringify(project));
+  showToast('Project saved! You can close and come back later.');
+}
+
+function loadProject() {
+  const slug = getEventSlug();
+  const key = `leimage_pb_project_${slug}`;
+  const data = localStorage.getItem(key);
+  if (!data) return false;
+
+  try {
+    const project = JSON.parse(data);
+
+    // Restore props
+    if (project.props) {
+      document.querySelectorAll('input[name="props"]').forEach(cb => {
+        cb.checked = project.props.includes(cb.value);
+      });
+    }
+
+    // Restore special instructions
+    if (project.specialInstructions) {
+      const ta = document.getElementById('special-instructions');
+      if (ta) ta.value = project.specialInstructions;
+    }
+
+    // Restore parking
+    if (project.parking) {
+      WizardState.parking = project.parking;
+      const parkingBtn = document.querySelector(`.toggle-card[data-value="${project.parking}"]`);
+      if (parkingBtn) parkingBtn.classList.add('selected');
+      const parkingHidden = document.getElementById('parking-value');
+      if (parkingHidden) parkingHidden.value = project.parking;
+    }
+
+    // Restore backdrop
+    if (project.backdrop) {
+      WizardState.backdrop = project.backdrop;
+      const bdCard = document.querySelector(`.toggle-selectable[data-value="${project.backdrop}"]`);
+      if (bdCard) {
+        document.querySelectorAll('.toggle-selectable[data-group="backdrop"]').forEach(c => c.classList.remove('selected'));
+        bdCard.classList.add('selected');
+      }
+      const bdHidden = document.getElementById('backdrop-value');
+      if (bdHidden) bdHidden.value = project.backdrop;
+    }
+
+    // Restore print size
+    if (project.printSize) {
+      WizardState.printSize = project.printSize;
+      const psCard = document.querySelector(`.toggle-selectable[data-value="${project.printSize}"]`);
+      if (psCard) {
+        document.querySelectorAll('.toggle-selectable[data-group="print_size"]').forEach(c => c.classList.remove('selected'));
+        psCard.classList.add('selected');
+      }
+      const psHidden = document.getElementById('print-size-value');
+      if (psHidden) psHidden.value = project.printSize;
+    }
+
+    // Restore monogram state
+    if (project.monogram) {
+      const m = project.monogram;
+      const mono = window.MonogramBuilder.state;
+
+      if (m.line1) { mono.line1 = m.line1; const el = document.getElementById('mono-line1'); if (el) el.value = m.line1; }
+      if (m.line2) { mono.line2 = m.line2; const el = document.getElementById('mono-line2'); if (el) el.value = m.line2; }
+      if (m.fontFamily) { mono.fontFamily = m.fontFamily; const el = document.getElementById('mono-font'); if (el) el.value = m.fontFamily; }
+      if (m.textColor1) { mono.textColor1 = m.textColor1; const el = document.getElementById('mono-color1'); if (el) el.value = m.textColor1; }
+      if (m.textColor2) { mono.textColor2 = m.textColor2; const el = document.getElementById('mono-color2'); if (el) el.value = m.textColor2; }
+      if (m.colorsLinked !== undefined) { mono.colorsLinked = m.colorsLinked; const btn = document.getElementById('color-link-toggle'); if (btn) { btn.classList.toggle('linked', m.colorsLinked); btn.textContent = m.colorsLinked ? '🔗' : '🔓'; } }
+      if (m.frame) { mono.frame = m.frame; mono.flourish = m.frame; }
+      if (m.frameColor) { mono.frameColor = m.frameColor; }
+    }
+
+    // Navigate to saved step
+    if (project.currentStep && project.currentStep > 1) {
+      goToStep(project.currentStep);
+    }
+
+    return true;
+  } catch (e) {
+    console.error('Failed to load project:', e);
+    return false;
+  }
+}
+
+function showToast(message) {
+  const existing = document.querySelector('.save-toast');
+  if (existing) existing.remove();
+
+  const toast = document.createElement('div');
+  toast.className = 'save-toast';
+  toast.textContent = message;
+  document.body.appendChild(toast);
+  setTimeout(() => toast.remove(), 2500);
 }

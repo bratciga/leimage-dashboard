@@ -28,28 +28,7 @@ const FRAME_TEMPLATES = [
 
   /* ─────────────────── BOTANICAL FRAMES ─────────────────────── */
 
-  {
-    id: 'botanical-leaf-wreath',
-    name: 'Botanical Leaf Wreath',
-    category: 'botanical',
-    textPadding: { x: 0.20, y: 0.22 },
-    textZone: { left: 0.15, top: 0.55, right: 0.95, bottom: 0.95 },
-    svg: null,
-    svgFile: 'assets/frames/botanical-leaf-wreath.svg',
-    viewBoxW: 3271.04,
-    viewBoxH: 5000,
-  },
-  {
-    id: 'olive-branch',
-    name: 'Olive Branch',
-    category: 'botanical',
-    textPadding: { x: 0.15, y: 0.18 },
-    textZone: { left: 0.20, top: 0.40, right: 0.80, bottom: 0.90 },
-    svg: null,
-    svgFile: 'assets/frames/olive-branch.svg',
-    viewBoxW: 5000,
-    viewBoxH: 3362.87,
-  },
+
   {
     id: 'classic-laurel-crest',
     name: 'Classic Laurel Crest',
@@ -83,17 +62,7 @@ const FRAME_TEMPLATES = [
     viewBoxW: 5000,
     viewBoxH: 4076.1,
   },
-  {
-    id: 'minimal-floral',
-    name: 'Minimal Floral',
-    category: 'botanical',
-    textPadding: { x: 0.15, y: 0.18 },
-    textZone: { left: 0.20, top: 0.35, right: 0.80, bottom: 0.85 },
-    svg: null,
-    svgFile: 'assets/frames/minimal-floral.svg',
-    viewBoxW: 5000,
-    viewBoxH: 3564.25,
-  },
+
   {
     id: 'rustic-floral',
     name: 'Rustic Floral',
@@ -286,42 +255,7 @@ const FRAME_TEMPLATES = [
 </svg>`,
   },
 
-  /* ─────────────────── 9. Laurel Wreath ────────────────────── */
-  {
-    id: 'laurel-wreath',
-    name: 'Laurel Wreath',
-    category: 'nature',
-    textPadding: { x: 0.28, y: 0.22 },
-    svg: `<svg viewBox="0 0 400 200" xmlns="http://www.w3.org/2000/svg">
-  <!-- Left laurel branch -->
-  <path d="M68,100 C62,92 56,84 50,82 C52,90 56,96 62,100" fill="FRAME_COLOR" opacity="0.9"/>
-  <path d="M78,88  C72,76 62,70 54,70 C58,80 66,86 74,88" fill="FRAME_COLOR" opacity="0.9"/>
-  <path d="M92,78  C86,64 74,56 64,58 C70,68 80,74 88,76" fill="FRAME_COLOR" opacity="0.9"/>
-  <path d="M108,70 C104,56 92,48 82,50 C88,60 98,66 106,68" fill="FRAME_COLOR" opacity="0.9"/>
-  <path d="M126,64 C122,50 110,42 100,44 C106,54 116,60 124,62" fill="FRAME_COLOR" opacity="0.9"/>
-  <path d="M146,60 C142,46 130,40 120,42 C126,52 136,58 144,58" fill="FRAME_COLOR" opacity="0.9"/>
-  <path d="M167,58 C164,44 152,38 142,40 C148,50 158,56 165,56" fill="FRAME_COLOR" opacity="0.9"/>
-  <!-- Left stem -->
-  <path d="M68,100 C92,88 120,70 167,58" fill="none" stroke="FRAME_COLOR" stroke-width="1.5"/>
-  <!-- Right laurel branch (mirrored) -->
-  <path d="M332,100 C338,92 344,84 350,82 C348,90 344,96 338,100" fill="FRAME_COLOR" opacity="0.9"/>
-  <path d="M322,88  C328,76 338,70 346,70 C342,80 334,86 326,88" fill="FRAME_COLOR" opacity="0.9"/>
-  <path d="M308,78  C314,64 326,56 336,58 C330,68 320,74 312,76" fill="FRAME_COLOR" opacity="0.9"/>
-  <path d="M292,70  C296,56 308,48 318,50 C312,60 302,66 294,68" fill="FRAME_COLOR" opacity="0.9"/>
-  <path d="M274,64  C278,50 290,42 300,44 C294,54 284,60 276,62" fill="FRAME_COLOR" opacity="0.9"/>
-  <path d="M254,60  C258,46 270,40 280,42 C274,52 264,58 256,58" fill="FRAME_COLOR" opacity="0.9"/>
-  <path d="M233,58  C236,44 248,38 258,40 C252,50 242,56 235,56" fill="FRAME_COLOR" opacity="0.9"/>
-  <!-- Right stem -->
-  <path d="M332,100 C308,88 280,70 233,58" fill="none" stroke="FRAME_COLOR" stroke-width="1.5"/>
-  <!-- Center top bow -->
-  <path d="M167,58 C180,50 190,48 200,48 C210,48 220,50 233,58" fill="none" stroke="FRAME_COLOR" stroke-width="1.5"/>
-  <!-- Bottom line -->
-  <path d="M68,100 Q200,130 332,100" fill="none" stroke="FRAME_COLOR" stroke-width="1.5"/>
-  <!-- Center ribbon tie -->
-  <path d="M192,48 C196,44 200,42 204,44 C200,48 196,48 192,48 Z" fill="FRAME_COLOR"/>
-  <path d="M208,48 C204,44 200,42 196,44 C200,48 204,48 208,48 Z" fill="FRAME_COLOR"/>
-</svg>`,
-  },
+
 
   /* ─────────────────── 10. Floral Frame ────────────────────── */
   {
@@ -378,19 +312,7 @@ const FRAME_TEMPLATES = [
 </svg>`,
   },
 
-  /* ─────────────────── 11. Heart Frame ─────────────────────── */
-  {
-    id: 'heart',
-    name: 'Heart Frame',
-    category: 'romantic',
-    textPadding: { x: 0.22, y: 0.24 },
-    svg: `<svg viewBox="0 0 400 200" xmlns="http://www.w3.org/2000/svg">
-  <path d="M200,175 C140,145 30,110 30,65 C30,36 54,18 80,18 C112,18 132,38 142,52 C152,38 172,18 200,18 C228,18 248,38 258,52 C268,38 288,18 320,18 C346,18 370,36 370,65 C370,110 260,145 200,175 Z"
-    fill="none" stroke="FRAME_COLOR" stroke-width="2.5" stroke-linejoin="round"/>
-  <path d="M200,162 C148,136 50,106 50,65 C50,46 66,34 80,34 C106,34 124,52 138,68 C150,52 170,34 200,34 C230,34 250,52 262,68 C276,52 294,34 320,34 C334,34 350,46 350,65 C350,106 252,136 200,162 Z"
-    fill="none" stroke="FRAME_COLOR" stroke-width="0.8" stroke-linejoin="round"/>
-</svg>`,
-  },
+
 
   /* ─────────────────── 12. Shield ──────────────────────────── */
   {
@@ -430,25 +352,7 @@ const FRAME_TEMPLATES = [
 </svg>`,
   },
 
-  /* ─────────────────── 14. Arch ────────────────────────────── */
-  {
-    id: 'arch',
-    name: 'Arch',
-    category: 'classic',
-    textPadding: { x: 0.16, y: 0.18 },
-    svg: `<svg viewBox="0 0 400 200" xmlns="http://www.w3.org/2000/svg">
-  <path d="M20,192 L20,100 C20,44 380,44 380,100 L380,192 Z" fill="none" stroke="FRAME_COLOR" stroke-width="2.5"/>
-  <path d="M32,192 L32,102 C32,56 368,56 368,102 L368,192 Z" fill="none" stroke="FRAME_COLOR" stroke-width="0.8"/>
-  <line x1="20" y1="192" x2="380" y2="192" stroke="FRAME_COLOR" stroke-width="2.5"/>
-  <line x1="20" y1="184" x2="380" y2="184" stroke="FRAME_COLOR" stroke-width="0.8"/>
-  <!-- Keystone at arch apex -->
-  <circle cx="200" cy="44" r="5" fill="none" stroke="FRAME_COLOR" stroke-width="1.8"/>
-  <circle cx="200" cy="44" r="2" fill="FRAME_COLOR"/>
-  <!-- Column bases -->
-  <rect x="8"  y="184" width="24" height="8" rx="1" fill="none" stroke="FRAME_COLOR" stroke-width="1.5"/>
-  <rect x="368" y="184" width="24" height="8" rx="1" fill="none" stroke="FRAME_COLOR" stroke-width="1.5"/>
-</svg>`,
-  },
+
 
   /* ─────────────────── 15. Banner Ribbon ───────────────────── */
   {
@@ -526,34 +430,7 @@ const FRAME_TEMPLATES = [
 </svg>`,
   },
 
-  /* ─────────────────── 18. Crown Frame ─────────────────────── */
-  {
-    id: 'crown',
-    name: 'Crown Frame',
-    category: 'royal',
-    textPadding: { x: 0.16, y: 0.24 },
-    svg: `<svg viewBox="0 0 400 200" xmlns="http://www.w3.org/2000/svg">
-  <!-- Main rect -->
-  <rect x="14" y="62" width="372" height="126" rx="2" fill="none" stroke="FRAME_COLOR" stroke-width="2"/>
-  <rect x="20" y="68" width="360" height="114" rx="1" fill="none" stroke="FRAME_COLOR" stroke-width="0.8"/>
-  <!-- Crown top -->
-  <path d="M14,62 L14,20 L76,44 L140,6 L200,36 L260,6 L324,44 L386,20 L386,62 Z" fill="none" stroke="FRAME_COLOR" stroke-width="2" stroke-linejoin="round"/>
-  <!-- Crown jewels -->
-  <circle cx="14"  cy="20" r="4.5" fill="FRAME_COLOR"/>
-  <circle cx="140" cy="6"  r="5.5" fill="FRAME_COLOR"/>
-  <circle cx="200" cy="36" r="4"   fill="none" stroke="FRAME_COLOR" stroke-width="1.5"/>
-  <circle cx="200" cy="36" r="2"   fill="FRAME_COLOR"/>
-  <circle cx="260" cy="6"  r="5.5" fill="FRAME_COLOR"/>
-  <circle cx="386" cy="20" r="4.5" fill="FRAME_COLOR"/>
-  <!-- Base band -->
-  <line x1="14" y1="72" x2="386" y2="72" stroke="FRAME_COLOR" stroke-width="1"/>
-  <!-- Bottom accent -->
-  <line x1="14"  y1="182" x2="386" y2="182" stroke="FRAME_COLOR" stroke-width="1"/>
-  <circle cx="14"  cy="188" r="3" fill="FRAME_COLOR"/>
-  <circle cx="386" cy="188" r="3" fill="FRAME_COLOR"/>
-  <circle cx="200" cy="188" r="3" fill="FRAME_COLOR"/>
-</svg>`,
-  },
+
 
   /* ─────────────────── 19. Star Frame ──────────────────────── */
   {
@@ -697,47 +574,7 @@ const FRAME_TEMPLATES = [
 </svg>`,
   },
 
-  /* ─────────────────── 23. Chandelier ──────────────────────── */
-  {
-    id: 'chandelier',
-    name: 'Chandelier',
-    category: 'ornate',
-    textPadding: { x: 0.18, y: 0.30 },
-    svg: `<svg viewBox="0 0 400 200" xmlns="http://www.w3.org/2000/svg">
-  <!-- Base horizontal line -->
-  <line x1="20" y1="170" x2="380" y2="170" stroke="FRAME_COLOR" stroke-width="2"/>
-  <line x1="20" y1="178" x2="380" y2="178" stroke="FRAME_COLOR" stroke-width="0.8"/>
-  <!-- End ornaments -->
-  <circle cx="20"  cy="174" r="5" fill="none" stroke="FRAME_COLOR" stroke-width="1.5"/>
-  <circle cx="380" cy="174" r="5" fill="none" stroke="FRAME_COLOR" stroke-width="1.5"/>
-  <!-- Vertical drops -->
-  <line x1="200" y1="6"   x2="200" y2="40"  stroke="FRAME_COLOR" stroke-width="2"/>
-  <line x1="150" y1="30"  x2="150" y2="60"  stroke="FRAME_COLOR" stroke-width="1.5"/>
-  <line x1="250" y1="30"  x2="250" y2="60"  stroke="FRAME_COLOR" stroke-width="1.5"/>
-  <line x1="100" y1="50"  x2="100" y2="80"  stroke="FRAME_COLOR" stroke-width="1.2"/>
-  <line x1="300" y1="50"  x2="300" y2="80"  stroke="FRAME_COLOR" stroke-width="1.2"/>
-  <line x1="60"  y1="90"  x2="60"  y2="120" stroke="FRAME_COLOR" stroke-width="1"/>
-  <line x1="340" y1="90"  x2="340" y2="120" stroke="FRAME_COLOR" stroke-width="1"/>
-  <!-- Horizontal connector bars -->
-  <line x1="150" y1="30"  x2="250" y2="30"  stroke="FRAME_COLOR" stroke-width="1.5"/>
-  <line x1="100" y1="50"  x2="300" y2="50"  stroke="FRAME_COLOR" stroke-width="1.2"/>
-  <line x1="60"  y1="90"  x2="340" y2="90"  stroke="FRAME_COLOR" stroke-width="1"/>
-  <line x1="20"  y1="130" x2="380" y2="130" stroke="FRAME_COLOR" stroke-width="1"/>
-  <!-- Crystal teardrop pendants -->
-  <ellipse cx="200" cy="46" rx="5"   ry="8"   fill="none" stroke="FRAME_COLOR" stroke-width="1.5"/>
-  <ellipse cx="150" cy="66" rx="4"   ry="7"   fill="none" stroke="FRAME_COLOR" stroke-width="1.2"/>
-  <ellipse cx="250" cy="66" rx="4"   ry="7"   fill="none" stroke="FRAME_COLOR" stroke-width="1.2"/>
-  <ellipse cx="100" cy="88" rx="3.5" ry="6"   fill="none" stroke="FRAME_COLOR" stroke-width="1"/>
-  <ellipse cx="300" cy="88" rx="3.5" ry="6"   fill="none" stroke="FRAME_COLOR" stroke-width="1"/>
-  <ellipse cx="60"  cy="126" rx="3"  ry="5.5" fill="none" stroke="FRAME_COLOR" stroke-width="1"/>
-  <ellipse cx="340" cy="126" rx="3"  ry="5.5" fill="none" stroke="FRAME_COLOR" stroke-width="1"/>
-  <ellipse cx="200" cy="140" rx="3"  ry="5"   fill="none" stroke="FRAME_COLOR" stroke-width="1"/>
-  <ellipse cx="130" cy="138" rx="2.5" ry="4.5" fill="none" stroke="FRAME_COLOR" stroke-width="0.8"/>
-  <ellipse cx="270" cy="138" rx="2.5" ry="4.5" fill="none" stroke="FRAME_COLOR" stroke-width="0.8"/>
-  <!-- Top chain attachment -->
-  <circle cx="200" cy="8" r="5" fill="none" stroke="FRAME_COLOR" stroke-width="1.8"/>
-</svg>`,
-  },
+
 
   /* ─────────────────── 24. Geometric Mosaic ────────────────── */
   {
@@ -944,6 +781,176 @@ const FRAME_TEMPLATES = [
   <path d="M20,22 C40,14 60,30 80,22 C100,14 120,30 140,22 C160,14 180,30 200,22 C220,14 240,30 260,22 C280,14 300,30 320,22 C340,14 360,30 380,22" fill="none" stroke="FRAME_COLOR" stroke-width="1.5"/>
   <!-- Bottom wave -->
   <path d="M20,178 C40,170 60,186 80,178 C100,170 120,186 140,178 C160,170 180,186 200,178 C220,170 240,186 260,178 C280,170 300,186 320,178 C340,170 360,186 380,178" fill="none" stroke="FRAME_COLOR" stroke-width="1.5"/>
+</svg>`,
+  },
+
+  /* ─────────────────── 33. Arrows ──────────────────────────── */
+  {
+    id: 'div-arrows',
+    name: 'Arrows',
+    category: 'divider',
+    textPadding: { x: 0.04, y: 0.15 },
+    svg: `<svg viewBox="0 0 400 200" xmlns="http://www.w3.org/2000/svg">
+  <!-- Top -->
+  <line x1="20" y1="22" x2="180" y2="22" stroke="FRAME_COLOR" stroke-width="1.2"/>
+  <line x1="220" y1="22" x2="380" y2="22" stroke="FRAME_COLOR" stroke-width="1.2"/>
+  <path d="M192,14 L200,22 L192,30" fill="none" stroke="FRAME_COLOR" stroke-width="1.5" stroke-linecap="round"/>
+  <path d="M208,14 L200,22 L208,30" fill="none" stroke="FRAME_COLOR" stroke-width="1.5" stroke-linecap="round"/>
+  <!-- Bottom -->
+  <line x1="20" y1="178" x2="180" y2="178" stroke="FRAME_COLOR" stroke-width="1.2"/>
+  <line x1="220" y1="178" x2="380" y2="178" stroke="FRAME_COLOR" stroke-width="1.2"/>
+  <path d="M192,170 L200,178 L192,186" fill="none" stroke="FRAME_COLOR" stroke-width="1.5" stroke-linecap="round"/>
+  <path d="M208,170 L200,178 L208,186" fill="none" stroke="FRAME_COLOR" stroke-width="1.5" stroke-linecap="round"/>
+</svg>`,
+  },
+
+  /* ─────────────────── 34. Flourish Ends ───────────────────── */
+  {
+    id: 'div-flourish-ends',
+    name: 'Flourish Ends',
+    category: 'divider',
+    textPadding: { x: 0.04, y: 0.15 },
+    svg: `<svg viewBox="0 0 400 200" xmlns="http://www.w3.org/2000/svg">
+  <!-- Top -->
+  <line x1="50" y1="22" x2="350" y2="22" stroke="FRAME_COLOR" stroke-width="1.2"/>
+  <path d="M50,22 C40,22 30,16 24,10 C30,18 28,26 20,28" fill="none" stroke="FRAME_COLOR" stroke-width="1.2" stroke-linecap="round"/>
+  <path d="M50,22 C40,22 30,28 24,34 C30,26 28,18 20,16" fill="none" stroke="FRAME_COLOR" stroke-width="1.2" stroke-linecap="round"/>
+  <path d="M350,22 C360,22 370,16 376,10 C370,18 372,26 380,28" fill="none" stroke="FRAME_COLOR" stroke-width="1.2" stroke-linecap="round"/>
+  <path d="M350,22 C360,22 370,28 376,34 C370,26 372,18 380,16" fill="none" stroke="FRAME_COLOR" stroke-width="1.2" stroke-linecap="round"/>
+  <!-- Bottom -->
+  <line x1="50" y1="178" x2="350" y2="178" stroke="FRAME_COLOR" stroke-width="1.2"/>
+  <path d="M50,178 C40,178 30,172 24,166 C30,174 28,182 20,184" fill="none" stroke="FRAME_COLOR" stroke-width="1.2" stroke-linecap="round"/>
+  <path d="M50,178 C40,178 30,184 24,190 C30,182 28,174 20,172" fill="none" stroke="FRAME_COLOR" stroke-width="1.2" stroke-linecap="round"/>
+  <path d="M350,178 C360,178 370,172 376,166 C370,174 372,182 380,184" fill="none" stroke="FRAME_COLOR" stroke-width="1.2" stroke-linecap="round"/>
+  <path d="M350,178 C360,178 370,184 376,190 C370,182 372,174 380,172" fill="none" stroke="FRAME_COLOR" stroke-width="1.2" stroke-linecap="round"/>
+</svg>`,
+  },
+
+  /* ─────────────────── 35. Leaf Divider ────────────────────── */
+  {
+    id: 'div-leaf',
+    name: 'Leaf',
+    category: 'divider',
+    textPadding: { x: 0.04, y: 0.15 },
+    svg: `<svg viewBox="0 0 400 200" xmlns="http://www.w3.org/2000/svg">
+  <!-- Top -->
+  <line x1="20" y1="22" x2="175" y2="22" stroke="FRAME_COLOR" stroke-width="1.2"/>
+  <line x1="225" y1="22" x2="380" y2="22" stroke="FRAME_COLOR" stroke-width="1.2"/>
+  <ellipse cx="188" cy="18" rx="7" ry="4" transform="rotate(-30 188 18)" fill="FRAME_COLOR" opacity="0.8"/>
+  <ellipse cx="200" cy="14" rx="4" ry="7" fill="FRAME_COLOR" opacity="0.8"/>
+  <ellipse cx="212" cy="18" rx="7" ry="4" transform="rotate(30 212 18)" fill="FRAME_COLOR" opacity="0.8"/>
+  <ellipse cx="188" cy="26" rx="7" ry="4" transform="rotate(30 188 26)" fill="FRAME_COLOR" opacity="0.8"/>
+  <ellipse cx="200" cy="30" rx="4" ry="7" fill="FRAME_COLOR" opacity="0.8"/>
+  <ellipse cx="212" cy="26" rx="7" ry="4" transform="rotate(-30 212 26)" fill="FRAME_COLOR" opacity="0.8"/>
+  <!-- Bottom -->
+  <line x1="20" y1="178" x2="175" y2="178" stroke="FRAME_COLOR" stroke-width="1.2"/>
+  <line x1="225" y1="178" x2="380" y2="178" stroke="FRAME_COLOR" stroke-width="1.2"/>
+  <ellipse cx="188" cy="174" rx="7" ry="4" transform="rotate(-30 188 174)" fill="FRAME_COLOR" opacity="0.8"/>
+  <ellipse cx="200" cy="170" rx="4" ry="7" fill="FRAME_COLOR" opacity="0.8"/>
+  <ellipse cx="212" cy="174" rx="7" ry="4" transform="rotate(30 212 174)" fill="FRAME_COLOR" opacity="0.8"/>
+  <ellipse cx="188" cy="182" rx="7" ry="4" transform="rotate(30 188 182)" fill="FRAME_COLOR" opacity="0.8"/>
+  <ellipse cx="200" cy="186" rx="4" ry="7" fill="FRAME_COLOR" opacity="0.8"/>
+  <ellipse cx="212" cy="182" rx="7" ry="4" transform="rotate(-30 212 182)" fill="FRAME_COLOR" opacity="0.8"/>
+</svg>`,
+  },
+
+  /* ─────────────────── 36. Cross ───────────────────────────── */
+  {
+    id: 'div-cross',
+    name: 'Cross',
+    category: 'divider',
+    textPadding: { x: 0.04, y: 0.15 },
+    svg: `<svg viewBox="0 0 400 200" xmlns="http://www.w3.org/2000/svg">
+  <!-- Top -->
+  <line x1="20" y1="22" x2="185" y2="22" stroke="FRAME_COLOR" stroke-width="1.2"/>
+  <line x1="215" y1="22" x2="380" y2="22" stroke="FRAME_COLOR" stroke-width="1.2"/>
+  <line x1="193" y1="14" x2="207" y2="30" stroke="FRAME_COLOR" stroke-width="1.5"/>
+  <line x1="207" y1="14" x2="193" y2="30" stroke="FRAME_COLOR" stroke-width="1.5"/>
+  <!-- Bottom -->
+  <line x1="20" y1="178" x2="185" y2="178" stroke="FRAME_COLOR" stroke-width="1.2"/>
+  <line x1="215" y1="178" x2="380" y2="178" stroke="FRAME_COLOR" stroke-width="1.2"/>
+  <line x1="193" y1="170" x2="207" y2="186" stroke="FRAME_COLOR" stroke-width="1.5"/>
+  <line x1="207" y1="170" x2="193" y2="186" stroke="FRAME_COLOR" stroke-width="1.5"/>
+</svg>`,
+  },
+
+  /* ─────────────────── 37. Infinity ────────────────────────── */
+  {
+    id: 'div-infinity',
+    name: 'Infinity',
+    category: 'divider',
+    textPadding: { x: 0.04, y: 0.15 },
+    svg: `<svg viewBox="0 0 400 200" xmlns="http://www.w3.org/2000/svg">
+  <!-- Top -->
+  <line x1="20" y1="22" x2="175" y2="22" stroke="FRAME_COLOR" stroke-width="1.2"/>
+  <line x1="225" y1="22" x2="380" y2="22" stroke="FRAME_COLOR" stroke-width="1.2"/>
+  <path d="M200,22 C200,14 208,10 214,14 C220,18 220,26 214,30 C208,34 200,30 200,22 C200,14 192,10 186,14 C180,18 180,26 186,30 C192,34 200,30 200,22 Z" fill="none" stroke="FRAME_COLOR" stroke-width="1.2"/>
+  <!-- Bottom -->
+  <line x1="20" y1="178" x2="175" y2="178" stroke="FRAME_COLOR" stroke-width="1.2"/>
+  <line x1="225" y1="178" x2="380" y2="178" stroke="FRAME_COLOR" stroke-width="1.2"/>
+  <path d="M200,178 C200,170 208,166 214,170 C220,174 220,182 214,186 C208,190 200,186 200,178 C200,170 192,166 186,170 C180,174 180,182 186,186 C192,190 200,186 200,178 Z" fill="none" stroke="FRAME_COLOR" stroke-width="1.2"/>
+</svg>`,
+  },
+
+  /* ─────────────────── 38. Ampersand ───────────────────────── */
+  {
+    id: 'div-ampersand',
+    name: 'Ampersand',
+    category: 'divider',
+    textPadding: { x: 0.04, y: 0.15 },
+    svg: `<svg viewBox="0 0 400 200" xmlns="http://www.w3.org/2000/svg">
+  <!-- Top -->
+  <line x1="20" y1="22" x2="180" y2="22" stroke="FRAME_COLOR" stroke-width="1.2"/>
+  <line x1="220" y1="22" x2="380" y2="22" stroke="FRAME_COLOR" stroke-width="1.2"/>
+  <text x="200" y="28" font-family="serif" font-size="18" fill="FRAME_COLOR" text-anchor="middle">&amp;</text>
+  <!-- Bottom -->
+  <line x1="20" y1="178" x2="180" y2="178" stroke="FRAME_COLOR" stroke-width="1.2"/>
+  <line x1="220" y1="178" x2="380" y2="178" stroke="FRAME_COLOR" stroke-width="1.2"/>
+  <text x="200" y="184" font-family="serif" font-size="18" fill="FRAME_COLOR" text-anchor="middle">&amp;</text>
+</svg>`,
+  },
+
+  /* ─────────────────── 39. Triple Dots ─────────────────────── */
+  {
+    id: 'div-triple-dots',
+    name: 'Triple Dots',
+    category: 'divider',
+    textPadding: { x: 0.04, y: 0.15 },
+    svg: `<svg viewBox="0 0 400 200" xmlns="http://www.w3.org/2000/svg">
+  <!-- Top -->
+  <line x1="20" y1="22" x2="178" y2="22" stroke="FRAME_COLOR" stroke-width="1.2"/>
+  <line x1="222" y1="22" x2="380" y2="22" stroke="FRAME_COLOR" stroke-width="1.2"/>
+  <circle cx="190" cy="22" r="3" fill="FRAME_COLOR"/>
+  <circle cx="200" cy="22" r="3" fill="FRAME_COLOR"/>
+  <circle cx="210" cy="22" r="3" fill="FRAME_COLOR"/>
+  <!-- Bottom -->
+  <line x1="20" y1="178" x2="178" y2="178" stroke="FRAME_COLOR" stroke-width="1.2"/>
+  <line x1="222" y1="178" x2="380" y2="178" stroke="FRAME_COLOR" stroke-width="1.2"/>
+  <circle cx="190" cy="178" r="3" fill="FRAME_COLOR"/>
+  <circle cx="200" cy="178" r="3" fill="FRAME_COLOR"/>
+  <circle cx="210" cy="178" r="3" fill="FRAME_COLOR"/>
+</svg>`,
+  },
+
+  /* ─────────────────── 40. Ornamental ──────────────────────── */
+  {
+    id: 'div-ornamental',
+    name: 'Ornamental',
+    category: 'divider',
+    textPadding: { x: 0.04, y: 0.15 },
+    svg: `<svg viewBox="0 0 400 200" xmlns="http://www.w3.org/2000/svg">
+  <!-- Top -->
+  <line x1="20" y1="22" x2="160" y2="22" stroke="FRAME_COLOR" stroke-width="1.2"/>
+  <line x1="240" y1="22" x2="380" y2="22" stroke="FRAME_COLOR" stroke-width="1.2"/>
+  <path d="M170,22 Q180,12 190,18 Q195,22 190,26 Q180,32 170,22 Z" fill="none" stroke="FRAME_COLOR" stroke-width="1"/>
+  <path d="M230,22 Q220,12 210,18 Q205,22 210,26 Q220,32 230,22 Z" fill="none" stroke="FRAME_COLOR" stroke-width="1"/>
+  <circle cx="200" cy="22" r="3" fill="FRAME_COLOR"/>
+  <!-- Bottom -->
+  <line x1="20" y1="178" x2="160" y2="178" stroke="FRAME_COLOR" stroke-width="1.2"/>
+  <line x1="240" y1="178" x2="380" y2="178" stroke="FRAME_COLOR" stroke-width="1.2"/>
+  <path d="M170,178 Q180,168 190,174 Q195,178 190,182 Q180,188 170,178 Z" fill="none" stroke="FRAME_COLOR" stroke-width="1"/>
+  <path d="M230,178 Q220,168 210,174 Q205,178 210,182 Q220,188 230,178 Z" fill="none" stroke="FRAME_COLOR" stroke-width="1"/>
+  <circle cx="200" cy="178" r="3" fill="FRAME_COLOR"/>
 </svg>`,
   },
 

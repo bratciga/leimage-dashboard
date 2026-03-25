@@ -9,7 +9,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300&display=swap" rel="stylesheet" />
 
-  <link rel="stylesheet" href="css/style.css?v=12" />
+  <link rel="stylesheet" href="css/style.css?v=13" />
 </head>
 <body>
 
@@ -20,6 +20,7 @@
     <div class="header-inner">
       <a href="https://leimageinc.com" class="brand"><img src="assets/images/leimage-logo.png" alt="Le Image" class="brand-logo" /></a>
       <div class="header-sub">Photo Booth Configurator</div>
+      <button type="button" id="save-project-btn" class="btn btn-secondary btn-sm header-save-btn">💾 Save</button>
     </div>
   </header>
 
@@ -356,46 +357,29 @@
         <div class="monogram-controls">
 
           <div class="field-group">
-            <label class="field-label" for="mono-line1">Line 1 <span class="field-hint">(e.g. "J &amp; M" or "Jessica &amp; Michael")</span></label>
-            <input type="text" id="mono-line1" class="text-input" placeholder="J & M" maxlength="60" />
+            <label class="field-label" for="mono-line1">Names <span class="field-hint">(e.g. "J &amp; M" or "Jessica &amp; Michael")</span></label>
+            <div class="text-color-row">
+              <input type="text" id="mono-line1" class="text-input" placeholder="J & M" maxlength="60" />
+              <input type="color" id="mono-color1" class="text-color-dot" value="#333333" title="Names color" />
+            </div>
+          </div>
+
+          <div class="color-link-row">
+            <button type="button" id="color-link-toggle" class="color-link-btn linked" title="Link/Unlink colors">🔗</button>
           </div>
 
           <div class="field-group">
-            <label class="field-label" for="mono-line2">Line 2 <span class="field-hint">(e.g. "April 15, 2026")</span></label>
-            <input type="text" id="mono-line2" class="text-input" placeholder="April 15, 2026" maxlength="60" />
+            <label class="field-label" for="mono-line2">Date <span class="field-hint">(e.g. "April 15, 2026")</span></label>
+            <div class="text-color-row">
+              <input type="text" id="mono-line2" class="text-input" placeholder="April 15, 2026" maxlength="60" />
+              <input type="color" id="mono-color2" class="text-color-dot" value="#333333" title="Date color" />
+            </div>
           </div>
 
           <div class="field-group">
             <label class="field-label" for="mono-font">Font</label>
             <select id="mono-font" class="select-input"></select>
             <div id="font-preview-strip" class="font-preview-strip">Font Preview</div>
-          </div>
-
-          <div class="field-group">
-            <label class="field-label">Text Colors</label>
-            <div class="dual-color-row">
-              <div class="color-col">
-                <span class="color-label">Names</span>
-                <div class="color-picker-wrap">
-                  <input type="color" id="mono-color1" class="color-input" value="#333333" />
-                  <span id="mono-color1-hex" class="color-hex">#333333</span>
-                </div>
-                <button type="button" id="match-to-date" class="btn btn-xs btn-ghost color-match-btn hidden">← Match to Date</button>
-                <div id="color1-warning" class="color-warning hidden">⚠️ Light colors may not be visible on the white print strip</div>
-              </div>
-              <div class="color-link-col">
-                <button type="button" id="color-link-toggle" class="color-link-btn linked" title="Link/Unlink colors">🔗</button>
-              </div>
-              <div class="color-col">
-                <span class="color-label">Date</span>
-                <div class="color-picker-wrap">
-                  <input type="color" id="mono-color2" class="color-input" value="#333333" />
-                  <span id="mono-color2-hex" class="color-hex">#333333</span>
-                </div>
-                <button type="button" id="match-to-names" class="btn btn-xs btn-ghost color-match-btn hidden">← Match to Names</button>
-                <div id="color2-warning" class="color-warning hidden">⚠️ Light colors may not be visible on the white print strip</div>
-              </div>
-            </div>
           </div>
 
           <div class="field-group">
@@ -564,9 +548,9 @@
     <p>© <span id="footer-year"></span> Le Image Photography Studio. All rights reserved.</p>
   </footer>
 
-  <script src="js/frames.js?v=12"></script>
-  <script src="js/monogram.js?v=12"></script>
-  <script src="js/app.js?v=12"></script>
+  <script src="js/frames.js?v=13"></script>
+  <script src="js/monogram.js?v=13"></script>
+  <script src="js/app.js?v=13"></script>
 
 </body>
 </html>
