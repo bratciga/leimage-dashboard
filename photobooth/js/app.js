@@ -560,60 +560,68 @@ function buildPrintLayoutPreview() {
 
   const printSize = WizardState.printSize || '4x6';
   const is2x6 = printSize === '2x6';
+  const gap = 2; // % gap between cells
 
-  // Set layout class
   container.classList.add(is2x6 ? 'review-print-layout--2x6' : 'review-print-layout--4x6');
 
-  // Set backdrop background
+  // White background like real prints
+  container.style.backgroundColor = '#ffffff';
+  container.style.backgroundImage = 'none';
+
+  // Find backdrop image URL
+  let backdropUrl = '';
   const backdrop = WizardState.backdrop;
   if (backdrop) {
-    // Find the backdrop image from the card
     const backdropCard = document.querySelector(`.toggle-selectable[data-value="${backdrop}"]`);
     const backdropImg = backdropCard?.querySelector('img');
-    if (backdropImg) {
-      container.style.backgroundImage = `url('${backdropImg.src}')`;
+    if (backdropImg) backdropUrl = backdropImg.src;
+  }
+
+  function makePhotoSlot(left, top, width, height, label) {
+    const ph = document.createElement('div');
+    ph.className = 'photo-placeholder';
+    ph.style.cssText = `left:${left}%; top:${top}%; width:${width}%; height:${height}%;`;
+    if (backdropUrl) {
+      ph.style.backgroundImage = `url('${backdropUrl}')`;
+      ph.style.backgroundSize = 'cover';
+      ph.style.backgroundPosition = 'center';
+      ph.style.border = 'none';
     }
-  } else {
-    container.style.backgroundImage = 'none';
-    container.style.backgroundColor = '#333';
+    ph.textContent = label;
+    return ph;
   }
 
   if (is2x6) {
-    // 2x6 strip: 3 photo slots stacked vertically, monogram at bottom
-    // Layout: photos take top 75%, monogram bottom 25%
-    const photoH = 22; // % each
-    for (let i = 0; i < 3; i++) {
-      const ph = document.createElement('div');
-      ph.className = 'photo-placeholder';
-      ph.style.cssText = `left:8%; top:${2 + i * 24}%; width:84%; height:${photoH}%;`;
-      ph.textContent = `Photo ${i + 1}`;
-      container.appendChild(ph);
+    // 2x6 strip: 4 photos stacked (each ~18.5% height) + monogram footer (~20%)
+    const photoH = 18.5;
+    const photoGap = 1.5;
+    const startY = 1.5;
+    for (let i = 0; i < 4; i++) {
+      const y = startY + i * (photoH + photoGap);
+      container.appendChild(makePhotoSlot(3, y, 94, photoH, `Photo ${i + 1}`));
     }
-    // Monogram area at bottom
+    // Monogram footer
     const mono = document.createElement('div');
     mono.className = 'monogram-placeholder';
-    mono.style.cssText = 'left:15%; top:74%; width:70%; height:24%;';
+    mono.style.cssText = 'left:10%; top:80%; width:80%; height:18%;';
     addMonogramToPlaceholder(mono);
     container.appendChild(mono);
   } else {
-    // 4x6: 2 photos on left, monogram on right (or 2 photos top, monogram bottom)
-    // Common layout: 2 photos stacked on left half, monogram on right half
-    const ph1 = document.createElement('div');
-    ph1.className = 'photo-placeholder';
-    ph1.style.cssText = 'left:3%; top:3%; width:45%; height:45%;';
-    ph1.textContent = 'Photo 1';
-    container.appendChild(ph1);
+    // 4x6 landscape: 2 photos across top, 1 photo bottom-right, monogram bottom-left
+    const halfW = 48;
+    const halfH = 47;
 
-    const ph2 = document.createElement('div');
-    ph2.className = 'photo-placeholder';
-    ph2.style.cssText = 'left:3%; top:52%; width:45%; height:45%;';
-    ph2.textContent = 'Photo 2';
-    container.appendChild(ph2);
+    // Top-left photo
+    container.appendChild(makePhotoSlot(1.5, 1.5, halfW, halfH, 'Photo 1'));
+    // Top-right photo
+    container.appendChild(makePhotoSlot(50.5, 1.5, halfW, halfH, 'Photo 2'));
+    // Bottom-right photo
+    container.appendChild(makePhotoSlot(50.5, 51, halfW, halfH, 'Photo 3'));
 
-    // Monogram on right side
+    // Monogram bottom-left
     const mono = document.createElement('div');
     mono.className = 'monogram-placeholder';
-    mono.style.cssText = 'left:52%; top:10%; width:44%; height:80%;';
+    mono.style.cssText = 'left:1.5%; top:51%; width:48%; height:47%;';
     addMonogramToPlaceholder(mono);
     container.appendChild(mono);
   }
@@ -622,17 +630,17 @@ function buildPrintLayoutPreview() {
 function addMonogramToPlaceholder(container) {
   const srcCanvas = window.MonogramBuilder?.state?.canvas;
   if (!srcCanvas || srcCanvas.width === 0) {
-    container.style.color = 'rgba(255,255,255,0.4)';
+    container.style.color = 'rgba(0,0,0,0.25)';
     container.style.fontSize = '0.65rem';
+    container.style.fontFamily = "'Cinzel', serif";
     container.textContent = 'Monogram';
     return;
   }
 
   const miniCanvas = document.createElement('canvas');
   const aspect = srcCanvas.width / srcCanvas.height;
-  // Fit inside the placeholder
-  miniCanvas.width = 200;
-  miniCanvas.height = Math.round(200 / aspect);
+  miniCanvas.width = 240;
+  miniCanvas.height = Math.round(240 / aspect);
   const ctx = miniCanvas.getContext('2d');
   ctx.drawImage(srcCanvas, 0, 0, miniCanvas.width, miniCanvas.height);
   container.appendChild(miniCanvas);
