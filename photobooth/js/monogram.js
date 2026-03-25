@@ -69,7 +69,7 @@ const CANVAS_SPECS = {
   '2x6': { w: 1240, h: 1844 },
 };
 
-const MONOGRAM_ZONE_HEIGHT_RATIO = 0.70;
+const MONOGRAM_ZONE_HEIGHT_RATIO = 0.85;
 const PADDING_RATIO = 0.06;
 
 /* ================================================================
@@ -376,8 +376,9 @@ async function drawMonogramContent(ctx, spec, state, transparent = false) {
     return;
   }
 
-  const zoneTop  = spec.h * (1 - MONOGRAM_ZONE_HEIGHT_RATIO);
+  // Center the monogram zone vertically
   const zoneH    = spec.h * MONOGRAM_ZONE_HEIGHT_RATIO;
+  const zoneTop  = (spec.h - zoneH) / 2;
   const centerX  = spec.w / 2;
   const padding  = spec.w * PADDING_RATIO;
   const maxW     = spec.w - padding * 2;
