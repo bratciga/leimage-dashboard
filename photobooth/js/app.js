@@ -789,6 +789,7 @@ function collectFormData() {
       text_color1:    mono.textColor1,
       text_color2:    mono.textColor2,
       flourish_style: mono.flourish,
+      frame_color:    mono.frameColor,
       bg_transparent: true,
     },
     props,

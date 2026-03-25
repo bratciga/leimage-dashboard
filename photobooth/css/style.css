@@ -1010,6 +1010,91 @@ h1, h2, h3 {
   background: linear-gradient(to left, transparent, var(--border));
 }
 
+/* ---- Frame Color Selector ---- */
+.frame-color-selector {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.6rem 0.75rem;
+  background: var(--bg-alt);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  margin-bottom: 0.5rem;
+}
+
+.frame-color-label {
+  font-size: 0.75rem;
+  letter-spacing: 0.04em;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.frame-color-swatches {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  flex-wrap: wrap;
+}
+
+.frame-color-swatch-group {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.2rem;
+}
+
+.frame-color-swatch {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  border: 2.5px solid var(--border);
+  cursor: pointer;
+  transition: all 0.15s ease;
+  padding: 0;
+  outline: none;
+}
+
+.frame-color-swatch:hover {
+  transform: scale(1.1);
+  border-color: var(--text-muted);
+}
+
+.frame-color-swatch.active {
+  border-color: var(--navy);
+  box-shadow: 0 0 0 2px rgba(4,40,164,0.25);
+  transform: scale(1.1);
+}
+
+.frame-color-swatch-label {
+  font-size: 0.6rem;
+  color: var(--text-muted);
+  text-align: center;
+  letter-spacing: 0.02em;
+}
+
+.frame-color-custom {
+  width: 28px;
+  height: 28px;
+  border: 2.5px solid var(--border);
+  border-radius: 50%;
+  padding: 1px;
+  cursor: pointer;
+  background: none;
+  transition: all 0.15s ease;
+}
+
+.frame-color-custom:hover {
+  transform: scale(1.1);
+  border-color: var(--text-muted);
+}
+
+.frame-color-hex {
+  font-family: monospace;
+  font-size: 0.58rem;
+}
+
 .frame-category-label:first-child {
   margin-top: 0;
 }

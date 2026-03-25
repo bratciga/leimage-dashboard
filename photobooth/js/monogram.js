@@ -84,6 +84,7 @@ const MonogramState = {
   colorsLinked:  true,
   flourish:      'none',   // kept for backward compat (maps to frame id)
   frame:         'none',   // primary: selected frame id
+  frameColor:    '#c9a84c', // frame color (gold default)
   printSize:     '4x6',
   canvas:        null,
   mockCanvas:    null,
@@ -203,13 +204,140 @@ const FRAME_CATEGORY_LABELS = {
   divider:   'Line Dividers',
 };
 
+function updateFramePreviewColors() {
+  const color = MonogramState.frameColor;
+  const grid = document.getElementById('flourish-picker-grid');
+  if (!grid) return;
+
+  // Update inline SVG previews
+  grid.querySelectorAll('.frame-option').forEach(card => {
+    const frameId = card.dataset.frame;
+    const templates = window.FrameTemplates ? window.FrameTemplates.templates : [];
+    const tpl = templates.find(f => f.id === frameId);
+    if (!tpl) return;
+
+    const svgEl = card.querySelector('.frame-preview-svg');
+    if (!svgEl) return;
+
+    if (tpl.svg) {
+      const colored = tpl.svg.split('FRAME_COLOR').join(color);
+      svgEl.innerHTML = colored;
+      const svgTag = svgEl.querySelector('svg');
+      if (svgTag) {
+        svgTag.setAttribute('width', '100%');
+        svgTag.setAttribute('height', '100%');
+        svgTag.style.display = 'block';
+      }
+    } else if (tpl.svgFile && window.FrameTemplates.fetchSvgText) {
+      window.FrameTemplates.fetchSvgText(tpl.svgFile).then(text => {
+        if (!text) return;
+        let colored;
+        if (text.includes('FRAME_COLOR')) {
+          colored = text.split('FRAME_COLOR').join(color);
+        } else {
+          colored = text.replace(/<svg([^>]*)>/, (match, attrs) => {
+            if (/fill=/.test(attrs)) return match;
+            return `<svg${attrs} fill="${color}">`;
+          });
+        }
+        const parser = new DOMParser();
+        const doc = parser.parseFromString(colored, 'image/svg+xml');
+        const svgTag = doc.querySelector('svg');
+        if (svgTag) {
+          svgTag.setAttribute('width', '100%');
+          svgTag.setAttribute('height', '100%');
+          svgTag.style.display = 'block';
+          svgEl.innerHTML = svgTag.outerHTML;
+        }
+      });
+    }
+  });
+}
+
 function initFramePicker() {
   const grid = document.getElementById('flourish-picker-grid');
   if (!grid) return;
   grid.innerHTML = '';
 
-  const PREVIEW_COLOR = '#c9a84c'; // gold for picker previews
+  const PREVIEW_COLOR = MonogramState.frameColor;
   const templates = window.FrameTemplates ? window.FrameTemplates.templates : [];
+
+  // ---- Frame Color Selector ----
+  const colorRow = document.createElement('div');
+  colorRow.className = 'frame-color-selector';
+
+  const colorLabel = document.createElement('span');
+  colorLabel.className = 'frame-color-label';
+  colorLabel.textContent = 'Frame Color';
+  colorRow.appendChild(colorLabel);
+
+  const swatchWrap = document.createElement('div');
+  swatchWrap.className = 'frame-color-swatches';
+
+  const presets = [
+    { name: 'Gold', color: '#c9a84c' },
+    { name: 'Rose', color: '#b76e79' },
+  ];
+
+  presets.forEach(preset => {
+    const swatch = document.createElement('button');
+    swatch.type = 'button';
+    swatch.className = 'frame-color-swatch' + (MonogramState.frameColor === preset.color ? ' active' : '');
+    swatch.style.backgroundColor = preset.color;
+    swatch.title = preset.name;
+    swatch.dataset.color = preset.color;
+
+    const swatchLabel = document.createElement('span');
+    swatchLabel.className = 'frame-color-swatch-label';
+    swatchLabel.textContent = preset.name;
+
+    const swatchGroup = document.createElement('div');
+    swatchGroup.className = 'frame-color-swatch-group';
+    swatchGroup.appendChild(swatch);
+    swatchGroup.appendChild(swatchLabel);
+    swatchWrap.appendChild(swatchGroup);
+
+    swatch.addEventListener('click', () => {
+      MonogramState.frameColor = preset.color;
+      window.FrameTemplates.clearCache();
+      colorRow.querySelectorAll('.frame-color-swatch').forEach(s => s.classList.remove('active'));
+      swatch.classList.add('active');
+      customInput.value = preset.color;
+      customHex.textContent = preset.color;
+      updateFramePreviewColors();
+      renderMonogram();
+    });
+  });
+
+  // Custom color picker
+  const customGroup = document.createElement('div');
+  customGroup.className = 'frame-color-swatch-group';
+
+  const customInput = document.createElement('input');
+  customInput.type = 'color';
+  customInput.className = 'frame-color-custom';
+  customInput.value = MonogramState.frameColor;
+  customInput.title = 'Custom color';
+
+  const customHex = document.createElement('span');
+  customHex.className = 'frame-color-swatch-label frame-color-hex';
+  customHex.textContent = MonogramState.frameColor;
+
+  customInput.addEventListener('input', () => {
+    MonogramState.frameColor = customInput.value;
+    window.FrameTemplates.clearCache();
+    colorRow.querySelectorAll('.frame-color-swatch').forEach(s => s.classList.remove('active'));
+    customHex.textContent = customInput.value;
+    updateFramePreviewColors();
+    renderMonogram();
+  });
+
+  customGroup.appendChild(customInput);
+  customGroup.appendChild(customHex);
+  swatchWrap.appendChild(customGroup);
+
+  colorRow.appendChild(swatchWrap);
+  grid.appendChild(colorRow);
 
   // Group templates by category preserving order of first appearance
   const categoryOrder = [];
@@ -437,9 +565,8 @@ async function drawMonogramContent(ctx, spec, state, transparent = false) {
 
   // Draw frame first (behind text)
   if (hasFrame && window.FrameTemplates) {
-    // Use fixed gold color for frames — frames keep their original color
-    // regardless of text color selection
-    const frameImg = await window.FrameTemplates.getImage(frameId, '#c9a84c');
+    // Use the selected frame color (not the text color)
+    const frameImg = await window.FrameTemplates.getImage(frameId, state.frameColor || '#c9a84c');
     if (frameImg) {
       // For frames with a known viewBox aspect ratio (botanical), scale to fit
       // the zone while maintaining aspect ratio and centering.

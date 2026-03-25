@@ -981,9 +981,8 @@ function _fetchSvgText(svgFile) {
  * Returns a Promise<HTMLImageElement>.
  */
 function getFrameImage(frameId, color) {
-  // All frames use their original gold color — never the user's text color
-  const FIXED_COLOR = '#c9a84c';
-  const cacheKey = `${frameId}::FIXED`;
+  const FIXED_COLOR = color || '#c9a84c';
+  const cacheKey = `${frameId}::${FIXED_COLOR}`;
 
   if (_frameImageCache.has(cacheKey)) {
     return Promise.resolve(_frameImageCache.get(cacheKey));
