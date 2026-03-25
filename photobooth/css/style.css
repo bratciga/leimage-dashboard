@@ -633,7 +633,7 @@ h1, h2, h3 {
 ================================================================ */
 .monogram-layout {
   display: grid;
-  grid-template-columns: 1fr 1.2fr;
+  grid-template-columns: 1fr 2fr;
   gap: 2rem;
 }
 
@@ -1120,7 +1120,6 @@ h1, h2, h3 {
 .canvas-outer canvas {
   width: 100%;
   max-height: 400px;
-  height: auto;
   display: block;
   object-fit: contain;
 }
