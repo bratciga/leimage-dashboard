@@ -122,12 +122,15 @@ h1, h2, h3 {
 .admin-page .header-inner { max-width: 1100px; }
 
 .brand {
-  font-family: 'Cormorant Garamond', Georgia, serif;
-  font-size: 1.5rem;
-  font-weight: 400;
-  color: var(--navy);
-  letter-spacing: 0.08em;
   flex-shrink: 0;
+  display: flex;
+  align-items: center;
+}
+
+.brand-logo {
+  height: 32px;
+  width: auto;
+  display: block;
 }
 
 .header-sub {
