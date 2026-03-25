@@ -424,7 +424,7 @@ h1, h2, h3 {
   width: 100%;
   aspect-ratio: 1;
   overflow: hidden;
-  cursor: zoom-in;
+  cursor: pointer;
 }
 
 .backdrop-img {
@@ -545,7 +545,7 @@ h1, h2, h3 {
   align-items: center;
   justify-content: center;
   overflow: hidden;
-  cursor: zoom-in;
+  cursor: pointer;
   width: 100%;
 }
 
