@@ -637,19 +637,12 @@ function addMonogramToPlaceholder(container) {
     return;
   }
 
-  // Crop to the monogram zone (centered 85% of canvas) to fill the preview
-  const zoneRatio = 0.85;
-  const zoneH = srcCanvas.height * zoneRatio;
-  const zoneY = (srcCanvas.height - zoneH) / 2;
-  const zoneW = srcCanvas.width * 0.92; // slight horizontal trim
-  const zoneX = (srcCanvas.width - zoneW) / 2;
-
+  // Canvas is square — draw it directly to fill the placeholder
   const miniCanvas = document.createElement('canvas');
-  const cropAspect = zoneW / zoneH;
   miniCanvas.width = 500;
-  miniCanvas.height = Math.round(500 / cropAspect);
+  miniCanvas.height = 500;
   const ctx = miniCanvas.getContext('2d');
-  ctx.drawImage(srcCanvas, zoneX, zoneY, zoneW, zoneH, 0, 0, miniCanvas.width, miniCanvas.height);
+  ctx.drawImage(srcCanvas, 0, 0, miniCanvas.width, miniCanvas.height);
   container.appendChild(miniCanvas);
 }
 
