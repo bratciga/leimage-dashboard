@@ -989,12 +989,13 @@ function getFrameImage(frameId, color) {
   const template = FRAME_TEMPLATES.find(f => f.id === frameId);
   if (!template) return Promise.resolve(null);
 
-  const makeImageFromSvg = (svgText) => {
+  const makeImageFromSvg = (svgText, overrideColor) => {
+    const useColor = overrideColor || color;
     return new Promise((resolve) => {
       let coloredSvg;
       if (svgText.includes('FRAME_COLOR')) {
         // Standard placeholder replacement
-        coloredSvg = svgText.split('FRAME_COLOR').join(color);
+        coloredSvg = svgText.split('FRAME_COLOR').join(useColor);
       } else {
         // No placeholder found: inject fill on the root <svg> element
         coloredSvg = svgText.replace(/<svg([^>]*)>/, (match, attrs) => {
@@ -1036,9 +1037,17 @@ function getFrameImage(frameId, color) {
     });
   }
 
-  // Inline SVG string (legacy frames)
+  // Inline SVG string — use fixed dark color, not user's text color
   if (!template.svg) return Promise.resolve(null);
-  return makeImageFromSvg(template.svg);
+  const fixedInlineColor = '#3a3a3a';
+  const fixedInlineKey = `${frameId}::FIXED`;
+  if (_frameImageCache.has(fixedInlineKey)) {
+    return Promise.resolve(_frameImageCache.get(fixedInlineKey));
+  }
+  return makeImageFromSvg(template.svg, fixedInlineColor).then(img => {
+    if (img) _frameImageCache.set(fixedInlineKey, img);
+    return img;
+  });
 }
 
 /**
