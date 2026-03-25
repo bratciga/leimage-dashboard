@@ -1021,7 +1021,7 @@ h1, h2, h3 {
   border-radius: var(--radius);
   margin-bottom: 0.5rem;
   position: sticky;
-  top: 110px;
+  top: 148px;
   z-index: 80;
   box-shadow: 0 2px 8px rgba(0,0,0,0.06);
 }
