@@ -592,18 +592,20 @@ function buildPrintLayoutPreview() {
   }
 
   if (is2x6) {
-    // 2x6 strip: 4 photos stacked (each ~18.5% height) + monogram footer (~20%)
-    const photoH = 18.5;
-    const photoGap = 1.5;
-    const startY = 1.5;
+    // 2x6 strip: 4 photos stacked + monogram same size as a photo
+    // 5 equal slots with gaps: each ~18% height, 1.5% gap
+    const slotH = 18;
+    const gap = 1.5;
+    const startY = 1;
     for (let i = 0; i < 4; i++) {
-      const y = startY + i * (photoH + photoGap);
-      container.appendChild(makePhotoSlot(3, y, 94, photoH, `Photo ${i + 1}`));
+      const y = startY + i * (slotH + gap);
+      container.appendChild(makePhotoSlot(3, y, 94, slotH, `Photo ${i + 1}`));
     }
-    // Monogram footer
+    // Monogram — same size as photo slots
     const mono = document.createElement('div');
     mono.className = 'monogram-placeholder';
-    mono.style.cssText = 'left:10%; top:80%; width:80%; height:18%;';
+    const monoY = startY + 4 * (slotH + gap);
+    mono.style.cssText = `left:3%; top:${monoY}%; width:94%; height:${slotH}%;`;
     addMonogramToPlaceholder(mono);
     container.appendChild(mono);
   } else {
