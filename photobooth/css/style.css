@@ -1078,10 +1078,87 @@ h1, h2, h3 {
   .review-print-layout--2x6 { width: 150px; height: 450px; }
 }
 
-.review-download {
+.review-actions {
   display: flex;
   justify-content: center;
+  gap: 1rem;
   margin: 1rem 0 1.5rem;
+}
+
+.print-fullscreen-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.print-fullscreen-modal.hidden { display: none; }
+
+.print-fullscreen-backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(0,0,0,0.85);
+}
+
+.print-fullscreen-content {
+  position: relative;
+  z-index: 1;
+  max-width: 95vw;
+  max-height: 95vh;
+}
+
+.print-fullscreen-close {
+  position: absolute;
+  top: -40px;
+  right: 0;
+  background: none;
+  border: none;
+  color: #fff;
+  font-size: 1.5rem;
+  cursor: pointer;
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.print-fullscreen-close:hover { color: var(--gold); }
+
+#print-fullscreen-layout {
+  background: #fff;
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+  box-shadow: 0 8px 40px rgba(0,0,0,0.5);
+}
+
+#print-fullscreen-layout .photo-placeholder {
+  background: #e0e0e0;
+  border: none;
+  border-radius: 2px;
+  position: absolute;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: rgba(0,0,0,0.15);
+  font-size: 1rem;
+  font-family: 'Cinzel', serif;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  overflow: hidden;
+}
+
+#print-fullscreen-layout .monogram-placeholder {
+  position: absolute;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #ffffff;
+}
+
+#print-fullscreen-layout .monogram-placeholder canvas {
+  max-width: 100%;
+  max-height: 100%;
 }
 
 /* ---- Canvas area ---- */

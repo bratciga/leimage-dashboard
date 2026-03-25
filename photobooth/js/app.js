@@ -82,6 +82,21 @@ async function initApp() {
     });
   }
 
+  // Fullscreen print preview
+  const fullscreenBtn = document.getElementById('review-fullscreen-btn');
+  if (fullscreenBtn) {
+    fullscreenBtn.addEventListener('click', openFullscreenPrintPreview);
+  }
+
+  const fsModal = document.getElementById('print-fullscreen-modal');
+  if (fsModal) {
+    fsModal.querySelector('.print-fullscreen-close')?.addEventListener('click', closeFullscreenPrintPreview);
+    fsModal.querySelector('.print-fullscreen-backdrop')?.addEventListener('click', closeFullscreenPrintPreview);
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && !fsModal.classList.contains('hidden')) closeFullscreenPrintPreview();
+    });
+  }
+
   // Show step 1
   goToStep(1);
 }
@@ -664,6 +679,83 @@ function addMonogramToPlaceholder(container) {
   ctx.drawImage(srcCanvas, 0, zoneY, srcCanvas.width, zoneH, 0, 0, miniCanvas.width, miniCanvas.height);
 
   container.appendChild(miniCanvas);
+}
+
+function openFullscreenPrintPreview() {
+  const modal = document.getElementById('print-fullscreen-modal');
+  const layout = document.getElementById('print-fullscreen-layout');
+  if (!modal || !layout) return;
+
+  layout.innerHTML = '';
+  layout.className = '';
+  layout.style.cssText = '';
+
+  const printSize = WizardState.printSize || '4x6';
+  const is2x6 = printSize === '2x6';
+
+  // Use viewport-filling sizes
+  if (is2x6) {
+    // Fill height, calculate width from ratio 430:1280
+    const h = Math.min(window.innerHeight * 0.88, 800);
+    const w = h * (430 / 1280);
+    layout.style.cssText = `position:relative; width:${w}px; height:${h}px; background:#fff;`;
+  } else {
+    // Fill width, calculate height from ratio 1280:861
+    const w = Math.min(window.innerWidth * 0.85, 900);
+    const h = w * (861 / 1280);
+    layout.style.cssText = `position:relative; width:${w}px; height:${h}px; background:#fff;`;
+  }
+
+  // Find backdrop
+  let backdropUrl = '';
+  const backdrop = WizardState.backdrop;
+  if (backdrop) {
+    const card = document.querySelector(`.toggle-selectable[data-value="${backdrop}"]`);
+    const img = card?.querySelector('img');
+    if (img) backdropUrl = img.src;
+  }
+
+  function makeSlot(left, top, width, height, label) {
+    const el = document.createElement('div');
+    el.className = 'photo-placeholder';
+    el.style.cssText = `left:${left}%; top:${top}%; width:${width}%; height:${height}%;`;
+    if (backdropUrl) {
+      el.style.backgroundImage = `url('${backdropUrl}')`;
+      el.style.backgroundSize = 'cover';
+      el.style.backgroundPosition = 'center';
+    }
+    el.textContent = label;
+    return el;
+  }
+
+  if (is2x6) {
+    const slotH = 18, gap = 1.5, startY = 1;
+    for (let i = 0; i < 4; i++) {
+      layout.appendChild(makeSlot(3, startY + i * (slotH + gap), 94, slotH, `Photo ${i + 1}`));
+    }
+    const mono = document.createElement('div');
+    mono.className = 'monogram-placeholder';
+    const monoY = startY + 4 * (slotH + gap);
+    mono.style.cssText = `left:3%; top:${monoY}%; width:94%; height:${slotH}%;`;
+    addMonogramToPlaceholder(mono);
+    layout.appendChild(mono);
+  } else {
+    const halfW = 48, halfH = 47;
+    layout.appendChild(makeSlot(1.5, 1.5, halfW, halfH, 'Photo 1'));
+    layout.appendChild(makeSlot(50.5, 1.5, halfW, halfH, 'Photo 2'));
+    layout.appendChild(makeSlot(50.5, 51, halfW, halfH, 'Photo 3'));
+    const mono = document.createElement('div');
+    mono.className = 'monogram-placeholder';
+    mono.style.cssText = 'left:1.5%; top:51%; width:48%; height:47%;';
+    addMonogramToPlaceholder(mono);
+    layout.appendChild(mono);
+  }
+
+  modal.classList.remove('hidden');
+}
+
+function closeFullscreenPrintPreview() {
+  document.getElementById('print-fullscreen-modal')?.classList.add('hidden');
 }
 
 /* ================================================================

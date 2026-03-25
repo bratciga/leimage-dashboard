@@ -475,8 +475,18 @@
         </div>
       </div>
 
-      <div class="review-download">
+      <div class="review-actions">
+        <button type="button" id="review-fullscreen-btn" class="btn btn-secondary">🔍 Full Screen Preview</button>
         <button type="button" id="review-download-btn" class="btn btn-secondary">↓ Download Monogram PNG</button>
+      </div>
+
+      <!-- Fullscreen print preview modal -->
+      <div id="print-fullscreen-modal" class="print-fullscreen-modal hidden">
+        <div class="print-fullscreen-backdrop"></div>
+        <div class="print-fullscreen-content">
+          <button type="button" class="print-fullscreen-close">✕</button>
+          <div id="print-fullscreen-layout"></div>
+        </div>
       </div>
 
       <div class="card--submit-inner">
