@@ -437,7 +437,9 @@ async function drawMonogramContent(ctx, spec, state, transparent = false) {
 
   // Draw frame first (behind text)
   if (hasFrame && window.FrameTemplates) {
-    const frameImg = await window.FrameTemplates.getImage(frameId, color1);
+    // Use fixed gold color for frames — frames keep their original color
+    // regardless of text color selection
+    const frameImg = await window.FrameTemplates.getImage(frameId, '#c9a84c');
     if (frameImg) {
       // For frames with a known viewBox aspect ratio (botanical), scale to fit
       // the zone while maintaining aspect ratio and centering.

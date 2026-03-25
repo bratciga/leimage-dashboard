@@ -336,12 +336,13 @@ h1, h2, h3 {
   transition: opacity 0.2s ease;
   cursor: pointer;
   z-index: 3;
-  pointer-events: auto;
+  pointer-events: none;
 }
 
 .lightbox-trigger:hover .zoom-icon-overlay,
 .photo-slot:hover .zoom-icon-overlay {
   opacity: 1;
+  pointer-events: auto;
 }
 
 /* ================================================================
@@ -633,7 +634,7 @@ h1, h2, h3 {
 ================================================================ */
 .monogram-layout {
   display: grid;
-  grid-template-columns: 1fr 2fr;
+  grid-template-columns: 2fr 1fr;
   gap: 2rem;
 }
 
