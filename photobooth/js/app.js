@@ -693,16 +693,21 @@ function openFullscreenPrintPreview() {
   const printSize = WizardState.printSize || '4x6';
   const is2x6 = printSize === '2x6';
 
-  // Use viewport-filling sizes
+  // Responsive: fit within viewport while maintaining exact print ratio
+  const vw = window.innerWidth * 0.92;
+  const vh = window.innerHeight * 0.88;
+
   if (is2x6) {
-    // Fill height, calculate width from ratio 430:1280
-    const h = Math.min(window.innerHeight * 0.88, 800);
-    const w = h * (430 / 1280);
+    const ratio = 430 / 1280; // w:h
+    let h = vh;
+    let w = h * ratio;
+    if (w > vw) { w = vw; h = w / ratio; }
     layout.style.cssText = `position:relative; width:${w}px; height:${h}px; background:#fff;`;
   } else {
-    // Fill width, calculate height from ratio 1280:861
-    const w = Math.min(window.innerWidth * 0.85, 900);
-    const h = w * (861 / 1280);
+    const ratio = 1280 / 861; // w:h
+    let w = vw;
+    let h = w / ratio;
+    if (h > vh) { h = vh; w = h * ratio; }
     layout.style.cssText = `position:relative; width:${w}px; height:${h}px; background:#fff;`;
   }
 
