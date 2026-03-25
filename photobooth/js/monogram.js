@@ -501,9 +501,11 @@ const initFlourishPicker = initFramePicker;
    CANVAS RENDERING HELPERS
 ================================================================ */
 function fitFontSize(ctx, text, fontFamily, maxWidth, maxSize, minSize = 16) {
+  const lines = text.split('\n');
+  const longest = lines.reduce((a, b) => a.length >= b.length ? a : b, '');
   let size = maxSize;
   ctx.font = `${size}px "${fontFamily}"`;
-  while (size > minSize && ctx.measureText(text).width > maxWidth) {
+  while (size > minSize && ctx.measureText(longest).width > maxWidth) {
     size -= 2;
     ctx.font = `${size}px "${fontFamily}"`;
   }
@@ -647,15 +649,23 @@ async function drawMonogramContent(ctx, spec, state, transparent = false) {
 
   if (line1) {
     ctx.fillStyle = color1;
-    ctx.font = `${size1}px "${font}"`;
-    ctx.fillText(line1, textZoneCenterX, cursor + size1 * 0.82);
-    cursor += size1 + lineGap;
+    const subLines1 = line1.split('\n');
+    const sub1Size = subLines1.length > 1 ? Math.floor(size1 / subLines1.length * 1.2) : size1;
+    ctx.font = `${sub1Size}px "${font}"`;
+    subLines1.forEach((sl, i) => {
+      ctx.fillText(sl, textZoneCenterX, cursor + sub1Size * 0.82 + i * sub1Size * 1.1);
+    });
+    cursor += (subLines1.length > 1 ? sub1Size * 1.1 * subLines1.length : size1) + lineGap;
   }
 
   if (line2) {
     ctx.fillStyle = color2;
-    ctx.font = `${size2}px "${font}"`;
-    ctx.fillText(line2, textZoneCenterX, cursor + size2 * 0.82);
+    const subLines2 = line2.split('\n');
+    const sub2Size = subLines2.length > 1 ? Math.floor(size2 / subLines2.length * 1.2) : size2;
+    ctx.font = `${sub2Size}px "${font}"`;
+    subLines2.forEach((sl, i) => {
+      ctx.fillText(sl, textZoneCenterX, cursor + sub2Size * 0.82 + i * sub2Size * 1.1);
+    });
   }
 }
 

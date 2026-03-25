@@ -9,7 +9,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300&display=swap" rel="stylesheet" />
 
-  <link rel="stylesheet" href="css/style.css?v=17" />
+  <link rel="stylesheet" href="css/style.css?v=19" />
 </head>
 <body>
 
@@ -20,7 +20,7 @@
     <div class="header-inner">
       <a href="https://leimageinc.com" class="brand"><img src="assets/images/leimage-logo.png" alt="Le Image" class="brand-logo" /></a>
       <div class="header-sub">Photo Booth Configurator</div>
-      <button type="button" id="save-project-btn" class="btn btn-secondary btn-sm header-save-btn">💾 Save</button>
+      <button type="button" id="save-project-btn" class="btn btn-secondary btn-sm header-save-btn">⬇ Save</button>
     </div>
   </header>
 
@@ -359,7 +359,7 @@
           <div class="field-group">
             <label class="field-label" for="mono-line1">Names <span class="field-hint">(e.g. "J &amp; M" or "Jessica &amp; Michael")</span></label>
             <div class="text-color-row">
-              <input type="text" id="mono-line1" class="text-input" placeholder="J & M" maxlength="60" />
+              <textarea id="mono-line1" class="text-input" placeholder="J & M" maxlength="120" rows="1" style="resize:none;overflow:hidden;min-height:2.2rem;field-sizing:content;"></textarea>
               <input type="color" id="mono-color1" class="text-color-dot" value="#333333" title="Names color" />
               <button type="button" id="color-link-toggle" class="color-link-btn linked" title="Link/Unlink colors">🔗</button>
             </div>
@@ -368,7 +368,7 @@
           <div class="field-group">
             <label class="field-label" for="mono-line2">Date <span class="field-hint">(e.g. "April 15, 2026")</span></label>
             <div class="text-color-row">
-              <input type="text" id="mono-line2" class="text-input" placeholder="April 15, 2026" maxlength="60" />
+              <textarea id="mono-line2" class="text-input" placeholder="April 15, 2026" maxlength="120" rows="1" style="resize:none;overflow:hidden;min-height:2.2rem;field-sizing:content;"></textarea>
               <input type="color" id="mono-color2" class="text-color-dot" value="#333333" title="Date color" />
               <button type="button" id="color-link-toggle-2" class="color-link-btn linked" title="Link/Unlink colors">🔗</button>
             </div>
@@ -546,9 +546,9 @@
     <p>© <span id="footer-year"></span> Le Image Photography Studio. All rights reserved.</p>
   </footer>
 
-  <script src="js/frames.js?v=17"></script>
-  <script src="js/monogram.js?v=17"></script>
-  <script src="js/app.js?v=17"></script>
+  <script src="js/frames.js?v=19"></script>
+  <script src="js/monogram.js?v=19"></script>
+  <script src="js/app.js?v=19"></script>
 
 </body>
 </html>
