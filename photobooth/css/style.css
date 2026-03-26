@@ -787,26 +787,28 @@ h1, h2, h3 {
 }
 
 .color-link-btn {
-  background: none;
-  border: 1.5px solid var(--border);
+  background: #f8f8f8;
+  border: 1px solid var(--border);
   border-radius: 50%;
   width: 22px;
   height: 22px;
-  font-size: 0.65rem;
+  font-size: 0.7rem;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
   transition: all var(--transition);
+  line-height: 1;
 }
 
 .color-link-btn.linked {
   border-color: var(--navy);
-  background: rgba(4,40,164,0.08);
+  background: #f8f8f8;
 }
 
 .color-link-btn:hover {
   border-color: var(--navy-light);
+  background: #f0f0f0;
 }
 
 .color-match-btn {
@@ -2386,3 +2388,153 @@ img, canvas, iframe, video {
 
 @keyframes toastIn { from { opacity: 0; transform: translateX(-50%) translateY(20px); } to { opacity: 1; transform: translateX(-50%) translateY(0); } }
 @keyframes toastOut { from { opacity: 1; } to { opacity: 0; } }
+
+/* ================================================================
+   MONOGRAM BUILDER ADVANCED CONTROLS (v38)
+================================================================ */
+
+/* Sub-rows for per-field controls */
+.field-sub-row {
+  display: flex;
+  gap: 0.75rem;
+  margin-top: 0.4rem;
+}
+
+.field-sub-col {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.field-sub-col--center {
+  justify-content: flex-end;
+  align-items: flex-start;
+}
+
+.field-sublabel {
+  font-size: 0.68rem;
+  color: var(--text-light);
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.field-sublabel .field-hint {
+  text-transform: none;
+  letter-spacing: 0;
+}
+
+/* Font field row with link button */
+.font-field-row {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.font-field-row .select-input--sm {
+  flex: 1;
+}
+
+/* Smaller select inputs */
+.select-input--sm {
+  padding: 0.4rem 0.6rem;
+  font-size: 0.85rem;
+  padding-right: 1.6rem;
+  background-position: right 8px center;
+}
+
+/* Extra small text inputs */
+.text-input--xs {
+  width: 60px;
+  padding: 0.35rem 0.5rem;
+  font-size: 0.8rem;
+  text-align: center;
+}
+
+/* Font size row */
+.fontsize-row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.fontsize-row .text-input--xs {
+  width: 55px;
+  flex-shrink: 0;
+}
+
+.fontsize-row .range-input {
+  flex: 1;
+  min-width: 60px;
+}
+
+/* Range input styling */
+.range-input {
+  -webkit-appearance: none;
+  appearance: none;
+  height: 4px;
+  background: var(--border);
+  border-radius: 2px;
+  outline: none;
+  cursor: pointer;
+}
+
+.range-input::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 14px;
+  height: 14px;
+  background: var(--navy);
+  border-radius: 50%;
+  cursor: pointer;
+  transition: transform 0.15s ease;
+}
+
+.range-input::-webkit-slider-thumb:hover {
+  transform: scale(1.15);
+}
+
+.range-input::-moz-range-thumb {
+  width: 14px;
+  height: 14px;
+  background: var(--navy);
+  border: none;
+  border-radius: 50%;
+  cursor: pointer;
+}
+
+.range-val {
+  font-size: 0.72rem;
+  color: var(--text-muted);
+  min-width: 36px;
+  text-align: right;
+}
+
+/* Offset row */
+.offset-row {
+  display: flex;
+  gap: 0.35rem;
+}
+
+.offset-row .text-input--xs {
+  width: 50px;
+}
+
+/* Extra small button */
+.btn-xs {
+  font-size: 0.68rem;
+  padding: 0.25rem 0.5rem;
+}
+
+/* Monogram actions row */
+.monogram-actions {
+  display: flex;
+  gap: 0.75rem;
+  align-items: center;
+  flex-wrap: wrap;
+  margin-top: 0.5rem;
+}
+
+.monogram-actions .btn-ghost {
+  font-size: 0.72rem;
+}

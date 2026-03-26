@@ -4,11 +4,15 @@
  * Features:
  *  - 38 Google Fonts sorted alphabetically
  *  - Dual color pickers (linked by default) for names + date
+ *  - Per-field font selection (linked by default)
+ *  - Font size controls (auto-fit or manual)
+ *  - Text X/Y offset controls
+ *  - Frame scale + X/Y offset controls
  *  - 24 SVG frame templates (from frames.js)
  *  - Live canvas preview (always transparent background)
  *  - Realistic print mock with sample photos
  *  - 2×6 export: doubled for 4×6 sheet (printer cuts in half)
- *  - Full-res PNG export
+ *  - Full-res transparent PNG export at 1650px wide
  *
  * Canvas specs:
  *  - 4×6 print: 1844 × 1240 px (landscape)
@@ -76,19 +80,64 @@ const PADDING_RATIO = 0.02;
    STATE
 ================================================================ */
 const MonogramState = {
-  line1:         '',
-  line2:         '',
-  fontFamily:    MONOGRAM_FONTS[0].family,
-  textColor1:    '#333333',
-  textColor2:    '#333333',
-  colorsLinked:  true,
-  flourish:      'none',   // kept for backward compat (maps to frame id)
-  frame:         'none',   // primary: selected frame id
-  frameColor:    '#c9a84c', // frame color (gold default)
-  printSize:     '4x6',
-  canvas:        null,
-  mockCanvas:    null,
-  backdropColor: null,
+  line1:          '',
+  line2:          '',
+  // Legacy single font (kept for backward compat)
+  fontFamily:     MONOGRAM_FONTS[0].family,
+  // Per-field fonts
+  fontFamily1:    MONOGRAM_FONTS[0].family,
+  fontFamily2:    MONOGRAM_FONTS[0].family,
+  fontsLinked:    true,
+  // Colors
+  textColor1:     '#333333',
+  textColor2:     '#333333',
+  colorsLinked:   true,
+  // Font sizes (0 = auto-fit)
+  fontSize1:      0,
+  fontSize2:      0,
+  // Text offsets
+  offsetX1:       0,
+  offsetY1:       0,
+  offsetX2:       0,
+  offsetY2:       0,
+  // Frame
+  flourish:       'none',   // kept for backward compat
+  frame:          'none',
+  frameColor:     '#333333', // defaults to text color
+  // Frame transform
+  frameScale:     1.0,
+  frameOffsetX:   0,
+  frameOffsetY:   0,
+  // Print
+  printSize:      '4x6',
+  // Canvas refs
+  canvas:         null,
+  mockCanvas:     null,
+  backdropColor:  null,
+};
+
+const _defaultMonogramState = {
+  line1:          '',
+  line2:          '',
+  fontFamily:     MONOGRAM_FONTS[0].family,
+  fontFamily1:    MONOGRAM_FONTS[0].family,
+  fontFamily2:    MONOGRAM_FONTS[0].family,
+  fontsLinked:    true,
+  textColor1:     '#333333',
+  textColor2:     '#333333',
+  colorsLinked:   true,
+  fontSize1:      0,
+  fontSize2:      0,
+  offsetX1:       0,
+  offsetY1:       0,
+  offsetX2:       0,
+  offsetY2:       0,
+  flourish:       'none',
+  frame:          'none',
+  frameColor:     '#333333',
+  frameScale:     1.0,
+  frameOffsetX:   0,
+  frameOffsetY:   0,
 };
 
 const _loadedFonts = new Set();
@@ -137,20 +186,11 @@ function loadSampleImages() {
 }
 
 /* ================================================================
-   FONT PICKER — native <select> with font preview strip
+   FONT PICKER — builds per-field font selects
 ================================================================ */
-function buildFontPicker() {
-  const sel = document.getElementById('mono-font');
+function _buildFontSelectEl(selectId, previewId, fieldIndex) {
+  const sel = document.getElementById(selectId);
   if (!sel) return;
-
-  // Remove any previously injected custom picker (defensive)
-  const old = document.getElementById('custom-font-picker');
-  if (old) old.remove();
-
-  // Make sure the select is visible and styled
-  sel.style.display = '';
-
-  // Populate <option> elements (idempotent — clear first)
   sel.innerHTML = '';
   MONOGRAM_FONTS.forEach((f, i) => {
     const opt = document.createElement('option');
@@ -161,21 +201,68 @@ function buildFontPicker() {
     sel.appendChild(opt);
   });
 
-  // Font preview strip — update on change
   sel.addEventListener('change', async () => {
     const family = sel.value;
-    MonogramState.fontFamily = family;
-
-    const strip     = document.getElementById('font-preview-strip');
+    if (fieldIndex === 1) {
+      MonogramState.fontFamily1 = family;
+      MonogramState.fontFamily = family;
+      if (MonogramState.fontsLinked) {
+        MonogramState.fontFamily2 = family;
+        const sel2 = document.getElementById('mono-font2');
+        if (sel2) sel2.value = family;
+      }
+    } else {
+      MonogramState.fontFamily2 = family;
+      if (MonogramState.fontsLinked) {
+        MonogramState.fontFamily1 = family;
+        MonogramState.fontFamily = family;
+        const sel1 = document.getElementById('mono-font1');
+        if (sel1) sel1.value = family;
+      }
+    }
+    const strip = document.getElementById(previewId);
     const line1Input = document.getElementById('mono-line1');
     if (strip) {
       strip.style.fontFamily = `"${family}", serif`;
       strip.textContent = line1Input?.value || family;
     }
-
     await loadGoogleFont(family);
     await renderMonogram();
   });
+}
+
+function buildFontPicker() {
+  // Legacy single picker
+  const sel = document.getElementById('mono-font');
+  if (sel) {
+    sel.innerHTML = '';
+    MONOGRAM_FONTS.forEach((f, i) => {
+      const opt = document.createElement('option');
+      opt.value = f.family;
+      opt.textContent = f.name;
+      opt.style.fontFamily = `"${f.family}", serif`;
+      if (i === 0) opt.selected = true;
+      sel.appendChild(opt);
+    });
+    sel.addEventListener('change', async () => {
+      const family = sel.value;
+      MonogramState.fontFamily = family;
+      MonogramState.fontFamily1 = family;
+      if (MonogramState.fontsLinked) MonogramState.fontFamily2 = family;
+      const strip = document.getElementById('font-preview-strip');
+      const line1Input = document.getElementById('mono-line1');
+      if (strip) {
+        strip.style.fontFamily = `"${family}", serif`;
+        strip.textContent = line1Input?.value || family;
+      }
+      await loadGoogleFont(family);
+      await renderMonogram();
+    });
+  }
+
+  // Per-field pickers
+  _buildFontSelectEl('mono-font1', 'font-preview-strip', 1);
+  _buildFontSelectEl('mono-font2', 'font-preview-strip2', 2);
 
   // Pre-load all fonts in background (non-blocking)
   setTimeout(() => {
@@ -202,6 +289,7 @@ const FRAME_CATEGORY_LABELS = {
   romantic:  'Romantic',
   royal:     'Royal',
   divider:   'Line Dividers',
+  monogram:  'Monogram Frames',
 };
 
 function updateFramePreviewColors() {
@@ -209,7 +297,6 @@ function updateFramePreviewColors() {
   const grid = document.getElementById('flourish-picker-grid');
   if (!grid) return;
 
-  // Update inline SVG previews
   grid.querySelectorAll('.frame-option').forEach(card => {
     const frameId = card.dataset.frame;
     const templates = window.FrameTemplates ? window.FrameTemplates.templates : [];
@@ -336,7 +423,7 @@ function initFramePicker() {
   customGroup.appendChild(customHex);
   swatchWrap.appendChild(customGroup);
 
-  // Eyedropper button — uses EyeDropper API if available, otherwise opens color picker
+  // Eyedropper button
   const eyedropperGroup = document.createElement('div');
   eyedropperGroup.className = 'frame-color-swatch-group';
 
@@ -367,7 +454,6 @@ function initFramePicker() {
         // User cancelled
       }
     } else {
-      // Fallback: trigger the color input
       customInput.click();
     }
   });
@@ -392,13 +478,14 @@ function initFramePicker() {
   });
 
   categoryOrder.forEach(cat => {
-    // Category heading
-    const heading = document.createElement('div');
-    heading.className = 'frame-category-label';
-    heading.textContent = FRAME_CATEGORY_LABELS[cat] || cat;
-    grid.appendChild(heading);
+    // Skip heading for 'simple' category (only "None" left)
+    if (cat !== 'simple') {
+      const heading = document.createElement('div');
+      heading.className = 'frame-category-label';
+      heading.textContent = FRAME_CATEGORY_LABELS[cat] || cat;
+      grid.appendChild(heading);
+    }
 
-    // Category grid row
     const catGrid = document.createElement('div');
     catGrid.className = 'frame-category-grid';
     grid.appendChild(catGrid);
@@ -410,13 +497,11 @@ function initFramePicker() {
       card.className = 'flourish-option frame-option' + (isSelected ? ' selected' : '');
       card.dataset.frame = template.id;
 
-      // Preview: inline SVG scaled to card, or text for "None"
       const isBotanical = template.category === 'botanical';
       const previewWrap = document.createElement('div');
       previewWrap.className = 'frame-preview-inner' + (isBotanical ? ' botanical-frame-preview' : '');
 
       if (template.svg) {
-        // Inline SVG frame
         const colored = template.svg.split('FRAME_COLOR').join(PREVIEW_COLOR);
         const svgEl = document.createElement('div');
         svgEl.className = 'frame-preview-svg';
@@ -429,7 +514,6 @@ function initFramePicker() {
         }
         previewWrap.appendChild(svgEl);
       } else if (template.svgFile) {
-        // External SVG file (botanical) — load async and inject inline
         const svgEl = document.createElement('div');
         svgEl.className = 'frame-preview-svg botanical-preview-loading';
         svgEl.style.cssText = 'display:flex;align-items:center;justify-content:center;width:100%;height:100%;';
@@ -439,7 +523,6 @@ function initFramePicker() {
         svgEl.appendChild(placeholder);
         previewWrap.appendChild(svgEl);
 
-        // Fetch and render asynchronously
         if (window.FrameTemplates && window.FrameTemplates.fetchSvgText) {
           window.FrameTemplates.fetchSvgText(template.svgFile).then(text => {
             if (!text) return;
@@ -447,13 +530,11 @@ function initFramePicker() {
             if (text.includes('FRAME_COLOR')) {
               colored = text.split('FRAME_COLOR').join(PREVIEW_COLOR);
             } else {
-              // No placeholder: inject fill on root <svg>
               colored = text.replace(/<svg([^>]*)>/, (match, attrs) => {
                 if (/fill=/.test(attrs)) return match;
                 return `<svg${attrs} fill="${PREVIEW_COLOR}">`;
               });
             }
-            // Parse the SVG and inject responsive size attrs
             const parser = new DOMParser();
             const doc = parser.parseFromString(colored, 'image/svg+xml');
             const svgTag = doc.querySelector('svg');
@@ -467,7 +548,6 @@ function initFramePicker() {
           });
         }
       } else {
-        // "None" option
         previewWrap.classList.add('frame-preview-none');
         const noText = document.createElement('span');
         noText.textContent = '—';
@@ -487,14 +567,13 @@ function initFramePicker() {
         grid.querySelectorAll('.frame-option').forEach(c => c.classList.remove('selected'));
         card.classList.add('selected');
         MonogramState.frame = template.id;
-        MonogramState.flourish = template.id; // backward compat
+        MonogramState.flourish = template.id;
         renderMonogram();
       });
     });
   });
 }
 
-// Keep old name as alias
 const initFlourishPicker = initFramePicker;
 
 /* ================================================================
@@ -514,11 +593,6 @@ function fitFontSize(ctx, text, fontFamily, maxWidth, maxSize, minSize = 16) {
 
 /**
  * Draw monogram text + optional SVG frame onto a canvas context.
- * @param {CanvasRenderingContext2D} ctx
- * @param {object} spec       — { w, h }
- * @param {object} state      — MonogramState (or clone)
- * @param {boolean} transparent — skip white fill
- * @returns {Promise<void>}
  */
 async function drawMonogramContent(ctx, spec, state, transparent = false) {
   if (!transparent) {
@@ -528,12 +602,16 @@ async function drawMonogramContent(ctx, spec, state, transparent = false) {
     ctx.clearRect(0, 0, spec.w, spec.h);
   }
 
-  const font    = state.fontFamily;
+  const font1   = state.fontFamily1 || state.fontFamily || MONOGRAM_FONTS[0].family;
+  const font2   = state.fontFamily2 || state.fontFamily || MONOGRAM_FONTS[0].family;
   const line1   = state.line1.trim();
   const line2   = state.line2.trim();
   const color1  = state.textColor1;
   const color2  = state.textColor2;
   const frameId = state.frame || state.flourish || 'none';
+  const fScale  = (state.frameScale != null && state.frameScale > 0) ? state.frameScale : 1.0;
+  const fOffX   = state.frameOffsetX || 0;
+  const fOffY   = state.frameOffsetY || 0;
 
   if (!line1 && !line2) {
     if (!transparent) {
@@ -546,37 +624,32 @@ async function drawMonogramContent(ctx, spec, state, transparent = false) {
     return;
   }
 
-  // Center the monogram zone vertically
   const zoneH    = spec.h * MONOGRAM_ZONE_HEIGHT_RATIO;
   const zoneTop  = (spec.h - zoneH) / 2;
   const centerX  = spec.w / 2;
   const padding  = spec.w * PADDING_RATIO;
   const maxW     = spec.w - padding * 2;
 
-  // Find the frame template
   const templates = window.FrameTemplates ? window.FrameTemplates.templates : [];
   const frameTpl = templates.find(f => f.id === frameId) || templates.find(f => f.id === 'none');
   const hasFrame = frameTpl && (frameTpl.svg || frameTpl.svgFile);
 
-  // Text area: use textZone (exact safe rectangle) if available, else textPadding
   let textZoneW, textZoneH, textZoneTop, textZoneCenterX;
 
   if (hasFrame && frameTpl.textZone && frameTpl.viewBoxW && frameTpl.viewBoxH) {
-    // textZone is in frame-relative coords (0-1). Map to where the frame is drawn on canvas.
     const tz = frameTpl.textZone;
     const vbAspect   = frameTpl.viewBoxW / frameTpl.viewBoxH;
-    const canvasMaxW = spec.w;
-    const canvasMaxH = spec.h;
-    let drawW, drawH, drawX, drawY;
+    const canvasMaxW = spec.w * fScale;
+    const canvasMaxH = spec.h * fScale;
+    let drawW, drawH;
     if (vbAspect > canvasMaxW / canvasMaxH) {
       drawW = canvasMaxW; drawH = canvasMaxW / vbAspect;
     } else {
       drawH = canvasMaxH; drawW = canvasMaxH * vbAspect;
     }
-    drawX = centerX - drawW / 2;
-    drawY = (spec.h - drawH) / 2;
+    const drawX = centerX - drawW / 2 + fOffX;
+    const drawY = (spec.h - drawH) / 2 + fOffY;
 
-    // Map textZone fractions to canvas pixels
     const safeLeft   = drawX + drawW * tz.left;
     const safeRight  = drawX + drawW * tz.right;
     const safeTop    = drawY + drawH * tz.top;
@@ -595,30 +668,39 @@ async function drawMonogramContent(ctx, spec, state, transparent = false) {
     textZoneCenterX = centerX;
   }
 
-  // Reduce max font size by ~20% when a frame is active to prevent overflow
   const frameSizeReduction = hasFrame ? 0.80 : 1.0;
   const maxLine1Size = Math.floor(textZoneH * (line2 ? 0.46 : 0.60) * frameSizeReduction);
   const maxLine2Size = Math.floor(textZoneH * (line1 ? 0.34 : 0.60) * frameSizeReduction);
 
-  let size1 = line1 ? fitFontSize(ctx, line1, font, textZoneW, maxLine1Size) : 0;
-  let size2 = line2 ? fitFontSize(ctx, line2, font, textZoneW, maxLine2Size) : 0;
+  // Font sizes: use manual if set (> 0), else auto-fit
+  let size1 = 0;
+  let size2 = 0;
+  if (line1) {
+    if (state.fontSize1 && state.fontSize1 > 0) {
+      size1 = state.fontSize1;
+    } else {
+      size1 = fitFontSize(ctx, line1, font1, textZoneW, maxLine1Size);
+    }
+  }
+  if (line2) {
+    if (state.fontSize2 && state.fontSize2 > 0) {
+      size2 = state.fontSize2;
+    } else {
+      size2 = fitFontSize(ctx, line2, font2, textZoneW, maxLine2Size);
+    }
+  }
 
   const lineGap = zoneH * 0.04;
   const totalTextH = (line1 ? size1 : 0) + (line2 ? size2 + lineGap : 0);
 
   // Draw frame first (behind text)
   if (hasFrame && window.FrameTemplates) {
-    // Use the selected frame color (not the text color)
     const frameImg = await window.FrameTemplates.getImage(frameId, state.frameColor || '#c9a84c');
     if (frameImg) {
-      // For frames with a known viewBox aspect ratio (botanical), scale to fit
-      // the zone while maintaining aspect ratio and centering.
-      // For legacy inline-SVG frames (fixed 400×200 viewBox), fill the zone.
       if (frameTpl.viewBoxW && frameTpl.viewBoxH) {
         const vbAspect   = frameTpl.viewBoxW / frameTpl.viewBoxH;
-        // Use full canvas dimensions (not zone) for maximum frame size
-        const canvasMaxW = spec.w;
-        const canvasMaxH = spec.h;
+        const canvasMaxW = spec.w * fScale;
+        const canvasMaxH = spec.h * fScale;
         let drawW, drawH;
         if (vbAspect > canvasMaxW / canvasMaxH) {
           drawW = canvasMaxW;
@@ -627,15 +709,14 @@ async function drawMonogramContent(ctx, spec, state, transparent = false) {
           drawH = canvasMaxH;
           drawW = canvasMaxH * vbAspect;
         }
-        const drawX = centerX - drawW / 2;
-        const drawY = (spec.h - drawH) / 2;
+        const drawX = centerX - drawW / 2 + fOffX;
+        const drawY = (spec.h - drawH) / 2 + fOffY;
         ctx.drawImage(frameImg, drawX, drawY, drawW, drawH);
       } else {
-        // Legacy inline frames: stretch to fill full canvas
-        const frameW = spec.w;
-        const frameH = spec.h;
-        const frameX = 0;
-        const frameY = 0;
+        const frameW = spec.w * fScale;
+        const frameH = spec.h * fScale;
+        const frameX = (spec.w - frameW) / 2 + fOffX;
+        const frameY = (spec.h - frameH) / 2 + fOffY;
         ctx.drawImage(frameImg, frameX, frameY, frameW, frameH);
       }
     }
@@ -652,9 +733,10 @@ async function drawMonogramContent(ctx, spec, state, transparent = false) {
     ctx.fillStyle = color1;
     const subLines1 = line1.split('\n');
     const sub1Size = subLines1.length > 1 ? Math.floor(size1 / subLines1.length * 1.2) : size1;
-    ctx.font = `${sub1Size}px "${font}"`;
+    ctx.font = `${sub1Size}px "${font1}"`;
+    const cx1 = textZoneCenterX + (state.offsetX1 || 0);
     subLines1.forEach((sl, i) => {
-      ctx.fillText(sl, textZoneCenterX, cursor + sub1Size * 0.82 + i * sub1Size * 1.1);
+      ctx.fillText(sl, cx1, cursor + sub1Size * 0.82 + i * sub1Size * 1.1 + (state.offsetY1 || 0));
     });
     cursor += (subLines1.length > 1 ? sub1Size * 1.1 * subLines1.length : size1) + lineGap;
   }
@@ -663,9 +745,10 @@ async function drawMonogramContent(ctx, spec, state, transparent = false) {
     ctx.fillStyle = color2;
     const subLines2 = line2.split('\n');
     const sub2Size = subLines2.length > 1 ? Math.floor(size2 / subLines2.length * 1.2) : size2;
-    ctx.font = `${sub2Size}px "${font}"`;
+    ctx.font = `${sub2Size}px "${font2}"`;
+    const cx2 = textZoneCenterX + (state.offsetX2 || 0);
     subLines2.forEach((sl, i) => {
-      ctx.fillText(sl, textZoneCenterX, cursor + sub2Size * 0.82 + i * sub2Size * 1.1);
+      ctx.fillText(sl, cx2, cursor + sub2Size * 0.82 + i * sub2Size * 1.1 + (state.offsetY2 || 0));
     });
   }
 }
@@ -774,7 +857,6 @@ async function renderPrintMock() {
   ctx.fillStyle = 'rgba(255,255,255,0.95)';
   ctx.fillRect(0, monoY, displayW, monoZoneH);
 
-  // Draw monogram content scaled into the mock monogram strip
   const monoCanvas = MonogramState.canvas;
   if (monoCanvas && monoCanvas.width > 0) {
     const srcSpec  = CANVAS_SPECS[printSize];
@@ -790,7 +872,6 @@ async function renderPrintMock() {
     }
   }
 
-  // Border
   ctx.strokeStyle = 'rgba(255,255,255,0.15)';
   ctx.lineWidth   = 2;
   ctx.strokeRect(1, 1, displayW - 2, displayH - 2);
@@ -808,7 +889,7 @@ function scheduleRender() {
 }
 
 /* ================================================================
-   EXPORT — transparent PNG
+   EXPORT — transparent PNG at 1650px wide
 ================================================================ */
 function exportMonogramPNG() {
   return new Promise(async (resolve) => {
@@ -825,22 +906,27 @@ async function getExportCanvas() {
   const printSize = MonogramState.printSize;
   const spec      = CANVAS_SPECS[printSize];
 
+  // Export at 1650px wide (matching sample asset dimensions)
+  const exportW = 1650;
+  const exportH = Math.round(exportW * spec.h / spec.w);
+  const exportSpec = { w: exportW, h: exportH };
+
   const exportSingle = document.createElement('canvas');
-  exportSingle.width  = spec.w;
-  exportSingle.height = spec.h;
+  exportSingle.width  = exportW;
+  exportSingle.height = exportH;
   const ectx = exportSingle.getContext('2d');
 
   // Transparent export
-  await drawMonogramContent(ectx, spec, MonogramState, true);
+  await drawMonogramContent(ectx, exportSpec, MonogramState, true);
 
   if (printSize === '2x6') {
+    // For 2x6: export doubled (two copies side by side) for 4x6 sheet
     const doubled = document.createElement('canvas');
-    doubled.width  = 1844;
-    doubled.height = 1240;
+    doubled.width  = exportW * 2;
+    doubled.height = exportH;
     const dctx = doubled.getContext('2d');
-    const halfW = 922;
-    dctx.drawImage(exportSingle, 0, 0, exportSingle.width, exportSingle.height, 0,     0, halfW, 1240);
-    dctx.drawImage(exportSingle, 0, 0, exportSingle.width, exportSingle.height, halfW, 0, halfW, 1240);
+    dctx.drawImage(exportSingle, 0,        0, exportW, exportH);
+    dctx.drawImage(exportSingle, exportW,  0, exportW, exportH);
     return doubled;
   }
 
@@ -864,10 +950,23 @@ function isColorTooLight(hex) {
 }
 
 /* ================================================================
+   DATE PLACEHOLDER HELPER
+================================================================ */
+function getTodayDateString() {
+  const now = new Date();
+  const months = ['January','February','March','April','May','June',
+                  'July','August','September','October','November','December'];
+  const month = months[now.getMonth()];
+  const day = String(now.getDate()).padStart(2, '0');
+  const year = now.getFullYear();
+  return `${month} ${day}, ${year}`;
+}
+
+/* ================================================================
    INIT
 ================================================================ */
 async function initMonogramBuilder() {
-  populateFontSelect(); // builds custom font picker
+  populateFontSelect();
 
   // Create main canvas
   const outer = document.getElementById('canvas-outer');
@@ -882,7 +981,7 @@ async function initMonogramBuilder() {
   outer.appendChild(canvas);
   MonogramState.canvas = canvas;
 
-  // Init frame picker (was flourish picker)
+  // Init frame picker
   initFramePicker();
 
   await loadGoogleFont(MonogramState.fontFamily);
@@ -893,9 +992,13 @@ async function initMonogramBuilder() {
   const line1Input = document.getElementById('mono-line1');
   const line2Input = document.getElementById('mono-line2');
 
+  // Set date placeholder to today's date
+  if (line2Input) {
+    line2Input.placeholder = getTodayDateString();
+  }
+
   if (line1Input) line1Input.addEventListener('input', () => {
     MonogramState.line1 = line1Input.value;
-    // Update font preview text
     const fontPreview = document.getElementById('font-preview-strip');
     if (fontPreview) fontPreview.textContent = line1Input.value || MonogramState.fontFamily;
     scheduleRender();
@@ -907,6 +1010,155 @@ async function initMonogramBuilder() {
   if (fontPreview) {
     fontPreview.style.fontFamily = `"${MonogramState.fontFamily}", serif`;
   }
+
+  /* ---- Font size controls ---- */
+  const fontSize1Input = document.getElementById('mono-fontsize1');
+  const fontSize1Range = document.getElementById('mono-fontsize1-range');
+  const fontSize2Input = document.getElementById('mono-fontsize2');
+  const fontSize2Range = document.getElementById('mono-fontsize2-range');
+
+  function syncFontSize1(val) {
+    const v = parseInt(val) || 0;
+    MonogramState.fontSize1 = v;
+    if (fontSize1Input && fontSize1Input !== document.activeElement) fontSize1Input.value = v || '';
+    if (fontSize1Range) fontSize1Range.value = v;
+    scheduleRender();
+  }
+  function syncFontSize2(val) {
+    const v = parseInt(val) || 0;
+    MonogramState.fontSize2 = v;
+    if (fontSize2Input && fontSize2Input !== document.activeElement) fontSize2Input.value = v || '';
+    if (fontSize2Range) fontSize2Range.value = v;
+    scheduleRender();
+  }
+
+  if (fontSize1Input) fontSize1Input.addEventListener('input', () => syncFontSize1(fontSize1Input.value));
+  if (fontSize1Range) fontSize1Range.addEventListener('input', () => syncFontSize1(fontSize1Range.value));
+  if (fontSize2Input) fontSize2Input.addEventListener('input', () => syncFontSize2(fontSize2Input.value));
+  if (fontSize2Range) fontSize2Range.addEventListener('input', () => syncFontSize2(fontSize2Range.value));
+
+  /* ---- Text position controls ---- */
+  const offsetX1 = document.getElementById('mono-offsetx1');
+  const offsetY1 = document.getElementById('mono-offsety1');
+  const offsetX2 = document.getElementById('mono-offsetx2');
+  const offsetY2 = document.getElementById('mono-offsety2');
+
+  if (offsetX1) offsetX1.addEventListener('input', () => { MonogramState.offsetX1 = parseInt(offsetX1.value) || 0; scheduleRender(); });
+  if (offsetY1) offsetY1.addEventListener('input', () => { MonogramState.offsetY1 = parseInt(offsetY1.value) || 0; scheduleRender(); });
+  if (offsetX2) offsetX2.addEventListener('input', () => { MonogramState.offsetX2 = parseInt(offsetX2.value) || 0; scheduleRender(); });
+  if (offsetY2) offsetY2.addEventListener('input', () => { MonogramState.offsetY2 = parseInt(offsetY2.value) || 0; scheduleRender(); });
+
+  const resetPosBtn = document.getElementById('btn-reset-position');
+  if (resetPosBtn) {
+    resetPosBtn.addEventListener('click', () => {
+      MonogramState.offsetX1 = 0; MonogramState.offsetY1 = 0;
+      MonogramState.offsetX2 = 0; MonogramState.offsetY2 = 0;
+      [offsetX1, offsetY1, offsetX2, offsetY2].forEach(el => { if (el) el.value = 0; });
+      scheduleRender();
+    });
+  }
+
+  /* ---- Frame transform controls ---- */
+  const frameScaleRange = document.getElementById('mono-frame-scale');
+  const frameScaleVal   = document.getElementById('mono-frame-scale-val');
+  const frameOffXInput  = document.getElementById('mono-frame-offsetx');
+  const frameOffYInput  = document.getElementById('mono-frame-offsety');
+
+  if (frameScaleRange) {
+    frameScaleRange.addEventListener('input', () => {
+      const v = parseFloat(frameScaleRange.value) || 1.0;
+      MonogramState.frameScale = v;
+      if (frameScaleVal) frameScaleVal.textContent = v.toFixed(2) + 'x';
+      scheduleRender();
+    });
+  }
+  if (frameOffXInput) frameOffXInput.addEventListener('input', () => { MonogramState.frameOffsetX = parseInt(frameOffXInput.value) || 0; scheduleRender(); });
+  if (frameOffYInput) frameOffYInput.addEventListener('input', () => { MonogramState.frameOffsetY = parseInt(frameOffYInput.value) || 0; scheduleRender(); });
+
+  /* ---- Reset all to default ---- */
+  const resetAllBtn = document.getElementById('btn-reset-all');
+  if (resetAllBtn) {
+    resetAllBtn.addEventListener('click', () => {
+      // Reset state fields (preserve canvas/mock refs and printSize/backdropColor)
+      Object.assign(MonogramState, _defaultMonogramState);
+
+      // Reset UI inputs
+      if (line1Input) line1Input.value = '';
+      if (line2Input) line2Input.value = '';
+
+      // Fonts
+      const sel1 = document.getElementById('mono-font1');
+      const sel2 = document.getElementById('mono-font2');
+      const selLegacy = document.getElementById('mono-font');
+      if (sel1) sel1.value = MONOGRAM_FONTS[0].family;
+      if (sel2) sel2.value = MONOGRAM_FONTS[0].family;
+      if (selLegacy) selLegacy.value = MONOGRAM_FONTS[0].family;
+      if (fontPreview) { fontPreview.style.fontFamily = `"${MONOGRAM_FONTS[0].family}", serif`; fontPreview.textContent = 'Font Preview'; }
+
+      // Font link
+      const fontLinkBtn = document.getElementById('font-link-toggle');
+      if (fontLinkBtn) { fontLinkBtn.classList.add('linked'); fontLinkBtn.textContent = '🔗'; }
+
+      // Font sizes
+      if (fontSize1Input) fontSize1Input.value = '';
+      if (fontSize1Range) fontSize1Range.value = 0;
+      if (fontSize2Input) fontSize2Input.value = '';
+      if (fontSize2Range) fontSize2Range.value = 0;
+
+      // Offsets
+      [offsetX1, offsetY1, offsetX2, offsetY2].forEach(el => { if (el) el.value = 0; });
+
+      // Frame controls
+      if (frameScaleRange) frameScaleRange.value = 1.0;
+      if (frameScaleVal) frameScaleVal.textContent = '1.00x';
+      if (frameOffXInput) frameOffXInput.value = 0;
+      if (frameOffYInput) frameOffYInput.value = 0;
+
+      // Colors
+      const color1Input = document.getElementById('mono-color1');
+      const color1Hex   = document.getElementById('mono-color1-hex');
+      const color2Input = document.getElementById('mono-color2');
+      const color2Hex   = document.getElementById('mono-color2-hex');
+      if (color1Input) color1Input.value = '#333333';
+      if (color1Hex)   color1Hex.textContent = '#333333';
+      if (color2Input) color2Input.value = '#333333';
+      if (color2Hex)   color2Hex.textContent = '#333333';
+
+      // Color link buttons
+      ['color-link-toggle', 'color-link-toggle-2'].forEach(id => {
+        const btn = document.getElementById(id);
+        if (btn) { btn.classList.add('linked'); btn.textContent = '🔗'; }
+      });
+
+      // Frame picker: deselect all, select none
+      const grid = document.getElementById('flourish-picker-grid');
+      if (grid) {
+        grid.querySelectorAll('.frame-option').forEach(c => {
+          c.classList.toggle('selected', c.dataset.frame === 'none');
+        });
+      }
+
+      scheduleRender();
+    });
+  }
+
+  /* ---- Font link toggle ---- */
+  const fontLinkBtn = document.getElementById('font-link-toggle');
+  function toggleFontLink() {
+    MonogramState.fontsLinked = !MonogramState.fontsLinked;
+    const icon = MonogramState.fontsLinked ? '🔗' : '🔓';
+    if (fontLinkBtn) {
+      fontLinkBtn.classList.toggle('linked', MonogramState.fontsLinked);
+      fontLinkBtn.textContent = icon;
+    }
+    if (MonogramState.fontsLinked) {
+      MonogramState.fontFamily2 = MonogramState.fontFamily1;
+      const sel2 = document.getElementById('mono-font2');
+      if (sel2) sel2.value = MonogramState.fontFamily1;
+    }
+    scheduleRender();
+  }
+  if (fontLinkBtn) fontLinkBtn.addEventListener('click', toggleFontLink);
 
   /* ---- Dual color pickers ---- */
   const color1Input = document.getElementById('mono-color1');

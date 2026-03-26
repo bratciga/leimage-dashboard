@@ -9,7 +9,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300&display=swap" rel="stylesheet" />
 
-  <link rel="stylesheet" href="css/style.css?v=37" />
+  <link rel="stylesheet" href="css/style.css?v=38" />
 </head>
 <body>
 
@@ -356,6 +356,7 @@
         <!-- Controls (right) -->
         <div class="monogram-controls">
 
+          <!-- Names field -->
           <div class="field-group">
             <label class="field-label" for="mono-line1">Names <span class="field-hint">(e.g. "J &amp; M" or "Jessica &amp; Michael")</span></label>
             <div class="text-color-row">
@@ -363,25 +364,97 @@
               <input type="color" id="mono-color1" class="text-color-dot" value="#333333" title="Names color" />
               <button type="button" id="color-link-toggle" class="color-link-btn linked" title="Link/Unlink colors">🔗</button>
             </div>
-          </div>
-
-          <div class="field-group">
-            <label class="field-label" for="mono-line2">Date <span class="field-hint">(e.g. "April 15, 2026")</span></label>
-            <div class="text-color-row">
-              <textarea id="mono-line2" class="text-input" placeholder="April 15, 2026" maxlength="120" rows="1" style="resize:none;overflow:hidden;min-height:2.2rem;field-sizing:content;"></textarea>
-              <input type="color" id="mono-color2" class="text-color-dot" value="#333333" title="Date color" />
-              <button type="button" id="color-link-toggle-2" class="color-link-btn linked" title="Link/Unlink colors">🔗</button>
+            <!-- Per-field font (Names) -->
+            <div class="field-sub-row">
+              <div class="field-sub-col">
+                <label class="field-sublabel" for="mono-font1">Font</label>
+                <div class="font-field-row">
+                  <select id="mono-font1" class="select-input select-input--sm"></select>
+                  <button type="button" id="font-link-toggle" class="color-link-btn linked" title="Link/Unlink fonts">🔗</button>
+                </div>
+              </div>
+              <div class="field-sub-col">
+                <label class="field-sublabel" for="mono-fontsize1">Size <span class="field-hint">(0 = auto)</span></label>
+                <div class="fontsize-row">
+                  <input type="number" id="mono-fontsize1" class="text-input text-input--xs" min="0" max="500" placeholder="auto" />
+                  <input type="range" id="mono-fontsize1-range" class="range-input" min="0" max="300" value="0" />
+                </div>
+              </div>
+            </div>
+            <!-- Names position -->
+            <div class="field-sub-row">
+              <div class="field-sub-col">
+                <label class="field-sublabel">Offset X / Y</label>
+                <div class="offset-row">
+                  <input type="number" id="mono-offsetx1" class="text-input text-input--xs" value="0" placeholder="X" />
+                  <input type="number" id="mono-offsety1" class="text-input text-input--xs" value="0" placeholder="Y" />
+                </div>
+              </div>
             </div>
           </div>
 
+          <!-- Date field -->
           <div class="field-group">
-            <label class="field-label" for="mono-font">Font</label>
-            <select id="mono-font" class="select-input"></select>
-            <div id="font-preview-strip" class="font-preview-strip">Font Preview</div>
+            <label class="field-label" for="mono-line2">Date <span class="field-hint">(e.g. "April 15, 2026")</span></label>
+            <div class="text-color-row">
+              <textarea id="mono-line2" class="text-input" placeholder="" maxlength="120" rows="1" style="resize:none;overflow:hidden;min-height:2.2rem;field-sizing:content;"></textarea>
+              <input type="color" id="mono-color2" class="text-color-dot" value="#333333" title="Date color" />
+              <button type="button" id="color-link-toggle-2" class="color-link-btn linked" title="Link/Unlink colors">🔗</button>
+            </div>
+            <!-- Per-field font (Date) -->
+            <div class="field-sub-row">
+              <div class="field-sub-col">
+                <label class="field-sublabel" for="mono-font2">Font</label>
+                <select id="mono-font2" class="select-input select-input--sm"></select>
+              </div>
+              <div class="field-sub-col">
+                <label class="field-sublabel" for="mono-fontsize2">Size <span class="field-hint">(0 = auto)</span></label>
+                <div class="fontsize-row">
+                  <input type="number" id="mono-fontsize2" class="text-input text-input--xs" min="0" max="500" placeholder="auto" />
+                  <input type="range" id="mono-fontsize2-range" class="range-input" min="0" max="300" value="0" />
+                </div>
+              </div>
+            </div>
+            <!-- Date position -->
+            <div class="field-sub-row">
+              <div class="field-sub-col">
+                <label class="field-sublabel">Offset X / Y</label>
+                <div class="offset-row">
+                  <input type="number" id="mono-offsetx2" class="text-input text-input--xs" value="0" placeholder="X" />
+                  <input type="number" id="mono-offsety2" class="text-input text-input--xs" value="0" placeholder="Y" />
+                </div>
+              </div>
+              <div class="field-sub-col field-sub-col--center">
+                <button type="button" id="btn-reset-position" class="btn btn-ghost btn-xs">↺ Reset Position</button>
+              </div>
+            </div>
           </div>
 
+          <!-- Legacy single font (hidden, kept for backwards compat with save/load) -->
+          <select id="mono-font" class="select-input" style="display:none;"></select>
+          <div id="font-preview-strip" class="font-preview-strip" style="display:none;">Font Preview</div>
+          <div id="font-preview-strip2" class="font-preview-strip" style="display:none;">Font Preview</div>
+
+          <!-- Frame controls -->
           <div class="field-group">
             <label class="field-label">Frame Style</label>
+            <!-- Frame scale -->
+            <div class="field-sub-row" style="margin-bottom:0.5rem;">
+              <div class="field-sub-col">
+                <label class="field-sublabel">Scale</label>
+                <div class="fontsize-row">
+                  <input type="range" id="mono-frame-scale" class="range-input" min="0.5" max="2.0" step="0.05" value="1.0" />
+                  <span id="mono-frame-scale-val" class="range-val">1.00x</span>
+                </div>
+              </div>
+              <div class="field-sub-col">
+                <label class="field-sublabel">Offset X / Y</label>
+                <div class="offset-row">
+                  <input type="number" id="mono-frame-offsetx" class="text-input text-input--xs" value="0" placeholder="X" />
+                  <input type="number" id="mono-frame-offsety" class="text-input text-input--xs" value="0" placeholder="Y" />
+                </div>
+              </div>
+            </div>
             <div id="flourish-picker-grid" class="flourish-picker-grid"></div>
           </div>
 
@@ -389,6 +462,7 @@
             <button type="button" id="btn-download-preview" class="btn btn-secondary">
               ↓ Download PNG
             </button>
+            <button type="button" id="btn-reset-all" class="btn btn-ghost btn-sm">↺ Reset All</button>
           </div>
           <div class="field-error" id="error-monogram" aria-live="polite"></div>
 
@@ -546,9 +620,9 @@
     <p>© <span id="footer-year"></span> Le Image Photography Studio. All rights reserved.</p>
   </footer>
 
-  <script src="js/frames.js?v=37"></script>
-  <script src="js/monogram.js?v=37"></script>
-  <script src="js/app.js?v=37"></script>
+  <script src="js/frames.js?v=38"></script>
+  <script src="js/monogram.js?v=38"></script>
+  <script src="js/app.js?v=38"></script>
 
 </body>
 </html>

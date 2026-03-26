@@ -548,7 +548,7 @@ const FRAME_TEMPLATES = [
   {
     id: 'minimalist',
     name: 'Min. Lines',
-    category: 'simple',
+    category: 'elegant',
     textPadding: { x: 0.08, y: 0.20 },
     svg: `<svg viewBox="0 0 400 200" xmlns="http://www.w3.org/2000/svg">
   <line x1="20" y1="22"  x2="380" y2="22"  stroke="FRAME_COLOR" stroke-width="2"/>
@@ -1253,7 +1253,7 @@ function _fetchSvgText(svgFile) {
   if (_svgTextCache.has(svgFile)) {
     return Promise.resolve(_svgTextCache.get(svgFile));
   }
-  return fetch(svgFile + '?v=37')
+  return fetch(svgFile + '?v=38')
     .then(r => r.ok ? r.text() : null)
     .then(text => {
       if (text) _svgTextCache.set(svgFile, text);
