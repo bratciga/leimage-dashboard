@@ -1253,7 +1253,7 @@ function _fetchSvgText(svgFile) {
   if (_svgTextCache.has(svgFile)) {
     return Promise.resolve(_svgTextCache.get(svgFile));
   }
-  return fetch(svgFile + '?v=35')
+  return fetch(svgFile + '?v=36')
     .then(r => r.ok ? r.text() : null)
     .then(text => {
       if (text) _svgTextCache.set(svgFile, text);
