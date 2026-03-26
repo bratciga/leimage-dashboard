@@ -1096,6 +1096,8 @@ const FRAME_TEMPLATES = [
     category: 'monogram',
     textPadding: { x: 0.15, y: 0.15 },
     svgFile: 'assets/frames/monogram-44.svg',
+    viewBoxW: 1650,
+    viewBoxH: 1462.98,
   },
   {
     id: 'monogram-45',
@@ -1103,6 +1105,8 @@ const FRAME_TEMPLATES = [
     category: 'monogram',
     textPadding: { x: 0.12, y: 0.18 },
     svgFile: 'assets/frames/monogram-45.svg',
+    viewBoxW: 1650,
+    viewBoxH: 913.26,
   },
   {
     id: 'monogram-46',
@@ -1110,6 +1114,8 @@ const FRAME_TEMPLATES = [
     category: 'monogram',
     textPadding: { x: 0.12, y: 0.12 },
     svgFile: 'assets/frames/monogram-46.svg',
+    viewBoxW: 1650,
+    viewBoxH: 1229.38,
   },
   {
     id: 'monogram-47',
@@ -1117,6 +1123,8 @@ const FRAME_TEMPLATES = [
     category: 'monogram',
     textPadding: { x: 0.15, y: 0.15 },
     svgFile: 'assets/frames/monogram-47.svg',
+    viewBoxW: 1650,
+    viewBoxH: 1171.5,
   },
   {
     id: 'monogram-48',
@@ -1124,6 +1132,8 @@ const FRAME_TEMPLATES = [
     category: 'monogram',
     textPadding: { x: 0.15, y: 0.15 },
     svgFile: 'assets/frames/monogram-48.svg',
+    viewBoxW: 1650,
+    viewBoxH: 1185.23,
   },
   {
     id: 'monogram-49',
@@ -1131,6 +1141,8 @@ const FRAME_TEMPLATES = [
     category: 'monogram',
     textPadding: { x: 0.15, y: 0.15 },
     svgFile: 'assets/frames/monogram-49.svg',
+    viewBoxW: 1650,
+    viewBoxH: 1149.76,
   },
   {
     id: 'monogram-50',
@@ -1138,6 +1150,8 @@ const FRAME_TEMPLATES = [
     category: 'monogram',
     textPadding: { x: 0.14, y: 0.14 },
     svgFile: 'assets/frames/monogram-50.svg',
+    viewBoxW: 1650,
+    viewBoxH: 1115.77,
   },
   {
     id: 'monogram-51',
@@ -1145,6 +1159,8 @@ const FRAME_TEMPLATES = [
     category: 'monogram',
     textPadding: { x: 0.14, y: 0.14 },
     svgFile: 'assets/frames/monogram-51.svg',
+    viewBoxW: 1650,
+    viewBoxH: 1054.46,
   },
   {
     id: 'monogram-52',
@@ -1152,6 +1168,8 @@ const FRAME_TEMPLATES = [
     category: 'monogram',
     textPadding: { x: 0.15, y: 0.15 },
     svgFile: 'assets/frames/monogram-52.svg',
+    viewBoxW: 1650,
+    viewBoxH: 1473.88,
   },
   {
     id: 'monogram-53',
@@ -1159,6 +1177,8 @@ const FRAME_TEMPLATES = [
     category: 'monogram',
     textPadding: { x: 0.12, y: 0.12 },
     svgFile: 'assets/frames/monogram-53.svg',
+    viewBoxW: 1318.59,
+    viewBoxH: 1050.15,
   },
   {
     id: 'monogram-54',
@@ -1166,6 +1186,8 @@ const FRAME_TEMPLATES = [
     category: 'monogram',
     textPadding: { x: 0.15, y: 0.15 },
     svgFile: 'assets/frames/monogram-54.svg',
+    viewBoxW: 1650,
+    viewBoxH: 1463.27,
   },
   {
     id: 'monogram-55',
@@ -1173,6 +1195,8 @@ const FRAME_TEMPLATES = [
     category: 'monogram',
     textPadding: { x: 0.14, y: 0.14 },
     svgFile: 'assets/frames/monogram-55.svg',
+    viewBoxW: 1650,
+    viewBoxH: 1380.25,
   },
   {
     id: 'monogram-56',
@@ -1180,6 +1204,8 @@ const FRAME_TEMPLATES = [
     category: 'monogram',
     textPadding: { x: 0.14, y: 0.14 },
     svgFile: 'assets/frames/monogram-56.svg',
+    viewBoxW: 1650,
+    viewBoxH: 1298.93,
   },
   {
     id: 'monogram-57',
@@ -1187,6 +1213,8 @@ const FRAME_TEMPLATES = [
     category: 'monogram',
     textPadding: { x: 0.12, y: 0.15 },
     svgFile: 'assets/frames/monogram-57.svg',
+    viewBoxW: 1650,
+    viewBoxH: 980.75,
   },
   {
     id: 'monogram-58',
@@ -1194,6 +1222,8 @@ const FRAME_TEMPLATES = [
     category: 'monogram',
     textPadding: { x: 0.15, y: 0.15 },
     svgFile: 'assets/frames/monogram-58.svg',
+    viewBoxW: 1650,
+    viewBoxH: 1584.04,
   },
   {
     id: 'eucalyptus-wreath',
@@ -1201,6 +1231,8 @@ const FRAME_TEMPLATES = [
     category: 'botanical',
     textPadding: { x: 0.22, y: 0.22 },
     svgFile: 'assets/frames/eucalyptus-wreath.svg',
+    viewBoxW: 864,
+    viewBoxH: 864,
   },
 ];
 

@@ -566,11 +566,12 @@ async function drawMonogramContent(ctx, spec, state, transparent = false) {
     const tz = frameTpl.textZone;
     const vbAspect   = frameTpl.viewBoxW / frameTpl.viewBoxH;
     const zoneAspect = maxW / zoneH;
+    const fillBoost = vbAspect < 1.3 ? 1.15 : 1.0;
     let drawW, drawH, drawX, drawY;
     if (vbAspect > zoneAspect) {
-      drawW = maxW; drawH = maxW / vbAspect;
+      drawW = maxW * fillBoost; drawH = drawW / vbAspect;
     } else {
-      drawH = zoneH; drawW = zoneH * vbAspect;
+      drawH = zoneH * fillBoost; drawW = drawH * vbAspect;
     }
     drawX = centerX - drawW / 2;
     drawY = zoneTop + (zoneH - drawH) / 2;
@@ -616,15 +617,15 @@ async function drawMonogramContent(ctx, spec, state, transparent = false) {
       if (frameTpl.viewBoxW && frameTpl.viewBoxH) {
         const vbAspect   = frameTpl.viewBoxW / frameTpl.viewBoxH;
         const zoneAspect = maxW / zoneH;
+        // Scale up square/circular frames to fill more of the canvas
+        const fillBoost = vbAspect < 1.3 ? 1.15 : 1.0;
         let drawW, drawH;
         if (vbAspect > zoneAspect) {
-          // Frame is wider — constrain by width
-          drawW = maxW;
-          drawH = maxW / vbAspect;
+          drawW = maxW * fillBoost;
+          drawH = drawW / vbAspect;
         } else {
-          // Frame is taller — constrain by height
-          drawH = zoneH;
-          drawW = zoneH * vbAspect;
+          drawH = zoneH * fillBoost;
+          drawW = drawH * vbAspect;
         }
         const drawX = centerX - drawW / 2;
         const drawY = zoneTop + (zoneH - drawH) / 2;
