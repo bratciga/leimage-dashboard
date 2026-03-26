@@ -890,7 +890,7 @@ async function renderPrintMock() {
     const positions = [
       { x: 0,            y: 0 },             // top-left
       { x: cellW + gap,  y: 0 },             // top-right
-      { x: 0,            y: cellH + gap },    // bottom-left
+      { x: cellW + gap,  y: cellH + gap },   // bottom-right
     ];
     for (let i = 0; i < 3; i++) {
       const p = positions[i];
@@ -919,11 +919,11 @@ async function renderPrintMock() {
       ctx.drawImage(monoCanvas, 0, srcZoneY, srcSpec.w, srcZoneH, 0,           monoY, stripW, monoZoneH);
       ctx.drawImage(monoCanvas, 0, srcZoneY, srcSpec.w, srcZoneH, stripW + 2,  monoY, stripW, monoZoneH);
     } else {
-      // 4x6: monogram in bottom-right quadrant
+      // 4x6: monogram in bottom-left quadrant
       const gap = 2;
       const cellW = Math.floor((displayW - gap) / 2);
       const cellH = Math.floor((displayH - gap) / 2);
-      const mx = cellW + gap;
+      const mx = 0;
       const my = cellH + gap;
       ctx.fillStyle = 'rgba(255,255,255,0.95)';
       ctx.fillRect(mx, my, cellW, cellH);
@@ -1044,10 +1044,10 @@ async function getExportCanvas() {
     drawFitted(ctx, 0, singleW, monoStripH, monoY);
     drawFitted(ctx, singleW, singleW, monoStripH, monoY);
   } else {
-    // 4x6 layout: 2×2 grid — monogram goes in the bottom-right quadrant
+    // 4x6 layout: 2×2 grid — monogram goes in the bottom-left quadrant
     const quadW = Math.floor(print.w / 2);
     const quadH = Math.floor(print.h / 2);
-    const qx = quadW;          // right column
+    const qx = 0;              // left column
     const qy = quadH;          // bottom row
     drawFitted(ctx, qx, quadW, quadH, qy);
   }
