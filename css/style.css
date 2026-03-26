@@ -2631,3 +2631,37 @@ img, canvas, iframe, video {
 .frame-category-label:empty {
   display: none;
 }
+
+/* ---- Nudge / Position Controls ---- */
+.nudge-controls {
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  margin-bottom: 0.4rem;
+}
+.nudge-label {
+  font-size: 0.75rem;
+  color: var(--text-secondary, #666);
+  min-width: 3.2rem;
+}
+.btn-nudge {
+  width: 2rem;
+  height: 2rem;
+  padding: 0;
+  font-size: 0.9rem;
+  line-height: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 4px;
+  border: 1px solid rgba(4,40,164,0.15);
+  background: #fff;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+.btn-nudge:hover {
+  background: rgba(4,40,164,0.08);
+}
+.btn-nudge:active {
+  background: rgba(4,40,164,0.15);
+}

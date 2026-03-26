@@ -9,7 +9,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300&display=swap" rel="stylesheet" />
 
-  <link rel="stylesheet" href="css/style.css?v=41" />
+  <link rel="stylesheet" href="css/style.css?v=42" />
 </head>
 <body>
 
@@ -350,7 +350,7 @@
         <div class="monogram-preview-wrap">
           <div class="canvas-label">Live Preview (scaled)</div>
           <div class="canvas-outer" id="canvas-outer"></div>
-          <div class="canvas-note">Drag text or frame to reposition · Transparent background</div>
+          <div class="canvas-note">Use +/- buttons below to position text and frame · Transparent background</div>
         </div>
 
         <!-- Controls (right) -->
@@ -381,7 +381,7 @@
                 </div>
               </div>
             </div>
-            <!-- Names position: drag on canvas to move -->
+            <!-- Names position -->
           </div>
 
           <!-- Date field -->
@@ -406,12 +406,14 @@
                 </div>
               </div>
             </div>
-            <!-- Date position: drag on canvas to move -->
-            <div class="field-sub-row">
-              <div class="field-sub-col field-sub-col--center">
-                <button type="button" id="btn-reset-position" class="btn btn-ghost btn-xs">↺ Reset Position</button>
-              </div>
-            </div>
+            <!-- Date position -->
+          </div>
+
+          <!-- Position controls -->
+          <div class="field-group">
+            <label class="field-label">Position</label>
+            <div id="position-controls"></div>
+            <button type="button" id="btn-reset-position" class="btn btn-ghost btn-xs" style="margin-top:0.5rem;">↺ Reset Position</button>
           </div>
 
           <!-- Hidden offset inputs for save/load compat -->
@@ -542,7 +544,7 @@
 
   </main>
 
-  <footer style="text-align:center;padding:1rem 0 0.5rem;opacity:0.35;font-size:0.7rem;font-family:'Inter',sans-serif;">v41</footer>
+  <footer style="text-align:center;padding:1rem 0 0.5rem;opacity:0.35;font-size:0.7rem;font-family:'Inter',sans-serif;">v42</footer>
 
   <!-- ============================================================
        LIGHTBOX
@@ -596,9 +598,9 @@
     <p>© <span id="footer-year"></span> Le Image Photography Studio. All rights reserved.</p>
   </footer>
 
-  <script src="js/frames.js?v=41"></script>
-  <script src="js/monogram.js?v=41"></script>
-  <script src="js/app.js?v=41"></script>
+  <script src="js/frames.js?v=42"></script>
+  <script src="js/monogram.js?v=42"></script>
+  <script src="js/app.js?v=42"></script>
 
 </body>
 </html>

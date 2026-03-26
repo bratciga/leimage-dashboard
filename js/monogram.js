@@ -75,6 +75,8 @@ const CANVAS_SPECS = {
 
 const MONOGRAM_ZONE_HEIGHT_RATIO = 0.96;
 const PADDING_RATIO = 0.02;
+// How much of the final PRINT the monogram strip occupies (bottom portion)
+const PRINT_STRIP_RATIO = 0.18;
 
 /* ================================================================
    STATE
@@ -857,7 +859,7 @@ async function renderPrintMock() {
   ctx.fillStyle = bgColor;
   ctx.fillRect(0, 0, displayW, displayH);
 
-  const monoZoneH  = Math.round(displayH * MONOGRAM_ZONE_HEIGHT_RATIO);
+  const monoZoneH  = Math.round(displayH * PRINT_STRIP_RATIO);
   const photoAreaH = displayH - monoZoneH;
 
   if (is2x6) {
@@ -969,11 +971,11 @@ async function getExportCanvas() {
   const singleW = is2x6 ? print.w / 2 : print.w;   // single strip width
   const singleH = print.h;
 
-  // Monogram zone at bottom of the print
-  const monoZoneH  = Math.round(singleH * MONOGRAM_ZONE_HEIGHT_RATIO);
-  const monoY      = singleH - monoZoneH;
+  // Monogram strip at bottom — same proportion as preview mock
+  const monoStripH = Math.round(singleH * PRINT_STRIP_RATIO);
+  const monoY      = singleH - monoStripH;
 
-  // Source: crop the monogram canvas to just the zone area
+  // Source: crop the monogram canvas to just the visible zone area
   const srcZoneY = spec.h * (1 - MONOGRAM_ZONE_HEIGHT_RATIO);
   const srcZoneH = spec.h * MONOGRAM_ZONE_HEIGHT_RATIO;
 
@@ -984,9 +986,9 @@ async function getExportCanvas() {
     out.height = print.h;
     const ctx = out.getContext('2d');
     // Left strip
-    ctx.drawImage(monoCanvas, 0, srcZoneY, spec.w, srcZoneH, 0, monoY, singleW, monoZoneH);
+    ctx.drawImage(monoCanvas, 0, srcZoneY, spec.w, srcZoneH, 0, monoY, singleW, monoStripH);
     // Right strip
-    ctx.drawImage(monoCanvas, 0, srcZoneY, spec.w, srcZoneH, singleW, monoY, singleW, monoZoneH);
+    ctx.drawImage(monoCanvas, 0, srcZoneY, spec.w, srcZoneH, singleW, monoY, singleW, monoStripH);
     return out;
   } else {
     // Single 1844×1240 sheet
@@ -994,7 +996,7 @@ async function getExportCanvas() {
     out.width  = print.w;
     out.height = print.h;
     const ctx = out.getContext('2d');
-    ctx.drawImage(monoCanvas, 0, srcZoneY, spec.w, srcZoneH, 0, monoY, print.w, monoZoneH);
+    ctx.drawImage(monoCanvas, 0, srcZoneY, spec.w, srcZoneH, 0, monoY, print.w, monoStripH);
     return out;
   }
 }
@@ -1029,117 +1031,52 @@ function getTodayDateString() {
 }
 
 /* ================================================================
-   DRAG-TO-MOVE ON CANVAS
+   POSITION NUDGE CONTROLS — +/- buttons to move text/frame
 ================================================================ */
-function initCanvasDrag(canvas) {
-  let dragging = null; // 'line1' | 'line2' | 'frame' | null
-  let startX = 0, startY = 0;
-  let startOffX = 0, startOffY = 0;
+const NUDGE_STEP = 10; // pixels per click
 
-  function getCanvasCoords(e) {
-    const rect = canvas.getBoundingClientRect();
-    const scaleX = canvas.width / rect.width;
-    const scaleY = canvas.height / rect.height;
-    const clientX = e.touches ? e.touches[0].clientX : e.clientX;
-    const clientY = e.touches ? e.touches[0].clientY : e.clientY;
-    return {
-      x: (clientX - rect.left) * scaleX,
-      y: (clientY - rect.top) * scaleY
-    };
-  }
+function buildNudgeControls(targetLabel, xKey, yKey) {
+  const wrap = document.createElement('div');
+  wrap.className = 'nudge-controls';
 
-  function hitTest(cx, cy) {
-    const spec = CANVAS_SPECS[MonogramState.printSize] || CANVAS_SPECS['4x6'];
-    const zoneH = spec.h * MONOGRAM_ZONE_HEIGHT_RATIO;
-    const midY = spec.h / 2;
+  const label = document.createElement('span');
+  label.className = 'nudge-label';
+  label.textContent = targetLabel;
 
-    // If there's a frame and click is in the outer area, move frame
-    const hasFrame = MonogramState.frame && MonogramState.frame !== 'none';
-    const hasLine1 = MonogramState.line1 && MonogramState.line1.trim();
-    const hasLine2 = MonogramState.line2 && MonogramState.line2.trim();
+  const makeBtn = (text, dx, dy) => {
+    const btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = 'btn btn-ghost btn-nudge';
+    btn.textContent = text;
+    btn.addEventListener('click', () => {
+      MonogramState[xKey] = (MonogramState[xKey] || 0) + dx * NUDGE_STEP;
+      MonogramState[yKey] = (MonogramState[yKey] || 0) + dy * NUDGE_STEP;
+      const hx = document.getElementById(xKey.replace('offset', 'mono-offset').replace('X', 'x').replace('Y', 'y').replace('frame', 'frame-offset'));
+      const hy = document.getElementById(yKey.replace('offset', 'mono-offset').replace('X', 'x').replace('Y', 'y').replace('frame', 'frame-offset'));
+      if (hx) hx.value = MonogramState[xKey];
+      if (hy) hy.value = MonogramState[yKey];
+      scheduleRender();
+    });
+    return btn;
+  };
 
-    // Simple zones: top half = line1 or frame, bottom half = line2 or frame
-    // If no text, any drag moves the frame
-    if (!hasLine1 && !hasLine2) {
-      return hasFrame ? 'frame' : null;
-    }
+  wrap.appendChild(label);
+  wrap.appendChild(makeBtn('←', -1, 0));
+  wrap.appendChild(makeBtn('→', 1, 0));
+  wrap.appendChild(makeBtn('↑', 0, -1));
+  wrap.appendChild(makeBtn('↓', 0, 1));
 
-    if (hasLine1 && hasLine2) {
-      // Top 40% = line1, bottom 40% = line2, rest = frame
-      if (cy < midY - spec.h * 0.05) return 'line1';
-      if (cy > midY + spec.h * 0.05) return 'line2';
-      return hasFrame ? 'frame' : 'line1';
-    }
+  return wrap;
+}
 
-    if (hasLine1) return 'line1';
-    if (hasLine2) return 'line2';
-    return null;
-  }
+function initPositionControls() {
+  const container = document.getElementById('position-controls');
+  if (!container) return;
+  container.innerHTML = '';
 
-  function onStart(e) {
-    const coords = getCanvasCoords(e);
-    const target = hitTest(coords.x, coords.y);
-    if (!target) return;
-
-    dragging = target;
-    startX = coords.x;
-    startY = coords.y;
-
-    if (target === 'line1') {
-      startOffX = MonogramState.offsetX1 || 0;
-      startOffY = MonogramState.offsetY1 || 0;
-    } else if (target === 'line2') {
-      startOffX = MonogramState.offsetX2 || 0;
-      startOffY = MonogramState.offsetY2 || 0;
-    } else if (target === 'frame') {
-      startOffX = MonogramState.frameOffsetX || 0;
-      startOffY = MonogramState.frameOffsetY || 0;
-    }
-
-    canvas.style.cursor = 'grabbing';
-    e.preventDefault();
-  }
-
-  function onMove(e) {
-    if (!dragging) return;
-    const coords = getCanvasCoords(e);
-    const dx = coords.x - startX;
-    const dy = coords.y - startY;
-
-    if (dragging === 'line1') {
-      MonogramState.offsetX1 = Math.round(startOffX + dx);
-      MonogramState.offsetY1 = Math.round(startOffY + dy);
-    } else if (dragging === 'line2') {
-      MonogramState.offsetX2 = Math.round(startOffX + dx);
-      MonogramState.offsetY2 = Math.round(startOffY + dy);
-    } else if (dragging === 'frame') {
-      MonogramState.frameOffsetX = Math.round(startOffX + dx);
-      MonogramState.frameOffsetY = Math.round(startOffY + dy);
-    }
-
-    scheduleRender();
-    e.preventDefault();
-  }
-
-  function onEnd() {
-    if (dragging) {
-      dragging = null;
-      canvas.style.cursor = 'grab';
-    }
-  }
-
-  // Mouse events
-  canvas.addEventListener('mousedown', onStart);
-  window.addEventListener('mousemove', onMove);
-  window.addEventListener('mouseup', onEnd);
-
-  // Touch events
-  canvas.addEventListener('touchstart', onStart, { passive: false });
-  window.addEventListener('touchmove', onMove, { passive: false });
-  window.addEventListener('touchend', onEnd);
-
-  // Set default cursor
-  canvas.style.cursor = 'grab';
+  container.appendChild(buildNudgeControls('Names', 'offsetX1', 'offsetY1'));
+  container.appendChild(buildNudgeControls('Date', 'offsetX2', 'offsetY2'));
+  container.appendChild(buildNudgeControls('Frame', 'frameOffsetX', 'frameOffsetY'));
 }
 
 /* ================================================================
@@ -1167,8 +1104,8 @@ async function initMonogramBuilder() {
   await loadGoogleFont(MonogramState.fontFamily);
   await renderMonogram();
 
-  /* ---- Drag-to-move on canvas ---- */
-  initCanvasDrag(canvas);
+  /* ---- Position nudge controls ---- */
+  initPositionControls();
 
   /* ---- Wire controls ---- */
 
