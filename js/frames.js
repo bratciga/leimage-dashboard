@@ -312,6 +312,20 @@ const FRAME_TEMPLATES = [
     viewBoxH: 3600,
   },
 
+  /* ─────────────────── FULL WELD WREATH ──────────────────── */
+
+  {
+    id: 'full-weld-wreath',
+    name: 'Full Weld Wreath',
+    category: 'botanical',
+    textPadding: { x: 0.22, y: 0.22 },
+    textZone: { left: 0.18, top: 0.20, right: 0.82, bottom: 0.80 },
+    svg: null,
+    svgFile: 'assets/frames/full-weld-wreath.svg',
+    viewBoxW: 7234,
+    viewBoxH: 5979,
+  },
+
   /* ─────────────────── ORNAMENTAL FRAMES (235-243) ────────── */
 
   {
