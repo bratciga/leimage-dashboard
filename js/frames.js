@@ -312,6 +312,20 @@ const FRAME_TEMPLATES = [
     viewBoxH: 3600,
   },
 
+  /* ─────────────────── FRAME 32 TRACED ───────────────────── */
+
+  {
+    id: 'frame-32-traced',
+    name: 'Ornate Border Frame',
+    category: 'botanical',
+    textPadding: { x: 0.22, y: 0.18 },
+    textZone: { left: 0.18, top: 0.15, right: 0.82, bottom: 0.85 },
+    svg: null,
+    svgFile: 'assets/frames/frame-32-traced.svg',
+    viewBoxW: 1409.574,
+    viewBoxH: 1032,
+  },
+
   /* ─────────────────── LEAVES WREATH ─────────────────────── */
 
   {
