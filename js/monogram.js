@@ -1024,10 +1024,8 @@ async function getExportCanvas() {
     drawFitted(ctx, 0, singleW);
     drawFitted(ctx, singleW, singleW);
   } else {
-    // 4x6: single monogram across full width — match print layout exactly
-    const srcZoneY = spec.h * (1 - MONOGRAM_ZONE_HEIGHT_RATIO);
-    const srcZoneH = spec.h * MONOGRAM_ZONE_HEIGHT_RATIO;
-    ctx.drawImage(monoCanvas, 0, srcZoneY, spec.w, srcZoneH, 0, monoY, print.w, monoStripH);
+    // 4x6: single monogram centered in strip, aspect ratio preserved
+    drawFitted(ctx, 0, print.w);
   }
   return out;
 }
