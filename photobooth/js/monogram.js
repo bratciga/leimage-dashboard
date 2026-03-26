@@ -69,8 +69,8 @@ const CANVAS_SPECS = {
   '2x6': { w: 1200, h: 800 },
 };
 
-const MONOGRAM_ZONE_HEIGHT_RATIO = 0.85;
-const PADDING_RATIO = 0.06;
+const MONOGRAM_ZONE_HEIGHT_RATIO = 0.96;
+const PADDING_RATIO = 0.02;
 
 /* ================================================================
    STATE
@@ -566,7 +566,7 @@ async function drawMonogramContent(ctx, spec, state, transparent = false) {
     const tz = frameTpl.textZone;
     const vbAspect   = frameTpl.viewBoxW / frameTpl.viewBoxH;
     const zoneAspect = maxW / zoneH;
-    const fillBoost = vbAspect < 1.3 ? 1.15 : 1.0;
+    const fillBoost = 1.0;
     let drawW, drawH, drawX, drawY;
     if (vbAspect > zoneAspect) {
       drawW = maxW * fillBoost; drawH = drawW / vbAspect;
@@ -618,7 +618,7 @@ async function drawMonogramContent(ctx, spec, state, transparent = false) {
         const vbAspect   = frameTpl.viewBoxW / frameTpl.viewBoxH;
         const zoneAspect = maxW / zoneH;
         // Scale up square/circular frames to fill more of the canvas
-        const fillBoost = vbAspect < 1.3 ? 1.15 : 1.0;
+        const fillBoost = 1.0;
         let drawW, drawH;
         if (vbAspect > zoneAspect) {
           drawW = maxW * fillBoost;
