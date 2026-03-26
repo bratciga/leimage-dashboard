@@ -908,23 +908,12 @@ async function renderPrintMock() {
     const srcZoneY = srcSpec.h * (1 - MONOGRAM_ZONE_HEIGHT_RATIO);
     const srcZoneH = srcSpec.h * MONOGRAM_ZONE_HEIGHT_RATIO;
 
-    const mockSrcAspect = srcSpec.w / srcZoneH;
     if (is2x6) {
       const stripW = Math.floor(displayW / 2) - 1;
-      for (let si = 0; si < 2; si++) {
-        const sx = si * (stripW + 2);
-        let dw = stripW; let dh = dw / mockSrcAspect;
-        if (dh > monoZoneH) { dh = monoZoneH; dw = dh * mockSrcAspect; }
-        const dx = sx + (stripW - dw) / 2;
-        const dy = monoY + (monoZoneH - dh) / 2;
-        ctx.drawImage(monoCanvas, 0, srcZoneY, srcSpec.w, srcZoneH, dx, dy, dw, dh);
-      }
+      ctx.drawImage(monoCanvas, 0, srcZoneY, srcSpec.w, srcZoneH, 0,           monoY, stripW, monoZoneH);
+      ctx.drawImage(monoCanvas, 0, srcZoneY, srcSpec.w, srcZoneH, stripW + 2,  monoY, stripW, monoZoneH);
     } else {
-      let dw = displayW; let dh = dw / mockSrcAspect;
-      if (dh > monoZoneH) { dh = monoZoneH; dw = dh * mockSrcAspect; }
-      const dx = (displayW - dw) / 2;
-      const dy = monoY + (monoZoneH - dh) / 2;
-      ctx.drawImage(monoCanvas, 0, srcZoneY, srcSpec.w, srcZoneH, dx, dy, dw, dh);
+      ctx.drawImage(monoCanvas, 0, srcZoneY, srcSpec.w, srcZoneH, 0, monoY, displayW, monoZoneH);
     }
   }
 
@@ -990,26 +979,16 @@ async function getExportCanvas() {
   const srcZoneY = spec.h * (1 - MONOGRAM_ZONE_HEIGHT_RATIO);
   const srcZoneH = spec.h * MONOGRAM_ZONE_HEIGHT_RATIO;
 
-  // Fit monogram into strip zone while preserving aspect ratio
-  const srcAspect = spec.w / srcZoneH;
-
   if (is2x6) {
     // Two strips side by side on one 1240×1844 sheet
     const out = document.createElement('canvas');
     out.width  = print.w;
     out.height = print.h;
     const ctx = out.getContext('2d');
-
-    for (let s = 0; s < 2; s++) {
-      const sx = s * singleW;
-      // Fit: try full width first, then check height
-      let dw = singleW;
-      let dh = dw / srcAspect;
-      if (dh > monoStripH) { dh = monoStripH; dw = dh * srcAspect; }
-      const dx = sx + (singleW - dw) / 2;
-      const dy = monoY + (monoStripH - dh) / 2;
-      ctx.drawImage(monoCanvas, 0, srcZoneY, spec.w, srcZoneH, dx, dy, dw, dh);
-    }
+    // Left strip
+    ctx.drawImage(monoCanvas, 0, srcZoneY, spec.w, srcZoneH, 0, monoY, singleW, monoStripH);
+    // Right strip
+    ctx.drawImage(monoCanvas, 0, srcZoneY, spec.w, srcZoneH, singleW, monoY, singleW, monoStripH);
     return out;
   } else {
     // Single 1844×1240 sheet
@@ -1017,13 +996,7 @@ async function getExportCanvas() {
     out.width  = print.w;
     out.height = print.h;
     const ctx = out.getContext('2d');
-
-    let dw = print.w;
-    let dh = dw / srcAspect;
-    if (dh > monoStripH) { dh = monoStripH; dw = dh * srcAspect; }
-    const dx = (print.w - dw) / 2;
-    const dy = monoY + (monoStripH - dh) / 2;
-    ctx.drawImage(monoCanvas, 0, srcZoneY, spec.w, srcZoneH, dx, dy, dw, dh);
+    ctx.drawImage(monoCanvas, 0, srcZoneY, spec.w, srcZoneH, 0, monoY, print.w, monoStripH);
     return out;
   }
 }
