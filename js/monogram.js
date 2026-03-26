@@ -1014,22 +1014,22 @@ async function getExportCanvas() {
     ctx.drawImage(monoCanvas, cLeft, cTop, srcW, srcH, dx, dy, dw, dh);
   }
 
+  const out = document.createElement('canvas');
+  out.width  = print.w;
+  out.height = print.h;
+  const ctx = out.getContext('2d');
+
   if (is2x6) {
-    const out = document.createElement('canvas');
-    out.width  = print.w;
-    out.height = print.h;
-    const ctx = out.getContext('2d');
+    // Two strips stacked — one monogram per strip half
     drawFitted(ctx, 0, singleW);
     drawFitted(ctx, singleW, singleW);
-    return out;
   } else {
-    const out = document.createElement('canvas');
-    out.width  = print.w;
-    out.height = print.h;
-    const ctx = out.getContext('2d');
-    drawFitted(ctx, 0, print.w);
-    return out;
+    // 4x6: two photos side by side — one monogram per half
+    const halfW = Math.floor(print.w / 2);
+    drawFitted(ctx, 0, halfW);
+    drawFitted(ctx, halfW, halfW);
   }
+  return out;
 }
 
 /* ================================================================
