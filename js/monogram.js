@@ -980,23 +980,35 @@ async function getExportCanvas() {
   const srcZoneH = spec.h * MONOGRAM_ZONE_HEIGHT_RATIO;
 
   if (is2x6) {
-    // Two strips side by side on one 1240×1844 sheet
     const out = document.createElement('canvas');
     out.width  = print.w;
     out.height = print.h;
     const ctx = out.getContext('2d');
-    // Left strip
-    ctx.drawImage(monoCanvas, 0, srcZoneY, spec.w, srcZoneH, 0, monoY, singleW, monoStripH);
-    // Right strip
-    ctx.drawImage(monoCanvas, 0, srcZoneY, spec.w, srcZoneH, singleW, monoY, singleW, monoStripH);
+
+    for (let s = 0; s < 2; s++) {
+      const sx = s * singleW;
+      // Scale monogram to fill strip width, keep aspect ratio
+      const scale = singleW / spec.w;
+      const dw = singleW;
+      const dh = Math.round(srcZoneH * scale);
+      // Align bottom of monogram to bottom of print
+      const dy = singleH - dh;
+      ctx.drawImage(monoCanvas, 0, srcZoneY, spec.w, srcZoneH, sx, dy, dw, dh);
+    }
     return out;
   } else {
-    // Single 1844×1240 sheet
     const out = document.createElement('canvas');
     out.width  = print.w;
     out.height = print.h;
     const ctx = out.getContext('2d');
-    ctx.drawImage(monoCanvas, 0, srcZoneY, spec.w, srcZoneH, 0, monoY, print.w, monoStripH);
+
+    // Scale monogram to fill print width, keep aspect ratio
+    const scale = print.w / spec.w;
+    const dw = print.w;
+    const dh = Math.round(srcZoneH * scale);
+    // Align bottom of monogram to bottom of print
+    const dy = print.h - dh;
+    ctx.drawImage(monoCanvas, 0, srcZoneY, spec.w, srcZoneH, 0, dy, dw, dh);
     return out;
   }
 }
