@@ -1028,6 +1028,21 @@ h1, h2, h3 {
   box-shadow: 0 2px 8px rgba(0,0,0,0.06);
 }
 
+.frame-scale-bar {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.4rem 0.75rem;
+  background: var(--bg-alt);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  margin-bottom: 0.5rem;
+  position: sticky;
+  top: 192px;
+  z-index: 79;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+}
+
 .frame-color-label {
   font-size: 0.75rem;
   letter-spacing: 0.04em;

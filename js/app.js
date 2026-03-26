@@ -684,10 +684,10 @@ function addMonogramToPlaceholder(container) {
   miniCanvas.style.maxWidth = '100%';
   miniCanvas.style.maxHeight = '100%';
 
-  // Crop to the monogram zone (centered 85%) to remove blank edges
-  const zoneRatio = 0.85;
+  // Crop to the monogram zone (bottom 96% — matching MONOGRAM_ZONE_HEIGHT_RATIO)
+  const zoneRatio = 0.96;
   const zoneH = srcCanvas.height * zoneRatio;
-  const zoneY = (srcCanvas.height - zoneH) / 2;
+  const zoneY = srcCanvas.height - zoneH;
 
   miniCanvas.width = srcCanvas.width;
   miniCanvas.height = Math.round(zoneH);

@@ -463,6 +463,28 @@ function initFramePicker() {
   swatchWrap.appendChild(eyedropperGroup);
 
   colorRow.appendChild(swatchWrap);
+
+  // Add scale slider to the color row (shares sticky positioning)
+  const scaleWrap = document.createElement('div');
+  scaleWrap.style.cssText = 'display:flex;align-items:center;gap:0.4rem;margin-left:auto;white-space:nowrap;';
+  const scaleLabel = document.createElement('span');
+  scaleLabel.className = 'frame-color-label';
+  scaleLabel.textContent = 'Scale';
+  const scaleRange = document.createElement('input');
+  scaleRange.type = 'range'; scaleRange.id = 'mono-frame-scale';
+  scaleRange.className = 'range-input';
+  scaleRange.min = '0.5'; scaleRange.max = '2.0'; scaleRange.step = '0.05'; scaleRange.value = '1.0';
+  scaleRange.style.width = '80px';
+  const scaleVal = document.createElement('span');
+  scaleVal.id = 'mono-frame-scale-val';
+  scaleVal.className = 'range-val';
+  scaleVal.textContent = '1.00x';
+  scaleVal.style.fontSize = '0.7rem';
+  scaleWrap.appendChild(scaleLabel);
+  scaleWrap.appendChild(scaleRange);
+  scaleWrap.appendChild(scaleVal);
+  colorRow.appendChild(scaleWrap);
+
   grid.appendChild(colorRow);
 
   // Group templates by category preserving order of first appearance
@@ -637,18 +659,18 @@ async function drawMonogramContent(ctx, spec, state, transparent = false) {
   let textZoneW, textZoneH, textZoneTop, textZoneCenterX;
 
   if (hasFrame && frameTpl.textZone && frameTpl.viewBoxW && frameTpl.viewBoxH) {
+    // Text zone is always calculated at scale 1.0 with no offset
+    // so text stays fixed regardless of frame scale/position
     const tz = frameTpl.textZone;
     const vbAspect   = frameTpl.viewBoxW / frameTpl.viewBoxH;
-    const canvasMaxW = spec.w * fScale;
-    const canvasMaxH = spec.h * fScale;
     let drawW, drawH;
-    if (vbAspect > canvasMaxW / canvasMaxH) {
-      drawW = canvasMaxW; drawH = canvasMaxW / vbAspect;
+    if (vbAspect > spec.w / spec.h) {
+      drawW = spec.w; drawH = spec.w / vbAspect;
     } else {
-      drawH = canvasMaxH; drawW = canvasMaxH * vbAspect;
+      drawH = spec.h; drawW = spec.h * vbAspect;
     }
-    const drawX = centerX - drawW / 2 + fOffX;
-    const drawY = (spec.h - drawH) / 2 + fOffY;
+    const drawX = centerX - drawW / 2;
+    const drawY = (spec.h - drawH) / 2;
 
     const safeLeft   = drawX + drawW * tz.left;
     const safeRight  = drawX + drawW * tz.right;
@@ -767,7 +789,28 @@ async function renderMonogram() {
   }
 
   const ctx = canvas.getContext('2d');
+
+  // Clip to the monogram zone (what actually shows in the print)
+  // This prevents frames from appearing outside the printable area
+  const clipTop = spec.h * (1 - MONOGRAM_ZONE_HEIGHT_RATIO);
+  ctx.save();
+  ctx.beginPath();
+  ctx.rect(0, clipTop, spec.w, spec.h - clipTop);
+  ctx.clip();
+
   await drawMonogramContent(ctx, spec, MonogramState, false);
+
+  ctx.restore();
+
+  // Draw a subtle boundary line at the clip edge so users can see the limit
+  ctx.strokeStyle = 'rgba(180,180,180,0.3)';
+  ctx.lineWidth = 1;
+  ctx.setLineDash([6, 4]);
+  ctx.beginPath();
+  ctx.moveTo(0, clipTop);
+  ctx.lineTo(spec.w, clipTop);
+  ctx.stroke();
+  ctx.setLineDash([]);
 }
 
 /* ================================================================
@@ -889,8 +932,15 @@ function scheduleRender() {
 }
 
 /* ================================================================
-   EXPORT — transparent PNG at 1650px wide
+   EXPORT — full print-size transparent PNG
+   4x6 = 1844 × 1240 (landscape)
+   2x6 = 1240 × 1844 (portrait), doubled side-by-side for cutting
 ================================================================ */
+const PRINT_DIMS = {
+  '4x6': { w: 1844, h: 1240 },
+  '2x6': { w: 1240, h: 1844 },
+};
+
 function exportMonogramPNG() {
   return new Promise(async (resolve) => {
     const exportCanvas = await getExportCanvas();
@@ -904,33 +954,49 @@ function exportMonogramDataURL() {
 
 async function getExportCanvas() {
   const printSize = MonogramState.printSize;
-  const spec      = CANVAS_SPECS[printSize];
+  const print     = PRINT_DIMS[printSize] || PRINT_DIMS['4x6'];
+  const is2x6     = printSize === '2x6';
 
-  // Export at 1650px wide (matching sample asset dimensions)
-  const exportW = 1650;
-  const exportH = Math.round(exportW * spec.h / spec.w);
-  const exportSpec = { w: exportW, h: exportH };
+  // Render the monogram at the internal spec resolution first
+  const spec = CANVAS_SPECS[printSize];
+  const monoCanvas = document.createElement('canvas');
+  monoCanvas.width  = spec.w;
+  monoCanvas.height = spec.h;
+  const mctx = monoCanvas.getContext('2d');
+  await drawMonogramContent(mctx, spec, MonogramState, true);
 
-  const exportSingle = document.createElement('canvas');
-  exportSingle.width  = exportW;
-  exportSingle.height = exportH;
-  const ectx = exportSingle.getContext('2d');
+  // Create full-print-size canvas (transparent)
+  const singleW = is2x6 ? print.w / 2 : print.w;   // single strip width
+  const singleH = print.h;
 
-  // Transparent export
-  await drawMonogramContent(ectx, exportSpec, MonogramState, true);
+  // Monogram zone at bottom of the print
+  const monoZoneH  = Math.round(singleH * MONOGRAM_ZONE_HEIGHT_RATIO);
+  const monoY      = singleH - monoZoneH;
 
-  if (printSize === '2x6') {
-    // For 2x6: export doubled (two copies side by side) for 4x6 sheet
-    const doubled = document.createElement('canvas');
-    doubled.width  = exportW * 2;
-    doubled.height = exportH;
-    const dctx = doubled.getContext('2d');
-    dctx.drawImage(exportSingle, 0,        0, exportW, exportH);
-    dctx.drawImage(exportSingle, exportW,  0, exportW, exportH);
-    return doubled;
+  // Source: crop the monogram canvas to just the zone area
+  const srcZoneY = spec.h * (1 - MONOGRAM_ZONE_HEIGHT_RATIO);
+  const srcZoneH = spec.h * MONOGRAM_ZONE_HEIGHT_RATIO;
+
+  if (is2x6) {
+    // Two strips side by side on one 1240×1844 sheet
+    const out = document.createElement('canvas');
+    out.width  = print.w;
+    out.height = print.h;
+    const ctx = out.getContext('2d');
+    // Left strip
+    ctx.drawImage(monoCanvas, 0, srcZoneY, spec.w, srcZoneH, 0, monoY, singleW, monoZoneH);
+    // Right strip
+    ctx.drawImage(monoCanvas, 0, srcZoneY, spec.w, srcZoneH, singleW, monoY, singleW, monoZoneH);
+    return out;
+  } else {
+    // Single 1844×1240 sheet
+    const out = document.createElement('canvas');
+    out.width  = print.w;
+    out.height = print.h;
+    const ctx = out.getContext('2d');
+    ctx.drawImage(monoCanvas, 0, srcZoneY, spec.w, srcZoneH, 0, monoY, print.w, monoZoneH);
+    return out;
   }
-
-  return exportSingle;
 }
 
 /* ================================================================
@@ -963,6 +1029,120 @@ function getTodayDateString() {
 }
 
 /* ================================================================
+   DRAG-TO-MOVE ON CANVAS
+================================================================ */
+function initCanvasDrag(canvas) {
+  let dragging = null; // 'line1' | 'line2' | 'frame' | null
+  let startX = 0, startY = 0;
+  let startOffX = 0, startOffY = 0;
+
+  function getCanvasCoords(e) {
+    const rect = canvas.getBoundingClientRect();
+    const scaleX = canvas.width / rect.width;
+    const scaleY = canvas.height / rect.height;
+    const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+    const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+    return {
+      x: (clientX - rect.left) * scaleX,
+      y: (clientY - rect.top) * scaleY
+    };
+  }
+
+  function hitTest(cx, cy) {
+    const spec = CANVAS_SPECS[MonogramState.printSize] || CANVAS_SPECS['4x6'];
+    const zoneH = spec.h * MONOGRAM_ZONE_HEIGHT_RATIO;
+    const midY = spec.h / 2;
+
+    // If there's a frame and click is in the outer area, move frame
+    const hasFrame = MonogramState.frame && MonogramState.frame !== 'none';
+    const hasLine1 = MonogramState.line1 && MonogramState.line1.trim();
+    const hasLine2 = MonogramState.line2 && MonogramState.line2.trim();
+
+    // Simple zones: top half = line1 or frame, bottom half = line2 or frame
+    // If no text, any drag moves the frame
+    if (!hasLine1 && !hasLine2) {
+      return hasFrame ? 'frame' : null;
+    }
+
+    if (hasLine1 && hasLine2) {
+      // Top 40% = line1, bottom 40% = line2, rest = frame
+      if (cy < midY - spec.h * 0.05) return 'line1';
+      if (cy > midY + spec.h * 0.05) return 'line2';
+      return hasFrame ? 'frame' : 'line1';
+    }
+
+    if (hasLine1) return 'line1';
+    if (hasLine2) return 'line2';
+    return null;
+  }
+
+  function onStart(e) {
+    const coords = getCanvasCoords(e);
+    const target = hitTest(coords.x, coords.y);
+    if (!target) return;
+
+    dragging = target;
+    startX = coords.x;
+    startY = coords.y;
+
+    if (target === 'line1') {
+      startOffX = MonogramState.offsetX1 || 0;
+      startOffY = MonogramState.offsetY1 || 0;
+    } else if (target === 'line2') {
+      startOffX = MonogramState.offsetX2 || 0;
+      startOffY = MonogramState.offsetY2 || 0;
+    } else if (target === 'frame') {
+      startOffX = MonogramState.frameOffsetX || 0;
+      startOffY = MonogramState.frameOffsetY || 0;
+    }
+
+    canvas.style.cursor = 'grabbing';
+    e.preventDefault();
+  }
+
+  function onMove(e) {
+    if (!dragging) return;
+    const coords = getCanvasCoords(e);
+    const dx = coords.x - startX;
+    const dy = coords.y - startY;
+
+    if (dragging === 'line1') {
+      MonogramState.offsetX1 = Math.round(startOffX + dx);
+      MonogramState.offsetY1 = Math.round(startOffY + dy);
+    } else if (dragging === 'line2') {
+      MonogramState.offsetX2 = Math.round(startOffX + dx);
+      MonogramState.offsetY2 = Math.round(startOffY + dy);
+    } else if (dragging === 'frame') {
+      MonogramState.frameOffsetX = Math.round(startOffX + dx);
+      MonogramState.frameOffsetY = Math.round(startOffY + dy);
+    }
+
+    scheduleRender();
+    e.preventDefault();
+  }
+
+  function onEnd() {
+    if (dragging) {
+      dragging = null;
+      canvas.style.cursor = 'grab';
+    }
+  }
+
+  // Mouse events
+  canvas.addEventListener('mousedown', onStart);
+  window.addEventListener('mousemove', onMove);
+  window.addEventListener('mouseup', onEnd);
+
+  // Touch events
+  canvas.addEventListener('touchstart', onStart, { passive: false });
+  window.addEventListener('touchmove', onMove, { passive: false });
+  window.addEventListener('touchend', onEnd);
+
+  // Set default cursor
+  canvas.style.cursor = 'grab';
+}
+
+/* ================================================================
    INIT
 ================================================================ */
 async function initMonogramBuilder() {
@@ -986,6 +1166,9 @@ async function initMonogramBuilder() {
 
   await loadGoogleFont(MonogramState.fontFamily);
   await renderMonogram();
+
+  /* ---- Drag-to-move on canvas ---- */
+  initCanvasDrag(canvas);
 
   /* ---- Wire controls ---- */
 
