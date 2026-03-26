@@ -312,6 +312,20 @@ const FRAME_TEMPLATES = [
     viewBoxH: 3600,
   },
 
+  /* ─────────────────── LEAVES WREATH ─────────────────────── */
+
+  {
+    id: 'leaves-wreath',
+    name: 'Leaves Wreath',
+    category: 'botanical',
+    textPadding: { x: 0.28, y: 0.28 },
+    textZone: { left: 0.25, top: 0.25, right: 0.75, bottom: 0.75 },
+    svg: null,
+    svgFile: 'assets/frames/leaves-wreath.svg',
+    viewBoxW: 864,
+    viewBoxH: 864,
+  },
+
   /* ─────────────────── FULL WELD WREATH ──────────────────── */
 
   {
