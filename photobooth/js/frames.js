@@ -1091,6 +1091,120 @@ const FRAME_TEMPLATES = [
 
 ];
 
+/* ═══════════════════ MONOGRAM FRAMES (Assets 44-58 + Eucalyptus) ════════ */
+  {
+    id: 'monogram-44',
+    name: 'Ornate Frame I',
+    category: 'monogram',
+    textPadding: { x: 0.15, y: 0.15 },
+    svgFile: 'assets/frames/monogram-44.svg',
+  },
+  {
+    id: 'monogram-45',
+    name: 'Wide Banner',
+    category: 'monogram',
+    textPadding: { x: 0.12, y: 0.18 },
+    svgFile: 'assets/frames/monogram-45.svg',
+  },
+  {
+    id: 'monogram-46',
+    name: 'Scroll Frame',
+    category: 'monogram',
+    textPadding: { x: 0.12, y: 0.12 },
+    svgFile: 'assets/frames/monogram-46.svg',
+  },
+  {
+    id: 'monogram-47',
+    name: 'Floral Frame I',
+    category: 'monogram',
+    textPadding: { x: 0.15, y: 0.15 },
+    svgFile: 'assets/frames/monogram-47.svg',
+  },
+  {
+    id: 'monogram-48',
+    name: 'Floral Frame II',
+    category: 'monogram',
+    textPadding: { x: 0.15, y: 0.15 },
+    svgFile: 'assets/frames/monogram-48.svg',
+  },
+  {
+    id: 'monogram-49',
+    name: 'Vine Frame',
+    category: 'monogram',
+    textPadding: { x: 0.15, y: 0.15 },
+    svgFile: 'assets/frames/monogram-49.svg',
+  },
+  {
+    id: 'monogram-50',
+    name: 'Garden Frame',
+    category: 'monogram',
+    textPadding: { x: 0.14, y: 0.14 },
+    svgFile: 'assets/frames/monogram-50.svg',
+  },
+  {
+    id: 'monogram-51',
+    name: 'Leaf Border',
+    category: 'monogram',
+    textPadding: { x: 0.14, y: 0.14 },
+    svgFile: 'assets/frames/monogram-51.svg',
+  },
+  {
+    id: 'monogram-52',
+    name: 'Ornate Frame II',
+    category: 'monogram',
+    textPadding: { x: 0.15, y: 0.15 },
+    svgFile: 'assets/frames/monogram-52.svg',
+  },
+  {
+    id: 'monogram-53',
+    name: 'Compact Frame',
+    category: 'monogram',
+    textPadding: { x: 0.12, y: 0.12 },
+    svgFile: 'assets/frames/monogram-53.svg',
+  },
+  {
+    id: 'monogram-54',
+    name: 'Classic Border',
+    category: 'monogram',
+    textPadding: { x: 0.15, y: 0.15 },
+    svgFile: 'assets/frames/monogram-54.svg',
+  },
+  {
+    id: 'monogram-55',
+    name: 'Elegant Border',
+    category: 'monogram',
+    textPadding: { x: 0.14, y: 0.14 },
+    svgFile: 'assets/frames/monogram-55.svg',
+  },
+  {
+    id: 'monogram-56',
+    name: 'Decorative Frame',
+    category: 'monogram',
+    textPadding: { x: 0.14, y: 0.14 },
+    svgFile: 'assets/frames/monogram-56.svg',
+  },
+  {
+    id: 'monogram-57',
+    name: 'Flourish Frame',
+    category: 'monogram',
+    textPadding: { x: 0.12, y: 0.15 },
+    svgFile: 'assets/frames/monogram-57.svg',
+  },
+  {
+    id: 'monogram-58',
+    name: 'Grand Frame',
+    category: 'monogram',
+    textPadding: { x: 0.15, y: 0.15 },
+    svgFile: 'assets/frames/monogram-58.svg',
+  },
+  {
+    id: 'eucalyptus-wreath',
+    name: 'Eucalyptus Wreath',
+    category: 'botanical',
+    textPadding: { x: 0.22, y: 0.22 },
+    svgFile: 'assets/frames/eucalyptus-wreath.svg',
+  },
+
 /* ================================================================
    SVG → Canvas image cache
    Key: `${frameId}::${color}`, Value: HTMLImageElement
