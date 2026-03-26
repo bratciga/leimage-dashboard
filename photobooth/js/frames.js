@@ -174,7 +174,7 @@ const FRAME_TEMPLATES = [
     svg: null,
     svgFile: 'assets/frames/wreath-5.svg',
     viewBoxW: 281,
-    viewBoxH: 220,
+    viewBoxH: 260,
   },
   {
     id: 'wreath-6',
@@ -1253,7 +1253,7 @@ function _fetchSvgText(svgFile) {
   if (_svgTextCache.has(svgFile)) {
     return Promise.resolve(_svgTextCache.get(svgFile));
   }
-  return fetch(svgFile + '?v=33')
+  return fetch(svgFile + '?v=34')
     .then(r => r.ok ? r.text() : null)
     .then(text => {
       if (text) _svgTextCache.set(svgFile, text);
