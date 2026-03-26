@@ -116,8 +116,8 @@ const FRAME_TEMPLATES = [
     textZone: { left: 0.25, top: 0.30, right: 0.75, bottom: 0.70 },
     svg: null,
     svgFile: 'assets/frames/classic-wreath.svg',
-    viewBoxW: 432,
-    viewBoxH: 432,
+    viewBoxW: 303,
+    viewBoxH: 302,
   },
 
   {
@@ -128,8 +128,8 @@ const FRAME_TEMPLATES = [
     textZone: { left: 0.25, top: 0.30, right: 0.75, bottom: 0.70 },
     svg: null,
     svgFile: 'assets/frames/ornate-wreath.svg',
-    viewBoxW: 432,
-    viewBoxH: 432,
+    viewBoxW: 311,
+    viewBoxH: 309,
   },
 
   {
@@ -140,8 +140,8 @@ const FRAME_TEMPLATES = [
     textZone: { left: 0.25, top: 0.30, right: 0.75, bottom: 0.70 },
     svg: null,
     svgFile: 'assets/frames/wreath-2.svg',
-    viewBoxW: 432,
-    viewBoxH: 432,
+    viewBoxW: 309,
+    viewBoxH: 297,
   },
   {
     id: 'wreath-3',
@@ -151,8 +151,8 @@ const FRAME_TEMPLATES = [
     textZone: { left: 0.25, top: 0.30, right: 0.75, bottom: 0.70 },
     svg: null,
     svgFile: 'assets/frames/wreath-3.svg',
-    viewBoxW: 432,
-    viewBoxH: 432,
+    viewBoxW: 309,
+    viewBoxH: 289,
   },
   {
     id: 'wreath-4',
@@ -162,8 +162,8 @@ const FRAME_TEMPLATES = [
     textZone: { left: 0.25, top: 0.30, right: 0.75, bottom: 0.70 },
     svg: null,
     svgFile: 'assets/frames/wreath-4.svg',
-    viewBoxW: 432,
-    viewBoxH: 432,
+    viewBoxW: 349,
+    viewBoxH: 325,
   },
   {
     id: 'wreath-5',
@@ -173,8 +173,8 @@ const FRAME_TEMPLATES = [
     textZone: { left: 0.25, top: 0.30, right: 0.75, bottom: 0.70 },
     svg: null,
     svgFile: 'assets/frames/wreath-5.svg',
-    viewBoxW: 432,
-    viewBoxH: 432,
+    viewBoxW: 281,
+    viewBoxH: 351,
   },
   {
     id: 'wreath-6',
@@ -184,8 +184,8 @@ const FRAME_TEMPLATES = [
     textZone: { left: 0.25, top: 0.30, right: 0.75, bottom: 0.70 },
     svg: null,
     svgFile: 'assets/frames/wreath-6.svg',
-    viewBoxW: 432,
-    viewBoxH: 432,
+    viewBoxW: 351,
+    viewBoxH: 327,
   },
   {
     id: 'wreath-7',
@@ -195,8 +195,8 @@ const FRAME_TEMPLATES = [
     textZone: { left: 0.25, top: 0.30, right: 0.75, bottom: 0.70 },
     svg: null,
     svgFile: 'assets/frames/wreath-7.svg',
-    viewBoxW: 432,
-    viewBoxH: 432,
+    viewBoxW: 279,
+    viewBoxH: 259,
   },
   {
     id: 'wreath-8',
@@ -206,8 +206,8 @@ const FRAME_TEMPLATES = [
     textZone: { left: 0.25, top: 0.30, right: 0.75, bottom: 0.70 },
     svg: null,
     svgFile: 'assets/frames/wreath-8.svg',
-    viewBoxW: 432,
-    viewBoxH: 432,
+    viewBoxW: 305,
+    viewBoxH: 290,
   },
   {
     id: 'wreath-9',
@@ -217,8 +217,8 @@ const FRAME_TEMPLATES = [
     textZone: { left: 0.25, top: 0.30, right: 0.75, bottom: 0.70 },
     svg: null,
     svgFile: 'assets/frames/wreath-9.svg',
-    viewBoxW: 432,
-    viewBoxH: 432,
+    viewBoxW: 301,
+    viewBoxH: 221,
   },
   {
     id: 'wreath-10',
@@ -228,8 +228,8 @@ const FRAME_TEMPLATES = [
     textZone: { left: 0.25, top: 0.30, right: 0.75, bottom: 0.70 },
     svg: null,
     svgFile: 'assets/frames/wreath-10.svg',
-    viewBoxW: 432,
-    viewBoxH: 432,
+    viewBoxW: 313,
+    viewBoxH: 323,
   },
   {
     id: 'wreath-11',
@@ -239,8 +239,8 @@ const FRAME_TEMPLATES = [
     textZone: { left: 0.25, top: 0.30, right: 0.75, bottom: 0.70 },
     svg: null,
     svgFile: 'assets/frames/wreath-11.svg',
-    viewBoxW: 432,
-    viewBoxH: 432,
+    viewBoxW: 327,
+    viewBoxH: 333,
   },
 
   /* ─────────────────── 2. Classic Oval ─────────────────────── */
