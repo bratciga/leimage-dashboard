@@ -565,16 +565,16 @@ async function drawMonogramContent(ctx, spec, state, transparent = false) {
     // textZone is in frame-relative coords (0-1). Map to where the frame is drawn on canvas.
     const tz = frameTpl.textZone;
     const vbAspect   = frameTpl.viewBoxW / frameTpl.viewBoxH;
-    const zoneAspect = maxW / zoneH;
-    const fillBoost = 1.0;
+    const canvasMaxW = spec.w;
+    const canvasMaxH = spec.h;
     let drawW, drawH, drawX, drawY;
-    if (vbAspect > zoneAspect) {
-      drawW = maxW * fillBoost; drawH = drawW / vbAspect;
+    if (vbAspect > canvasMaxW / canvasMaxH) {
+      drawW = canvasMaxW; drawH = canvasMaxW / vbAspect;
     } else {
-      drawH = zoneH * fillBoost; drawW = drawH * vbAspect;
+      drawH = canvasMaxH; drawW = canvasMaxH * vbAspect;
     }
     drawX = centerX - drawW / 2;
-    drawY = zoneTop + (zoneH - drawH) / 2;
+    drawY = (spec.h - drawH) / 2;
 
     // Map textZone fractions to canvas pixels
     const safeLeft   = drawX + drawW * tz.left;
@@ -616,26 +616,26 @@ async function drawMonogramContent(ctx, spec, state, transparent = false) {
       // For legacy inline-SVG frames (fixed 400×200 viewBox), fill the zone.
       if (frameTpl.viewBoxW && frameTpl.viewBoxH) {
         const vbAspect   = frameTpl.viewBoxW / frameTpl.viewBoxH;
-        const zoneAspect = maxW / zoneH;
-        // Scale up square/circular frames to fill more of the canvas
-        const fillBoost = 1.0;
+        // Use full canvas dimensions (not zone) for maximum frame size
+        const canvasMaxW = spec.w;
+        const canvasMaxH = spec.h;
         let drawW, drawH;
-        if (vbAspect > zoneAspect) {
-          drawW = maxW * fillBoost;
-          drawH = drawW / vbAspect;
+        if (vbAspect > canvasMaxW / canvasMaxH) {
+          drawW = canvasMaxW;
+          drawH = canvasMaxW / vbAspect;
         } else {
-          drawH = zoneH * fillBoost;
-          drawW = drawH * vbAspect;
+          drawH = canvasMaxH;
+          drawW = canvasMaxH * vbAspect;
         }
         const drawX = centerX - drawW / 2;
-        const drawY = zoneTop + (zoneH - drawH) / 2;
+        const drawY = (spec.h - drawH) / 2;
         ctx.drawImage(frameImg, drawX, drawY, drawW, drawH);
       } else {
-        // Legacy inline frames: stretch to fill zone
-        const frameW = maxW;
-        const frameH = zoneH;
-        const frameX = centerX - frameW / 2;
-        const frameY = zoneTop;
+        // Legacy inline frames: stretch to fill full canvas
+        const frameW = spec.w;
+        const frameH = spec.h;
+        const frameX = 0;
+        const frameY = 0;
         ctx.drawImage(frameImg, frameX, frameY, frameW, frameH);
       }
     }
