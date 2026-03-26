@@ -1020,14 +1020,14 @@ async function getExportCanvas() {
   const ctx = out.getContext('2d');
 
   if (is2x6) {
-    // Two strips stacked — one monogram per strip half
+    // Two strips side by side — one monogram per half (printer cuts in half)
     drawFitted(ctx, 0, singleW);
     drawFitted(ctx, singleW, singleW);
   } else {
-    // 4x6: two photos side by side — one monogram per half
-    const halfW = Math.floor(print.w / 2);
-    drawFitted(ctx, 0, halfW);
-    drawFitted(ctx, halfW, halfW);
+    // 4x6: single monogram across full width — match print layout exactly
+    const srcZoneY = spec.h * (1 - MONOGRAM_ZONE_HEIGHT_RATIO);
+    const srcZoneH = spec.h * MONOGRAM_ZONE_HEIGHT_RATIO;
+    ctx.drawImage(monoCanvas, 0, srcZoneY, spec.w, srcZoneH, 0, monoY, print.w, monoStripH);
   }
   return out;
 }
