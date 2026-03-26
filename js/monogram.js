@@ -883,25 +883,28 @@ async function renderPrintMock() {
     ctx.beginPath(); ctx.moveTo(displayW / 2, 0); ctx.lineTo(displayW / 2, displayH); ctx.stroke();
     ctx.setLineDash([]);
   } else {
-    const pw = Math.floor(displayW / 2) - 3;
-    const ph = photoAreaH - 4;
-    for (let i = 0; i < 2; i++) {
-      const px = 2 + i * (pw + 2);
+    // 4x6: 2×2 grid — 3 photos + monogram in bottom-right
+    const gap = 2;
+    const cellW = Math.floor((displayW - gap) / 2);
+    const cellH = Math.floor((displayH - gap) / 2);
+    const positions = [
+      { x: 0,            y: 0 },             // top-left
+      { x: cellW + gap,  y: 0 },             // top-right
+      { x: 0,            y: cellH + gap },    // bottom-left
+    ];
+    for (let i = 0; i < 3; i++) {
+      const p = positions[i];
       if (_sampleImagesLoaded && _sampleImages[i] && _sampleImages[i].complete) {
-        ctx.drawImage(_sampleImages[i], px, 2, pw, ph);
+        ctx.drawImage(_sampleImages[i], p.x + 1, p.y + 1, cellW - 2, cellH - 2);
       } else {
         ctx.fillStyle = 'rgba(255,255,255,0.07)';
-        ctx.fillRect(px, 2, pw, ph);
-        drawPhotoIcon(ctx, px + pw / 2, 2 + ph / 2, pw * 0.2);
+        ctx.fillRect(p.x + 1, p.y + 1, cellW - 2, cellH - 2);
+        drawPhotoIcon(ctx, p.x + cellW / 2, p.y + cellH / 2, cellH * 0.2);
       }
     }
   }
 
-  // Monogram strip at bottom
-  const monoY = displayH - monoZoneH;
-  ctx.fillStyle = 'rgba(255,255,255,0.95)';
-  ctx.fillRect(0, monoY, displayW, monoZoneH);
-
+  // Monogram zone
   const monoCanvas = MonogramState.canvas;
   if (monoCanvas && monoCanvas.width > 0) {
     const srcSpec  = CANVAS_SPECS[printSize];
@@ -909,11 +912,28 @@ async function renderPrintMock() {
     const srcZoneH = srcSpec.h * MONOGRAM_ZONE_HEIGHT_RATIO;
 
     if (is2x6) {
+      const monoY = displayH - monoZoneH;
+      ctx.fillStyle = 'rgba(255,255,255,0.95)';
+      ctx.fillRect(0, monoY, displayW, monoZoneH);
       const stripW = Math.floor(displayW / 2) - 1;
       ctx.drawImage(monoCanvas, 0, srcZoneY, srcSpec.w, srcZoneH, 0,           monoY, stripW, monoZoneH);
       ctx.drawImage(monoCanvas, 0, srcZoneY, srcSpec.w, srcZoneH, stripW + 2,  monoY, stripW, monoZoneH);
     } else {
-      ctx.drawImage(monoCanvas, 0, srcZoneY, srcSpec.w, srcZoneH, 0, monoY, displayW, monoZoneH);
+      // 4x6: monogram in bottom-right quadrant
+      const gap = 2;
+      const cellW = Math.floor((displayW - gap) / 2);
+      const cellH = Math.floor((displayH - gap) / 2);
+      const mx = cellW + gap;
+      const my = cellH + gap;
+      ctx.fillStyle = 'rgba(255,255,255,0.95)';
+      ctx.fillRect(mx, my, cellW, cellH);
+      // Fit monogram content into the cell preserving aspect ratio
+      const mSrcAspect = srcSpec.w / srcZoneH;
+      let dw = cellW - 4, dh = dw / mSrcAspect;
+      if (dh > cellH - 4) { dh = cellH - 4; dw = dh * mSrcAspect; }
+      const dx = mx + (cellW - dw) / 2;
+      const dy = my + (cellH - dh) / 2;
+      ctx.drawImage(monoCanvas, 0, srcZoneY, srcSpec.w, srcZoneH, dx, dy, dw, dh);
     }
   }
 
@@ -1024,12 +1044,12 @@ async function getExportCanvas() {
     drawFitted(ctx, 0, singleW, monoStripH, monoY);
     drawFitted(ctx, singleW, singleW, monoStripH, monoY);
   } else {
-    // 4x6: scale content to fill print width, bottom-aligned, correct proportions
-    const dw = print.w;
-    const dh = Math.round(dw / srcAspect);
-    const dy = print.h - dh;
-    ctx.drawImage(monoCanvas, cLeft, cTop, srcW, srcH,
-                  0, Math.max(0, dy), dw, dh);
+    // 4x6 layout: 2×2 grid — monogram goes in the bottom-right quadrant
+    const quadW = Math.floor(print.w / 2);
+    const quadH = Math.floor(print.h / 2);
+    const qx = quadW;          // right column
+    const qy = quadH;          // bottom row
+    drawFitted(ctx, qx, quadW, quadH, qy);
   }
   return out;
 }
