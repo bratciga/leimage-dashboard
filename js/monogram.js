@@ -1004,13 +1004,13 @@ async function getExportCanvas() {
   const monoStripH = Math.round(singleH * PRINT_STRIP_RATIO);
   const monoY      = singleH - monoStripH;
 
-  // Fit the content bbox into the strip, preserving aspect ratio, centered
-  function drawFitted(ctx, sx, stripW) {
-    let dw = stripW;
+  // Fit the content bbox into a target area, preserving aspect ratio, centered
+  function drawFitted(ctx, sx, targetW, targetH, targetY) {
+    let dw = targetW;
     let dh = dw / srcAspect;
-    if (dh > monoStripH) { dh = monoStripH; dw = dh * srcAspect; }
-    const dx = sx + (stripW - dw) / 2;
-    const dy = monoY + (monoStripH - dh) / 2;
+    if (dh > targetH) { dh = targetH; dw = dh * srcAspect; }
+    const dx = sx + (targetW - dw) / 2;
+    const dy = targetY + (targetH - dh) / 2;
     ctx.drawImage(monoCanvas, cLeft, cTop, srcW, srcH, dx, dy, dw, dh);
   }
 
@@ -1021,11 +1021,15 @@ async function getExportCanvas() {
 
   if (is2x6) {
     // Two strips side by side — one monogram per half (printer cuts in half)
-    drawFitted(ctx, 0, singleW);
-    drawFitted(ctx, singleW, singleW);
+    drawFitted(ctx, 0, singleW, monoStripH, monoY);
+    drawFitted(ctx, singleW, singleW, monoStripH, monoY);
   } else {
-    // 4x6: single monogram centered in strip, aspect ratio preserved
-    drawFitted(ctx, 0, print.w);
+    // 4x6: scale content to fill print width, bottom-aligned, correct proportions
+    const dw = print.w;
+    const dh = Math.round(dw / srcAspect);
+    const dy = print.h - dh;
+    ctx.drawImage(monoCanvas, cLeft, cTop, srcW, srcH,
+                  0, Math.max(0, dy), dw, dh);
   }
   return out;
 }
