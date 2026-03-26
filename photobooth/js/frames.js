@@ -1289,6 +1289,16 @@ function getFrameImage(frameId, color) {
           return `<svg${attrs} fill="${FIXED_COLOR}">`;
         });
       }
+      // Ensure SVG has explicit width/height so browser doesn't default to 150x150
+      if (!/\bwidth\s*=/.test(coloredSvg.substring(0, 500))) {
+        const vbMatch = coloredSvg.match(/viewBox="[\d.\s-]*([\d.]+)\s+([\d.]+)"/);
+        if (vbMatch) {
+          const scale = 2000 / Math.max(parseFloat(vbMatch[1]), parseFloat(vbMatch[2]));
+          const w = Math.round(parseFloat(vbMatch[1]) * scale);
+          const h = Math.round(parseFloat(vbMatch[2]) * scale);
+          coloredSvg = coloredSvg.replace(/<svg/, `<svg width="${w}" height="${h}"`);
+        }
+      }
       const dataUrl = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(coloredSvg);
       const img = new Image();
       img.onload = () => { _frameImageCache.set(cacheKey, img); resolve(img); };
