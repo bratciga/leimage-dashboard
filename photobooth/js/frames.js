@@ -1089,8 +1089,6 @@ const FRAME_TEMPLATES = [
 </svg>`,
   },
 
-];
-
 /* ═══════════════════ MONOGRAM FRAMES (Assets 44-58 + Eucalyptus) ════════ */
   {
     id: 'monogram-44',
@@ -1204,6 +1202,7 @@ const FRAME_TEMPLATES = [
     textPadding: { x: 0.22, y: 0.22 },
     svgFile: 'assets/frames/eucalyptus-wreath.svg',
   },
+];
 
 /* ================================================================
    SVG → Canvas image cache
