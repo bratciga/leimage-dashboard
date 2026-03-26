@@ -959,7 +959,7 @@ async function getExportCanvas() {
   const print     = PRINT_DIMS[printSize] || PRINT_DIMS['4x6'];
   const is2x6     = printSize === '2x6';
 
-  // Render the monogram at the internal spec resolution first
+  // Render the monogram at the internal spec resolution (transparent)
   const spec = CANVAS_SPECS[printSize];
   const monoCanvas = document.createElement('canvas');
   monoCanvas.width  = spec.w;
@@ -967,48 +967,67 @@ async function getExportCanvas() {
   const mctx = monoCanvas.getContext('2d');
   await drawMonogramContent(mctx, spec, MonogramState, true);
 
+  // --- find the actual bounding box of content ---
+  const imgData = mctx.getImageData(0, 0, spec.w, spec.h);
+  const px = imgData.data;
+  let cTop = spec.h, cBot = 0, cLeft = spec.w, cRight = 0;
+  let found = false;
+  for (let y = 0; y < spec.h; y++) {
+    for (let x = 0; x < spec.w; x++) {
+      if (px[(y * spec.w + x) * 4 + 3] > 10) {
+        found = true;
+        if (y < cTop) cTop = y;
+        if (y > cBot) cBot = y;
+        if (x < cLeft) cLeft = x;
+        if (x > cRight) cRight = x;
+      }
+    }
+  }
+  if (!found) { cTop = 0; cBot = spec.h; cLeft = 0; cRight = spec.w; }
+
+  // Add small padding around the content
+  const pad = Math.round(spec.w * 0.01);
+  cTop  = Math.max(0, cTop - pad);
+  cBot  = Math.min(spec.h, cBot + pad);
+  cLeft = Math.max(0, cLeft - pad);
+  cRight = Math.min(spec.w, cRight + pad);
+
+  const srcW = cRight - cLeft;
+  const srcH = cBot - cTop;
+  const srcAspect = srcW / srcH;
+
   // Create full-print-size canvas (transparent)
-  const singleW = is2x6 ? print.w / 2 : print.w;   // single strip width
+  const singleW = is2x6 ? print.w / 2 : print.w;
   const singleH = print.h;
 
   // Monogram strip at bottom — same proportion as preview mock
   const monoStripH = Math.round(singleH * PRINT_STRIP_RATIO);
   const monoY      = singleH - monoStripH;
 
-  // Source: crop the monogram canvas to just the visible zone area
-  const srcZoneY = spec.h * (1 - MONOGRAM_ZONE_HEIGHT_RATIO);
-  const srcZoneH = spec.h * MONOGRAM_ZONE_HEIGHT_RATIO;
+  // Fit the content bbox into the strip, preserving aspect ratio, centered
+  function drawFitted(ctx, sx, stripW) {
+    let dw = stripW;
+    let dh = dw / srcAspect;
+    if (dh > monoStripH) { dh = monoStripH; dw = dh * srcAspect; }
+    const dx = sx + (stripW - dw) / 2;
+    const dy = monoY + (monoStripH - dh) / 2;
+    ctx.drawImage(monoCanvas, cLeft, cTop, srcW, srcH, dx, dy, dw, dh);
+  }
 
   if (is2x6) {
     const out = document.createElement('canvas');
     out.width  = print.w;
     out.height = print.h;
     const ctx = out.getContext('2d');
-
-    for (let s = 0; s < 2; s++) {
-      const sx = s * singleW;
-      // Scale monogram to fill strip width, keep aspect ratio
-      const scale = singleW / spec.w;
-      const dw = singleW;
-      const dh = Math.round(srcZoneH * scale);
-      // Align bottom of monogram to bottom of print
-      const dy = singleH - dh;
-      ctx.drawImage(monoCanvas, 0, srcZoneY, spec.w, srcZoneH, sx, dy, dw, dh);
-    }
+    drawFitted(ctx, 0, singleW);
+    drawFitted(ctx, singleW, singleW);
     return out;
   } else {
     const out = document.createElement('canvas');
     out.width  = print.w;
     out.height = print.h;
     const ctx = out.getContext('2d');
-
-    // Scale monogram to fill print width, keep aspect ratio
-    const scale = print.w / spec.w;
-    const dw = print.w;
-    const dh = Math.round(srcZoneH * scale);
-    // Align bottom of monogram to bottom of print
-    const dy = print.h - dh;
-    ctx.drawImage(monoCanvas, 0, srcZoneY, spec.w, srcZoneH, 0, dy, dw, dh);
+    drawFitted(ctx, 0, print.w);
     return out;
   }
 }
