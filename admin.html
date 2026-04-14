@@ -4,12 +4,13 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Le Image — Admin Dashboard</title>
+  <meta name="robots" content="noindex,nofollow,noarchive,noimageindex" />
 
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600&family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300&display=swap" rel="stylesheet" />
 
-  <link rel="stylesheet" href="css/style.css" />
+  <link rel="stylesheet" href="css/style.css?v=61" />
 </head>
 <body class="admin-page">
 
@@ -57,17 +58,44 @@
       <div class="stats-bar">
         <div class="stat-item">
           <span class="stat-value" id="total-count">0</span>
-          <span class="stat-label">Total Submissions</span>
+          <span class="stat-label">Total Projects</span>
         </div>
         <div class="stat-item">
-          <span class="stat-value" id="today-count">0</span>
-          <span class="stat-label">Today</span>
+          <span class="stat-value" id="draft-count">0</span>
+          <span class="stat-label">Draft / In Progress</span>
         </div>
         <div class="stat-item">
-          <span class="stat-value" id="week-count">0</span>
-          <span class="stat-label">This Week</span>
+          <span class="stat-value" id="submitted-count">0</span>
+          <span class="stat-label">Submitted</span>
         </div>
       </div>
+
+      <section class="card admin-create-card">
+        <div class="admin-create-head">
+          <div>
+            <h2 class="section-title" style="margin-bottom:.35rem;">Create Client Link</h2>
+            <p class="section-desc" style="margin-bottom:0;">Generate a private project link for a booked booth client.</p>
+          </div>
+          <button id="create-project-btn" class="btn btn-primary">+ Create Project</button>
+        </div>
+
+        <div class="admin-create-grid">
+          <div class="field-group">
+            <label class="field-label" for="client-name-input">Client name</label>
+            <input id="client-name-input" class="text-input" type="text" placeholder="Example: Sarah & Luis" />
+          </div>
+          <div class="field-group">
+            <label class="field-label" for="event-slug-input">Event slug</label>
+            <input id="event-slug-input" class="text-input" type="text" placeholder="Example: sarah-luis-2026-06-20" />
+          </div>
+          <div class="field-group">
+            <label class="field-label" for="event-date-input">Event date</label>
+            <input id="event-date-input" class="text-input" type="date" />
+          </div>
+        </div>
+
+        <div id="create-project-status" class="submit-status" aria-live="polite"></div>
+      </section>
 
       <!-- Toolbar: search + export -->
       <div class="admin-toolbar">
@@ -75,8 +103,8 @@
           type="search"
           id="search-input"
           class="text-input search-input"
-          placeholder="Search by event name…"
-          aria-label="Search submissions"
+          placeholder="Search by client, event, token, or status…"
+          aria-label="Search projects"
         />
         <button id="export-all-btn" class="btn btn-secondary">
           ↓ Export All (JSON)
@@ -88,13 +116,13 @@
 
       <!-- Submission list -->
       <div id="submissions-list" class="submissions-list" aria-live="polite">
-        <div class="loading-state">Loading submissions…</div>
+        <div class="loading-state">Loading projects…</div>
       </div>
 
       <!-- Empty state (shown when no results) -->
       <div id="empty-state" class="empty-state hidden">
         <div class="empty-icon">✦</div>
-        <p>No submissions found.</p>
+        <p>No projects found.</p>
       </div>
 
     </main>

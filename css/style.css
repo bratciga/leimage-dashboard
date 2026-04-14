@@ -1222,6 +1222,10 @@ h1, h2, h3 {
 @media (max-width: 700px) {
   .review-print-layout--4x6 { width: 320px; height: 213px; }
   .review-print-layout--2x6 { width: 150px; height: 450px; }
+
+  .admin-create-grid {
+    grid-template-columns: 1fr;
+  }
 }
 
 .review-actions {
@@ -1736,6 +1740,25 @@ h1, h2, h3 {
 .stat-value { font-size: 1.75rem; color: var(--navy); line-height: 1; font-weight: 600; }
 .stat-label { font-size: 0.72rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.06em; margin-top: 0.3rem; }
 
+.admin-create-card {
+  margin-bottom: 1.5rem;
+}
+
+.admin-create-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 1rem;
+  margin-bottom: 1rem;
+  flex-wrap: wrap;
+}
+
+.admin-create-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1rem;
+}
+
 .admin-toolbar { display: flex; gap: 0.75rem; margin-bottom: 1.5rem; flex-wrap: wrap; }
 .search-input { flex: 1; min-width: 200px; }
 
@@ -1781,6 +1804,48 @@ h1, h2, h3 {
 }
 
 .submission-date { font-size: 0.8rem; color: var(--text-muted); margin-bottom: 0.5rem; font-style: italic; }
+
+.submission-status-row {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+  flex-wrap: wrap;
+  margin-bottom: 0.55rem;
+}
+
+.status-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.18rem 0.55rem;
+  border-radius: 999px;
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  border: 1px solid var(--border);
+  background: var(--bg-alt);
+  color: var(--text-muted);
+}
+
+.status-pill--draft,
+.status-pill--invited {
+  background: #f7f4ec;
+  color: #836735;
+  border-color: #e7dcc3;
+}
+
+.status-pill--in_progress {
+  background: #eef4fb;
+  color: #315b8a;
+  border-color: #d3e2f4;
+}
+
+.status-pill--submitted,
+.status-pill--approved {
+  background: #eef8f1;
+  color: #2f6b45;
+  border-color: #d2e9da;
+}
 
 .submission-tags { display: flex; flex-wrap: wrap; gap: 0.4rem; }
 

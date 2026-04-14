@@ -1,17 +1,18 @@
 # Le Image — Photo Booth Configurator
 
-A client-facing web app for Le Image photography studio's photo booth service. Clients receive a unique URL, configure their booth options, build a custom monogram, and submit. The studio team reviews all submissions from the admin dashboard.
+A client-facing web app for Le Image photography studio's photo booth service. Clients receive a private project URL, configure their booth options, build a custom monogram, and submit. The studio team creates those links from the admin dashboard and reviews every project in one place.
 
 ---
 
 ## Features
 
-- **Event-specific links** — `?event=smith-jones-2026-04-15` pre-labels each form
+- **Private client links** — `?project=pb_xxxxx` opens one booking only
+- **Noindex protection** — `robots.txt` + meta robots keep it out of search
 - **Full configuration form** — parking, backdrop, print size, props, notes
-- **Monogram builder** — live canvas preview, 18 Google Fonts, color pickers, flourish toggle, full-res PNG export
-- **Supabase storage** — submissions stored as JSON + monogram PNG (base64)
+- **Monogram builder** — live canvas preview, full-res PNG export
+- **Supabase storage** — one row per booked client project
 - **localStorage fallback** — nothing is lost if the network is down
-- **Admin dashboard** — password-protected, search/filter, download monogram PNGs, export JSON
+- **Admin dashboard** — create links, search projects, copy links, download PNGs, track status
 - **Mobile-responsive** — dark elegant theme, smooth interactions
 
 ---
@@ -49,7 +50,7 @@ python3 -m http.server 8080
 # Option 3: just open index.html directly in Chrome/Firefox
 ```
 
-Visit: `http://localhost:8080?event=smith-jones-2026-04-15`
+Visit: `http://localhost:8080?project=pb_demo_token`
 Admin: `http://localhost:8080/admin.html`
 
 ---
@@ -62,42 +63,13 @@ Supabase is free for small projects. Follow these steps:
 
 Go to [https://supabase.com](https://supabase.com) → New Project.
 
-### 2. Create the submissions table
+### 2. Create the projects table
 
-In the **SQL Editor**, run:
+In the **SQL Editor**, run the SQL from:
 
-```sql
-CREATE TABLE submissions (
-  id           uuid DEFAULT gen_random_uuid() PRIMARY KEY,
-  event_slug   text NOT NULL,
-  submitted_at timestamptz DEFAULT now(),
-  data         jsonb NOT NULL,
-  monogram_png text   -- base64 PNG data URL
-);
+- `supabase-photo-booth-projects.sql`
 
--- Allow anonymous inserts (client form submissions)
-ALTER TABLE submissions ENABLE ROW LEVEL SECURITY;
-
-CREATE POLICY "Allow anon insert"
-  ON submissions FOR INSERT
-  TO anon
-  WITH CHECK (true);
-
--- Allow authenticated reads (for admin — optional, use service key for admin instead)
-CREATE POLICY "Allow authenticated read"
-  ON submissions FOR SELECT
-  TO authenticated
-  USING (true);
-```
-
-> **Note:** The admin dashboard uses the **anon key** for reads too, which means RLS must allow it, OR you switch to the service role key for admin reads (recommended for production). For now, the simplest approach is to also allow anon SELECT:
->
-> ```sql
-> CREATE POLICY "Allow anon read"
->   ON submissions FOR SELECT
->   TO anon
->   USING (true);
-> ```
+That creates the `photo_booth_projects` table used by both the client app and the admin dashboard.
 
 ### 3. Get your API keys
 
@@ -114,7 +86,7 @@ Open **`js/app.js`** and **`js/admin.js`** — both have the same config block a
 const SUPABASE_CONFIG = {
   url:     'YOUR_SUPABASE_URL',       // ← replace this
   anonKey: 'YOUR_SUPABASE_ANON_KEY',  // ← replace this
-  table:   'submissions',
+  table:   'photo_booth_projects',
 };
 ```
 

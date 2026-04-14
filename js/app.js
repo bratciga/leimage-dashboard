@@ -20,13 +20,16 @@
 const SUPABASE_CONFIG = {
   url:     'YOUR_SUPABASE_URL',
   anonKey: 'YOUR_SUPABASE_ANON_KEY',
-  table:   'submissions',
+  table:   'photo_booth_projects',
 };
 
 const SUPABASE_ENABLED = (
   SUPABASE_CONFIG.url     !== 'YOUR_SUPABASE_URL' &&
   SUPABASE_CONFIG.anonKey !== 'YOUR_SUPABASE_ANON_KEY'
 );
+
+const PROJECT_LS_PREFIX = 'leimage_pb_project_';
+let ActiveProjectRecord = null;
 
 /* ================================================================
    WIZARD STATE
@@ -50,7 +53,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
 async function initApp() {
   setFooterYear();
-  parseEventSlug();
 
   // Initialize monogram builder
   await window.MonogramBuilder.init();
@@ -100,15 +102,15 @@ async function initApp() {
   // Show step 1
   goToStep(1);
 
-  // Load saved project if exists
-  const loaded = loadProject();
+  // Load project from token / local draft
+  const loaded = await loadProject();
   if (loaded) {
     showToast('Welcome back! Your progress has been restored.');
   }
 
   // Save button
   const saveBtn = document.getElementById('save-project-btn');
-  if (saveBtn) saveBtn.addEventListener('click', saveProject);
+  if (saveBtn) saveBtn.addEventListener('click', () => saveProject());
 }
 
 /* ================================================================
@@ -119,17 +121,25 @@ function setFooterYear() {
   if (el) el.textContent = new Date().getFullYear();
 }
 
-function parseEventSlug() {
-  const params = new URLSearchParams(window.location.search);
-  const slug   = params.get('event') || 'demo-event';
-  const el     = document.getElementById('event-name');
-  if (el) el.textContent = slug;
-  return slug;
+function getProjectToken() {
+  return new URLSearchParams(window.location.search).get('project') || '';
 }
 
 function getEventSlug() {
   const params = new URLSearchParams(window.location.search);
-  return params.get('event') || 'demo-event';
+  return params.get('event') || ActiveProjectRecord?.event_slug || 'demo-event';
+}
+
+function updateEventBanner() {
+  const el = document.getElementById('event-name');
+  if (!el) return;
+  const label = ActiveProjectRecord?.client_name || ActiveProjectRecord?.event_slug || getEventSlug();
+  el.textContent = label;
+}
+
+function getProjectStorageKey() {
+  const token = getProjectToken();
+  return `${PROJECT_LS_PREFIX}${token || getEventSlug()}`;
 }
 
 /* ================================================================
@@ -788,8 +798,11 @@ function collectFormData() {
   const props = Array.from(document.querySelectorAll('input[name="props"]:checked')).map(el => el.value);
 
   return {
-    event_slug:           getEventSlug(),
-    submitted_at:         new Date().toISOString(),
+    project_token:        getProjectToken() || null,
+    event_slug:           ActiveProjectRecord?.event_slug || getEventSlug(),
+    client_name:          ActiveProjectRecord?.client_name || getEventSlug(),
+    event_date:           ActiveProjectRecord?.event_date || null,
+    currentStep:          WizardState.currentStep,
     parking:              WizardState.parking,
     backdrop:             WizardState.backdrop,
     print_size:           WizardState.printSize,
@@ -797,9 +810,12 @@ function collectFormData() {
       line1:          mono.line1,
       line2:          mono.line2,
       font:           mono.fontFamily,
+      fontFamily:     mono.fontFamily,
       text_color1:    mono.textColor1,
       text_color2:    mono.textColor2,
+      colorsLinked:   mono.colorsLinked,
       flourish_style: mono.flourish,
+      frame:          mono.frame,
       frame_color:    mono.frameColor,
       bg_transparent: true,
     },
@@ -809,57 +825,103 @@ function collectFormData() {
 }
 
 /* ================================================================
-   LOCAL STORAGE FALLBACK
+   LOCAL STORAGE + SUPABASE PROJECTS
 ================================================================ */
-const LS_KEY = 'leimage_photobooth_submissions';
-
-function saveToLocalStorage(submission) {
+function saveProjectToLocalStorage(project) {
   try {
-    const existing = JSON.parse(localStorage.getItem(LS_KEY) || '[]');
-    existing.push(submission);
-    localStorage.setItem(LS_KEY, JSON.stringify(existing));
+    localStorage.setItem(getProjectStorageKey(), JSON.stringify(project));
     return true;
   } catch (e) {
-    console.error('[App] localStorage save failed:', e);
+    console.error('[App] local project save failed:', e);
     return false;
   }
 }
 
-/* ================================================================
-   SUPABASE SUBMIT
-================================================================ */
-async function submitToSupabase(data, monogramDataURL) {
-  if (!SUPABASE_ENABLED) return { success: false, error: 'Supabase not configured' };
+function loadProjectFromLocalStorage() {
+  try {
+    const raw = localStorage.getItem(getProjectStorageKey());
+    return raw ? JSON.parse(raw) : null;
+  } catch (e) {
+    console.error('[App] local project load failed:', e);
+    return null;
+  }
+}
 
-  const payload = {
-    event_slug:   data.event_slug,
-    submitted_at: data.submitted_at,
-    data:         data,
-    monogram_png: monogramDataURL,
-  };
+async function fetchProjectFromSupabase(token) {
+  if (!SUPABASE_ENABLED || !token) return null;
 
   try {
-    const res = await fetch(`${SUPABASE_CONFIG.url}/rest/v1/${SUPABASE_CONFIG.table}`, {
-      method: 'POST',
-      headers: {
-        'Content-Type':  'application/json',
-        'apikey':        SUPABASE_CONFIG.anonKey,
-        'Authorization': `Bearer ${SUPABASE_CONFIG.anonKey}`,
-        'Prefer':        'return=minimal',
-      },
-      body: JSON.stringify(payload),
-    });
+    const res = await fetch(
+      `${SUPABASE_CONFIG.url}/rest/v1/${SUPABASE_CONFIG.table}?token=eq.${encodeURIComponent(token)}&select=*`,
+      {
+        headers: {
+          'apikey':        SUPABASE_CONFIG.anonKey,
+          'Authorization': `Bearer ${SUPABASE_CONFIG.anonKey}`,
+        },
+      }
+    );
 
     if (!res.ok) {
       const errText = await res.text();
-      throw new Error(`Supabase error ${res.status}: ${errText}`);
+      throw new Error(`Supabase load error ${res.status}: ${errText}`);
     }
 
-    return { success: true, error: null };
+    const rows = await res.json();
+    return rows[0] || null;
   } catch (e) {
-    console.error('[App] Supabase submit failed:', e);
+    console.error('[App] Supabase project load failed:', e);
+    return null;
+  }
+}
+
+async function patchProjectInSupabase(token, patch) {
+  if (!SUPABASE_ENABLED || !token) return { success: false, error: 'Supabase not configured or token missing' };
+
+  try {
+    const res = await fetch(
+      `${SUPABASE_CONFIG.url}/rest/v1/${SUPABASE_CONFIG.table}?token=eq.${encodeURIComponent(token)}`,
+      {
+        method: 'PATCH',
+        headers: {
+          'Content-Type':  'application/json',
+          'apikey':        SUPABASE_CONFIG.anonKey,
+          'Authorization': `Bearer ${SUPABASE_CONFIG.anonKey}`,
+          'Prefer':        'return=representation',
+        },
+        body: JSON.stringify(patch),
+      }
+    );
+
+    if (!res.ok) {
+      const errText = await res.text();
+      throw new Error(`Supabase save error ${res.status}: ${errText}`);
+    }
+
+    const rows = await res.json();
+    return { success: true, row: rows[0] || null };
+  } catch (e) {
+    console.error('[App] Supabase project save failed:', e);
     return { success: false, error: e.message };
   }
+}
+
+function buildProjectRecord({ status, monogramDataURL, submittedAt } = {}) {
+  const formData = collectFormData();
+  const token = getProjectToken();
+  const nextStatus = status || ActiveProjectRecord?.status || (formData.monogram.line1 || formData.monogram.line2 ? 'in_progress' : 'draft');
+
+  return {
+    ...(ActiveProjectRecord || {}),
+    token,
+    event_slug: ActiveProjectRecord?.event_slug || formData.event_slug,
+    client_name: ActiveProjectRecord?.client_name || formData.event_slug,
+    event_date: ActiveProjectRecord?.event_date || null,
+    status: nextStatus,
+    last_saved_at: new Date().toISOString(),
+    submitted_at: submittedAt || ActiveProjectRecord?.submitted_at || null,
+    project_data: formData,
+    monogram_png: monogramDataURL || ActiveProjectRecord?.monogram_png || null,
+  };
 }
 
 /* ================================================================
@@ -867,9 +929,7 @@ async function submitToSupabase(data, monogramDataURL) {
 ================================================================ */
 async function handleSubmit() {
   const submitBtn = document.getElementById('submit-btn');
-  const statusEl  = document.getElementById('submit-status');
 
-  // Basic review-step validation
   if (!WizardState.parking) {
     setStatus('Please go back and select a parking option (Step 2).', 'error');
     return;
@@ -884,26 +944,38 @@ async function handleSubmit() {
   }
 
   submitBtn.disabled = true;
-  setStatus('Saving your configuration…', 'loading');
+  setStatus('Submitting your configuration…', 'loading');
 
   try {
-    const formData    = collectFormData();
     const monogramURL = window.MonogramBuilder.exportDataURL();
-    const submission  = { ...formData, monogram_png: monogramURL };
+    const submittedAt = new Date().toISOString();
+    const project = buildProjectRecord({
+      status: 'submitted',
+      monogramDataURL: monogramURL,
+      submittedAt,
+    });
 
-    saveToLocalStorage(submission);
+    saveProjectToLocalStorage(project);
+    ActiveProjectRecord = project;
 
-    if (SUPABASE_ENABLED) {
-      const result = await submitToSupabase(formData, monogramURL);
-      if (!result.success) {
-        console.warn('[App] Supabase failed, stored locally:', result.error);
-      }
+    const token = getProjectToken();
+    if (token && SUPABASE_ENABLED) {
+      const result = await patchProjectInSupabase(token, {
+        status: project.status,
+        submitted_at: project.submitted_at,
+        last_saved_at: project.last_saved_at,
+        project_data: project.project_data,
+        monogram_png: project.monogram_png,
+      });
+      if (result.success && result.row) ActiveProjectRecord = result.row;
+      if (!result.success) console.warn('[App] Supabase submit failed, project kept locally:', result.error);
     }
 
-    showSuccessOverlay(formData.event_slug);
+    showSuccessOverlay(project.client_name || project.event_slug);
+    setStatus('Submitted successfully.', 'success');
   } catch (err) {
     console.error('[App] Unexpected submit error:', err);
-    setStatus('Something went wrong. Your data has been saved locally — please try again or contact us.', 'error');
+    setStatus('Something went wrong. Your data has been saved locally. Please try again or contact us.', 'error');
     submitBtn.disabled = false;
   }
 }
@@ -925,93 +997,105 @@ function showSuccessOverlay(eventSlug) {
 /* ================================================================
    SAVE / LOAD PROJECT
 ================================================================ */
-function saveProject() {
-  const mono = window.MonogramBuilder.state;
-  const props = Array.from(document.querySelectorAll('input[name="props"]:checked')).map(el => el.value);
-  const project = {
-    version: 1,
-    savedAt: new Date().toISOString(),
-    eventSlug: getEventSlug(),
-    currentStep: WizardState.currentStep,
-    parking: WizardState.parking,
-    backdrop: WizardState.backdrop,
-    printSize: WizardState.printSize,
-    props,
-    specialInstructions: document.getElementById('special-instructions')?.value || '',
-    monogram: {
-      line1: mono.line1,
-      line2: mono.line2,
-      fontFamily: mono.fontFamily,
-      textColor1: mono.textColor1,
-      textColor2: mono.textColor2,
-      colorsLinked: mono.colorsLinked,
-      frame: mono.frame,
-      frameColor: mono.frameColor,
-    },
-  };
-  const key = `leimage_pb_project_${project.eventSlug}`;
-  localStorage.setItem(key, JSON.stringify(project));
-  showToast('Project saved! You can close and come back later.');
+async function saveProject() {
+  const project = buildProjectRecord({
+    status: ActiveProjectRecord?.status === 'submitted' ? 'submitted' : 'in_progress',
+    monogramDataURL: window.MonogramBuilder.exportDataURL(),
+  });
+
+  saveProjectToLocalStorage(project);
+  ActiveProjectRecord = project;
+  updateEventBanner();
+
+  const token = getProjectToken();
+  if (token && SUPABASE_ENABLED) {
+    const result = await patchProjectInSupabase(token, {
+      status: project.status,
+      last_saved_at: project.last_saved_at,
+      project_data: project.project_data,
+      monogram_png: project.monogram_png,
+    });
+    if (result.success && result.row) ActiveProjectRecord = result.row;
+  }
+
+  showToast('Project saved. Your link will keep this draft connected to your event.');
 }
 
-function loadProject() {
-  const slug = getEventSlug();
-  const key = `leimage_pb_project_${slug}`;
-  const data = localStorage.getItem(key);
-  if (!data) return false;
+async function loadProject() {
+  const token = getProjectToken();
+  let project = null;
+
+  if (token) {
+    project = await fetchProjectFromSupabase(token);
+  }
+
+  if (!project) {
+    project = loadProjectFromLocalStorage();
+  }
+
+  if (!project) {
+    ActiveProjectRecord = {
+      token,
+      event_slug: getEventSlug(),
+      client_name: getEventSlug(),
+      status: 'draft',
+      project_data: null,
+    };
+    updateEventBanner();
+    return false;
+  }
 
   try {
-    const project = JSON.parse(data);
+    ActiveProjectRecord = project;
+    updateEventBanner();
+    const payload = project.project_data || project;
 
     // Restore props
-    if (project.props) {
+    if (payload.props) {
       document.querySelectorAll('input[name="props"]').forEach(cb => {
-        cb.checked = project.props.includes(cb.value);
+        cb.checked = payload.props.includes(cb.value);
       });
     }
 
-    // Restore special instructions
-    if (project.specialInstructions) {
+    if (payload.special_instructions || payload.specialInstructions) {
       const ta = document.getElementById('special-instructions');
-      if (ta) ta.value = project.specialInstructions;
+      if (ta) ta.value = payload.special_instructions || payload.specialInstructions;
     }
 
-    // Restore parking
-    if (project.parking) {
-      WizardState.parking = project.parking;
-      const parkingBtn = document.querySelector(`.toggle-card[data-value="${project.parking}"]`);
+    if (payload.parking) {
+      WizardState.parking = payload.parking;
+      const parkingBtn = document.querySelector(`.toggle-card[data-value="${payload.parking}"]`);
       if (parkingBtn) parkingBtn.classList.add('selected');
       const parkingHidden = document.getElementById('parking-value');
-      if (parkingHidden) parkingHidden.value = project.parking;
+      if (parkingHidden) parkingHidden.value = payload.parking;
     }
 
-    // Restore backdrop
-    if (project.backdrop) {
-      WizardState.backdrop = project.backdrop;
-      const bdCard = document.querySelector(`.toggle-selectable[data-value="${project.backdrop}"]`);
+    if (payload.backdrop) {
+      WizardState.backdrop = payload.backdrop;
+      const bdCard = document.querySelector(`.toggle-selectable[data-value="${payload.backdrop}"]`);
       if (bdCard) {
         document.querySelectorAll('.toggle-selectable[data-group="backdrop"]').forEach(c => c.classList.remove('selected'));
         bdCard.classList.add('selected');
       }
       const bdHidden = document.getElementById('backdrop-value');
-      if (bdHidden) bdHidden.value = project.backdrop;
+      if (bdHidden) bdHidden.value = payload.backdrop;
     }
 
-    // Restore print size
-    if (project.printSize) {
-      WizardState.printSize = project.printSize;
-      const psCard = document.querySelector(`.toggle-selectable[data-value="${project.printSize}"]`);
+    if (payload.print_size || payload.printSize) {
+      const savedPrintSize = payload.print_size || payload.printSize;
+      WizardState.printSize = savedPrintSize;
+      const psCard = document.querySelector(`.toggle-selectable[data-value="${savedPrintSize}"]`);
       if (psCard) {
         document.querySelectorAll('.toggle-selectable[data-group="print_size"]').forEach(c => c.classList.remove('selected'));
         psCard.classList.add('selected');
       }
       const psHidden = document.getElementById('print-size-value');
-      if (psHidden) psHidden.value = project.printSize;
+      if (psHidden) psHidden.value = savedPrintSize;
     }
 
     // Restore monogram state
-    if (project.monogram) {
-      const m = project.monogram;
+    if (payload.monogram) {
+      const m = payload.monogram;
       const mono = window.MonogramBuilder.state;
 
       if (m.line1) { mono.line1 = m.line1; const el = document.getElementById('mono-line1'); if (el) el.value = m.line1; }
@@ -1025,8 +1109,8 @@ function loadProject() {
     }
 
     // Navigate to saved step
-    if (project.currentStep && project.currentStep > 1) {
-      goToStep(project.currentStep);
+    if (payload.currentStep && payload.currentStep > 1) {
+      goToStep(payload.currentStep);
     }
 
     return true;

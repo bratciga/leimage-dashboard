@@ -2,28 +2,20 @@
  * admin.js — Le Image Photo Booth Admin Dashboard
  *
  * Handles:
- *  - Password gate (hardcoded, swap for real auth before production)
- *  - Loading submissions from Supabase + localStorage fallback
- *  - Rendering submission cards with monogram thumbnails
- *  - Search/filter by event name
- *  - Detail modal with full info
- *  - Monogram PNG download
- *  - Export all as JSON
- *
- * SUPABASE CONFIG
- * ───────────────
- * Must match the values in app.js. Copy from there.
+ *  - Password gate
+ *  - Project creation with private token links
+ *  - Loading projects from Supabase + local fallback
+ *  - Search/filter by client, event, token, status
+ *  - Detail modal with copy/open actions
+ *  - Status updates and PNG download
  */
 
 'use strict';
 
-/* ================================================================
-   CONFIG — keep in sync with app.js
-================================================================ */
 const SUPABASE_CONFIG = {
   url:     'YOUR_SUPABASE_URL',
   anonKey: 'YOUR_SUPABASE_ANON_KEY',
-  table:   'submissions',
+  table:   'photo_booth_projects',
 };
 
 const SUPABASE_ENABLED = (
@@ -31,46 +23,27 @@ const SUPABASE_ENABLED = (
   SUPABASE_CONFIG.anonKey !== 'YOUR_SUPABASE_ANON_KEY'
 );
 
-/* Admin password — change before going to production */
 const ADMIN_PASSWORD = 'leimage2026';
-
-/* localStorage key — must match app.js */
-const LS_KEY = 'leimage_photobooth_submissions';
-
-/* Session flag — avoid re-prompting on page reload during same session */
 const SESSION_KEY = 'leimage_admin_auth';
+const LS_PROJECTS_KEY = 'leimage_photobooth_projects';
 
-/* ================================================================
-   STATE
-================================================================ */
-let allSubmissions = [];   // raw loaded data
-let filteredData   = [];   // after search filter
+let allProjects = [];
+let filteredData = [];
+let currentModalProject = null;
 
-/* ================================================================
-   DOM READY
-================================================================ */
 document.addEventListener('DOMContentLoaded', () => {
   setFooterYear();
   initAuth();
 });
 
-/* ================================================================
-   UTILITIES
-================================================================ */
+function $(id) { return document.getElementById(id); }
 
 function setFooterYear() {
-  const el = document.getElementById('footer-year');
+  const el = $('footer-year');
   if (el) el.textContent = new Date().getFullYear();
 }
 
-function $(id) { return document.getElementById(id); }
-
-/* ================================================================
-   AUTH GATE
-================================================================ */
-
 function initAuth() {
-  // Check session flag
   if (sessionStorage.getItem(SESSION_KEY) === '1') {
     showAdminContent();
     return;
@@ -95,356 +68,515 @@ function attemptLogin() {
 }
 
 function showAdminContent() {
-  $('login-gate').style.display   = 'none';
+  $('login-gate').style.display = 'none';
   $('admin-content').classList.remove('hidden');
-  loadSubmissions();
 
   $('logout-btn').addEventListener('click', () => {
     sessionStorage.removeItem(SESSION_KEY);
     window.location.reload();
   });
 
-  $('refresh-btn').addEventListener('click', loadSubmissions);
-
-  $('search-input').addEventListener('input', () => {
-    const q = $('search-input').value.toLowerCase().trim();
-    filteredData = q
-      ? allSubmissions.filter(s => {
-          const slug = (s.event_slug || s.data?.event_slug || '').toLowerCase();
-          return slug.includes(q);
-        })
-      : [...allSubmissions];
-    renderList(filteredData);
-  });
-
+  $('refresh-btn').addEventListener('click', loadProjects);
   $('export-all-btn').addEventListener('click', exportAllJSON);
-
-  // Modal close
+  $('create-project-btn').addEventListener('click', createProject);
   $('modal-close').addEventListener('click', closeModal);
   $('modal-backdrop').addEventListener('click', closeModal);
+
+  $('client-name-input').addEventListener('input', syncSlugFromClient);
+  $('event-slug-input').addEventListener('input', () => {
+    $('event-slug-input').dataset.touched = $('event-slug-input').value.trim() ? '1' : '';
+  });
+  $('search-input').addEventListener('input', applySearch);
+
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') closeModal();
+  });
+
+  loadProjects();
 }
 
-/* ================================================================
-   DATA LOADING
-================================================================ */
+function syncSlugFromClient() {
+  const slugInput = $('event-slug-input');
+  if (!slugInput) return;
+  if (slugInput.dataset.touched === '1') return;
+  slugInput.value = slugify($('client-name-input').value || '');
+}
 
-async function loadSubmissions() {
+function applySearch() {
+  const q = ($('search-input').value || '').toLowerCase().trim();
+  filteredData = q
+    ? allProjects.filter((project) => {
+        const haystack = [
+          project.client_name,
+          project.event_slug,
+          project.token,
+          project.status,
+          project.event_date,
+        ].filter(Boolean).join(' ').toLowerCase();
+        return haystack.includes(q);
+      })
+    : [...allProjects];
+  renderList(filteredData);
+}
+
+function slugify(input) {
+  return String(input || '')
+    .toLowerCase()
+    .trim()
+    .replace(/&/g, ' and ')
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '')
+    .replace(/-{2,}/g, '-');
+}
+
+function generateToken() {
+  const bytes = new Uint8Array(18);
+  crypto.getRandomValues(bytes);
+  return 'pb_' + Array.from(bytes, (b) => b.toString(36).padStart(2, '0')).join('').slice(0, 28);
+}
+
+function getBaseClientUrl() {
+  const url = new URL(window.location.href);
+  url.pathname = url.pathname.replace(/admin\.html$/, 'index.html');
+  url.search = '';
+  url.hash = '';
+  return url.toString();
+}
+
+function buildProjectLink(token) {
+  return `${getBaseClientUrl()}?project=${encodeURIComponent(token)}`;
+}
+
+function setCreateStatus(message, type = '') {
+  const el = $('create-project-status');
+  if (!el) return;
+  el.textContent = message || '';
+  el.className = `submit-status ${type}`.trim();
+}
+
+function loadLocalProjects() {
+  try {
+    return JSON.parse(localStorage.getItem(LS_PROJECTS_KEY) || '[]');
+  } catch (e) {
+    console.error('[Admin] local project load failed:', e);
+    return [];
+  }
+}
+
+function saveLocalProjects(projects) {
+  localStorage.setItem(LS_PROJECTS_KEY, JSON.stringify(projects));
+}
+
+function upsertLocalProject(project) {
+  const existing = loadLocalProjects();
+  const idx = existing.findIndex((p) => p.token === project.token);
+  if (idx >= 0) existing[idx] = { ...existing[idx], ...project };
+  else existing.unshift(project);
+  saveLocalProjects(existing);
+}
+
+async function fetchProjectsFromSupabase() {
+  if (!SUPABASE_ENABLED) return [];
+
+  const res = await fetch(
+    `${SUPABASE_CONFIG.url}/rest/v1/${SUPABASE_CONFIG.table}?select=*&order=created_at.desc.nullslast,last_saved_at.desc.nullslast`,
+    {
+      headers: {
+        'apikey': SUPABASE_CONFIG.anonKey,
+        'Authorization': `Bearer ${SUPABASE_CONFIG.anonKey}`,
+      },
+    }
+  );
+
+  if (!res.ok) {
+    throw new Error(`Supabase load error ${res.status}`);
+  }
+
+  return res.json();
+}
+
+async function insertProjectToSupabase(project) {
+  const res = await fetch(`${SUPABASE_CONFIG.url}/rest/v1/${SUPABASE_CONFIG.table}`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'apikey': SUPABASE_CONFIG.anonKey,
+      'Authorization': `Bearer ${SUPABASE_CONFIG.anonKey}`,
+      'Prefer': 'return=representation',
+    },
+    body: JSON.stringify(project),
+  });
+
+  if (!res.ok) {
+    const errText = await res.text();
+    throw new Error(`Supabase create error ${res.status}: ${errText}`);
+  }
+
+  const rows = await res.json();
+  return rows[0] || null;
+}
+
+async function patchProjectStatus(token, status) {
+  if (!SUPABASE_ENABLED || !token) return null;
+
+  const res = await fetch(
+    `${SUPABASE_CONFIG.url}/rest/v1/${SUPABASE_CONFIG.table}?token=eq.${encodeURIComponent(token)}`,
+    {
+      method: 'PATCH',
+      headers: {
+        'Content-Type': 'application/json',
+        'apikey': SUPABASE_CONFIG.anonKey,
+        'Authorization': `Bearer ${SUPABASE_CONFIG.anonKey}`,
+        'Prefer': 'return=representation',
+      },
+      body: JSON.stringify({ status }),
+    }
+  );
+
+  if (!res.ok) {
+    const errText = await res.text();
+    throw new Error(`Supabase status error ${res.status}: ${errText}`);
+  }
+
+  const rows = await res.json();
+  return rows[0] || null;
+}
+
+async function loadProjects() {
   const list = $('submissions-list');
-  list.innerHTML = '<div class="loading-state">Loading submissions…</div>';
+  list.innerHTML = '<div class="loading-state">Loading projects…</div>';
 
-  const results = [];
+  let projects = [];
 
-  // 1. Try Supabase
   if (SUPABASE_ENABLED) {
     try {
-      const res = await fetch(
-        `${SUPABASE_CONFIG.url}/rest/v1/${SUPABASE_CONFIG.table}?order=submitted_at.desc`,
-        {
-          headers: {
-            'apikey':        SUPABASE_CONFIG.anonKey,
-            'Authorization': `Bearer ${SUPABASE_CONFIG.anonKey}`,
-          },
-        }
-      );
-
-      if (!res.ok) throw new Error(`Supabase error ${res.status}`);
-
-      const rows = await res.json();
-      rows.forEach(row => {
-        results.push({
-          id:           row.id,
-          event_slug:   row.event_slug,
-          submitted_at: row.submitted_at,
-          monogram_png: row.monogram_png,
-          ...(row.data || {}),
-          _source: 'supabase',
-        });
-      });
+      projects = await fetchProjectsFromSupabase();
     } catch (e) {
-      console.warn('[Admin] Supabase load failed, using localStorage:', e);
+      console.warn('[Admin] Supabase load failed, using local fallback:', e);
     }
   }
 
-  // 2. Merge localStorage (de-dupe by event_slug + submitted_at)
-  try {
-    const ls = JSON.parse(localStorage.getItem(LS_KEY) || '[]');
-    const existingKeys = new Set(results.map(r => `${r.event_slug}|${r.submitted_at}`));
+  const localProjects = loadLocalProjects();
+  const seen = new Set(projects.map((p) => p.token));
+  localProjects.forEach((project) => {
+    if (!seen.has(project.token)) projects.push(project);
+  });
 
-    ls.forEach(item => {
-      const key = `${item.event_slug}|${item.submitted_at}`;
-      if (!existingKeys.has(key)) {
-        results.push({ ...item, _source: 'local' });
-      }
-    });
-  } catch (e) {
-    console.warn('[Admin] localStorage load failed:', e);
-  }
+  projects.sort((a, b) => {
+    const aTime = new Date(a.submitted_at || a.last_saved_at || a.created_at || 0).getTime();
+    const bTime = new Date(b.submitted_at || b.last_saved_at || b.created_at || 0).getTime();
+    return bTime - aTime;
+  });
 
-  // Sort newest first
-  results.sort((a, b) =>
-    new Date(b.submitted_at || 0) - new Date(a.submitted_at || 0)
-  );
-
-  allSubmissions = results;
-  filteredData   = [...results];
-
-  updateStats(results);
-  renderList(results);
+  allProjects = projects;
+  filteredData = [...projects];
+  updateStats(projects);
+  renderList(projects);
 }
 
-/* ================================================================
-   STATS BAR
-================================================================ */
+function updateStats(projects) {
+  const drafts = projects.filter((p) => ['draft', 'invited', 'in_progress'].includes(p.status || 'draft')).length;
+  const submitted = projects.filter((p) => ['submitted', 'approved'].includes(p.status || '')).length;
 
-function updateStats(submissions) {
-  const now   = new Date();
-  const today = now.toDateString();
-  const weekAgo = new Date(now - 7 * 24 * 60 * 60 * 1000);
-
-  const todayCount = submissions.filter(s => {
-    return new Date(s.submitted_at || 0).toDateString() === today;
-  }).length;
-
-  const weekCount = submissions.filter(s => {
-    return new Date(s.submitted_at || 0) >= weekAgo;
-  }).length;
-
-  $('total-count').textContent = submissions.length;
-  $('today-count').textContent = todayCount;
-  $('week-count').textContent  = weekCount;
+  $('total-count').textContent = projects.length;
+  $('draft-count').textContent = drafts;
+  $('submitted-count').textContent = submitted;
 }
 
-/* ================================================================
-   RENDER LIST
-================================================================ */
-
-function renderList(submissions) {
-  const list   = $('submissions-list');
-  const empty  = $('empty-state');
-
+function renderList(projects) {
+  const list = $('submissions-list');
+  const empty = $('empty-state');
   list.innerHTML = '';
 
-  if (submissions.length === 0) {
+  if (!projects.length) {
     empty.classList.remove('hidden');
     return;
   }
-  empty.classList.add('hidden');
 
-  submissions.forEach((sub, idx) => {
-    const card = buildCard(sub, idx);
-    list.appendChild(card);
-  });
+  empty.classList.add('hidden');
+  projects.forEach((project) => list.appendChild(buildCard(project)));
 }
 
-function buildCard(sub, idx) {
+function normalizeStatus(status) {
+  return (status || 'draft').toLowerCase();
+}
+
+function formatStatus(status) {
+  const normalized = normalizeStatus(status);
+  if (normalized === 'in_progress') return 'In Progress';
+  return normalized.charAt(0).toUpperCase() + normalized.slice(1);
+}
+
+function buildCard(project) {
   const card = document.createElement('div');
   card.className = 'submission-card';
-  card.setAttribute('role', 'button');
-  card.setAttribute('tabindex', '0');
-  card.setAttribute('aria-label', `View details for ${sub.event_slug}`);
+  card.tabIndex = 0;
 
-  const dateStr = sub.submitted_at
-    ? new Date(sub.submitted_at).toLocaleString()
-    : 'Unknown date';
-
-  const mono      = sub.monogram || {};
-  const props     = (sub.props || []).join(', ') || '—';
-  const backdrop  = sub.backdrop || '—';
-  const printSize = sub.print_size || '—';
-  const source    = sub._source === 'local' ? ' (local)' : '';
-
-  /* Thumbnail */
   const thumb = document.createElement('div');
   thumb.className = 'submission-thumb';
-  if (sub.monogram_png) {
+  if (project.monogram_png) {
     const img = document.createElement('img');
-    img.src = sub.monogram_png;
+    img.src = project.monogram_png;
     img.alt = 'Monogram preview';
     thumb.appendChild(img);
   } else {
     thumb.style.display = 'flex';
     thumb.style.alignItems = 'center';
     thumb.style.justifyContent = 'center';
-    thumb.style.color = 'var(--text-muted)';
-    thumb.style.fontSize = '1.5rem';
     thumb.textContent = '✦';
   }
 
-  /* Info */
   const info = document.createElement('div');
   info.className = 'submission-info';
+  const lastActivity = project.submitted_at || project.last_saved_at || project.created_at;
+  const lastActivityLabel = lastActivity ? new Date(lastActivity).toLocaleString() : 'No activity yet';
+  const status = normalizeStatus(project.status);
+  const payload = project.project_data || {};
+  const tags = [
+    payload.print_size ? `🖨️ ${payload.print_size}` : '',
+    payload.backdrop ? `🎨 ${payload.backdrop}` : '',
+    project.event_date ? `📅 ${project.event_date}` : '',
+    project.token ? `🔑 ${project.token.slice(0, 10)}…` : '',
+  ].filter(Boolean);
+
   info.innerHTML = `
-    <div class="submission-event">${escHtml(sub.event_slug || 'Unknown event')}${escHtml(source)}</div>
-    <div class="submission-date">${escHtml(dateStr)}</div>
-    <div class="submission-tags">
-      <span class="tag">📸 ${escHtml(backdrop)}</span>
-      <span class="tag">🖨️ ${escHtml(printSize)}</span>
-      ${props !== '—' ? `<span class="tag">🎊 ${escHtml(props)}</span>` : ''}
-      ${mono.line1 ? `<span class="tag">✦ ${escHtml(mono.line1)}</span>` : ''}
+    <div class="submission-event">${escHtml(project.client_name || project.event_slug || 'Untitled Project')}</div>
+    <div class="submission-date">${escHtml(project.event_slug || 'No event slug')}</div>
+    <div class="submission-status-row">
+      <span class="status-pill status-pill--${escHtml(status)}">${escHtml(formatStatus(status))}</span>
+      <span class="submission-date">Last activity: ${escHtml(lastActivityLabel)}</span>
     </div>
+    <div class="submission-tags">${tags.map((tag) => `<span class="tag">${escHtml(tag)}</span>`).join('')}</div>
   `;
 
-  /* Actions */
   const actions = document.createElement('div');
   actions.className = 'submission-actions';
+
+  const copyBtn = document.createElement('button');
+  copyBtn.className = 'btn btn-secondary btn-sm';
+  copyBtn.textContent = 'Copy Link';
+  copyBtn.addEventListener('click', async (e) => {
+    e.stopPropagation();
+    await copyText(buildProjectLink(project.token));
+    setCreateStatus(`Copied link for ${project.client_name || project.event_slug}.`, 'success');
+  });
 
   const viewBtn = document.createElement('button');
   viewBtn.className = 'btn btn-ghost btn-sm';
   viewBtn.textContent = 'View';
   viewBtn.addEventListener('click', (e) => {
     e.stopPropagation();
-    openDetailModal(sub);
+    openDetailModal(project);
   });
 
-  if (sub.monogram_png) {
-    const dlBtn = document.createElement('button');
-    dlBtn.className = 'btn btn-secondary btn-sm';
-    dlBtn.textContent = '↓ PNG';
-    dlBtn.addEventListener('click', (e) => {
-      e.stopPropagation();
-      downloadMonogramPNG(sub);
-    });
-    actions.appendChild(dlBtn);
-  }
-
+  actions.appendChild(copyBtn);
   actions.appendChild(viewBtn);
+
   card.appendChild(thumb);
   card.appendChild(info);
   card.appendChild(actions);
-
-  // Click anywhere on card opens modal
-  card.addEventListener('click', () => openDetailModal(sub));
+  card.addEventListener('click', () => openDetailModal(project));
   card.addEventListener('keydown', (e) => {
-    if (e.key === 'Enter' || e.key === ' ') openDetailModal(sub);
+    if (e.key === 'Enter' || e.key === ' ') openDetailModal(project);
   });
 
   return card;
 }
 
-/* ================================================================
-   DETAIL MODAL
-================================================================ */
+async function createProject() {
+  const clientName = ($('client-name-input').value || '').trim();
+  const eventSlug = slugify(($('event-slug-input').value || clientName).trim());
+  const eventDate = $('event-date-input').value || null;
 
-function openDetailModal(sub) {
-  const modal = $('detail-modal');
+  if (!clientName) {
+    setCreateStatus('Client name is required.', 'error');
+    return;
+  }
+  if (!eventSlug) {
+    setCreateStatus('Event slug is required.', 'error');
+    return;
+  }
+
+  const token = generateToken();
+  const project = {
+    token,
+    client_name: clientName,
+    event_slug: eventSlug,
+    event_date: eventDate,
+    status: 'invited',
+    created_at: new Date().toISOString(),
+    last_saved_at: null,
+    submitted_at: null,
+    project_data: {
+      project_token: token,
+      client_name: clientName,
+      event_slug: eventSlug,
+      event_date: eventDate,
+      currentStep: 1,
+    },
+    monogram_png: null,
+  };
+
+  setCreateStatus('Creating private client link…', 'loading');
+
+  try {
+    let created = project;
+    if (SUPABASE_ENABLED) {
+      created = await insertProjectToSupabase(project);
+    }
+    upsertLocalProject(created);
+    $('client-name-input').value = '';
+    $('event-slug-input').value = '';
+    $('event-slug-input').dataset.touched = '';
+    $('event-date-input').value = '';
+    await copyText(buildProjectLink(created.token));
+    setCreateStatus(`Project created and link copied for ${created.client_name}.`, 'success');
+    await loadProjects();
+  } catch (e) {
+    console.error('[Admin] project create failed:', e);
+    setCreateStatus(`Project create failed: ${e.message}`, 'error');
+  }
+}
+
+function openDetailModal(project) {
+  currentModalProject = project;
+  const body = $('modal-body');
   const title = $('modal-title');
-  const body  = $('modal-body');
+  const payload = project.project_data || {};
+  const link = buildProjectLink(project.token);
 
-  title.textContent = sub.event_slug || 'Submission';
-
-  const mono      = sub.monogram || {};
-  const props     = (sub.props || []).join(', ') || '—';
-  const dateStr   = sub.submitted_at
-    ? new Date(sub.submitted_at).toLocaleString()
-    : '—';
-
+  title.textContent = project.client_name || project.event_slug || 'Project';
   body.innerHTML = `
     <div class="detail-section">
-      <div class="detail-section-title">Event</div>
-      <div class="detail-row"><span class="detail-key">Event slug</span><span class="detail-val">${escHtml(sub.event_slug || '—')}</span></div>
-      <div class="detail-row"><span class="detail-key">Submitted</span><span class="detail-val">${escHtml(dateStr)}</span></div>
-      <div class="detail-row"><span class="detail-key">Source</span><span class="detail-val">${escHtml(sub._source || '—')}</span></div>
+      <div class="detail-section-title">Project</div>
+      <div class="detail-row"><span class="detail-key">Client</span><span class="detail-val">${escHtml(project.client_name || '—')}</span></div>
+      <div class="detail-row"><span class="detail-key">Event slug</span><span class="detail-val">${escHtml(project.event_slug || '—')}</span></div>
+      <div class="detail-row"><span class="detail-key">Event date</span><span class="detail-val">${escHtml(project.event_date || '—')}</span></div>
+      <div class="detail-row"><span class="detail-key">Status</span><span class="detail-val">${escHtml(formatStatus(project.status || 'draft'))}</span></div>
+      <div class="detail-row"><span class="detail-key">Token</span><span class="detail-val">${escHtml(project.token || '—')}</span></div>
+      <div class="detail-row"><span class="detail-key">Created</span><span class="detail-val">${escHtml(formatDate(project.created_at))}</span></div>
+      <div class="detail-row"><span class="detail-key">Last saved</span><span class="detail-val">${escHtml(formatDate(project.last_saved_at))}</span></div>
+      <div class="detail-row"><span class="detail-key">Submitted</span><span class="detail-val">${escHtml(formatDate(project.submitted_at))}</span></div>
+      <div style="display:flex;gap:.75rem;flex-wrap:wrap;margin-top:1rem;">
+        <button class="btn btn-secondary btn-sm" id="modal-copy-link">Copy Client Link</button>
+        <button class="btn btn-ghost btn-sm" id="modal-open-link">Open Client Link</button>
+        <button class="btn btn-ghost btn-sm" id="modal-mark-submitted">Mark Submitted</button>
+      </div>
     </div>
 
     <div class="detail-section">
       <div class="detail-section-title">Configuration</div>
-      <div class="detail-row"><span class="detail-key">Parking</span><span class="detail-val">${escHtml(sub.parking || '—')}</span></div>
-      <div class="detail-row"><span class="detail-key">Backdrop</span><span class="detail-val">${escHtml(sub.backdrop || '—')}</span></div>
-      <div class="detail-row"><span class="detail-key">Print size</span><span class="detail-val">${escHtml(sub.print_size || '—')}</span></div>
-      <div class="detail-row"><span class="detail-key">Props</span><span class="detail-val">${escHtml(props)}</span></div>
+      <div class="detail-row"><span class="detail-key">Parking</span><span class="detail-val">${escHtml(payload.parking || '—')}</span></div>
+      <div class="detail-row"><span class="detail-key">Backdrop</span><span class="detail-val">${escHtml(payload.backdrop || '—')}</span></div>
+      <div class="detail-row"><span class="detail-key">Print size</span><span class="detail-val">${escHtml(payload.print_size || '—')}</span></div>
+      <div class="detail-row"><span class="detail-key">Props</span><span class="detail-val">${escHtml((payload.props || []).join(', ') || '—')}</span></div>
+      <div class="detail-row"><span class="detail-key">Notes</span><span class="detail-val">${escHtml(payload.special_instructions || '—')}</span></div>
     </div>
 
     <div class="detail-section">
       <div class="detail-section-title">Monogram</div>
-      <div class="detail-row"><span class="detail-key">Line 1</span><span class="detail-val">${escHtml(mono.line1 || '—')}</span></div>
-      <div class="detail-row"><span class="detail-key">Line 2</span><span class="detail-val">${escHtml(mono.line2 || '—')}</span></div>
-      <div class="detail-row"><span class="detail-key">Font</span><span class="detail-val">${escHtml(mono.font || '—')}</span></div>
-      <div class="detail-row"><span class="detail-key">Text color</span><span class="detail-val">${escHtml(mono.text_color || '—')}</span></div>
-      <div class="detail-row"><span class="detail-key">Background</span><span class="detail-val">${escHtml(mono.bg_color || '—')}</span></div>
-      ${sub.monogram_png ? `
+      <div class="detail-row"><span class="detail-key">Line 1</span><span class="detail-val">${escHtml(payload.monogram?.line1 || '—')}</span></div>
+      <div class="detail-row"><span class="detail-key">Line 2</span><span class="detail-val">${escHtml(payload.monogram?.line2 || '—')}</span></div>
+      <div class="detail-row"><span class="detail-key">Font</span><span class="detail-val">${escHtml(payload.monogram?.font || payload.monogram?.fontFamily || '—')}</span></div>
+      <div class="detail-row"><span class="detail-key">Text color</span><span class="detail-val">${escHtml(payload.monogram?.text_color1 || '—')}</span></div>
+      ${project.monogram_png ? `
         <div style="margin-top:1rem;">
-          <div class="detail-key" style="margin-bottom:.5rem;">Preview</div>
-          <img src="${sub.monogram_png}" alt="Monogram" class="detail-monogram-preview" />
+          <img src="${project.monogram_png}" alt="Monogram" class="detail-monogram-preview" />
         </div>
-        <div style="margin-top:1rem;">
-          <button class="btn btn-secondary btn-sm" onclick="downloadMonogramPNG(currentModalSub)">
-            ↓ Download Full-Resolution PNG
-          </button>
+        <div style="margin-top:1rem;display:flex;gap:.75rem;flex-wrap:wrap;">
+          <button class="btn btn-secondary btn-sm" id="modal-download-png">↓ Download PNG</button>
         </div>
-      ` : ''}
+      ` : '<p style="color:var(--text-muted);margin-top:1rem;">No monogram submitted yet.</p>'}
     </div>
 
-    ${sub.special_instructions ? `
-      <div class="detail-section">
-        <div class="detail-section-title">Special Instructions</div>
-        <p style="color:var(--text);font-size:.9rem;line-height:1.7;">${escHtml(sub.special_instructions)}</p>
-      </div>
-    ` : ''}
+    <div class="detail-section">
+      <div class="detail-section-title">Client Link</div>
+      <p style="word-break:break-all;color:var(--text);font-size:.9rem;">${escHtml(link)}</p>
+    </div>
   `;
 
-  // Expose for inline onclick
-  window.currentModalSub = sub;
-
-  modal.classList.remove('hidden');
+  $('detail-modal').classList.remove('hidden');
   document.body.style.overflow = 'hidden';
+
+  $('modal-copy-link')?.addEventListener('click', async () => {
+    await copyText(link);
+    setCreateStatus(`Copied link for ${project.client_name || project.event_slug}.`, 'success');
+  });
+
+  $('modal-open-link')?.addEventListener('click', () => {
+    window.open(link, '_blank', 'noopener');
+  });
+
+  $('modal-download-png')?.addEventListener('click', () => downloadMonogramPNG(project));
+  $('modal-mark-submitted')?.addEventListener('click', async () => {
+    await updateProjectStatus(project, 'submitted');
+  });
 }
 
 function closeModal() {
   $('detail-modal').classList.add('hidden');
   document.body.style.overflow = '';
-  window.currentModalSub = null;
+  currentModalProject = null;
 }
 
-/* Close on Escape key */
-document.addEventListener('keydown', (e) => {
-  if (e.key === 'Escape') closeModal();
-});
+async function updateProjectStatus(project, status) {
+  try {
+    let updated = { ...project, status };
+    if (SUPABASE_ENABLED) {
+      updated = await patchProjectStatus(project.token, status) || updated;
+    }
+    upsertLocalProject(updated);
+    setCreateStatus(`Updated ${updated.client_name || updated.event_slug} to ${formatStatus(status)}.`, 'success');
+    closeModal();
+    await loadProjects();
+  } catch (e) {
+    console.error('[Admin] status update failed:', e);
+    setCreateStatus(`Status update failed: ${e.message}`, 'error');
+  }
+}
 
-/* ================================================================
-   DOWNLOAD MONOGRAM PNG
-================================================================ */
-
-function downloadMonogramPNG(sub) {
-  if (!sub?.monogram_png) return;
-
-  const a    = document.createElement('a');
-  const slug = sub.event_slug || 'monogram';
-  a.href     = sub.monogram_png;
-  a.download = `${slug}-monogram.png`;
+function downloadMonogramPNG(project) {
+  if (!project?.monogram_png) return;
+  const a = document.createElement('a');
+  a.href = project.monogram_png;
+  a.download = `${project.event_slug || 'monogram'}-monogram.png`;
   a.click();
 }
 
-/* Make available globally for inline onclick in modal */
-window.downloadMonogramPNG = downloadMonogramPNG;
-
-/* ================================================================
-   EXPORT ALL JSON
-================================================================ */
-
 function exportAllJSON() {
-  if (allSubmissions.length === 0) {
-    alert('No submissions to export.');
+  if (!allProjects.length) {
+    alert('No projects to export.');
     return;
   }
 
-  // Strip monogram_png from export to keep file size reasonable
-  const exportData = allSubmissions.map(({ monogram_png, ...rest }) => rest);
-
-  const blob = new Blob(
-    [JSON.stringify(exportData, null, 2)],
-    { type: 'application/json' }
-  );
-  const url  = URL.createObjectURL(blob);
-  const a    = document.createElement('a');
-  a.href     = url;
-  a.download = `leimage-photobooth-submissions-${Date.now()}.json`;
+  const blob = new Blob([JSON.stringify(allProjects, null, 2)], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `leimage-photobooth-projects-${Date.now()}.json`;
   a.click();
   URL.revokeObjectURL(url);
 }
 
-/* ================================================================
-   SECURITY HELPER
-================================================================ */
+async function copyText(text) {
+  if (navigator.clipboard?.writeText) {
+    await navigator.clipboard.writeText(text);
+    return;
+  }
+
+  const ta = document.createElement('textarea');
+  ta.value = text;
+  document.body.appendChild(ta);
+  ta.select();
+  document.execCommand('copy');
+  ta.remove();
+}
+
+function formatDate(value) {
+  if (!value) return '—';
+  const dt = new Date(value);
+  return Number.isNaN(dt.getTime()) ? String(value) : dt.toLocaleString();
+}
 
 function escHtml(str) {
   return String(str ?? '')
@@ -454,3 +586,5 @@ function escHtml(str) {
     .replace(/"/g, '&quot;')
     .replace(/'/g, '&#039;');
 }
+
+window.downloadMonogramPNG = downloadMonogramPNG;
