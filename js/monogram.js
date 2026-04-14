@@ -77,6 +77,7 @@ const MONOGRAM_ZONE_HEIGHT_RATIO = 0.96;
 const PADDING_RATIO = 0.02;
 // How much of the final PRINT the monogram strip occupies (bottom portion)
 const PRINT_STRIP_RATIO = 0.18;
+const FOUR_BY_SIX_DEFAULT_MONOGRAM_SCALE = 0.8;
 
 /* ================================================================
    STATE
@@ -890,8 +891,12 @@ async function renderPrintMock() {
       ctx.fillRect(mx, my, cellW, cellH);
       // Fit monogram content into the cell preserving aspect ratio
       const mSrcAspect = srcSpec.w / srcZoneH;
-      let dw = cellW - 4, dh = dw / mSrcAspect;
-      if (dh > cellH - 4) { dh = cellH - 4; dw = dh * mSrcAspect; }
+      const { dw, dh } = fitBoxToTarget(
+        mSrcAspect,
+        cellW - 4,
+        cellH - 4,
+        FOUR_BY_SIX_DEFAULT_MONOGRAM_SCALE
+      );
       const dx = mx + (cellW - dw) / 2;
       const dy = my + (cellH - dh) / 2;
       ctx.drawImage(monoCanvas, 0, srcZoneY, srcSpec.w, srcZoneH, dx, dy, dw, dh);
@@ -933,6 +938,19 @@ function exportMonogramPNG() {
 
 function exportMonogramDataURL() {
   return getExportCanvas().then(c => c.toDataURL('image/png'));
+}
+
+function fitBoxToTarget(srcAspect, targetW, targetH, scale = 1) {
+  const safeScale = (scale > 0 && scale <= 1) ? scale : 1;
+  const scaledTargetW = targetW * safeScale;
+  const scaledTargetH = targetH * safeScale;
+  let dw = scaledTargetW;
+  let dh = dw / srcAspect;
+  if (dh > scaledTargetH) {
+    dh = scaledTargetH;
+    dw = dh * srcAspect;
+  }
+  return { dw, dh };
 }
 
 async function getExportCanvas() {
@@ -987,9 +1005,8 @@ async function getExportCanvas() {
 
   // Fit the content bbox into a target area, preserving aspect ratio, centered
   function drawFitted(ctx, sx, targetW, targetH, targetY) {
-    let dw = targetW;
-    let dh = dw / srcAspect;
-    if (dh > targetH) { dh = targetH; dw = dh * srcAspect; }
+    const scale = is2x6 ? 1 : FOUR_BY_SIX_DEFAULT_MONOGRAM_SCALE;
+    const { dw, dh } = fitBoxToTarget(srcAspect, targetW, targetH, scale);
     const dx = sx + (targetW - dw) / 2;
     const dy = targetY + (targetH - dh) / 2;
     ctx.drawImage(monoCanvas, cLeft, cTop, srcW, srcH, dx, dy, dw, dh);

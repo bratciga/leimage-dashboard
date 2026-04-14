@@ -662,6 +662,7 @@ function buildPrintLayoutPreview() {
 
 function addMonogramToPlaceholder(container) {
   const state = window.MonogramBuilder?.state;
+  const is4x6 = (state?.printSize || '4x6') === '4x6';
   if (!state || (!state.line1.trim() && !state.line2.trim())) {
     container.style.color = 'rgba(0,0,0,0.25)';
     container.style.fontSize = '0.65rem';
@@ -681,8 +682,8 @@ function addMonogramToPlaceholder(container) {
   }
 
   const miniCanvas = document.createElement('canvas');
-  miniCanvas.style.maxWidth = '100%';
-  miniCanvas.style.maxHeight = '100%';
+  miniCanvas.style.maxWidth = is4x6 ? '80%' : '100%';
+  miniCanvas.style.maxHeight = is4x6 ? '80%' : '100%';
 
   // Crop to the monogram zone (bottom 96% — matching MONOGRAM_ZONE_HEIGHT_RATIO)
   const zoneRatio = 0.96;
