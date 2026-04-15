@@ -7,26 +7,18 @@
  *  - Toggle selection (deselect on re-click) for backdrop & print size
  *  - Lightbox for all images
  *  - Review step population
- *  - Form submit → localStorage + Supabase
- *
- * SUPABASE CONFIG — replace with your project values
+ *  - Form submit → localStorage + PHP JSON backend
  */
 
 'use strict';
 
 /* ================================================================
-   SUPABASE CONFIG
+   API CONFIG
 ================================================================ */
-const SUPABASE_CONFIG = {
-  url:     'YOUR_SUPABASE_URL',
-  anonKey: 'YOUR_SUPABASE_ANON_KEY',
-  table:   'photo_booth_projects',
+const PROJECT_API = {
+  get:  'api/get-project.php',
+  save: 'api/save-project.php',
 };
-
-const SUPABASE_ENABLED = (
-  SUPABASE_CONFIG.url     !== 'YOUR_SUPABASE_URL' &&
-  SUPABASE_CONFIG.anonKey !== 'YOUR_SUPABASE_ANON_KEY'
-);
 
 const PROJECT_LS_PREFIX = 'leimage_pb_project_';
 let ActiveProjectRecord = null;
@@ -825,7 +817,7 @@ function collectFormData() {
 }
 
 /* ================================================================
-   LOCAL STORAGE + SUPABASE PROJECTS
+   LOCAL STORAGE + PHP PROJECT API
 ================================================================ */
 function saveProjectToLocalStorage(project) {
   try {
@@ -847,60 +839,42 @@ function loadProjectFromLocalStorage() {
   }
 }
 
-async function fetchProjectFromSupabase(token) {
-  if (!SUPABASE_ENABLED || !token) return null;
+async function fetchProjectFromServer(token) {
+  if (!token) return null;
 
   try {
-    const res = await fetch(
-      `${SUPABASE_CONFIG.url}/rest/v1/${SUPABASE_CONFIG.table}?token=eq.${encodeURIComponent(token)}&select=*`,
-      {
-        headers: {
-          'apikey':        SUPABASE_CONFIG.anonKey,
-          'Authorization': `Bearer ${SUPABASE_CONFIG.anonKey}`,
-        },
-      }
-    );
+    const res = await fetch(`${PROJECT_API.get}?token=${encodeURIComponent(token)}`, {
+      headers: { 'Accept': 'application/json' },
+    });
 
-    if (!res.ok) {
-      const errText = await res.text();
-      throw new Error(`Supabase load error ${res.status}: ${errText}`);
-    }
-
-    const rows = await res.json();
-    return rows[0] || null;
+    if (!res.ok) return null;
+    const payload = await res.json();
+    return payload?.project || null;
   } catch (e) {
-    console.error('[App] Supabase project load failed:', e);
+    console.error('[App] project load failed:', e);
     return null;
   }
 }
 
-async function patchProjectInSupabase(token, patch) {
-  if (!SUPABASE_ENABLED || !token) return { success: false, error: 'Supabase not configured or token missing' };
-
+async function saveProjectToServer(project) {
   try {
-    const res = await fetch(
-      `${SUPABASE_CONFIG.url}/rest/v1/${SUPABASE_CONFIG.table}?token=eq.${encodeURIComponent(token)}`,
-      {
-        method: 'PATCH',
-        headers: {
-          'Content-Type':  'application/json',
-          'apikey':        SUPABASE_CONFIG.anonKey,
-          'Authorization': `Bearer ${SUPABASE_CONFIG.anonKey}`,
-          'Prefer':        'return=representation',
-        },
-        body: JSON.stringify(patch),
-      }
-    );
+    const res = await fetch(PROJECT_API.save, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+      },
+      body: JSON.stringify(project),
+    });
 
-    if (!res.ok) {
-      const errText = await res.text();
-      throw new Error(`Supabase save error ${res.status}: ${errText}`);
+    const payload = await res.json().catch(() => null);
+    if (!res.ok || !payload?.ok) {
+      throw new Error(payload?.error || `Save failed (${res.status})`);
     }
 
-    const rows = await res.json();
-    return { success: true, row: rows[0] || null };
+    return { success: true, project: payload.project || project };
   } catch (e) {
-    console.error('[App] Supabase project save failed:', e);
+    console.error('[App] project save failed:', e);
     return { success: false, error: e.message };
   }
 }
@@ -959,16 +933,10 @@ async function handleSubmit() {
     ActiveProjectRecord = project;
 
     const token = getProjectToken();
-    if (token && SUPABASE_ENABLED) {
-      const result = await patchProjectInSupabase(token, {
-        status: project.status,
-        submitted_at: project.submitted_at,
-        last_saved_at: project.last_saved_at,
-        project_data: project.project_data,
-        monogram_png: project.monogram_png,
-      });
-      if (result.success && result.row) ActiveProjectRecord = result.row;
-      if (!result.success) console.warn('[App] Supabase submit failed, project kept locally:', result.error);
+    if (token) {
+      const result = await saveProjectToServer(project);
+      if (result.success && result.project) ActiveProjectRecord = result.project;
+      if (!result.success) console.warn('[App] server submit failed, project kept locally:', result.error);
     }
 
     showSuccessOverlay(project.client_name || project.event_slug);
@@ -1008,14 +976,9 @@ async function saveProject() {
   updateEventBanner();
 
   const token = getProjectToken();
-  if (token && SUPABASE_ENABLED) {
-    const result = await patchProjectInSupabase(token, {
-      status: project.status,
-      last_saved_at: project.last_saved_at,
-      project_data: project.project_data,
-      monogram_png: project.monogram_png,
-    });
-    if (result.success && result.row) ActiveProjectRecord = result.row;
+  if (token) {
+    const result = await saveProjectToServer(project);
+    if (result.success && result.project) ActiveProjectRecord = result.project;
   }
 
   showToast('Project saved. Your link will keep this draft connected to your event.');
@@ -1026,7 +989,7 @@ async function loadProject() {
   let project = null;
 
   if (token) {
-    project = await fetchProjectFromSupabase(token);
+    project = await fetchProjectFromServer(token);
   }
 
   if (!project) {

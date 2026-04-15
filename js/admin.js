@@ -4,7 +4,7 @@
  * Handles:
  *  - Password gate
  *  - Project creation with private token links
- *  - Loading projects from Supabase + local fallback
+ *  - Loading projects from PHP JSON backend + local fallback
  *  - Search/filter by client, event, token, status
  *  - Detail modal with copy/open actions
  *  - Status updates and PNG download
@@ -12,24 +12,17 @@
 
 'use strict';
 
-const SUPABASE_CONFIG = {
-  url:     'YOUR_SUPABASE_URL',
-  anonKey: 'YOUR_SUPABASE_ANON_KEY',
-  table:   'photo_booth_projects',
-};
-
-const SUPABASE_ENABLED = (
-  SUPABASE_CONFIG.url !== 'YOUR_SUPABASE_URL' &&
-  SUPABASE_CONFIG.anonKey !== 'YOUR_SUPABASE_ANON_KEY'
-);
-
 const ADMIN_PASSWORD = 'leimage2026';
 const SESSION_KEY = 'leimage_admin_auth';
 const LS_PROJECTS_KEY = 'leimage_photobooth_projects';
+const API = {
+  create: 'api/create-project.php',
+  list: 'api/list-projects.php',
+  save: 'api/save-project.php',
+};
 
 let allProjects = [];
 let filteredData = [];
-let currentModalProject = null;
 
 document.addEventListener('DOMContentLoaded', () => {
   setFooterYear();
@@ -81,7 +74,6 @@ function showAdminContent() {
   $('create-project-btn').addEventListener('click', createProject);
   $('modal-close').addEventListener('click', closeModal);
   $('modal-backdrop').addEventListener('click', closeModal);
-
   $('client-name-input').addEventListener('input', syncSlugFromClient);
   $('event-slug-input').addEventListener('input', () => {
     $('event-slug-input').dataset.touched = $('event-slug-input').value.trim() ? '1' : '';
@@ -97,26 +89,8 @@ function showAdminContent() {
 
 function syncSlugFromClient() {
   const slugInput = $('event-slug-input');
-  if (!slugInput) return;
-  if (slugInput.dataset.touched === '1') return;
+  if (!slugInput || slugInput.dataset.touched === '1') return;
   slugInput.value = slugify($('client-name-input').value || '');
-}
-
-function applySearch() {
-  const q = ($('search-input').value || '').toLowerCase().trim();
-  filteredData = q
-    ? allProjects.filter((project) => {
-        const haystack = [
-          project.client_name,
-          project.event_slug,
-          project.token,
-          project.status,
-          project.event_date,
-        ].filter(Boolean).join(' ').toLowerCase();
-        return haystack.includes(q);
-      })
-    : [...allProjects];
-  renderList(filteredData);
 }
 
 function slugify(input) {
@@ -127,12 +101,6 @@ function slugify(input) {
     .replace(/[^a-z0-9]+/g, '-')
     .replace(/^-+|-+$/g, '')
     .replace(/-{2,}/g, '-');
-}
-
-function generateToken() {
-  const bytes = new Uint8Array(18);
-  crypto.getRandomValues(bytes);
-  return 'pb_' + Array.from(bytes, (b) => b.toString(36).padStart(2, '0')).join('').slice(0, 28);
 }
 
 function getBaseClientUrl() {
@@ -169,77 +137,31 @@ function saveLocalProjects(projects) {
 
 function upsertLocalProject(project) {
   const existing = loadLocalProjects();
-  const idx = existing.findIndex((p) => p.token === project.token);
+  const idx = existing.findIndex((item) => item.token === project.token);
   if (idx >= 0) existing[idx] = { ...existing[idx], ...project };
   else existing.unshift(project);
   saveLocalProjects(existing);
 }
 
-async function fetchProjectsFromSupabase() {
-  if (!SUPABASE_ENABLED) return [];
-
-  const res = await fetch(
-    `${SUPABASE_CONFIG.url}/rest/v1/${SUPABASE_CONFIG.table}?select=*&order=created_at.desc.nullslast,last_saved_at.desc.nullslast`,
-    {
-      headers: {
-        'apikey': SUPABASE_CONFIG.anonKey,
-        'Authorization': `Bearer ${SUPABASE_CONFIG.anonKey}`,
-      },
-    }
-  );
-
-  if (!res.ok) {
-    throw new Error(`Supabase load error ${res.status}`);
-  }
-
-  return res.json();
+async function apiGet(url) {
+  const res = await fetch(url, { headers: { 'Accept': 'application/json' } });
+  const payload = await res.json().catch(() => null);
+  if (!res.ok || !payload) throw new Error(payload?.error || `Request failed (${res.status})`);
+  return payload;
 }
 
-async function insertProjectToSupabase(project) {
-  const res = await fetch(`${SUPABASE_CONFIG.url}/rest/v1/${SUPABASE_CONFIG.table}`, {
+async function apiPost(url, data) {
+  const res = await fetch(url, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
-      'apikey': SUPABASE_CONFIG.anonKey,
-      'Authorization': `Bearer ${SUPABASE_CONFIG.anonKey}`,
-      'Prefer': 'return=representation',
+      'Accept': 'application/json',
     },
-    body: JSON.stringify(project),
+    body: JSON.stringify(data),
   });
-
-  if (!res.ok) {
-    const errText = await res.text();
-    throw new Error(`Supabase create error ${res.status}: ${errText}`);
-  }
-
-  const rows = await res.json();
-  return rows[0] || null;
-}
-
-async function patchProjectStatus(token, status) {
-  if (!SUPABASE_ENABLED || !token) return null;
-
-  const res = await fetch(
-    `${SUPABASE_CONFIG.url}/rest/v1/${SUPABASE_CONFIG.table}?token=eq.${encodeURIComponent(token)}`,
-    {
-      method: 'PATCH',
-      headers: {
-        'Content-Type': 'application/json',
-        'apikey': SUPABASE_CONFIG.anonKey,
-        'Authorization': `Bearer ${SUPABASE_CONFIG.anonKey}`,
-        'Prefer': 'return=representation',
-      },
-      body: JSON.stringify({ status }),
-    }
-  );
-
-  if (!res.ok) {
-    const errText = await res.text();
-    throw new Error(`Supabase status error ${res.status}: ${errText}`);
-  }
-
-  const rows = await res.json();
-  return rows[0] || null;
+  const payload = await res.json().catch(() => null);
+  if (!res.ok || !payload?.ok) throw new Error(payload?.error || `Request failed (${res.status})`);
+  return payload;
 }
 
 async function loadProjects() {
@@ -247,13 +169,11 @@ async function loadProjects() {
   list.innerHTML = '<div class="loading-state">Loading projects…</div>';
 
   let projects = [];
-
-  if (SUPABASE_ENABLED) {
-    try {
-      projects = await fetchProjectsFromSupabase();
-    } catch (e) {
-      console.warn('[Admin] Supabase load failed, using local fallback:', e);
-    }
+  try {
+    const payload = await apiGet(API.list);
+    projects = payload.projects || [];
+  } catch (e) {
+    console.warn('[Admin] server project load failed, using local fallback:', e);
   }
 
   const localProjects = loadLocalProjects();
@@ -275,12 +195,26 @@ async function loadProjects() {
 }
 
 function updateStats(projects) {
-  const drafts = projects.filter((p) => ['draft', 'invited', 'in_progress'].includes(p.status || 'draft')).length;
-  const submitted = projects.filter((p) => ['submitted', 'approved'].includes(p.status || '')).length;
+  const drafts = projects.filter((p) => ['draft', 'invited', 'in_progress'].includes(normalizeStatus(p.status))).length;
+  const submitted = projects.filter((p) => ['submitted', 'approved'].includes(normalizeStatus(p.status))).length;
 
   $('total-count').textContent = projects.length;
   $('draft-count').textContent = drafts;
   $('submitted-count').textContent = submitted;
+}
+
+function applySearch() {
+  const q = ($('search-input').value || '').toLowerCase().trim();
+  filteredData = q
+    ? allProjects.filter((project) => [
+        project.client_name,
+        project.event_slug,
+        project.token,
+        project.status,
+        project.event_date,
+      ].filter(Boolean).join(' ').toLowerCase().includes(q))
+    : [...allProjects];
+  renderList(filteredData);
 }
 
 function renderList(projects) {
@@ -298,13 +232,14 @@ function renderList(projects) {
 }
 
 function normalizeStatus(status) {
-  return (status || 'draft').toLowerCase();
+  return String(status || 'draft').toLowerCase();
 }
 
 function formatStatus(status) {
   const normalized = normalizeStatus(status);
-  if (normalized === 'in_progress') return 'In Progress';
-  return normalized.charAt(0).toUpperCase() + normalized.slice(1);
+  return normalized === 'in_progress'
+    ? 'In Progress'
+    : normalized.charAt(0).toUpperCase() + normalized.slice(1);
 }
 
 function buildCard(project) {
@@ -326,12 +261,9 @@ function buildCard(project) {
     thumb.textContent = '✦';
   }
 
-  const info = document.createElement('div');
-  info.className = 'submission-info';
-  const lastActivity = project.submitted_at || project.last_saved_at || project.created_at;
-  const lastActivityLabel = lastActivity ? new Date(lastActivity).toLocaleString() : 'No activity yet';
-  const status = normalizeStatus(project.status);
   const payload = project.project_data || {};
+  const status = normalizeStatus(project.status);
+  const lastActivity = project.submitted_at || project.last_saved_at || project.created_at;
   const tags = [
     payload.print_size ? `🖨️ ${payload.print_size}` : '',
     payload.backdrop ? `🎨 ${payload.backdrop}` : '',
@@ -339,12 +271,14 @@ function buildCard(project) {
     project.token ? `🔑 ${project.token.slice(0, 10)}…` : '',
   ].filter(Boolean);
 
+  const info = document.createElement('div');
+  info.className = 'submission-info';
   info.innerHTML = `
     <div class="submission-event">${escHtml(project.client_name || project.event_slug || 'Untitled Project')}</div>
     <div class="submission-date">${escHtml(project.event_slug || 'No event slug')}</div>
     <div class="submission-status-row">
       <span class="status-pill status-pill--${escHtml(status)}">${escHtml(formatStatus(status))}</span>
-      <span class="submission-date">Last activity: ${escHtml(lastActivityLabel)}</span>
+      <span class="submission-date">Last activity: ${escHtml(formatDate(lastActivity))}</span>
     </div>
     <div class="submission-tags">${tags.map((tag) => `<span class="tag">${escHtml(tag)}</span>`).join('')}</div>
   `;
@@ -371,10 +305,10 @@ function buildCard(project) {
 
   actions.appendChild(copyBtn);
   actions.appendChild(viewBtn);
-
   card.appendChild(thumb);
   card.appendChild(info);
   card.appendChild(actions);
+
   card.addEventListener('click', () => openDetailModal(project));
   card.addEventListener('keydown', (e) => {
     if (e.key === 'Enter' || e.key === ' ') openDetailModal(project);
@@ -384,53 +318,33 @@ function buildCard(project) {
 }
 
 async function createProject() {
-  const clientName = ($('client-name-input').value || '').trim();
-  const eventSlug = slugify(($('event-slug-input').value || clientName).trim());
-  const eventDate = $('event-date-input').value || null;
+  const client_name = ($('client-name-input').value || '').trim();
+  const event_slug = slugify(($('event-slug-input').value || client_name).trim());
+  const event_date = $('event-date-input').value || null;
 
-  if (!clientName) {
+  if (!client_name) {
     setCreateStatus('Client name is required.', 'error');
     return;
   }
-  if (!eventSlug) {
+  if (!event_slug) {
     setCreateStatus('Event slug is required.', 'error');
     return;
   }
 
-  const token = generateToken();
-  const project = {
-    token,
-    client_name: clientName,
-    event_slug: eventSlug,
-    event_date: eventDate,
-    status: 'invited',
-    created_at: new Date().toISOString(),
-    last_saved_at: null,
-    submitted_at: null,
-    project_data: {
-      project_token: token,
-      client_name: clientName,
-      event_slug: eventSlug,
-      event_date: eventDate,
-      currentStep: 1,
-    },
-    monogram_png: null,
-  };
-
   setCreateStatus('Creating private client link…', 'loading');
 
   try {
-    let created = project;
-    if (SUPABASE_ENABLED) {
-      created = await insertProjectToSupabase(project);
-    }
-    upsertLocalProject(created);
+    const payload = await apiPost(API.create, { client_name, event_slug, event_date });
+    const project = payload.project;
+    upsertLocalProject(project);
+
     $('client-name-input').value = '';
     $('event-slug-input').value = '';
     $('event-slug-input').dataset.touched = '';
     $('event-date-input').value = '';
-    await copyText(buildProjectLink(created.token));
-    setCreateStatus(`Project created and link copied for ${created.client_name}.`, 'success');
+
+    await copyText(buildProjectLink(project.token));
+    setCreateStatus(`Project created and link copied for ${project.client_name}.`, 'success');
     await loadProjects();
   } catch (e) {
     console.error('[Admin] project create failed:', e);
@@ -439,7 +353,6 @@ async function createProject() {
 }
 
 function openDetailModal(project) {
-  currentModalProject = project;
   const body = $('modal-body');
   const title = $('modal-title');
   const payload = project.project_data || {};
@@ -502,31 +415,27 @@ function openDetailModal(project) {
     await copyText(link);
     setCreateStatus(`Copied link for ${project.client_name || project.event_slug}.`, 'success');
   });
-
-  $('modal-open-link')?.addEventListener('click', () => {
-    window.open(link, '_blank', 'noopener');
-  });
-
+  $('modal-open-link')?.addEventListener('click', () => window.open(link, '_blank', 'noopener'));
   $('modal-download-png')?.addEventListener('click', () => downloadMonogramPNG(project));
-  $('modal-mark-submitted')?.addEventListener('click', async () => {
-    await updateProjectStatus(project, 'submitted');
-  });
+  $('modal-mark-submitted')?.addEventListener('click', async () => updateProjectStatus(project, 'submitted'));
 }
 
 function closeModal() {
   $('detail-modal').classList.add('hidden');
   document.body.style.overflow = '';
-  currentModalProject = null;
 }
 
 async function updateProjectStatus(project, status) {
   try {
-    let updated = { ...project, status };
-    if (SUPABASE_ENABLED) {
-      updated = await patchProjectStatus(project.token, status) || updated;
-    }
-    upsertLocalProject(updated);
-    setCreateStatus(`Updated ${updated.client_name || updated.event_slug} to ${formatStatus(status)}.`, 'success');
+    const updatedProject = {
+      ...project,
+      status,
+      last_saved_at: new Date().toISOString(),
+      submitted_at: status === 'submitted' && !project.submitted_at ? new Date().toISOString() : project.submitted_at,
+    };
+    const payload = await apiPost(API.save, updatedProject);
+    upsertLocalProject(payload.project);
+    setCreateStatus(`Updated ${payload.project.client_name || payload.project.event_slug} to ${formatStatus(status)}.`, 'success');
     closeModal();
     await loadProjects();
   } catch (e) {

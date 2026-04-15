@@ -2,6 +2,8 @@
 
 A client-facing web app for Le Image photography studio's photo booth service. Clients receive a private project URL, configure their booth options, build a custom monogram, and submit. The studio team creates those links from the admin dashboard and reviews every project in one place.
 
+This version uses a simple PHP + JSON backend on the same server, so it does not require Supabase.
+
 ---
 
 ## Features
@@ -10,7 +12,7 @@ A client-facing web app for Le Image photography studio's photo booth service. C
 - **Noindex protection** — `robots.txt` + meta robots keep it out of search
 - **Full configuration form** — parking, backdrop, print size, props, notes
 - **Monogram builder** — live canvas preview, full-res PNG export
-- **Supabase storage** — one row per booked client project
+- **PHP + JSON storage** — one file per booked client project on the server
 - **localStorage fallback** — nothing is lost if the network is down
 - **Admin dashboard** — create links, search projects, copy links, download PNGs, track status
 - **Mobile-responsive** — dark elegant theme, smooth interactions
@@ -55,42 +57,32 @@ Admin: `http://localhost:8080/admin.html`
 
 ---
 
-## Supabase Setup
+## Server Side Storage Setup
 
-Supabase is free for small projects. Follow these steps:
+This version writes project JSON files on the same server.
 
-### 1. Create a Supabase project
+### Files added
 
-Go to [https://supabase.com](https://supabase.com) → New Project.
+- `api/create-project.php`
+- `api/get-project.php`
+- `api/list-projects.php`
+- `api/save-project.php`
+- `api/lib.php`
+- `data/projects/`
+- `data/.htaccess`
 
-### 2. Create the projects table
+### Requirements
 
-In the **SQL Editor**, run the SQL from:
+- Apache or compatible PHP hosting
+- PHP enabled on the server
+- write permission for `data/projects/`
 
-- `supabase-photo-booth-projects.sql`
+### Storage model
 
-That creates the `photo_booth_projects` table used by both the client app and the admin dashboard.
-
-### 3. Get your API keys
-
-In your Supabase project: **Settings → API**
-
-- **Project URL** — looks like `https://abcxyz.supabase.co`
-- **anon/public key** — the long JWT string
-
-### 4. Configure the app
-
-Open **`js/app.js`** and **`js/admin.js`** — both have the same config block at the top:
-
-```js
-const SUPABASE_CONFIG = {
-  url:     'YOUR_SUPABASE_URL',       // ← replace this
-  anonKey: 'YOUR_SUPABASE_ANON_KEY',  // ← replace this
-  table:   'photo_booth_projects',
-};
-```
-
-Replace both placeholder values in both files. The app auto-detects whether Supabase is configured — if the placeholders are still present, it falls back to localStorage only.
+- one JSON file per project token
+- admin creates the token and client link
+- client saves and submits against that token
+- admin dashboard lists all stored project files
 
 ---
 
