@@ -10,7 +10,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300&display=swap" rel="stylesheet" />
 
-  <link rel="stylesheet" href="css/style.css?v=62" />
+  <link rel="stylesheet" href="css/style.css?v=63" />
 </head>
 <body>
 
@@ -29,6 +29,21 @@
   <div class="event-banner">
     <span class="event-label">Event:</span>
     <span id="event-name" class="event-slug">Loading…</span>
+  </div>
+
+  <div class="client-project-meta">
+    <div class="client-project-meta__item">
+      <span class="client-project-meta__label">Client</span>
+      <span id="client-name-display" class="client-project-meta__value">Loading…</span>
+    </div>
+    <div class="client-project-meta__item">
+      <span class="client-project-meta__label">Event date</span>
+      <span id="event-date-display" class="client-project-meta__value">—</span>
+    </div>
+    <div class="client-project-meta__item hidden" id="project-status-wrap">
+      <span class="client-project-meta__label">Status</span>
+      <span id="project-status-display" class="status-pill status-pill--draft">Draft</span>
+    </div>
   </div>
 
   <!-- ============================================================
@@ -545,7 +560,7 @@
 
   </main>
 
-  <footer style="text-align:center;padding:1rem 0 0.5rem;opacity:0.35;font-size:0.7rem;font-family:'Inter',sans-serif;">v62</footer>
+  <footer style="text-align:center;padding:1rem 0 0.5rem;opacity:0.35;font-size:0.7rem;font-family:'Inter',sans-serif;">v63</footer>
 
   <!-- ============================================================
        LIGHTBOX

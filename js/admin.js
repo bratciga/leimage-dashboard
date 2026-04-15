@@ -23,6 +23,7 @@ const API = {
 
 let allProjects = [];
 let filteredData = [];
+let lastCreatedLink = '';
 
 document.addEventListener('DOMContentLoaded', () => {
   setFooterYear();
@@ -120,6 +121,26 @@ function setCreateStatus(message, type = '') {
   if (!el) return;
   el.textContent = message || '';
   el.className = `submit-status ${type}`.trim();
+}
+
+function updateCreatedLink(link = '') {
+  lastCreatedLink = link;
+  const wrap = $('created-link-wrap');
+  const value = $('created-link-value');
+  const copyBtn = $('created-link-copy-btn');
+  const openBtn = $('created-link-open-btn');
+  if (!wrap || !value || !copyBtn || !openBtn) return;
+
+  if (!link) {
+    wrap.classList.add('hidden');
+    value.textContent = '—';
+    return;
+  }
+
+  wrap.classList.remove('hidden');
+  value.textContent = link;
+  copyBtn.onclick = () => copyText(link);
+  openBtn.onclick = () => window.open(link, '_blank', 'noopener');
 }
 
 function loadLocalProjects() {
@@ -336,6 +357,7 @@ async function createProject() {
   try {
     const payload = await apiPost(API.create, { client_name, event_slug, event_date });
     const project = payload.project;
+    const link = buildProjectLink(project.token);
     upsertLocalProject(project);
 
     $('client-name-input').value = '';
@@ -343,7 +365,8 @@ async function createProject() {
     $('event-slug-input').dataset.touched = '';
     $('event-date-input').value = '';
 
-    await copyText(buildProjectLink(project.token));
+    await copyText(link);
+    updateCreatedLink(link);
     setCreateStatus(`Project created and link copied for ${project.client_name}.`, 'success');
     await loadProjects();
   } catch (e) {
@@ -374,6 +397,8 @@ function openDetailModal(project) {
         <button class="btn btn-secondary btn-sm" id="modal-copy-link">Copy Client Link</button>
         <button class="btn btn-ghost btn-sm" id="modal-open-link">Open Client Link</button>
         <button class="btn btn-ghost btn-sm" id="modal-mark-submitted">Mark Submitted</button>
+        <button class="btn btn-primary btn-sm" id="modal-mark-approved">Approve & Lock</button>
+        <button class="btn btn-ghost btn-sm" id="modal-reopen-project">Reopen</button>
       </div>
     </div>
 
@@ -418,6 +443,8 @@ function openDetailModal(project) {
   $('modal-open-link')?.addEventListener('click', () => window.open(link, '_blank', 'noopener'));
   $('modal-download-png')?.addEventListener('click', () => downloadMonogramPNG(project));
   $('modal-mark-submitted')?.addEventListener('click', async () => updateProjectStatus(project, 'submitted'));
+  $('modal-mark-approved')?.addEventListener('click', async () => updateProjectStatus(project, 'approved'));
+  $('modal-reopen-project')?.addEventListener('click', async () => updateProjectStatus(project, 'in_progress'));
 }
 
 function closeModal() {

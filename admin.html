@@ -10,7 +10,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600&family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300&display=swap" rel="stylesheet" />
 
-  <link rel="stylesheet" href="css/style.css?v=62" />
+  <link rel="stylesheet" href="css/style.css?v=63" />
 </head>
 <body class="admin-page">
 
@@ -95,6 +95,17 @@
         </div>
 
         <div id="create-project-status" class="submit-status" aria-live="polite"></div>
+        <div id="created-link-wrap" class="detail-section hidden" style="margin-top:1rem;">
+          <div class="detail-section-title">Latest Client Link</div>
+          <div class="detail-row detail-row--stack">
+            <span class="detail-key">URL</span>
+            <span id="created-link-value" class="detail-val" style="word-break:break-all;">—</span>
+          </div>
+          <div style="margin-top:.75rem;display:flex;gap:.75rem;flex-wrap:wrap;">
+            <button id="created-link-copy-btn" class="btn btn-secondary btn-sm" type="button">Copy Link</button>
+            <button id="created-link-open-btn" class="btn btn-ghost btn-sm" type="button">Open Link</button>
+          </div>
+        </div>
       </section>
 
       <!-- Toolbar: search + export -->

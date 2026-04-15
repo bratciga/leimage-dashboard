@@ -123,10 +123,40 @@ function getEventSlug() {
 }
 
 function updateEventBanner() {
-  const el = document.getElementById('event-name');
-  if (!el) return;
   const label = ActiveProjectRecord?.client_name || ActiveProjectRecord?.event_slug || getEventSlug();
-  el.textContent = label;
+  const eventNameEl = document.getElementById('event-name');
+  const clientNameEl = document.getElementById('client-name-display');
+  const eventDateEl = document.getElementById('event-date-display');
+  const statusWrap = document.getElementById('project-status-wrap');
+  const statusEl = document.getElementById('project-status-display');
+
+  if (eventNameEl) eventNameEl.textContent = label;
+  if (clientNameEl) clientNameEl.textContent = ActiveProjectRecord?.client_name || label;
+  if (eventDateEl) eventDateEl.textContent = ActiveProjectRecord?.event_date || '—';
+
+  if (statusWrap && statusEl && ActiveProjectRecord?.status) {
+    const normalized = String(ActiveProjectRecord.status).toLowerCase();
+    statusWrap.classList.remove('hidden');
+    statusEl.className = `status-pill status-pill--${normalized}`;
+    statusEl.textContent = normalized === 'in_progress'
+      ? 'In Progress'
+      : normalized.charAt(0).toUpperCase() + normalized.slice(1);
+  }
+}
+
+function applyProjectLockState() {
+  const locked = String(ActiveProjectRecord?.status || '').toLowerCase() === 'approved';
+  const saveBtn = document.getElementById('save-project-btn');
+  const submitBtn = document.getElementById('submit-btn');
+  const statusEl = document.getElementById('submit-status');
+
+  if (saveBtn) saveBtn.disabled = locked;
+  if (submitBtn) submitBtn.disabled = locked;
+
+  if (locked && statusEl) {
+    statusEl.textContent = 'This project has been approved and locked by Le Image.';
+    statusEl.className = 'submit-status success';
+  }
 }
 
 function getProjectStorageKey() {
@@ -904,6 +934,11 @@ function buildProjectRecord({ status, monogramDataURL, submittedAt } = {}) {
 async function handleSubmit() {
   const submitBtn = document.getElementById('submit-btn');
 
+  if (String(ActiveProjectRecord?.status || '').toLowerCase() === 'approved') {
+    setStatus('This project has already been approved and locked by Le Image.', 'success');
+    return;
+  }
+
   if (!WizardState.parking) {
     setStatus('Please go back and select a parking option (Step 2).', 'error');
     return;
@@ -966,6 +1001,11 @@ function showSuccessOverlay(eventSlug) {
    SAVE / LOAD PROJECT
 ================================================================ */
 async function saveProject() {
+  if (String(ActiveProjectRecord?.status || '').toLowerCase() === 'approved') {
+    showToast('This project is locked because it was already approved.');
+    return;
+  }
+
   const project = buildProjectRecord({
     status: ActiveProjectRecord?.status === 'submitted' ? 'submitted' : 'in_progress',
     monogramDataURL: window.MonogramBuilder.exportDataURL(),
@@ -982,6 +1022,7 @@ async function saveProject() {
   }
 
   showToast('Project saved. Your link will keep this draft connected to your event.');
+  applyProjectLockState();
 }
 
 async function loadProject() {
@@ -1005,12 +1046,14 @@ async function loadProject() {
       project_data: null,
     };
     updateEventBanner();
+    applyProjectLockState();
     return false;
   }
 
   try {
     ActiveProjectRecord = project;
     updateEventBanner();
+    applyProjectLockState();
     const payload = project.project_data || project;
 
     // Restore props
