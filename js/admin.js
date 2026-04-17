@@ -24,6 +24,7 @@ const API = {
 let allProjects = [];
 let filteredData = [];
 let lastCreatedLink = '';
+let currentModalProject = null;
 
 document.addEventListener('DOMContentLoaded', () => {
   setFooterYear();
@@ -106,7 +107,7 @@ function slugify(input) {
 
 function getBaseClientUrl() {
   const url = new URL(window.location.href);
-  url.pathname = url.pathname.replace(/admin\.html$/, 'index.html');
+  url.pathname = url.pathname.replace(/admin(?:-clients)?\.html$/, 'index.html');
   url.search = '';
   url.hash = '';
   return url.toString();
@@ -376,30 +377,52 @@ async function createProject() {
 }
 
 function openDetailModal(project) {
+  currentModalProject = project;
+
   const body = $('modal-body');
   const title = $('modal-title');
   const payload = project.project_data || {};
   const link = buildProjectLink(project.token);
+  const normalizedStatus = normalizeStatus(project.status);
 
   title.textContent = project.client_name || project.event_slug || 'Project';
   body.innerHTML = `
     <div class="detail-section">
       <div class="detail-section-title">Project</div>
-      <div class="detail-row"><span class="detail-key">Client</span><span class="detail-val">${escHtml(project.client_name || '—')}</span></div>
-      <div class="detail-row"><span class="detail-key">Event slug</span><span class="detail-val">${escHtml(project.event_slug || '—')}</span></div>
-      <div class="detail-row"><span class="detail-key">Event date</span><span class="detail-val">${escHtml(project.event_date || '—')}</span></div>
-      <div class="detail-row"><span class="detail-key">Status</span><span class="detail-val">${escHtml(formatStatus(project.status || 'draft'))}</span></div>
+      <div class="detail-edit-grid">
+        <div class="field-group">
+          <label class="field-label" for="modal-client-name">Client</label>
+          <input id="modal-client-name" class="text-input" type="text" value="${escAttr(project.client_name || '')}" />
+        </div>
+        <div class="field-group">
+          <label class="field-label" for="modal-event-slug">Event slug</label>
+          <input id="modal-event-slug" class="text-input" type="text" value="${escAttr(project.event_slug || '')}" />
+          <div class="field-help">Safe to edit. The private client link stays the same because it uses the token, not the slug.</div>
+        </div>
+        <div class="field-group">
+          <label class="field-label" for="modal-event-date">Event date</label>
+          <input id="modal-event-date" class="text-input" type="date" value="${escAttr(project.event_date || '')}" />
+        </div>
+        <div class="field-group">
+          <label class="field-label" for="modal-project-status">Status</label>
+          <select id="modal-project-status" class="select-input">
+            ${buildStatusOptions(normalizedStatus)}
+          </select>
+        </div>
+      </div>
       <div class="detail-row"><span class="detail-key">Token</span><span class="detail-val">${escHtml(project.token || '—')}</span></div>
       <div class="detail-row"><span class="detail-key">Created</span><span class="detail-val">${escHtml(formatDate(project.created_at))}</span></div>
       <div class="detail-row"><span class="detail-key">Last saved</span><span class="detail-val">${escHtml(formatDate(project.last_saved_at))}</span></div>
       <div class="detail-row"><span class="detail-key">Submitted</span><span class="detail-val">${escHtml(formatDate(project.submitted_at))}</span></div>
-      <div style="display:flex;gap:.75rem;flex-wrap:wrap;margin-top:1rem;">
+      <div class="detail-actions-row">
+        <button class="btn btn-primary btn-sm" id="modal-save-project-details">Save Client Details</button>
         <button class="btn btn-secondary btn-sm" id="modal-copy-link">Copy Client Link</button>
         <button class="btn btn-ghost btn-sm" id="modal-open-link">Open Client Link</button>
         <button class="btn btn-ghost btn-sm" id="modal-mark-submitted">Mark Submitted</button>
         <button class="btn btn-primary btn-sm" id="modal-mark-approved">Approve & Lock</button>
         <button class="btn btn-ghost btn-sm" id="modal-reopen-project">Reopen</button>
       </div>
+      <div id="modal-save-status" class="submit-status" aria-live="polite"></div>
     </div>
 
     <div class="detail-section">
@@ -421,7 +444,7 @@ function openDetailModal(project) {
         <div style="margin-top:1rem;">
           <img src="${project.monogram_png}" alt="Monogram" class="detail-monogram-preview" />
         </div>
-        <div style="margin-top:1rem;display:flex;gap:.75rem;flex-wrap:wrap;">
+        <div class="detail-actions-row" style="margin-top:1rem;">
           <button class="btn btn-secondary btn-sm" id="modal-download-png">↓ Download PNG</button>
         </div>
       ` : '<p style="color:var(--text-muted);margin-top:1rem;">No monogram submitted yet.</p>'}
@@ -445,11 +468,13 @@ function openDetailModal(project) {
   $('modal-mark-submitted')?.addEventListener('click', async () => updateProjectStatus(project, 'submitted'));
   $('modal-mark-approved')?.addEventListener('click', async () => updateProjectStatus(project, 'approved'));
   $('modal-reopen-project')?.addEventListener('click', async () => updateProjectStatus(project, 'in_progress'));
+  $('modal-save-project-details')?.addEventListener('click', async () => saveProjectDetails(project));
 }
 
 function closeModal() {
   $('detail-modal').classList.add('hidden');
   document.body.style.overflow = '';
+  currentModalProject = null;
 }
 
 async function updateProjectStatus(project, status) {
@@ -469,6 +494,86 @@ async function updateProjectStatus(project, status) {
     console.error('[Admin] status update failed:', e);
     setCreateStatus(`Status update failed: ${e.message}`, 'error');
   }
+}
+
+async function saveProjectDetails(project) {
+  const clientName = ($('modal-client-name')?.value || '').trim();
+  const eventSlug = slugify(($('modal-event-slug')?.value || '').trim());
+  const eventDate = ($('modal-event-date')?.value || '').trim() || null;
+  const status = normalizeStatus($('modal-project-status')?.value || project.status);
+  const statusEl = $('modal-save-status');
+  const saveBtn = $('modal-save-project-details');
+
+  if (!clientName) {
+    if (statusEl) {
+      statusEl.textContent = 'Client name is required.';
+      statusEl.className = 'submit-status error';
+    }
+    return;
+  }
+
+  if (!eventSlug) {
+    if (statusEl) {
+      statusEl.textContent = 'Event slug is required.';
+      statusEl.className = 'submit-status error';
+    }
+    return;
+  }
+
+  const updatedProject = {
+    ...project,
+    client_name: clientName,
+    event_slug: eventSlug,
+    event_date: eventDate,
+    status,
+    last_saved_at: new Date().toISOString(),
+    project_data: {
+      ...(project.project_data || {}),
+      client_name: clientName,
+      event_slug: eventSlug,
+      event_date: eventDate,
+    },
+  };
+
+  if (status === 'submitted' && !updatedProject.submitted_at) {
+    updatedProject.submitted_at = new Date().toISOString();
+  }
+  if (status !== 'submitted' && status !== 'approved') {
+    updatedProject.submitted_at = project.submitted_at || null;
+  }
+
+  if (saveBtn) saveBtn.disabled = true;
+  if (statusEl) {
+    statusEl.textContent = 'Saving client details…';
+    statusEl.className = 'submit-status loading';
+  }
+
+  try {
+    const payload = await apiPost(API.save, updatedProject);
+    upsertLocalProject(payload.project);
+    if (statusEl) {
+      statusEl.textContent = 'Client details updated.';
+      statusEl.className = 'submit-status success';
+    }
+    setCreateStatus(`Updated ${payload.project.client_name || payload.project.event_slug}.`, 'success');
+    currentModalProject = payload.project;
+    await loadProjects();
+    openDetailModal(payload.project);
+  } catch (e) {
+    console.error('[Admin] project detail save failed:', e);
+    if (statusEl) {
+      statusEl.textContent = `Save failed: ${e.message}`;
+      statusEl.className = 'submit-status error';
+    }
+  } finally {
+    if (saveBtn) saveBtn.disabled = false;
+  }
+}
+
+function buildStatusOptions(selectedStatus) {
+  return ['invited', 'draft', 'in_progress', 'submitted', 'approved']
+    .map((status) => `<option value="${status}"${status === selectedStatus ? ' selected' : ''}>${escHtml(formatStatus(status))}</option>`)
+    .join('');
 }
 
 function downloadMonogramPNG(project) {
@@ -521,6 +626,10 @@ function escHtml(str) {
     .replace(/>/g, '&gt;')
     .replace(/"/g, '&quot;')
     .replace(/'/g, '&#039;');
+}
+
+function escAttr(str) {
+  return escHtml(str).replace(/`/g, '&#096;');
 }
 
 window.downloadMonogramPNG = downloadMonogramPNG;
