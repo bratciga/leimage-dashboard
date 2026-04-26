@@ -1805,13 +1805,14 @@ h1, h2, h3 {
 }
 
 .admin-create-grid .text-input {
+  height: 40px;
   line-height: 1.2;
 }
 
 .admin-create-grid input[type="date"].text-input {
   appearance: none;
   -webkit-appearance: none;
-  min-height: 0;
+  min-height: 40px;
   padding-right: 0.85rem;
 }
 
