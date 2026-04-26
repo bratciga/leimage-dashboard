@@ -762,12 +762,70 @@ function syncAutoFontSizeControls() {
   const fontSize2Range = document.getElementById('mono-fontsize2-range');
 
   if (fontSize1Range && (!MonogramState.fontSize1 || MonogramState.fontSize1 <= 0) && MonogramState.computedFontSize1 > 0) {
-    fontSize1Range.value = Math.min(parseInt(fontSize1Range.max || '300', 10), MonogramState.computedFontSize1);
+    fontSize1Range.value = Math.min(parseInt(fontSize1Range.max || '600', 10), MonogramState.computedFontSize1);
   }
 
   if (fontSize2Range && (!MonogramState.fontSize2 || MonogramState.fontSize2 <= 0) && MonogramState.computedFontSize2 > 0) {
-    fontSize2Range.value = Math.min(parseInt(fontSize2Range.max || '300', 10), MonogramState.computedFontSize2);
+    fontSize2Range.value = Math.min(parseInt(fontSize2Range.max || '600', 10), MonogramState.computedFontSize2);
   }
+}
+
+function isPhoneViewport() {
+  return window.matchMedia('(max-width: 700px)').matches;
+}
+
+function applyPhoneFontSizeRange() {
+  const max = isPhoneViewport() ? 600 : 300;
+  ['mono-fontsize1-range', 'mono-fontsize2-range'].forEach((id) => {
+    const el = document.getElementById(id);
+    if (!el) return;
+    el.max = String(max);
+    if (parseInt(el.value || '0', 10) > max) {
+      el.value = String(max);
+    }
+  });
+}
+
+function openPreviewZoomModal() {
+  const modal = document.getElementById('zoom-modal');
+  const content = document.getElementById('zoom-modal-content');
+  const sourceCanvas = MonogramState.canvas;
+  if (!modal || !content || !sourceCanvas) return;
+
+  content.innerHTML = '';
+  const zoomCanvas = document.createElement('canvas');
+  zoomCanvas.width = sourceCanvas.width;
+  zoomCanvas.height = sourceCanvas.height;
+  const ctx = zoomCanvas.getContext('2d');
+  ctx.drawImage(sourceCanvas, 0, 0);
+  zoomCanvas.style.width = '100%';
+  zoomCanvas.style.height = 'auto';
+  content.appendChild(zoomCanvas);
+
+  modal.classList.remove('hidden');
+  document.body.style.overflow = 'hidden';
+}
+
+function initPreviewZoomModal() {
+  const trigger = document.getElementById('btn-mobile-preview-zoom');
+  const modal = document.getElementById('zoom-modal');
+  const backdrop = document.getElementById('zoom-modal-backdrop');
+  const closeBtn = document.getElementById('zoom-modal-close');
+  const content = document.getElementById('zoom-modal-content');
+  if (!trigger || !modal || !backdrop || !closeBtn || !content) return;
+
+  const closeModal = () => {
+    modal.classList.add('hidden');
+    content.innerHTML = '';
+    document.body.style.overflow = '';
+  };
+
+  trigger.addEventListener('click', openPreviewZoomModal);
+  backdrop.addEventListener('click', closeModal);
+  closeBtn.addEventListener('click', closeModal);
+  document.addEventListener('keydown', (e) => {
+    if (!modal.classList.contains('hidden') && e.key === 'Escape') closeModal();
+  });
 }
 
 /* ================================================================
@@ -1126,10 +1184,13 @@ async function initMonogramBuilder() {
   initFramePicker();
 
   await loadGoogleFont(MonogramState.fontFamily);
+  applyPhoneFontSizeRange();
   await renderMonogram();
 
   /* ---- Position nudge controls ---- */
   initPositionControls();
+  initPreviewZoomModal();
+  window.addEventListener('resize', applyPhoneFontSizeRange);
 
   /* ---- Wire controls ---- */
 
@@ -1158,8 +1219,10 @@ async function initMonogramBuilder() {
   /* ---- Font size controls ---- */
   const fontSize1Input = document.getElementById('mono-fontsize1');
   const fontSize1Range = document.getElementById('mono-fontsize1-range');
+  const fontSize1Reset = document.getElementById('mono-fontsize1-reset');
   const fontSize2Input = document.getElementById('mono-fontsize2');
   const fontSize2Range = document.getElementById('mono-fontsize2-range');
+  const fontSize2Reset = document.getElementById('mono-fontsize2-reset');
 
   function syncFontSize1(val) {
     const v = parseInt(val) || 0;
@@ -1180,6 +1243,8 @@ async function initMonogramBuilder() {
   if (fontSize1Range) fontSize1Range.addEventListener('input', () => syncFontSize1(fontSize1Range.value));
   if (fontSize2Input) fontSize2Input.addEventListener('input', () => syncFontSize2(fontSize2Input.value));
   if (fontSize2Range) fontSize2Range.addEventListener('input', () => syncFontSize2(fontSize2Range.value));
+  if (fontSize1Reset) fontSize1Reset.addEventListener('click', () => syncFontSize1(0));
+  if (fontSize2Reset) fontSize2Reset.addEventListener('click', () => syncFontSize2(0));
 
   /* ---- Text position controls ---- */
   const offsetX1 = document.getElementById('mono-offsetx1');
