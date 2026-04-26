@@ -324,9 +324,9 @@ function buildCard(project) {
   const status = normalizeStatus(project.status);
   const lastActivity = project.submitted_at || project.last_saved_at || project.created_at;
   const tags = [
-    payload.print_size ? `🖨️ ${payload.print_size}` : '',
-    payload.backdrop ? `🎨 ${payload.backdrop}` : '',
-    payload.parking ? `🅿️ ${payload.parking === 'yes' ? 'Parking confirmed' : 'Parking needed'}` : '',
+    payload.print_size ? `Print ${payload.print_size}` : '',
+    payload.backdrop ? `Backdrop ${payload.backdrop}` : '',
+    payload.parking ? `Parking ${payload.parking === 'yes' ? 'confirmed' : 'needed'}` : '',
   ].filter(Boolean);
 
   const info = document.createElement('div');
