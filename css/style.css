@@ -1831,9 +1831,34 @@ h1, h2, h3 {
   justify-content: center;
 }
 
-.admin-toolbar { display: flex; gap: 0.75rem; margin-bottom: 1.5rem; flex-wrap: wrap; }
-.search-input { flex: 1; min-width: 200px; }
-.admin-sort-select { min-width: 220px; }
+.admin-toolbar {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  margin-bottom: 1.5rem;
+}
+
+.admin-toolbar-row {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.admin-toolbar-row--bottom {
+  justify-content: space-between;
+}
+
+.search-input { flex: 1; min-width: 200px; width: 100%; }
+.admin-sort-select,
+.admin-toolbar-compact-btn {
+  width: 120px;
+  min-width: 120px;
+}
+
+.admin-sort-select {
+  flex: 0 0 120px;
+}
 
 .submissions-list { display: flex; flex-direction: column; gap: 1rem; }
 .loading-state { text-align: center; color: var(--text-muted); font-style: italic; padding: 3rem; }
@@ -2391,8 +2416,14 @@ h1, h2, h3 {
     grid-template-columns: 1fr;
   }
 
-  .admin-sort-select {
+  .admin-toolbar-row--bottom {
+    align-items: stretch;
+  }
+
+  .admin-sort-select,
+  .admin-toolbar-compact-btn {
     width: 100%;
+    min-width: 0;
   }
 
   .admin-create-actions {

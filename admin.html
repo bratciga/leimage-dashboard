@@ -10,7 +10,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600&family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300&display=swap" rel="stylesheet" />
 
-  <link rel="stylesheet" href="css/style.css?v=71" />
+  <link rel="stylesheet" href="css/style.css?v=72" />
 </head>
 <body class="admin-page">
 
@@ -112,14 +112,16 @@
           placeholder="Search by client, event, date, or status…"
           aria-label="Search projects"
         />
-        <select id="sort-select" class="select-input admin-sort-select" aria-label="Sort projects">
-          <option value="recent">Sort: Recent activity</option>
-          <option value="name_asc">Name: A to Z</option>
-          <option value="name_desc">Name: Z to A</option>
-          <option value="event_date_desc">Event date: Newest first</option>
-          <option value="event_date_asc">Event date: Oldest first</option>
-        </select>
-        <button id="refresh-btn" class="btn btn-ghost">↻ Refresh</button>
+        <div class="admin-toolbar-row admin-toolbar-row--bottom">
+          <select id="sort-select" class="select-input admin-sort-select" aria-label="Sort projects">
+            <option value="recent">Sort: Recent activity</option>
+            <option value="name_asc">Name: A to Z</option>
+            <option value="name_desc">Name: Z to A</option>
+            <option value="event_date_desc">Event date: Newest first</option>
+            <option value="event_date_asc">Event date: Oldest first</option>
+          </select>
+          <button id="refresh-btn" class="btn btn-ghost admin-toolbar-compact-btn">↻ Refresh</button>
+        </div>
       </div>
 
       <div id="submissions-list" class="submissions-list" aria-live="polite">
@@ -133,7 +135,7 @@
     </main>
 
     <footer class="site-footer">
-      <p>© <span id="footer-year"></span> Le Image Photography Studio. Admin view · v71</p>
+      <p>© <span id="footer-year"></span> Le Image Photography Studio. Admin view · v72</p>
     </footer>
   </div>
 
@@ -148,6 +150,6 @@
     </div>
   </div>
 
-  <script src="js/admin.js?v=71"></script>
+  <script src="js/admin.js?v=72"></script>
 </body>
 </html>
