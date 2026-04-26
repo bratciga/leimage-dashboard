@@ -2583,20 +2583,16 @@ img, canvas, iframe, video {
 }
 
 .text-color-dot {
-  width: 32px;
-  height: 32px;
-  border-radius: 50%;
-  border: 2.5px solid var(--border);
-  padding: 2px;
-  cursor: pointer;
-  background: none;
-  flex-shrink: 0;
-  transition: all 0.15s ease;
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+  pointer-events: none;
 }
 
 .text-color-dot:hover {
-  transform: scale(1.1);
-  border-color: var(--navy);
+  transform: none;
+  border-color: var(--border);
 }
 
 .text-color-row .color-link-btn {
