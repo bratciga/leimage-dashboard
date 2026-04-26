@@ -2578,21 +2578,40 @@ img, canvas, iframe, video {
   color: var(--navy);
 }
 
+.quick-color-btn--swatch {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  border: 2.5px solid var(--border);
+  padding: 0;
+  font-size: 0;
+  flex-shrink: 0;
+}
+
+.quick-color-btn--swatch:hover {
+  transform: scale(1.1);
+  border-color: var(--text-muted);
+}
+
 .text-color-row .text-input {
   flex: 1;
 }
 
 .text-color-dot {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  opacity: 0;
-  pointer-events: none;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: 2.5px solid var(--border);
+  padding: 2px;
+  cursor: pointer;
+  background: none;
+  flex-shrink: 0;
+  transition: all 0.15s ease;
 }
 
 .text-color-dot:hover {
-  transform: none;
-  border-color: var(--border);
+  transform: scale(1.1);
+  border-color: var(--navy);
 }
 
 .text-color-row .color-link-btn {
