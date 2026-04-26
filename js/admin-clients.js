@@ -439,6 +439,7 @@ function openClientModal(client) {
         </div>
         <div class="detail-actions-row">
           <button type="button" class="btn btn-secondary btn-sm" onclick="window.copyClientLinkFromModal()">Copy Link</button>
+          ${submission && submission.monogram_png ? '<button type="button" class="btn btn-secondary btn-sm" onclick="window.downloadCurrentClientMonogram()">Download Monogram PNG</button>' : ''}
           <button type="button" class="btn btn-ghost btn-sm" onclick="window.prefillClientFormFromModal()">Edit Client</button>
         </div>
       </section>
@@ -498,9 +499,6 @@ function renderSubmissionDetails(submission) {
       ${submission.monogram_png ? `
         <div class="detail-monogram-block">
           <img src="${submission.monogram_png}" alt="Monogram preview" class="detail-monogram-preview detail-monogram-preview--large" />
-          <div class="detail-actions-row">
-            <button type="button" class="btn btn-secondary btn-sm" onclick="window.downloadCurrentClientMonogram()">Download Monogram PNG</button>
-          </div>
         </div>
       ` : ''}
 
