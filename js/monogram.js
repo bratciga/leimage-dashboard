@@ -98,6 +98,8 @@ const MonogramState = {
   // Font sizes (0 = auto-fit)
   fontSize1:      0,
   fontSize2:      0,
+  computedFontSize1: 0,
+  computedFontSize2: 0,
   // Text offsets
   offsetX1:       0,
   offsetY1:       0,
@@ -131,6 +133,8 @@ const _defaultMonogramState = {
   colorsLinked:   true,
   fontSize1:      0,
   fontSize2:      0,
+  computedFontSize1: 0,
+  computedFontSize2: 0,
   offsetX1:       0,
   offsetY1:       0,
   offsetX2:       0,
@@ -367,6 +371,7 @@ function initFramePicker() {
   const presets = [
     { name: 'Gold', color: '#c9a84c' },
     { name: 'Rose', color: '#b76e79' },
+    { name: 'Black', color: '#333333' },
   ];
 
   presets.forEach(preset => {
@@ -392,45 +397,16 @@ function initFramePicker() {
       window.FrameTemplates.clearCache();
       colorRow.querySelectorAll('.frame-color-swatch').forEach(s => s.classList.remove('active'));
       swatch.classList.add('active');
-      customInput.value = preset.color;
-      customHex.textContent = preset.color;
       updateFramePreviewColors();
       renderMonogram();
     });
   });
 
-  // Custom color picker
-  const customGroup = document.createElement('div');
-  customGroup.className = 'frame-color-swatch-group';
-
-  const customInput = document.createElement('input');
-  customInput.type = 'color';
-  customInput.className = 'frame-color-custom';
-  customInput.value = MonogramState.frameColor;
-  customInput.title = 'Custom color';
-
-  const customHex = document.createElement('span');
-  customHex.className = 'frame-color-swatch-label frame-color-hex';
-  customHex.textContent = MonogramState.frameColor;
-
-  customInput.addEventListener('input', () => {
-    MonogramState.frameColor = customInput.value;
-    window.FrameTemplates.clearCache();
-    colorRow.querySelectorAll('.frame-color-swatch').forEach(s => s.classList.remove('active'));
-    customHex.textContent = customInput.value;
-    updateFramePreviewColors();
-    renderMonogram();
-  });
-
-  customGroup.appendChild(customInput);
-  customGroup.appendChild(customHex);
-  swatchWrap.appendChild(customGroup);
-
   colorRow.appendChild(swatchWrap);
 
   // Add scale slider to the color row (shares sticky positioning)
   const scaleWrap = document.createElement('div');
-  scaleWrap.style.cssText = 'display:flex;align-items:center;gap:0.4rem;margin-left:auto;white-space:nowrap;';
+  scaleWrap.className = 'frame-scale-controls';
   const scaleLabel = document.createElement('span');
   scaleLabel.className = 'frame-color-label';
   scaleLabel.textContent = 'Scale';
@@ -443,7 +419,6 @@ function initFramePicker() {
   scaleVal.id = 'mono-frame-scale-val';
   scaleVal.className = 'range-val';
   scaleVal.textContent = '1.00x';
-  scaleVal.style.fontSize = '0.7rem';
   scaleWrap.appendChild(scaleLabel);
   scaleWrap.appendChild(scaleRange);
   scaleWrap.appendChild(scaleVal);
@@ -676,6 +651,9 @@ async function drawMonogramContent(ctx, spec, state, transparent = false) {
     }
   }
 
+  state.computedFontSize1 = size1;
+  state.computedFontSize2 = size2;
+
   const lineGap = zoneH * 0.04;
   const totalTextH = (line1 ? size1 : 0) + (line2 ? size2 + lineGap : 0);
 
@@ -775,6 +753,21 @@ async function renderMonogram() {
   ctx.lineTo(spec.w, clipTop);
   ctx.stroke();
   ctx.setLineDash([]);
+
+  syncAutoFontSizeControls();
+}
+
+function syncAutoFontSizeControls() {
+  const fontSize1Range = document.getElementById('mono-fontsize1-range');
+  const fontSize2Range = document.getElementById('mono-fontsize2-range');
+
+  if (fontSize1Range && (!MonogramState.fontSize1 || MonogramState.fontSize1 <= 0) && MonogramState.computedFontSize1 > 0) {
+    fontSize1Range.value = Math.min(parseInt(fontSize1Range.max || '300', 10), MonogramState.computedFontSize1);
+  }
+
+  if (fontSize2Range && (!MonogramState.fontSize2 || MonogramState.fontSize2 <= 0) && MonogramState.computedFontSize2 > 0) {
+    fontSize2Range.value = Math.min(parseInt(fontSize2Range.max || '300', 10), MonogramState.computedFontSize2);
+  }
 }
 
 /* ================================================================
@@ -1322,6 +1315,7 @@ async function initMonogramBuilder() {
   const matchToNames = document.getElementById('match-to-names');
   const warn1 = document.getElementById('color1-warning');
   const warn2 = document.getElementById('color2-warning');
+  const quickColorButtons = document.querySelectorAll('[data-quick-color-target]');
 
   function updateColorWarnings() {
     if (warn1) warn1.classList.toggle('hidden', !isColorTooLight(MonogramState.textColor1));
@@ -1407,6 +1401,17 @@ async function initMonogramBuilder() {
       scheduleRender();
     });
   }
+
+  quickColorButtons.forEach((btn) => {
+    btn.addEventListener('click', () => {
+      const targetId = btn.dataset.quickColorTarget;
+      const color = btn.dataset.color;
+      const input = document.getElementById(targetId);
+      if (!input || !color) return;
+      input.value = color;
+      input.dispatchEvent(new Event('input', { bubbles: true }));
+    });
+  });
 
   // Download button
   const dlBtn = document.getElementById('btn-download-preview');

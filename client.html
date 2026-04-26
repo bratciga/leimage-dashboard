@@ -9,7 +9,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300&display=swap" rel="stylesheet" />
 
-  <link rel="stylesheet" href="css/style.css?v=68" />
+  <link rel="stylesheet" href="css/style.css?v=72" />
 </head>
 <body>
 
@@ -364,6 +364,11 @@
               <input type="color" id="mono-color1" class="text-color-dot" value="#333333" title="Names color" />
               <button type="button" id="color-link-toggle" class="color-link-btn linked" title="Link/Unlink colors">🔗</button>
             </div>
+            <div class="quick-color-row" aria-label="Quick text colors for names">
+              <button type="button" class="quick-color-btn" data-quick-color-target="mono-color1" data-color="#c9a84c">Gold</button>
+              <button type="button" class="quick-color-btn" data-quick-color-target="mono-color1" data-color="#b76e79">Rose</button>
+              <button type="button" class="quick-color-btn" data-quick-color-target="mono-color1" data-color="#333333">Black</button>
+            </div>
             <!-- Per-field font (Names) -->
             <div class="field-sub-row">
               <div class="field-sub-col">
@@ -374,7 +379,7 @@
                 </div>
               </div>
               <div class="field-sub-col">
-                <label class="field-sublabel" for="mono-fontsize1">Size <span class="field-hint">(0 = auto)</span></label>
+                <label class="field-sublabel" for="mono-fontsize1">Size <span class="field-hint">(auto by default)</span></label>
                 <div class="fontsize-row">
                   <input type="number" id="mono-fontsize1" class="text-input text-input--xs" min="0" max="500" placeholder="auto" />
                   <input type="range" id="mono-fontsize1-range" class="range-input" min="0" max="300" value="0" />
@@ -392,6 +397,11 @@
               <input type="color" id="mono-color2" class="text-color-dot" value="#333333" title="Date color" />
               <button type="button" id="color-link-toggle-2" class="color-link-btn linked" title="Link/Unlink colors">🔗</button>
             </div>
+            <div class="quick-color-row" aria-label="Quick text colors for date">
+              <button type="button" class="quick-color-btn" data-quick-color-target="mono-color2" data-color="#c9a84c">Gold</button>
+              <button type="button" class="quick-color-btn" data-quick-color-target="mono-color2" data-color="#b76e79">Rose</button>
+              <button type="button" class="quick-color-btn" data-quick-color-target="mono-color2" data-color="#333333">Black</button>
+            </div>
             <!-- Per-field font (Date) -->
             <div class="field-sub-row">
               <div class="field-sub-col">
@@ -399,7 +409,7 @@
                 <select id="mono-font2" class="select-input select-input--sm"></select>
               </div>
               <div class="field-sub-col">
-                <label class="field-sublabel" for="mono-fontsize2">Size <span class="field-hint">(0 = auto)</span></label>
+                <label class="field-sublabel" for="mono-fontsize2">Size <span class="field-hint">(auto by default)</span></label>
                 <div class="fontsize-row">
                   <input type="number" id="mono-fontsize2" class="text-input text-input--xs" min="0" max="500" placeholder="auto" />
                   <input type="range" id="mono-fontsize2-range" class="range-input" min="0" max="300" value="0" />
@@ -547,7 +557,7 @@
 
   </main>
 
-  <footer style="text-align:center;padding:1rem 0 0.5rem;opacity:0.35;font-size:0.7rem;font-family:'Inter',sans-serif;">v68</footer>
+  <footer style="text-align:center;padding:1rem 0 0.5rem;opacity:0.35;font-size:0.7rem;font-family:'Inter',sans-serif;">v72</footer>
 
   <!-- ============================================================
        LIGHTBOX
@@ -601,9 +611,9 @@
     <p>© <span id="footer-year"></span> Le Image Photography Studio. All rights reserved.</p>
   </footer>
 
-  <script src="js/frames.js?v=68"></script>
-  <script src="js/monogram.js?v=68"></script>
-  <script src="js/app.js?v=68"></script>
+  <script src="js/frames.js?v=72"></script>
+  <script src="js/monogram.js?v=72"></script>
+  <script src="js/app.js?v=72"></script>
 
 </body>
 </html>
