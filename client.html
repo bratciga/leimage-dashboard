@@ -9,7 +9,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300&display=swap" rel="stylesheet" />
 
-  <link rel="stylesheet" href="css/style.css?v=65" />
+  <link rel="stylesheet" href="css/style.css?v=68" />
 </head>
 <body>
 
@@ -20,7 +20,7 @@
     <div class="header-inner">
       <a href="https://leimageinc.com" class="brand"><img src="assets/images/leimage-logo.png" alt="Le Image" class="brand-logo" /></a>
       <div class="header-sub">Photo Booth Configurator</div>
-      <button type="button" id="save-project-btn" class="btn btn-secondary btn-sm header-save-btn">⬇ Save</button>
+      <button type="button" id="save-project-btn" class="btn btn-secondary btn-sm header-save-btn">⬇ Save Progress</button>
     </div>
   </header>
 
@@ -525,11 +525,14 @@
       </div>
 
       <div class="card--submit-inner">
+        <div class="detail-actions-row" style="justify-content:center;margin-bottom:1rem;">
+          <button type="button" id="review-save-btn" class="btn btn-secondary btn-sm">⬇ Save Progress</button>
+        </div>
         <button type="button" id="submit-btn" class="btn btn-primary btn-large">
           Submit Configuration
         </button>
         <p class="submit-note">
-          By submitting, you confirm all selections above are accurate.
+          Save anytime and come back later using this same private link. By submitting, you confirm all selections above are accurate.
           Our team will review your configuration and reach out if needed.
         </p>
         <div id="submit-status" class="submit-status" aria-live="polite"></div>
@@ -544,7 +547,7 @@
 
   </main>
 
-  <footer style="text-align:center;padding:1rem 0 0.5rem;opacity:0.35;font-size:0.7rem;font-family:'Inter',sans-serif;">v65</footer>
+  <footer style="text-align:center;padding:1rem 0 0.5rem;opacity:0.35;font-size:0.7rem;font-family:'Inter',sans-serif;">v68</footer>
 
   <!-- ============================================================
        LIGHTBOX
@@ -598,9 +601,9 @@
     <p>© <span id="footer-year"></span> Le Image Photography Studio. All rights reserved.</p>
   </footer>
 
-  <script src="js/frames.js?v=65"></script>
-  <script src="js/monogram.js?v=65"></script>
-  <script src="js/app.js?v=65"></script>
+  <script src="js/frames.js?v=68"></script>
+  <script src="js/monogram.js?v=68"></script>
+  <script src="js/app.js?v=68"></script>
 
 </body>
 </html>

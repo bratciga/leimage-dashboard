@@ -103,6 +103,9 @@ async function initApp() {
   // Save button
   const saveBtn = document.getElementById('save-project-btn');
   if (saveBtn) saveBtn.addEventListener('click', () => saveProject());
+
+  const reviewSaveBtn = document.getElementById('review-save-btn');
+  if (reviewSaveBtn) reviewSaveBtn.addEventListener('click', () => saveProject());
 }
 
 /* ================================================================
@@ -147,10 +150,12 @@ function updateEventBanner() {
 function applyProjectLockState() {
   const locked = String(ActiveProjectRecord?.status || '').toLowerCase() === 'approved';
   const saveBtn = document.getElementById('save-project-btn');
+  const reviewSaveBtn = document.getElementById('review-save-btn');
   const submitBtn = document.getElementById('submit-btn');
   const statusEl = document.getElementById('submit-status');
 
   if (saveBtn) saveBtn.disabled = locked;
+  if (reviewSaveBtn) reviewSaveBtn.disabled = locked;
   if (submitBtn) submitBtn.disabled = locked;
 
   if (locked && statusEl) {

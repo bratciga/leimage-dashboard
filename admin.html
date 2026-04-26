@@ -10,13 +10,10 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600&family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300&display=swap" rel="stylesheet" />
 
-  <link rel="stylesheet" href="css/style.css?v=67" />
+  <link rel="stylesheet" href="css/style.css?v=68" />
 </head>
 <body class="admin-page">
 
-  <!-- ============================================================
-       LOGIN GATE — shown until authenticated
-  ============================================================ -->
   <div id="login-gate" class="login-gate">
     <div class="login-box">
       <div class="brand">Le Image</div>
@@ -38,12 +35,7 @@
     </div>
   </div>
 
-  <!-- ============================================================
-       ADMIN CONTENT — hidden until authenticated
-  ============================================================ -->
   <div id="admin-content" class="hidden">
-
-    <!-- Header -->
     <header class="site-header">
       <div class="header-inner">
         <div class="brand">Le Image</div>
@@ -53,13 +45,11 @@
     </header>
 
     <main class="container admin-container">
-
       <section class="card card-compact page-intro">
         <h1 class="section-title">Client Manager</h1>
-        <p class="section-desc" style="margin-bottom:0;">Create private client links, see every saved project, download monograms, and review exactly what each client selected.</p>
+        <p class="section-desc" style="margin-bottom:0;">Create private client links, review saved projects, download monograms, and manage client progress.</p>
       </section>
 
-      <!-- Stats bar -->
       <div class="stats-bar">
         <div class="stat-item">
           <span class="stat-value" id="total-count">0</span>
@@ -79,18 +69,16 @@
         <div class="admin-create-head">
           <div>
             <h2 class="section-title" style="margin-bottom:.35rem;">New Client</h2>
-            <p class="section-desc" style="margin-bottom:0;">Enter the couple name and event date, then tap Create to generate the private link.</p>
+            <p class="section-desc" style="margin-bottom:0;">Enter the client name and event date, then tap Create to generate the private link.</p>
           </div>
         </div>
 
-        <div class="admin-create-grid">
+        <input id="event-slug-input" type="hidden" />
+
+        <div class="admin-create-grid admin-create-grid--two-up">
           <div class="field-group">
             <label class="field-label" for="client-name-input">Client name</label>
             <input id="client-name-input" class="text-input" type="text" placeholder="Example: Sarah & Luis" />
-          </div>
-          <div class="field-group">
-            <label class="field-label" for="event-slug-input">Event slug</label>
-            <input id="event-slug-input" class="text-input" type="text" placeholder="Example: sarah-luis-2026-06-20" />
           </div>
           <div class="field-group">
             <label class="field-label" for="event-date-input">Event date</label>
@@ -116,45 +104,39 @@
         </div>
       </section>
 
-      <!-- Toolbar: search + export -->
       <div class="admin-toolbar">
         <input
           type="search"
           id="search-input"
           class="text-input search-input"
-          placeholder="Search by client, event, token, or status…"
+          placeholder="Search by client, event, date, or status…"
           aria-label="Search projects"
         />
-        <button id="export-all-btn" class="btn btn-secondary">
-          ↓ Export All (JSON)
-        </button>
-        <button id="refresh-btn" class="btn btn-ghost">
-          ↻ Refresh
-        </button>
+        <select id="sort-select" class="select-input admin-sort-select" aria-label="Sort projects">
+          <option value="recent">Sort: Recent activity</option>
+          <option value="name_asc">Name: A to Z</option>
+          <option value="name_desc">Name: Z to A</option>
+          <option value="event_date_desc">Event date: Newest first</option>
+          <option value="event_date_asc">Event date: Oldest first</option>
+        </select>
+        <button id="refresh-btn" class="btn btn-ghost">↻ Refresh</button>
       </div>
 
-      <!-- Submission list -->
       <div id="submissions-list" class="submissions-list" aria-live="polite">
         <div class="loading-state">Loading projects…</div>
       </div>
 
-      <!-- Empty state (shown when no results) -->
       <div id="empty-state" class="empty-state hidden">
         <div class="empty-icon">✦</div>
         <p>No projects found.</p>
       </div>
-
     </main>
 
     <footer class="site-footer">
-      <p>© <span id="footer-year"></span> Le Image Photography Studio. Admin view · v67</p>
+      <p>© <span id="footer-year"></span> Le Image Photography Studio. Admin view · v68</p>
     </footer>
+  </div>
 
-  </div><!-- /admin-content -->
-
-  <!-- ============================================================
-       SUBMISSION DETAIL MODAL
-  ============================================================ -->
   <div id="detail-modal" class="modal hidden" role="dialog" aria-modal="true" aria-label="Submission details">
     <div class="modal-backdrop" id="modal-backdrop"></div>
     <div class="modal-box">
@@ -166,7 +148,6 @@
     </div>
   </div>
 
-  <script src="js/admin.js?v=67"></script>
-
+  <script src="js/admin.js?v=68"></script>
 </body>
 </html>

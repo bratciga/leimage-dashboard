@@ -1800,6 +1800,10 @@ h1, h2, h3 {
   gap: 1rem;
 }
 
+.admin-create-grid--two-up {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
 .admin-create-actions {
   display: flex;
   justify-content: flex-start;
@@ -1813,6 +1817,7 @@ h1, h2, h3 {
 
 .admin-toolbar { display: flex; gap: 0.75rem; margin-bottom: 1.5rem; flex-wrap: wrap; }
 .search-input { flex: 1; min-width: 200px; }
+.admin-sort-select { min-width: 220px; }
 
 .submissions-list { display: flex; flex-direction: column; gap: 1rem; }
 .loading-state { text-align: center; color: var(--text-muted); font-style: italic; padding: 3rem; }
@@ -1911,7 +1916,7 @@ h1, h2, h3 {
   white-space: nowrap;
 }
 
-.submission-actions { display: flex; flex-direction: column; gap: 0.5rem; align-items: flex-end; flex-shrink: 0; }
+.submission-actions { display: flex; flex-direction: row; gap: 0.5rem; align-items: center; justify-content: flex-end; flex-wrap: wrap; flex-shrink: 0; }
 
 .empty-state { text-align: center; padding: 4rem 2rem; color: var(--text-muted); }
 .empty-icon { font-size: 2.5rem; color: var(--navy); margin-bottom: 1rem; opacity: 0.4; }
@@ -2351,6 +2356,14 @@ h1, h2, h3 {
 
   .detail-edit-grid {
     grid-template-columns: 1fr;
+  }
+
+  .admin-create-grid--two-up {
+    grid-template-columns: 1fr;
+  }
+
+  .admin-sort-select {
+    width: 100%;
   }
 
   .admin-create-actions {

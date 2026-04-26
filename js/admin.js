@@ -1,13 +1,5 @@
 /**
  * admin.js — Le Image Photo Booth Admin Dashboard
- *
- * Handles:
- *  - Password gate
- *  - Project creation with private token links
- *  - Loading projects from PHP JSON backend + local fallback
- *  - Search/filter by client, event, token, status
- *  - Detail modal with copy/open actions
- *  - Status updates and PNG download
  */
 
 'use strict';
@@ -19,12 +11,14 @@ const API = {
   create: 'api/create-project.php',
   list: 'api/list-projects.php',
   save: 'api/save-project.php',
+  remove: 'api/delete-project.php',
 };
 
 let allProjects = [];
 let filteredData = [];
 let lastCreatedLink = '';
 let currentModalProject = null;
+let currentSort = 'recent';
 
 document.addEventListener('DOMContentLoaded', () => {
   setFooterYear();
@@ -72,18 +66,17 @@ function showAdminContent() {
   });
 
   $('refresh-btn').addEventListener('click', loadProjects);
-  $('export-all-btn').addEventListener('click', exportAllJSON);
   $('create-project-btn').addEventListener('click', createProject);
   $('modal-close').addEventListener('click', closeModal);
   $('modal-backdrop').addEventListener('click', closeModal);
   $('client-name-input').addEventListener('input', syncSlugFromClient);
   $('client-name-input').addEventListener('keydown', handleCreateFieldEnter);
-  $('event-slug-input').addEventListener('keydown', handleCreateFieldEnter);
   $('event-date-input').addEventListener('keydown', handleCreateFieldEnter);
-  $('event-slug-input').addEventListener('input', () => {
-    $('event-slug-input').dataset.touched = $('event-slug-input').value.trim() ? '1' : '';
-  });
   $('search-input').addEventListener('input', applySearch);
+  $('sort-select').addEventListener('change', (event) => {
+    currentSort = event.target.value || 'recent';
+    applySearch();
+  });
 
   document.addEventListener('keydown', (e) => {
     if (e.key === 'Escape') closeModal();
@@ -94,7 +87,7 @@ function showAdminContent() {
 
 function syncSlugFromClient() {
   const slugInput = $('event-slug-input');
-  if (!slugInput || slugInput.dataset.touched === '1') return;
+  if (!slugInput) return;
   slugInput.value = slugify(getCreateFieldValue('client-name-input'));
 }
 
@@ -121,7 +114,7 @@ function slugify(input) {
 
 function getBaseClientUrl() {
   const url = new URL(window.location.href);
-  url.pathname = url.pathname.replace(/admin(?:-clients)?\.html$/, 'index.html');
+  url.pathname = url.pathname.replace(/admin(?:-clients)?\.html$/, 'client.html');
   url.search = '';
   url.hash = '';
   return url.toString();
@@ -179,8 +172,13 @@ function upsertLocalProject(project) {
   saveLocalProjects(existing);
 }
 
+function removeLocalProject(token) {
+  const existing = loadLocalProjects().filter((item) => item.token !== token);
+  saveLocalProjects(existing);
+}
+
 async function apiGet(url) {
-  const res = await fetch(url, { headers: { 'Accept': 'application/json' } });
+  const res = await fetch(url, { headers: { Accept: 'application/json' } });
   const payload = await res.json().catch(() => null);
   if (!res.ok || !payload) throw new Error(payload?.error || `Request failed (${res.status})`);
   return payload;
@@ -191,7 +189,7 @@ async function apiPost(url, data) {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
-      'Accept': 'application/json',
+      Accept: 'application/json',
     },
     body: JSON.stringify(data),
   });
@@ -213,21 +211,15 @@ async function loadProjects() {
   }
 
   const localProjects = loadLocalProjects();
-  const seen = new Set(projects.map((p) => p.token));
+  const merged = new Map();
+  projects.forEach((project) => merged.set(project.token, project));
   localProjects.forEach((project) => {
-    if (!seen.has(project.token)) projects.push(project);
+    if (!merged.has(project.token)) merged.set(project.token, project);
   });
 
-  projects.sort((a, b) => {
-    const aTime = new Date(a.submitted_at || a.last_saved_at || a.created_at || 0).getTime();
-    const bTime = new Date(b.submitted_at || b.last_saved_at || b.created_at || 0).getTime();
-    return bTime - aTime;
-  });
-
-  allProjects = projects;
-  filteredData = [...projects];
-  updateStats(projects);
-  renderList(projects);
+  allProjects = Array.from(merged.values());
+  updateStats(allProjects);
+  applySearch();
 }
 
 function updateStats(projects) {
@@ -241,16 +233,57 @@ function updateStats(projects) {
 
 function applySearch() {
   const q = ($('search-input').value || '').toLowerCase().trim();
-  filteredData = q
+  const filtered = q
     ? allProjects.filter((project) => [
         project.client_name,
         project.event_slug,
-        project.token,
         project.status,
         project.event_date,
       ].filter(Boolean).join(' ').toLowerCase().includes(q))
     : [...allProjects];
+
+  filteredData = sortProjects(filtered, currentSort);
   renderList(filteredData);
+}
+
+function sortProjects(projects, sortKey) {
+  const sorted = [...projects];
+
+  sorted.sort((a, b) => {
+    if (sortKey === 'name_asc') {
+      return compareText(a.client_name || a.event_slug, b.client_name || b.event_slug);
+    }
+    if (sortKey === 'name_desc') {
+      return compareText(b.client_name || b.event_slug, a.client_name || a.event_slug);
+    }
+    if (sortKey === 'event_date_asc') {
+      return compareDateValue(a.event_date, b.event_date, 'asc') || compareText(a.client_name || a.event_slug, b.client_name || b.event_slug);
+    }
+    if (sortKey === 'event_date_desc') {
+      return compareDateValue(a.event_date, b.event_date, 'desc') || compareText(a.client_name || a.event_slug, b.client_name || b.event_slug);
+    }
+
+    const aTime = new Date(a.submitted_at || a.last_saved_at || a.created_at || 0).getTime();
+    const bTime = new Date(b.submitted_at || b.last_saved_at || b.created_at || 0).getTime();
+    return bTime - aTime;
+  });
+
+  return sorted;
+}
+
+function compareText(a, b) {
+  return String(a || '').localeCompare(String(b || ''), undefined, { sensitivity: 'base' });
+}
+
+function compareDateValue(a, b, direction = 'asc') {
+  const aTime = a ? new Date(a).getTime() : Number.NaN;
+  const bTime = b ? new Date(b).getTime() : Number.NaN;
+  const aMissing = Number.isNaN(aTime);
+  const bMissing = Number.isNaN(bTime);
+  if (aMissing && bMissing) return 0;
+  if (aMissing) return 1;
+  if (bMissing) return -1;
+  return direction === 'desc' ? bTime - aTime : aTime - bTime;
 }
 
 function renderList(projects) {
@@ -285,17 +318,7 @@ function buildCard(project) {
 
   const thumb = document.createElement('div');
   thumb.className = 'submission-thumb';
-  if (project.monogram_png) {
-    const img = document.createElement('img');
-    img.src = project.monogram_png;
-    img.alt = 'Monogram preview';
-    thumb.appendChild(img);
-  } else {
-    thumb.style.display = 'flex';
-    thumb.style.alignItems = 'center';
-    thumb.style.justifyContent = 'center';
-    thumb.textContent = '✦';
-  }
+  thumb.appendChild(createMonogramPreviewNode(project, { className: 'submission-thumb-image' }));
 
   const payload = project.project_data || {};
   const status = normalizeStatus(project.status);
@@ -303,54 +326,67 @@ function buildCard(project) {
   const tags = [
     payload.print_size ? `🖨️ ${payload.print_size}` : '',
     payload.backdrop ? `🎨 ${payload.backdrop}` : '',
-    project.event_date ? `📅 ${project.event_date}` : '',
-    project.token ? `🔑 ${project.token.slice(0, 10)}…` : '',
+    payload.parking ? `🅿️ ${payload.parking === 'yes' ? 'Parking confirmed' : 'Parking needed'}` : '',
   ].filter(Boolean);
 
   const info = document.createElement('div');
   info.className = 'submission-info';
   info.innerHTML = `
+    <div class="submission-date submission-date--event">${escHtml(project.event_date ? formatEventDate(project.event_date) : 'No event date')}</div>
     <div class="submission-event">${escHtml(project.client_name || project.event_slug || 'Untitled Project')}</div>
-    <div class="submission-date">${escHtml(project.event_slug || 'No event slug')}</div>
     <div class="submission-status-row">
       <span class="status-pill status-pill--${escHtml(status)}">${escHtml(formatStatus(status))}</span>
       <span class="submission-date">Last activity: ${escHtml(formatDate(lastActivity))}</span>
     </div>
-    <div class="submission-tags">${tags.map((tag) => `<span class="tag">${escHtml(tag)}</span>`).join('')}</div>
+    <div class="submission-tags">${tags.length ? tags.map((tag) => `<span class="tag">${escHtml(tag)}</span>`).join('') : '<span class="tag">No selections saved yet</span>'}</div>
   `;
 
   const actions = document.createElement('div');
   actions.className = 'submission-actions';
 
-  const copyBtn = document.createElement('button');
-  copyBtn.className = 'btn btn-secondary btn-sm';
-  copyBtn.textContent = 'Copy Link';
-  copyBtn.addEventListener('click', async (e) => {
+  const copyBtn = buildActionButton('Copy Link', 'btn btn-secondary btn-sm', async (e) => {
     e.stopPropagation();
     await copyText(buildProjectLink(project.token));
     setCreateStatus(`Copied link for ${project.client_name || project.event_slug}.`, 'success');
   });
 
-  const viewBtn = document.createElement('button');
-  viewBtn.className = 'btn btn-ghost btn-sm';
-  viewBtn.textContent = 'View';
-  viewBtn.addEventListener('click', (e) => {
+  const downloadBtn = buildActionButton('Download', 'btn btn-secondary btn-sm', async (e) => {
+    e.stopPropagation();
+    await downloadMonogramPNG(project);
+  });
+  downloadBtn.disabled = !hasMonogramPreview(project);
+
+  const viewBtn = buildActionButton('View', 'btn btn-ghost btn-sm', (e) => {
     e.stopPropagation();
     openDetailModal(project);
   });
 
-  actions.appendChild(copyBtn);
-  actions.appendChild(viewBtn);
-  card.appendChild(thumb);
-  card.appendChild(info);
-  card.appendChild(actions);
+  const deleteBtn = buildActionButton('Delete', 'btn btn-ghost btn-sm btn-danger-lite', async (e) => {
+    e.stopPropagation();
+    await confirmDeleteProject(project);
+  });
+
+  actions.append(copyBtn, downloadBtn, viewBtn, deleteBtn);
+  card.append(thumb, info, actions);
 
   card.addEventListener('click', () => openDetailModal(project));
   card.addEventListener('keydown', (e) => {
-    if (e.key === 'Enter' || e.key === ' ') openDetailModal(project);
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      openDetailModal(project);
+    }
   });
 
   return card;
+}
+
+function buildActionButton(label, className, handler) {
+  const btn = document.createElement('button');
+  btn.type = 'button';
+  btn.className = className;
+  btn.textContent = label;
+  btn.addEventListener('click', handler);
+  return btn;
 }
 
 async function createProject() {
@@ -363,7 +399,7 @@ async function createProject() {
     return;
   }
   if (!event_slug) {
-    setCreateStatus('Event slug is required.', 'error');
+    setCreateStatus('Event slug could not be generated.', 'error');
     return;
   }
 
@@ -377,7 +413,6 @@ async function createProject() {
 
     $('client-name-input').value = '';
     $('event-slug-input').value = '';
-    $('event-slug-input').dataset.touched = '';
     $('event-date-input').value = '';
 
     await copyText(link);
@@ -397,92 +432,58 @@ function openDetailModal(project) {
   const title = $('modal-title');
   const payload = project.project_data || {};
   const link = buildProjectLink(project.token);
-  const normalizedStatus = normalizeStatus(project.status);
+  const hasPreview = hasMonogramPreview(project);
 
   title.textContent = project.client_name || project.event_slug || 'Project';
   body.innerHTML = `
     <div class="detail-section">
       <div class="detail-section-title">Project</div>
-      <div class="detail-edit-grid">
-        <div class="field-group">
-          <label class="field-label" for="modal-client-name">Client</label>
-          <input id="modal-client-name" class="text-input" type="text" value="${escAttr(project.client_name || '')}" />
-        </div>
-        <div class="field-group">
-          <label class="field-label" for="modal-event-slug">Event slug</label>
-          <input id="modal-event-slug" class="text-input" type="text" value="${escAttr(project.event_slug || '')}" />
-          <div class="field-help">Safe to edit. The private client link stays the same because it uses the token, not the slug.</div>
-        </div>
-        <div class="field-group">
-          <label class="field-label" for="modal-event-date">Event date</label>
-          <input id="modal-event-date" class="text-input" type="date" value="${escAttr(project.event_date || '')}" />
-        </div>
-        <div class="field-group">
-          <label class="field-label" for="modal-project-status">Status</label>
-          <select id="modal-project-status" class="select-input">
-            ${buildStatusOptions(normalizedStatus)}
-          </select>
-        </div>
-      </div>
-      <div class="detail-row"><span class="detail-key">Token</span><span class="detail-val">${escHtml(project.token || '—')}</span></div>
-      <div class="detail-row"><span class="detail-key">Created</span><span class="detail-val">${escHtml(formatDate(project.created_at))}</span></div>
-      <div class="detail-row"><span class="detail-key">Last saved</span><span class="detail-val">${escHtml(formatDate(project.last_saved_at))}</span></div>
-      <div class="detail-row"><span class="detail-key">Submitted</span><span class="detail-val">${escHtml(formatDate(project.submitted_at))}</span></div>
-      <div class="detail-actions-row">
-        <button class="btn btn-primary btn-sm" id="modal-save-project-details">Save Client Details</button>
-        <button class="btn btn-secondary btn-sm" id="modal-copy-link">Copy Client Link</button>
-        <button class="btn btn-ghost btn-sm" id="modal-open-link">Open Client Link</button>
-        <button class="btn btn-ghost btn-sm" id="modal-mark-submitted">Mark Submitted</button>
-        <button class="btn btn-primary btn-sm" id="modal-mark-approved">Approve & Lock</button>
-        <button class="btn btn-ghost btn-sm" id="modal-reopen-project">Reopen</button>
-      </div>
-      <div id="modal-save-status" class="submit-status" aria-live="polite"></div>
+      <div class="detail-row"><span class="detail-key">Client link</span><span class="detail-val" style="word-break:break-all;">${escHtml(link)}</span></div>
     </div>
 
     <div class="detail-section">
       <div class="detail-section-title">Configuration</div>
+      <div class="detail-row"><span class="detail-key">Props</span><span class="detail-val">${escHtml((payload.props || []).join(', ') || '—')}</span></div>
       <div class="detail-row"><span class="detail-key">Parking</span><span class="detail-val">${escHtml(payload.parking || '—')}</span></div>
       <div class="detail-row"><span class="detail-key">Backdrop</span><span class="detail-val">${escHtml(payload.backdrop || '—')}</span></div>
       <div class="detail-row"><span class="detail-key">Print size</span><span class="detail-val">${escHtml(payload.print_size || '—')}</span></div>
-      <div class="detail-row"><span class="detail-key">Props</span><span class="detail-val">${escHtml((payload.props || []).join(', ') || '—')}</span></div>
       <div class="detail-row"><span class="detail-key">Notes</span><span class="detail-val">${escHtml(payload.special_instructions || '—')}</span></div>
     </div>
 
     <div class="detail-section">
       <div class="detail-section-title">Monogram</div>
-      <div class="detail-row"><span class="detail-key">Line 1</span><span class="detail-val">${escHtml(payload.monogram?.line1 || '—')}</span></div>
-      <div class="detail-row"><span class="detail-key">Line 2</span><span class="detail-val">${escHtml(payload.monogram?.line2 || '—')}</span></div>
+      <div class="detail-row"><span class="detail-key">Names</span><span class="detail-val">${escHtml(payload.monogram?.line1 || '—')}</span></div>
+      <div class="detail-row"><span class="detail-key">Date line</span><span class="detail-val">${escHtml(payload.monogram?.line2 || '—')}</span></div>
       <div class="detail-row"><span class="detail-key">Font</span><span class="detail-val">${escHtml(payload.monogram?.font || payload.monogram?.fontFamily || '—')}</span></div>
       <div class="detail-row"><span class="detail-key">Text color</span><span class="detail-val">${escHtml(payload.monogram?.text_color1 || '—')}</span></div>
-      ${project.monogram_png ? `
-        <div style="margin-top:1rem;">
-          <img src="${project.monogram_png}" alt="Monogram" class="detail-monogram-preview" />
-        </div>
-        <div class="detail-actions-row" style="margin-top:1rem;">
-          <button class="btn btn-secondary btn-sm" id="modal-download-png">↓ Download PNG</button>
-        </div>
-      ` : '<p style="color:var(--text-muted);margin-top:1rem;">No monogram submitted yet.</p>'}
+      <div id="modal-monogram-preview-wrap" style="margin-top:1rem;"></div>
+      ${hasPreview ? '<div class="detail-actions-row" style="margin-top:1rem;"><button class="btn btn-secondary btn-sm" id="modal-download-png">↓ Download PNG</button></div>' : '<p style="color:var(--text-muted);margin-top:1rem;">No monogram saved yet.</p>'}
     </div>
 
     <div class="detail-section">
-      <div class="detail-section-title">Client Link</div>
-      <p style="word-break:break-all;color:var(--text);font-size:.9rem;">${escHtml(link)}</p>
+      <div class="detail-section-title">Activity</div>
+      <div class="detail-row"><span class="detail-key">Created</span><span class="detail-val">${escHtml(formatDate(project.created_at))}</span></div>
+      <div class="detail-row"><span class="detail-key">Last saved</span><span class="detail-val">${escHtml(formatDate(project.last_saved_at))}</span></div>
+      <div class="detail-row"><span class="detail-key">Submitted</span><span class="detail-val">${escHtml(formatDate(project.submitted_at))}</span></div>
+      <div class="detail-actions-row">
+        <button class="btn btn-ghost btn-sm btn-danger-lite" id="modal-delete-project">Delete Project</button>
+      </div>
     </div>
   `;
+
+  const previewWrap = $('modal-monogram-preview-wrap');
+  if (previewWrap && hasPreview) {
+    const previewNode = createMonogramPreviewNode(project, { className: 'detail-monogram-preview' });
+    previewWrap.appendChild(previewNode);
+  }
 
   $('detail-modal').classList.remove('hidden');
   document.body.style.overflow = 'hidden';
 
-  $('modal-copy-link')?.addEventListener('click', async () => {
-    await copyText(link);
-    setCreateStatus(`Copied link for ${project.client_name || project.event_slug}.`, 'success');
-  });
-  $('modal-open-link')?.addEventListener('click', () => window.open(link, '_blank', 'noopener'));
   $('modal-download-png')?.addEventListener('click', () => downloadMonogramPNG(project));
-  $('modal-mark-submitted')?.addEventListener('click', async () => updateProjectStatus(project, 'submitted'));
-  $('modal-mark-approved')?.addEventListener('click', async () => updateProjectStatus(project, 'approved'));
-  $('modal-reopen-project')?.addEventListener('click', async () => updateProjectStatus(project, 'in_progress'));
-  $('modal-save-project-details')?.addEventListener('click', async () => saveProjectDetails(project));
+  $('modal-delete-project')?.addEventListener('click', async () => {
+    await confirmDeleteProject(project);
+  });
 }
 
 function closeModal() {
@@ -491,126 +492,125 @@ function closeModal() {
   currentModalProject = null;
 }
 
-async function updateProjectStatus(project, status) {
-  try {
-    const updatedProject = {
-      ...project,
-      status,
-      last_saved_at: new Date().toISOString(),
-      submitted_at: status === 'submitted' && !project.submitted_at ? new Date().toISOString() : project.submitted_at,
-    };
-    const payload = await apiPost(API.save, updatedProject);
-    upsertLocalProject(payload.project);
-    setCreateStatus(`Updated ${payload.project.client_name || payload.project.event_slug} to ${formatStatus(status)}.`, 'success');
-    closeModal();
-    await loadProjects();
-  } catch (e) {
-    console.error('[Admin] status update failed:', e);
-    setCreateStatus(`Status update failed: ${e.message}`, 'error');
-  }
-}
-
-async function saveProjectDetails(project) {
-  const clientName = ($('modal-client-name')?.value || '').trim();
-  const eventSlug = slugify(($('modal-event-slug')?.value || '').trim());
-  const eventDate = ($('modal-event-date')?.value || '').trim() || null;
-  const status = normalizeStatus($('modal-project-status')?.value || project.status);
-  const statusEl = $('modal-save-status');
-  const saveBtn = $('modal-save-project-details');
-
-  if (!clientName) {
-    if (statusEl) {
-      statusEl.textContent = 'Client name is required.';
-      statusEl.className = 'submit-status error';
-    }
-    return;
-  }
-
-  if (!eventSlug) {
-    if (statusEl) {
-      statusEl.textContent = 'Event slug is required.';
-      statusEl.className = 'submit-status error';
-    }
-    return;
-  }
-
-  const updatedProject = {
-    ...project,
-    client_name: clientName,
-    event_slug: eventSlug,
-    event_date: eventDate,
-    status,
-    last_saved_at: new Date().toISOString(),
-    project_data: {
-      ...(project.project_data || {}),
-      client_name: clientName,
-      event_slug: eventSlug,
-      event_date: eventDate,
-    },
-  };
-
-  if (status === 'submitted' && !updatedProject.submitted_at) {
-    updatedProject.submitted_at = new Date().toISOString();
-  }
-  if (status !== 'submitted' && status !== 'approved') {
-    updatedProject.submitted_at = project.submitted_at || null;
-  }
-
-  if (saveBtn) saveBtn.disabled = true;
-  if (statusEl) {
-    statusEl.textContent = 'Saving client details…';
-    statusEl.className = 'submit-status loading';
-  }
+async function confirmDeleteProject(project) {
+  const label = project.client_name || project.event_slug || 'this project';
+  const confirmed = window.confirm(`Delete ${label}? This cannot be undone.`);
+  if (!confirmed) return;
 
   try {
-    const payload = await apiPost(API.save, updatedProject);
-    upsertLocalProject(payload.project);
-    if (statusEl) {
-      statusEl.textContent = 'Client details updated.';
-      statusEl.className = 'submit-status success';
+    await apiPost(API.remove, { token: project.token });
+    removeLocalProject(project.token);
+    setCreateStatus(`Deleted ${label}.`, 'success');
+    if (currentModalProject?.token === project.token) {
+      closeModal();
     }
-    setCreateStatus(`Updated ${payload.project.client_name || payload.project.event_slug}.`, 'success');
-    currentModalProject = payload.project;
     await loadProjects();
-    openDetailModal(payload.project);
   } catch (e) {
-    console.error('[Admin] project detail save failed:', e);
-    if (statusEl) {
-      statusEl.textContent = `Save failed: ${e.message}`;
-      statusEl.className = 'submit-status error';
-    }
-  } finally {
-    if (saveBtn) saveBtn.disabled = false;
+    console.error('[Admin] project delete failed:', e);
+    setCreateStatus(`Delete failed: ${e.message}`, 'error');
   }
 }
 
-function buildStatusOptions(selectedStatus) {
-  return ['invited', 'draft', 'in_progress', 'submitted', 'approved']
-    .map((status) => `<option value="${status}"${status === selectedStatus ? ' selected' : ''}>${escHtml(formatStatus(status))}</option>`)
-    .join('');
+function hasMonogramPreview(project) {
+  return Boolean(normalizeMonogramDataUrl(project?.monogram_png) || getMonogramFallbackData(project));
 }
 
-function downloadMonogramPNG(project) {
-  if (!project?.monogram_png) return;
-  const a = document.createElement('a');
-  a.href = project.monogram_png;
-  a.download = `${project.event_slug || 'monogram'}-monogram.png`;
-  a.click();
+function createMonogramPreviewNode(project, { className = '' } = {}) {
+  const normalizedSrc = normalizeMonogramDataUrl(project?.monogram_png);
+  if (normalizedSrc) {
+    const img = document.createElement('img');
+    img.src = normalizedSrc;
+    img.alt = 'Monogram preview';
+    if (className) img.className = className;
+    img.addEventListener('error', () => {
+      const fallback = createFallbackMonogramCanvas(project, className);
+      img.replaceWith(fallback);
+    }, { once: true });
+    return img;
+  }
+
+  return createFallbackMonogramCanvas(project, className);
 }
 
-function exportAllJSON() {
-  if (!allProjects.length) {
-    alert('No projects to export.');
+function normalizeMonogramDataUrl(value) {
+  if (!value || typeof value !== 'string') return '';
+  const trimmed = value.trim();
+  if (!trimmed) return '';
+  if (trimmed.startsWith('data:image/')) return trimmed;
+  if (/^[A-Za-z0-9+/=\s]+$/.test(trimmed) && trimmed.length > 100) {
+    return `data:image/png;base64,${trimmed.replace(/\s+/g, '')}`;
+  }
+  return trimmed;
+}
+
+function getMonogramFallbackData(project) {
+  const mono = project?.project_data?.monogram;
+  if (!mono) return null;
+  if (!String(mono.line1 || '').trim() && !String(mono.line2 || '').trim()) return null;
+  return mono;
+}
+
+function createFallbackMonogramCanvas(project, className = '') {
+  const mono = getMonogramFallbackData(project);
+  const canvas = document.createElement('canvas');
+  canvas.width = 800;
+  canvas.height = 320;
+  canvas.setAttribute('aria-label', 'Monogram preview');
+  if (className) canvas.className = className;
+  const ctx = canvas.getContext('2d');
+
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+  if (!mono) {
+    ctx.fillStyle = '#a6a0a0';
+    ctx.font = '32px Cormorant Garamond, serif';
+    ctx.textAlign = 'center';
+    ctx.fillText('No monogram', canvas.width / 2, canvas.height / 2 + 10);
+    return canvas;
+  }
+
+  const line1 = String(mono.line1 || '').trim();
+  const line2 = String(mono.line2 || '').trim();
+  const color1 = mono.text_color1 || '#333333';
+  const color2 = mono.text_color2 || color1;
+  const font1 = mono.fontFamily1 || mono.font || mono.fontFamily || 'Cormorant Garamond';
+  const font2 = mono.fontFamily2 || mono.font || mono.fontFamily || 'Cormorant Garamond';
+
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+
+  if (line1) {
+    ctx.fillStyle = color1;
+    ctx.font = `64px "${font1}", serif`;
+    ctx.fillText(line1, canvas.width / 2, line2 ? 130 : 160, canvas.width - 60);
+  }
+
+  if (line2) {
+    ctx.fillStyle = color2;
+    ctx.font = `40px "${font2}", serif`;
+    ctx.fillText(line2, canvas.width / 2, line1 ? 215 : 170, canvas.width - 60);
+  }
+
+  return canvas;
+}
+
+async function downloadMonogramPNG(project) {
+  const normalizedSrc = normalizeMonogramDataUrl(project?.monogram_png);
+  const fileName = `${project.event_slug || 'monogram'}-monogram.png`;
+
+  if (normalizedSrc) {
+    const a = document.createElement('a');
+    a.href = normalizedSrc;
+    a.download = fileName;
+    a.click();
     return;
   }
 
-  const blob = new Blob([JSON.stringify(allProjects, null, 2)], { type: 'application/json' });
-  const url = URL.createObjectURL(blob);
+  const fallback = createFallbackMonogramCanvas(project);
   const a = document.createElement('a');
-  a.href = url;
-  a.download = `leimage-photobooth-projects-${Date.now()}.json`;
+  a.href = fallback.toDataURL('image/png');
+  a.download = fileName;
   a.click();
-  URL.revokeObjectURL(url);
 }
 
 async function copyText(text) {
@@ -633,6 +633,14 @@ function formatDate(value) {
   return Number.isNaN(dt.getTime()) ? String(value) : dt.toLocaleString();
 }
 
+function formatEventDate(value) {
+  if (!value) return '—';
+  const dt = new Date(`${value}T00:00:00`);
+  return Number.isNaN(dt.getTime())
+    ? String(value)
+    : dt.toLocaleDateString(undefined, { year: 'numeric', month: 'long', day: 'numeric' });
+}
+
 function escHtml(str) {
   return String(str ?? '')
     .replace(/&/g, '&amp;')
@@ -642,8 +650,5 @@ function escHtml(str) {
     .replace(/'/g, '&#039;');
 }
 
-function escAttr(str) {
-  return escHtml(str).replace(/`/g, '&#096;');
-}
-
 window.downloadMonogramPNG = downloadMonogramPNG;
+window.copyText = copyText;
