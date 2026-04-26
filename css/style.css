@@ -1800,6 +1800,17 @@ h1, h2, h3 {
   gap: 1rem;
 }
 
+.admin-create-actions {
+  display: flex;
+  justify-content: flex-start;
+  margin-top: 1rem;
+}
+
+.admin-create-btn {
+  min-width: 160px;
+  justify-content: center;
+}
+
 .admin-toolbar { display: flex; gap: 0.75rem; margin-bottom: 1.5rem; flex-wrap: wrap; }
 .search-input { flex: 1; min-width: 200px; }
 
@@ -2340,6 +2351,15 @@ h1, h2, h3 {
 
   .detail-edit-grid {
     grid-template-columns: 1fr;
+  }
+
+  .admin-create-actions {
+    justify-content: stretch;
+  }
+
+  .admin-create-btn {
+    width: 100%;
+    min-height: 44px;
   }
 }
 
