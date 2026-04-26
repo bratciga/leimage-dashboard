@@ -1804,6 +1804,10 @@ h1, h2, h3 {
   grid-template-columns: repeat(2, minmax(0, 1fr));
 }
 
+.admin-create-grid .text-input {
+  height: 46px;
+}
+
 .admin-create-actions {
   display: flex;
   justify-content: flex-start;
