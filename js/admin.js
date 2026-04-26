@@ -77,6 +77,9 @@ function showAdminContent() {
   $('modal-close').addEventListener('click', closeModal);
   $('modal-backdrop').addEventListener('click', closeModal);
   $('client-name-input').addEventListener('input', syncSlugFromClient);
+  $('client-name-input').addEventListener('keydown', handleCreateFieldEnter);
+  $('event-slug-input').addEventListener('keydown', handleCreateFieldEnter);
+  $('event-date-input').addEventListener('keydown', handleCreateFieldEnter);
   $('event-slug-input').addEventListener('input', () => {
     $('event-slug-input').dataset.touched = $('event-slug-input').value.trim() ? '1' : '';
   });
@@ -92,7 +95,18 @@ function showAdminContent() {
 function syncSlugFromClient() {
   const slugInput = $('event-slug-input');
   if (!slugInput || slugInput.dataset.touched === '1') return;
-  slugInput.value = slugify($('client-name-input').value || '');
+  slugInput.value = slugify(getCreateFieldValue('client-name-input'));
+}
+
+function handleCreateFieldEnter(event) {
+  if (event.key !== 'Enter') return;
+  event.preventDefault();
+  createProject();
+}
+
+function getCreateFieldValue(id) {
+  const el = $(id);
+  return el && typeof el.value === 'string' ? el.value : '';
 }
 
 function slugify(input) {
@@ -340,9 +354,9 @@ function buildCard(project) {
 }
 
 async function createProject() {
-  const client_name = ($('client-name-input').value || '').trim();
-  const event_slug = slugify(($('event-slug-input').value || client_name).trim());
-  const event_date = $('event-date-input').value || null;
+  const client_name = getCreateFieldValue('client-name-input').trim();
+  const event_slug = slugify((getCreateFieldValue('event-slug-input') || client_name).trim());
+  const event_date = getCreateFieldValue('event-date-input') || null;
 
   if (!client_name) {
     setCreateStatus('Client name is required.', 'error');
