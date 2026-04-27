@@ -148,12 +148,10 @@ function updateEventBanner() {
 function applyProjectLockState() {
   const locked = String(ActiveProjectRecord?.status || '').toLowerCase() === 'approved';
   const saveBtn = document.getElementById('save-project-btn');
-  const reviewSaveBtn = document.getElementById('review-save-btn');
   const submitBtn = document.getElementById('submit-btn');
   const statusEl = document.getElementById('submit-status');
 
   if (saveBtn) saveBtn.disabled = locked;
-  if (reviewSaveBtn) reviewSaveBtn.disabled = locked;
   if (submitBtn) submitBtn.disabled = locked;
 
   if (locked && statusEl) {
@@ -198,11 +196,12 @@ function initWizardNavigation() {
     });
   });
 
-  // Progress bar step bubbles — allow clicking completed steps
+  // Progress bar step bubbles — allow clicking any step up to current progress
   document.querySelectorAll('.wizard-step').forEach(bubble => {
+    bubble.style.cursor = 'pointer';
     bubble.addEventListener('click', () => {
       const stepNum = parseInt(bubble.dataset.step, 10);
-      if (stepNum < WizardState.currentStep) {
+      if (stepNum <= WizardState.currentStep) {
         goToStep(stepNum);
       }
     });
@@ -506,21 +505,31 @@ function initLightbox() {
   let lastTouchTime = 0;
   let lastTouchTrigger = null;
   document.addEventListener('touchend', (e) => {
-    const trigger = e.target.closest('.lightbox-trigger');
+    const printCard = e.target.closest('.print-card.toggle-selectable');
+    const trigger = e.target.closest('.lightbox-trigger') || printCard;
     if (!trigger) return;
 
+    const touchKey = printCard || trigger;
     const now = Date.now();
-    if (lastTouchTrigger === trigger && now - lastTouchTime < 350) {
+    if (lastTouchTrigger === touchKey && now - lastTouchTime < 350) {
       e.preventDefault();
       e.stopPropagation();
-      openFromTrigger(trigger);
+      if (printCard) {
+        const src = printCard.dataset.lightboxSrc || '';
+        const alt = printCard.dataset.lightboxAlt || '';
+        if (src) {
+          openLightbox(src, alt, [{ src, alt }], 0);
+        }
+      } else {
+        openFromTrigger(trigger);
+      }
       lastTouchTime = 0;
       lastTouchTrigger = null;
       return;
     }
 
     lastTouchTime = now;
-    lastTouchTrigger = trigger;
+    lastTouchTrigger = touchKey;
   }, { passive: false });
 
   // Zoom toggle in lightbox
@@ -1014,10 +1023,8 @@ function setStatus(msg, type) {
   el.className   = `submit-status ${type}`;
 }
 
-function showSuccessOverlay(eventSlug) {
+function showSuccessOverlay() {
   const overlay = document.getElementById('success-overlay');
-  const nameEl  = document.getElementById('success-event-name');
-  if (nameEl) nameEl.textContent = eventSlug;
   if (overlay) overlay.classList.remove('hidden');
 }
 

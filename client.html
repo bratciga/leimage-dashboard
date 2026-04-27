@@ -11,7 +11,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300&display=swap" rel="stylesheet" />
 
-  <link rel="stylesheet" href="css/style.css?v=76" />
+  <link rel="stylesheet" href="css/style.css?v=77" />
 </head>
 <body>
 
@@ -310,7 +310,7 @@
 
       <div class="print-grid" role="group" aria-label="Print size selection">
 
-        <div class="print-card toggle-selectable" data-group="print_size" data-value="4x6">
+        <div class="print-card toggle-selectable" data-group="print_size" data-value="4x6" data-lightbox-src="assets/images/prints/4x6-sample.jpg" data-lightbox-alt="4×6 print sample">
           <div class="print-preview print-preview--4x6 lightbox-trigger" data-src="assets/images/prints/4x6-sample.jpg" data-alt="4×6 print sample">
             <img src="assets/images/prints/4x6-sample.jpg" alt="4×6 print sample" class="print-img" />
           </div>
@@ -318,7 +318,7 @@
           <span class="check-mark">✓</span>
         </div>
 
-        <div class="print-card toggle-selectable" data-group="print_size" data-value="2x6">
+        <div class="print-card toggle-selectable" data-group="print_size" data-value="2x6" data-lightbox-src="assets/images/prints/2x6-sample.jpg" data-lightbox-alt="2×6 strip sample">
           <div class="print-preview print-preview--2x6 lightbox-trigger" data-src="assets/images/prints/2x6-sample.jpg" data-alt="2×6 strip sample">
             <img src="assets/images/prints/2x6-sample.jpg" alt="2×6 strip sample" class="print-img" />
           </div>
@@ -540,11 +540,11 @@
 
       <div class="card--submit-inner">
         <button type="button" id="submit-btn" class="btn btn-primary btn-large">
-          Submit Configuration
+          Submit
         </button>
         <p class="submit-note">
-          Save anytime and come back later using this same private link. By submitting, you confirm all selections above are accurate.
-          Our team will review your configuration and reach out if needed.
+          By submitting, you confirm all selections above are accurate.
+          Our team will review your monogram and reach out if needed.
         </p>
         <div id="submit-status" class="submit-status" aria-live="polite"></div>
       </div>
@@ -558,7 +558,7 @@
 
   </main>
 
-  <footer style="text-align:center;padding:1rem 0 0.5rem;opacity:0.35;font-size:0.7rem;font-family:'Inter',sans-serif;">v76</footer>
+  <footer style="text-align:center;padding:1rem 0 0.5rem;opacity:0.35;font-size:0.7rem;font-family:'Inter',sans-serif;">v77</footer>
 
   <!-- ============================================================
        LIGHTBOX
@@ -596,8 +596,7 @@
     <div class="success-box">
       <div class="success-icon">✦</div>
       <h2>All Set!</h2>
-      <p>Your photo booth configuration has been submitted successfully.</p>
-      <p class="success-ref">Event reference: <strong id="success-event-name"></strong></p>
+      <p>Your photo booth monogram has been submitted successfully.</p>
       <p>Our team will review your selections and reach out if we have any questions.</p>
       <button class="btn btn-primary" onclick="document.getElementById('success-overlay').classList.add('hidden')">
         Close
@@ -613,8 +612,8 @@
   </footer>
 
   <script src="js/frames.js?v=74"></script>
-  <script src="js/monogram.js?v=76"></script>
-  <script src="js/app.js?v=76"></script>
+  <script src="js/monogram.js?v=77"></script>
+  <script src="js/app.js?v=77"></script>
 
 </body>
 </html>
