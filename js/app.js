@@ -197,11 +197,26 @@ function initWizardNavigation() {
   });
 
   // Progress bar step bubbles — allow clicking any step up to current progress
-  document.querySelectorAll('.wizard-step').forEach(bubble => {
-    bubble.style.cursor = 'pointer';
-    bubble.addEventListener('click', () => {
+  const track = document.querySelector('.wizard-steps-track');
+  if (track) {
+    track.addEventListener('click', (e) => {
+      const bubble = e.target.closest('.wizard-step');
+      if (!bubble) return;
       const stepNum = parseInt(bubble.dataset.step, 10);
-      if (stepNum <= WizardState.currentStep) {
+      if (!Number.isNaN(stepNum) && stepNum <= WizardState.currentStep) {
+        goToStep(stepNum);
+      }
+    });
+  }
+
+  document.querySelectorAll('.wizard-step').forEach((bubble) => {
+    bubble.style.cursor = 'pointer';
+    bubble.tabIndex = 0;
+    bubble.addEventListener('keydown', (e) => {
+      if (e.key !== 'Enter' && e.key !== ' ') return;
+      e.preventDefault();
+      const stepNum = parseInt(bubble.dataset.step, 10);
+      if (!Number.isNaN(stepNum) && stepNum <= WizardState.currentStep) {
         goToStep(stepNum);
       }
     });
@@ -515,11 +530,9 @@ function initLightbox() {
       e.preventDefault();
       e.stopPropagation();
       if (printCard) {
-        const src = printCard.dataset.lightboxSrc || '';
-        const alt = printCard.dataset.lightboxAlt || '';
-        if (src) {
-          openLightbox(src, alt, [{ src, alt }], 0);
-        }
+        const src = printCard.dataset.lightboxSrc || printCard.dataset.src || '';
+        const alt = printCard.dataset.lightboxAlt || printCard.dataset.alt || '';
+        if (src) openLightbox(src, alt, [{ src, alt }], 0);
       } else {
         openFromTrigger(trigger);
       }
@@ -531,41 +544,6 @@ function initLightbox() {
     lastTouchTime = now;
     lastTouchTrigger = touchKey;
   }, { passive: false });
-
-  // Zoom toggle in lightbox
-  const lbZoom = document.getElementById('lightbox-zoom');
-  const lbScrollWrap = document.getElementById('lightbox-scroll-wrap');
-  let isZoomed = false;
-
-  if (lbZoom && lbScrollWrap) {
-    lbZoom.addEventListener('click', (e) => {
-      e.stopPropagation();
-      isZoomed = !isZoomed;
-      if (isZoomed) {
-        lbImg.style.maxWidth = 'none';
-        lbImg.style.maxHeight = 'none';
-        lbImg.style.width = '150%';
-        lbScrollWrap.style.overflow = 'auto';
-        lbZoom.textContent = '🔍 150%';
-      } else {
-        lbImg.style.maxWidth = '90vw';
-        lbImg.style.maxHeight = '85vh';
-        lbImg.style.width = '';
-        lbScrollWrap.style.overflow = 'hidden';
-        lbZoom.textContent = '🔍 Fit';
-      }
-    });
-  }
-
-  // Reset zoom on close
-  const origClose = closeLightbox;
-  closeLightbox = function() {
-    isZoomed = false;
-    if (lbImg) { lbImg.style.maxWidth = '90vw'; lbImg.style.maxHeight = '85vh'; lbImg.style.width = ''; }
-    if (lbScrollWrap) lbScrollWrap.style.overflow = 'hidden';
-    if (lbZoom) lbZoom.textContent = '🔍 Fit';
-    origClose();
-  };
 
   // Arrow navigation
   if (lbPrev) lbPrev.addEventListener('click', (e) => { e.stopPropagation(); showImage(currentIndex - 1); });
@@ -776,8 +754,9 @@ function openFullscreenPrintPreview() {
 
   // Responsive: fit within viewport while maintaining exact print ratio
   const isPhone = window.matchMedia('(max-width: 700px)').matches;
-  const vw = window.innerWidth * (isPhone ? 0.88 : 0.92);
-  const vh = window.innerHeight * (isPhone ? 0.76 : 0.88);
+  const isTabletTouch = !isPhone && window.matchMedia('(max-width: 1180px) and (pointer: coarse)').matches;
+  const vw = window.innerWidth * (isPhone ? 0.88 : isTabletTouch ? 0.84 : 0.92);
+  const vh = window.innerHeight * (isPhone ? 0.76 : isTabletTouch ? 0.74 : 0.88);
 
   if (is2x6) {
     const ratio = 430 / 1280; // w:h

@@ -11,7 +11,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300&display=swap" rel="stylesheet" />
 
-  <link rel="stylesheet" href="css/style.css?v=77" />
+  <link rel="stylesheet" href="css/style.css?v=78" />
 </head>
 <body>
 
@@ -310,7 +310,7 @@
 
       <div class="print-grid" role="group" aria-label="Print size selection">
 
-        <div class="print-card toggle-selectable" data-group="print_size" data-value="4x6" data-lightbox-src="assets/images/prints/4x6-sample.jpg" data-lightbox-alt="4×6 print sample">
+        <div class="print-card toggle-selectable lightbox-trigger" data-group="print_size" data-value="4x6" data-lightbox-src="assets/images/prints/4x6-sample.jpg" data-lightbox-alt="4×6 print sample" data-src="assets/images/prints/4x6-sample.jpg" data-alt="4×6 print sample">
           <div class="print-preview print-preview--4x6 lightbox-trigger" data-src="assets/images/prints/4x6-sample.jpg" data-alt="4×6 print sample">
             <img src="assets/images/prints/4x6-sample.jpg" alt="4×6 print sample" class="print-img" />
           </div>
@@ -318,7 +318,7 @@
           <span class="check-mark">✓</span>
         </div>
 
-        <div class="print-card toggle-selectable" data-group="print_size" data-value="2x6" data-lightbox-src="assets/images/prints/2x6-sample.jpg" data-lightbox-alt="2×6 strip sample">
+        <div class="print-card toggle-selectable lightbox-trigger" data-group="print_size" data-value="2x6" data-lightbox-src="assets/images/prints/2x6-sample.jpg" data-lightbox-alt="2×6 strip sample" data-src="assets/images/prints/2x6-sample.jpg" data-alt="2×6 strip sample">
           <div class="print-preview print-preview--2x6 lightbox-trigger" data-src="assets/images/prints/2x6-sample.jpg" data-alt="2×6 strip sample">
             <img src="assets/images/prints/2x6-sample.jpg" alt="2×6 strip sample" class="print-img" />
           </div>
@@ -558,7 +558,7 @@
 
   </main>
 
-  <footer style="text-align:center;padding:1rem 0 0.5rem;opacity:0.35;font-size:0.7rem;font-family:'Inter',sans-serif;">v77</footer>
+  <footer style="text-align:center;padding:1rem 0 0.5rem;opacity:0.35;font-size:0.7rem;font-family:'Inter',sans-serif;">v78</footer>
 
   <!-- ============================================================
        LIGHTBOX
@@ -567,10 +567,7 @@
     <div class="lightbox-backdrop" id="lightbox-backdrop"></div>
     <button class="lightbox-arrow lightbox-prev" id="lightbox-prev" aria-label="Previous image">‹</button>
     <div class="lightbox-box" id="lightbox-box">
-      <div class="lightbox-toolbar">
-        <button class="lightbox-zoom-btn" id="lightbox-zoom" aria-label="Toggle zoom">🔍 Fit</button>
-        <button class="lightbox-close" id="lightbox-close" aria-label="Close">✕</button>
-      </div>
+      <button class="lightbox-close" id="lightbox-close" aria-label="Close">✕</button>
       <div class="lightbox-scroll-wrap" id="lightbox-scroll-wrap">
         <img id="lightbox-img" src="" alt="" class="lightbox-img" />
       </div>
@@ -612,8 +609,8 @@
   </footer>
 
   <script src="js/frames.js?v=74"></script>
-  <script src="js/monogram.js?v=77"></script>
-  <script src="js/app.js?v=77"></script>
+  <script src="js/monogram.js?v=78"></script>
+  <script src="js/app.js?v=78"></script>
 
 </body>
 </html>
