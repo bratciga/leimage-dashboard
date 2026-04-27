@@ -196,14 +196,14 @@ function initWizardNavigation() {
     });
   });
 
-  // Progress bar step bubbles — allow clicking any step up to current progress
+  // Progress bar step bubbles — allow clicking any step directly
   const track = document.querySelector('.wizard-steps-track');
   if (track) {
     track.addEventListener('click', (e) => {
       const bubble = e.target.closest('.wizard-step');
       if (!bubble) return;
       const stepNum = parseInt(bubble.dataset.step, 10);
-      if (!Number.isNaN(stepNum) && stepNum <= WizardState.currentStep) {
+      if (!Number.isNaN(stepNum)) {
         goToStep(stepNum);
       }
     });
@@ -216,7 +216,7 @@ function initWizardNavigation() {
       if (e.key !== 'Enter' && e.key !== ' ') return;
       e.preventDefault();
       const stepNum = parseInt(bubble.dataset.step, 10);
-      if (!Number.isNaN(stepNum) && stepNum <= WizardState.currentStep) {
+      if (!Number.isNaN(stepNum)) {
         goToStep(stepNum);
       }
     });
