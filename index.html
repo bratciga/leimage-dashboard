@@ -11,7 +11,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300&display=swap" rel="stylesheet" />
 
-  <link rel="stylesheet" href="css/style.css?v=79" />
+  <link rel="stylesheet" href="css/style.css?v=80" />
 </head>
 <body>
 
@@ -381,9 +381,9 @@
                 </div>
               </div>
               <div class="field-sub-col">
-                <label class="field-sublabel" for="mono-fontsize1">Size <span class="field-hint fontsize-auto-hint">(auto by default)</span></label>
+                <label class="field-sublabel" for="mono-fontsize1">Size</label>
                 <div class="fontsize-row">
-                  <input type="number" id="mono-fontsize1" class="text-input text-input--xs" min="0" max="600" placeholder="auto" />
+                  <input type="number" id="mono-fontsize1" class="text-input text-input--xs" min="0" max="600" placeholder="100" />
                   <input type="range" id="mono-fontsize1-range" class="range-input" min="0" max="600" value="0" />
                   <button type="button" id="mono-fontsize1-reset" class="font-size-reset-btn" aria-label="Reset name size">↺</button>
                 </div>
@@ -412,9 +412,9 @@
                 <select id="mono-font2" class="select-input select-input--sm"></select>
               </div>
               <div class="field-sub-col">
-                <label class="field-sublabel" for="mono-fontsize2">Size <span class="field-hint fontsize-auto-hint">(auto by default)</span></label>
+                <label class="field-sublabel" for="mono-fontsize2">Size</label>
                 <div class="fontsize-row">
-                  <input type="number" id="mono-fontsize2" class="text-input text-input--xs" min="0" max="600" placeholder="auto" />
+                  <input type="number" id="mono-fontsize2" class="text-input text-input--xs" min="0" max="600" placeholder="100" />
                   <input type="range" id="mono-fontsize2-range" class="range-input" min="0" max="600" value="0" />
                   <button type="button" id="mono-fontsize2-reset" class="font-size-reset-btn" aria-label="Reset date size">↺</button>
                 </div>
@@ -425,9 +425,11 @@
 
           <!-- Position controls -->
           <div class="field-group">
-            <label class="field-label">Position</label>
+            <div class="field-label-row">
+              <label class="field-label">Position</label>
+              <button type="button" id="btn-reset-position" class="font-size-reset-btn" aria-label="Reset position">↺</button>
+            </div>
             <div id="position-controls"></div>
-            <button type="button" id="btn-reset-position" class="btn btn-ghost btn-xs" style="margin-top:0.5rem;">↺ Reset Position</button>
           </div>
 
           <!-- Hidden offset inputs for save/load compat -->
@@ -558,7 +560,7 @@
 
   </main>
 
-  <footer style="text-align:center;padding:1rem 0 0.5rem;opacity:0.35;font-size:0.7rem;font-family:'Inter',sans-serif;">v79</footer>
+  <footer style="text-align:center;padding:1rem 0 0.5rem;opacity:0.35;font-size:0.7rem;font-family:'Inter',sans-serif;">v80</footer>
 
   <!-- ============================================================
        LIGHTBOX
@@ -609,8 +611,8 @@
   </footer>
 
   <script src="js/frames.js?v=74"></script>
-  <script src="js/monogram.js?v=79"></script>
-  <script src="js/app.js?v=79"></script>
+  <script src="js/monogram.js?v=80"></script>
+  <script src="js/app.js?v=80"></script>
 
 </body>
 </html>

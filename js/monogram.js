@@ -757,16 +757,31 @@ async function renderMonogram() {
   syncAutoFontSizeControls();
 }
 
-function syncAutoFontSizeControls() {
-  const fontSize1Range = document.getElementById('mono-fontsize1-range');
-  const fontSize2Range = document.getElementById('mono-fontsize2-range');
+function getDefaultFontSizeDisplayValue() {
+  return 100;
+}
 
-  if (fontSize1Range && (!MonogramState.fontSize1 || MonogramState.fontSize1 <= 0) && MonogramState.computedFontSize1 > 0) {
-    fontSize1Range.value = Math.min(parseInt(fontSize1Range.max || '600', 10), MonogramState.computedFontSize1);
+function syncAutoFontSizeControls() {
+  const fontSize1Input = document.getElementById('mono-fontsize1');
+  const fontSize1Range = document.getElementById('mono-fontsize1-range');
+  const fontSize2Input = document.getElementById('mono-fontsize2');
+  const fontSize2Range = document.getElementById('mono-fontsize2-range');
+  const defaultValue = getDefaultFontSizeDisplayValue();
+
+  if (!MonogramState.fontSize1 || MonogramState.fontSize1 <= 0) {
+    if (fontSize1Input && fontSize1Input !== document.activeElement) fontSize1Input.value = String(defaultValue);
+    if (fontSize1Range) fontSize1Range.value = String(defaultValue);
+  } else {
+    if (fontSize1Input && fontSize1Input !== document.activeElement) fontSize1Input.value = String(MonogramState.fontSize1);
+    if (fontSize1Range) fontSize1Range.value = String(MonogramState.fontSize1);
   }
 
-  if (fontSize2Range && (!MonogramState.fontSize2 || MonogramState.fontSize2 <= 0) && MonogramState.computedFontSize2 > 0) {
-    fontSize2Range.value = Math.min(parseInt(fontSize2Range.max || '600', 10), MonogramState.computedFontSize2);
+  if (!MonogramState.fontSize2 || MonogramState.fontSize2 <= 0) {
+    if (fontSize2Input && fontSize2Input !== document.activeElement) fontSize2Input.value = String(defaultValue);
+    if (fontSize2Range) fontSize2Range.value = String(defaultValue);
+  } else {
+    if (fontSize2Input && fontSize2Input !== document.activeElement) fontSize2Input.value = String(MonogramState.fontSize2);
+    if (fontSize2Range) fontSize2Range.value = String(MonogramState.fontSize2);
   }
 }
 
@@ -1196,15 +1211,13 @@ async function initMonogramBuilder() {
   function syncFontSize1(val) {
     const v = parseInt(val) || 0;
     MonogramState.fontSize1 = v;
-    if (fontSize1Input && fontSize1Input !== document.activeElement) fontSize1Input.value = v || '';
-    if (fontSize1Range) fontSize1Range.value = v;
+    syncAutoFontSizeControls();
     scheduleRender();
   }
   function syncFontSize2(val) {
     const v = parseInt(val) || 0;
     MonogramState.fontSize2 = v;
-    if (fontSize2Input && fontSize2Input !== document.activeElement) fontSize2Input.value = v || '';
-    if (fontSize2Range) fontSize2Range.value = v;
+    syncAutoFontSizeControls();
     scheduleRender();
   }
 
@@ -1235,9 +1248,12 @@ async function initMonogramBuilder() {
   const resetPosBtn = document.getElementById('btn-reset-position');
   if (resetPosBtn) {
     resetPosBtn.addEventListener('click', () => {
+      const frameOffXInput = document.getElementById('mono-frame-offsetx');
+      const frameOffYInput = document.getElementById('mono-frame-offsety');
       MonogramState.offsetX1 = 0; MonogramState.offsetY1 = 0;
       MonogramState.offsetX2 = 0; MonogramState.offsetY2 = 0;
-      [offsetX1, offsetY1, offsetX2, offsetY2].forEach(el => { if (el) el.value = 0; });
+      MonogramState.frameOffsetX = 0; MonogramState.frameOffsetY = 0;
+      [offsetX1, offsetY1, offsetX2, offsetY2, frameOffXInput, frameOffYInput].forEach(el => { if (el) el.value = 0; });
       scheduleRender();
     });
   }
@@ -1284,10 +1300,10 @@ async function initMonogramBuilder() {
       if (fontLinkBtn) { fontLinkBtn.classList.add('linked'); fontLinkBtn.textContent = '🔗'; }
 
       // Font sizes
-      if (fontSize1Input) fontSize1Input.value = '';
-      if (fontSize1Range) fontSize1Range.value = 0;
-      if (fontSize2Input) fontSize2Input.value = '';
-      if (fontSize2Range) fontSize2Range.value = 0;
+      if (fontSize1Input) fontSize1Input.value = String(getDefaultFontSizeDisplayValue());
+      if (fontSize1Range) fontSize1Range.value = String(getDefaultFontSizeDisplayValue());
+      if (fontSize2Input) fontSize2Input.value = String(getDefaultFontSizeDisplayValue());
+      if (fontSize2Range) fontSize2Range.value = String(getDefaultFontSizeDisplayValue());
 
       // Offsets
       [offsetX1, offsetY1, offsetX2, offsetY2].forEach(el => { if (el) el.value = 0; });
