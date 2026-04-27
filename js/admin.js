@@ -179,9 +179,26 @@ function upsertLocalProject(project) {
   saveLocalProjects(existing);
 }
 
-function removeLocalProject(token) {
-  const existing = loadLocalProjects().filter((item) => item.token !== token);
-  saveLocalProjects(existing);
+function hasValidProjectToken(token) {
+  return /^pb_[a-z0-9]{12,64}$/.test(String(token || ''));
+}
+
+function removeLocalProject(projectOrToken) {
+  const existing = loadLocalProjects();
+  const project = typeof projectOrToken === 'string' ? { token: projectOrToken } : (projectOrToken || {});
+  const next = existing.filter((item) => {
+    if (project.token && item.token === project.token) return false;
+    if (!project.token) {
+      const sameSlug = project.event_slug && item.event_slug === project.event_slug;
+      const sameName = project.client_name && item.client_name === project.client_name;
+      const sameCreated = project.created_at && item.created_at === project.created_at;
+      if ((sameSlug && sameName) || (sameSlug && sameCreated) || (sameName && sameCreated)) {
+        return false;
+      }
+    }
+    return true;
+  });
+  saveLocalProjects(next);
 }
 
 async function apiGet(url) {
@@ -508,16 +525,35 @@ async function confirmDeleteProject(project) {
   const confirmed = window.confirm(`Delete ${label}? This cannot be undone.`);
   if (!confirmed) return;
 
-  try {
-    await apiPost(API.remove, { token: project.token });
-    removeLocalProject(project.token);
-    setCreateStatus(`Deleted ${label}.`, 'success');
-    if (currentModalProject?.token === project.token) {
+  const closeIfOpen = () => {
+    if (currentModalProject?.token === project.token || currentModalProject?.event_slug === project.event_slug) {
       closeModal();
     }
+  };
+
+  if (!hasValidProjectToken(project.token)) {
+    removeLocalProject(project);
+    setCreateStatus(`Deleted local project copy for ${label}.`, 'success');
+    closeIfOpen();
+    await loadProjects();
+    return;
+  }
+
+  try {
+    await apiPost(API.remove, { token: project.token });
+    removeLocalProject(project);
+    setCreateStatus(`Deleted ${label}.`, 'success');
+    closeIfOpen();
     await loadProjects();
   } catch (e) {
     console.error('[Admin] project delete failed:', e);
+    if (/Project not found|Invalid project token|Method not allowed/i.test(String(e.message || ''))) {
+      removeLocalProject(project);
+      setCreateStatus(`Deleted stale local copy for ${label}.`, 'success');
+      closeIfOpen();
+      await loadProjects();
+      return;
+    }
     setCreateStatus(`Delete failed: ${e.message}`, 'error');
   }
 }
