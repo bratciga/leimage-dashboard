@@ -515,6 +515,31 @@ function hasMonogramPreview(project) {
   return Boolean(normalizeMonogramDataUrl(project?.monogram_png) || getMonogramFallbackData(project));
 }
 
+function getProjectPrintSize(project) {
+  return project?.project_data?.print_size || project?.project_data?.printSize || project?.project_data?.monogram?.printSize || '4x6';
+}
+
+async function resolveProjectMonogramDataUrl(project) {
+  const normalizedSrc = normalizeMonogramDataUrl(project?.monogram_png);
+  if (normalizedSrc) return normalizedSrc;
+  if (project?._resolvedMonogramDataUrl) return project._resolvedMonogramDataUrl;
+
+  const mono = getMonogramFallbackData(project);
+  if (!mono || !window.MonogramBuilder?.exportSavedDataURL) return '';
+
+  try {
+    const dataUrl = await window.MonogramBuilder.exportSavedDataURL(mono, getProjectPrintSize(project));
+    if (dataUrl) {
+      project._resolvedMonogramDataUrl = dataUrl;
+      return dataUrl;
+    }
+  } catch (error) {
+    console.error('[Admin] failed to regenerate monogram preview:', error);
+  }
+
+  return '';
+}
+
 function createMonogramPreviewNode(project, { className = '' } = {}) {
   const normalizedSrc = normalizeMonogramDataUrl(project?.monogram_png);
   if (normalizedSrc) {
@@ -522,11 +547,33 @@ function createMonogramPreviewNode(project, { className = '' } = {}) {
     img.src = normalizedSrc;
     img.alt = 'Monogram preview';
     if (className) img.className = className;
-    img.addEventListener('error', () => {
+    img.addEventListener('error', async () => {
+      const regenerated = await resolveProjectMonogramDataUrl(project);
+      if (regenerated) {
+        img.src = regenerated;
+        return;
+      }
       const fallback = createFallbackMonogramCanvas(project, className);
       img.replaceWith(fallback);
     }, { once: true });
     return img;
+  }
+
+  if (getMonogramFallbackData(project) && window.MonogramBuilder?.exportSavedDataURL) {
+    const wrap = document.createElement('div');
+    if (className) wrap.className = className;
+    wrap.appendChild(createFallbackMonogramCanvas(project));
+    resolveProjectMonogramDataUrl(project).then((dataUrl) => {
+      if (!dataUrl) return;
+      const img = document.createElement('img');
+      img.src = dataUrl;
+      img.alt = 'Monogram preview';
+      if (className) img.className = className;
+      wrap.replaceWith(img);
+    }).catch((error) => {
+      console.error('[Admin] async monogram preview failed:', error);
+    });
+    return wrap;
   }
 
   return createFallbackMonogramCanvas(project, className);
@@ -595,7 +642,7 @@ function createFallbackMonogramCanvas(project, className = '') {
 }
 
 async function downloadMonogramPNG(project) {
-  const normalizedSrc = normalizeMonogramDataUrl(project?.monogram_png);
+  const normalizedSrc = await resolveProjectMonogramDataUrl(project);
   const fileName = `${project.event_slug || 'monogram'}-monogram.png`;
 
   if (normalizedSrc) {

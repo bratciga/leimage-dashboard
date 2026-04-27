@@ -976,6 +976,43 @@ function exportMonogramDataURL() {
   return getExportCanvas().then(c => c.toDataURL('image/png'));
 }
 
+function buildSavedMonogramState(savedMonogram = {}, printSize = '4x6') {
+  const fontFamily = savedMonogram.fontFamily || savedMonogram.font || _defaultMonogramState.fontFamily;
+  return {
+    ..._defaultMonogramState,
+    line1: String(savedMonogram.line1 || ''),
+    line2: String(savedMonogram.line2 || ''),
+    fontFamily,
+    fontFamily1: savedMonogram.fontFamily1 || fontFamily,
+    fontFamily2: savedMonogram.fontFamily2 || fontFamily,
+    fontsLinked: savedMonogram.fontsLinked !== undefined ? Boolean(savedMonogram.fontsLinked) : _defaultMonogramState.fontsLinked,
+    textColor1: savedMonogram.textColor1 || savedMonogram.text_color1 || _defaultMonogramState.textColor1,
+    textColor2: savedMonogram.textColor2 || savedMonogram.text_color2 || _defaultMonogramState.textColor2,
+    colorsLinked: savedMonogram.colorsLinked !== undefined ? Boolean(savedMonogram.colorsLinked) : _defaultMonogramState.colorsLinked,
+    fontSize1: parseInt(savedMonogram.fontSize1, 10) || 0,
+    fontSize2: parseInt(savedMonogram.fontSize2, 10) || 0,
+    offsetX1: parseInt(savedMonogram.offsetX1, 10) || 0,
+    offsetY1: parseInt(savedMonogram.offsetY1, 10) || 0,
+    offsetX2: parseInt(savedMonogram.offsetX2, 10) || 0,
+    offsetY2: parseInt(savedMonogram.offsetY2, 10) || 0,
+    flourish: savedMonogram.flourish || savedMonogram.flourish_style || savedMonogram.frame || 'none',
+    frame: savedMonogram.frame || savedMonogram.flourish || savedMonogram.flourish_style || 'none',
+    frameColor: savedMonogram.frameColor || savedMonogram.frame_color || _defaultMonogramState.frameColor,
+    frameScale: parseFloat(savedMonogram.frameScale) || 1,
+    frameOffsetX: parseInt(savedMonogram.frameOffsetX, 10) || 0,
+    frameOffsetY: parseInt(savedMonogram.frameOffsetY, 10) || 0,
+    printSize: savedMonogram.printSize || printSize || '4x6',
+  };
+}
+
+async function exportSavedMonogramDataURL(savedMonogram = {}, printSize = '4x6') {
+  const state = buildSavedMonogramState(savedMonogram, printSize);
+  const fontFamilies = [state.fontFamily, state.fontFamily1, state.fontFamily2].filter(Boolean);
+  await Promise.all(Array.from(new Set(fontFamilies)).map((family) => loadGoogleFont(family)));
+  const exportCanvas = await getExportCanvas(state, state.printSize);
+  return exportCanvas.toDataURL('image/png');
+}
+
 function fitBoxToTarget(srcAspect, targetW, targetH, scale = 1) {
   const safeScale = (scale > 0 && scale <= 1) ? scale : 1;
   const scaledTargetW = targetW * safeScale;
@@ -989,8 +1026,8 @@ function fitBoxToTarget(srcAspect, targetW, targetH, scale = 1) {
   return { dw, dh };
 }
 
-async function getExportCanvas() {
-  const printSize = MonogramState.printSize;
+async function getExportCanvas(state = MonogramState, explicitPrintSize = null) {
+  const printSize = explicitPrintSize || state.printSize || MonogramState.printSize;
   const print     = PRINT_DIMS[printSize] || PRINT_DIMS['4x6'];
   const is2x6     = printSize === '2x6';
 
@@ -1000,7 +1037,7 @@ async function getExportCanvas() {
   monoCanvas.width  = spec.w;
   monoCanvas.height = spec.h;
   const mctx = monoCanvas.getContext('2d');
-  await drawMonogramContent(mctx, spec, MonogramState, true);
+  await drawMonogramContent(mctx, spec, state, true);
 
   // --- find the actual bounding box of content ---
   const imgData = mctx.getImageData(0, 0, spec.w, spec.h);
@@ -1509,6 +1546,7 @@ window.MonogramBuilder = {
   updateBackdropColor: updateMonogramBackdropColor,
   exportPNG:           exportMonogramPNG,
   exportDataURL:       exportMonogramDataURL,
+  exportSavedDataURL:  exportSavedMonogramDataURL,
   state:               MonogramState,
   fonts:               MONOGRAM_FONTS,
 };

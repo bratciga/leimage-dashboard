@@ -845,12 +845,29 @@ function collectFormData() {
       line2:          mono.line2,
       font:           mono.fontFamily,
       fontFamily:     mono.fontFamily,
+      fontFamily1:    mono.fontFamily1,
+      fontFamily2:    mono.fontFamily2,
+      fontsLinked:    mono.fontsLinked,
+      textColor1:     mono.textColor1,
+      textColor2:     mono.textColor2,
       text_color1:    mono.textColor1,
       text_color2:    mono.textColor2,
       colorsLinked:   mono.colorsLinked,
+      fontSize1:      mono.fontSize1,
+      fontSize2:      mono.fontSize2,
+      offsetX1:       mono.offsetX1,
+      offsetY1:       mono.offsetY1,
+      offsetX2:       mono.offsetX2,
+      offsetY2:       mono.offsetY2,
+      flourish:       mono.flourish,
       flourish_style: mono.flourish,
       frame:          mono.frame,
+      frameColor:     mono.frameColor,
       frame_color:    mono.frameColor,
+      frameScale:     mono.frameScale,
+      frameOffsetX:   mono.frameOffsetX,
+      frameOffsetY:   mono.frameOffsetY,
+      printSize:      mono.printSize,
       bg_transparent: true,
     },
     props,
@@ -968,7 +985,7 @@ async function handleSubmit() {
   setStatus('Submitting your configuration…', 'loading');
 
   try {
-    const monogramURL = window.MonogramBuilder.exportDataURL();
+    const monogramURL = await window.MonogramBuilder.exportDataURL();
     const submittedAt = new Date().toISOString();
     const project = buildProjectRecord({
       status: 'submitted',
@@ -1018,7 +1035,7 @@ async function saveProject() {
 
   const project = buildProjectRecord({
     status: ActiveProjectRecord?.status === 'submitted' ? 'submitted' : 'in_progress',
-    monogramDataURL: window.MonogramBuilder.exportDataURL(),
+    monogramDataURL: await window.MonogramBuilder.exportDataURL(),
   });
 
   saveProjectToLocalStorage(project);
@@ -1116,12 +1133,38 @@ async function loadProject() {
 
       if (m.line1) { mono.line1 = m.line1; const el = document.getElementById('mono-line1'); if (el) el.value = m.line1; }
       if (m.line2) { mono.line2 = m.line2; const el = document.getElementById('mono-line2'); if (el) el.value = m.line2; }
-      if (m.fontFamily) { mono.fontFamily = m.fontFamily; const el = document.getElementById('mono-font'); if (el) el.value = m.fontFamily; }
-      if (m.textColor1) { mono.textColor1 = m.textColor1; const el = document.getElementById('mono-color1'); if (el) el.value = m.textColor1; }
-      if (m.textColor2) { mono.textColor2 = m.textColor2; const el = document.getElementById('mono-color2'); if (el) el.value = m.textColor2; }
+      if (m.fontFamily || m.font) {
+        mono.fontFamily = m.fontFamily || m.font;
+        const el = document.getElementById('mono-font');
+        if (el) el.value = mono.fontFamily;
+      }
+      if (m.fontFamily1 || m.fontFamily || m.font) {
+        mono.fontFamily1 = m.fontFamily1 || m.fontFamily || m.font;
+        const el = document.getElementById('mono-font1');
+        if (el) el.value = mono.fontFamily1;
+      }
+      if (m.fontFamily2 || m.fontFamily || m.font) {
+        mono.fontFamily2 = m.fontFamily2 || m.fontFamily || m.font;
+        const el = document.getElementById('mono-font2');
+        if (el) el.value = mono.fontFamily2;
+      }
+      if (m.fontsLinked !== undefined) mono.fontsLinked = m.fontsLinked;
+      if (m.textColor1 || m.text_color1) { mono.textColor1 = m.textColor1 || m.text_color1; const el = document.getElementById('mono-color1'); if (el) el.value = mono.textColor1; }
+      if (m.textColor2 || m.text_color2) { mono.textColor2 = m.textColor2 || m.text_color2; const el = document.getElementById('mono-color2'); if (el) el.value = mono.textColor2; }
       if (m.colorsLinked !== undefined) { mono.colorsLinked = m.colorsLinked; ['color-link-toggle','color-link-toggle-2'].forEach(id => { const btn = document.getElementById(id); if (btn) { btn.classList.toggle('linked', m.colorsLinked); btn.textContent = m.colorsLinked ? '🔗' : '🔓'; } }); }
+      if (m.fontSize1 !== undefined) mono.fontSize1 = parseInt(m.fontSize1, 10) || 0;
+      if (m.fontSize2 !== undefined) mono.fontSize2 = parseInt(m.fontSize2, 10) || 0;
+      if (m.offsetX1 !== undefined) mono.offsetX1 = parseInt(m.offsetX1, 10) || 0;
+      if (m.offsetY1 !== undefined) mono.offsetY1 = parseInt(m.offsetY1, 10) || 0;
+      if (m.offsetX2 !== undefined) mono.offsetX2 = parseInt(m.offsetX2, 10) || 0;
+      if (m.offsetY2 !== undefined) mono.offsetY2 = parseInt(m.offsetY2, 10) || 0;
       if (m.frame) { mono.frame = m.frame; mono.flourish = m.frame; }
-      if (m.frameColor) { mono.frameColor = m.frameColor; }
+      if (m.flourish) { mono.flourish = m.flourish; }
+      if (m.frameColor || m.frame_color) { mono.frameColor = m.frameColor || m.frame_color; }
+      if (m.frameScale !== undefined) mono.frameScale = parseFloat(m.frameScale) || 1;
+      if (m.frameOffsetX !== undefined) mono.frameOffsetX = parseInt(m.frameOffsetX, 10) || 0;
+      if (m.frameOffsetY !== undefined) mono.frameOffsetY = parseInt(m.frameOffsetY, 10) || 0;
+      if (m.printSize) mono.printSize = m.printSize;
     }
 
     // Navigate to saved step
