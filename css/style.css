@@ -393,6 +393,12 @@ h1, h2, h3 {
   pointer-events: auto;
 }
 
+@media (hover: none), (pointer: coarse) {
+  .zoom-icon-overlay {
+    display: none !important;
+  }
+}
+
 /* ================================================================
    TOGGLE CARD GROUP (Parking)
 ================================================================ */
@@ -1065,9 +1071,7 @@ h1, h2, h3 {
   border: 1px solid var(--border);
   border-radius: var(--radius);
   margin-bottom: 0.5rem;
-  position: sticky;
-  top: 148px;
-  z-index: 80;
+  position: relative;
   box-shadow: 0 2px 8px rgba(0,0,0,0.06);
   flex-wrap: wrap;
 }
@@ -1299,24 +1303,29 @@ h1, h2, h3 {
 .print-fullscreen-content {
   position: relative;
   z-index: 1;
-  max-width: 95vw;
-  max-height: 95vh;
+  max-width: 92vw;
+  max-height: 88vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .print-fullscreen-close {
   position: absolute;
-  top: -40px;
-  right: 0;
-  background: none;
-  border: none;
-  color: #fff;
-  font-size: 1.5rem;
+  top: 8px;
+  right: 8px;
+  background: rgba(255,255,255,0.96);
+  border: 1px solid var(--border);
+  color: var(--text-muted);
+  font-size: 0.95rem;
   cursor: pointer;
-  width: 36px;
-  height: 36px;
+  width: 34px;
+  height: 34px;
   display: flex;
   align-items: center;
   justify-content: center;
+  border-radius: 50%;
+  z-index: 2;
 }
 .print-fullscreen-close:hover { color: var(--coral); }
 
@@ -1325,6 +1334,8 @@ h1, h2, h3 {
   border-radius: var(--radius-sm);
   overflow: hidden;
   box-shadow: var(--shadow-lg);
+  max-width: 100%;
+  max-height: 100%;
 }
 
 #print-fullscreen-layout .photo-placeholder {
@@ -1373,28 +1384,6 @@ h1, h2, h3 {
   text-transform: uppercase;
   align-self: flex-start;
   font-weight: 600;
-}
-
-.canvas-label-row {
-  width: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 0.75rem;
-}
-
-.preview-zoom-btn {
-  display: none;
-  align-items: center;
-  justify-content: center;
-  width: 38px;
-  height: 38px;
-  border: 1px solid var(--border);
-  border-radius: 999px;
-  background: rgba(255,255,255,0.95);
-  box-shadow: 0 4px 16px rgba(0,0,0,0.08);
-  cursor: pointer;
-  flex-shrink: 0;
 }
 
 .font-size-reset-btn {
@@ -2354,13 +2343,18 @@ h1, h2, h3 {
     width: 100%;
   }
 
-  .preview-zoom-btn {
-    display: inline-flex;
-  }
-
   .font-size-reset-btn {
     display: inline-flex;
     justify-content: center;
+    align-items: center;
+    width: 28px;
+    height: 28px;
+    padding: 0;
+    border: none;
+    background: transparent;
+    color: var(--text-muted);
+    font-size: 1rem;
+    line-height: 1;
   }
 
   .fontsize-auto-hint {

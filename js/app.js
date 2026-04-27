@@ -104,8 +104,6 @@ async function initApp() {
   const saveBtn = document.getElementById('save-project-btn');
   if (saveBtn) saveBtn.addEventListener('click', () => saveProject());
 
-  const reviewSaveBtn = document.getElementById('review-save-btn');
-  if (reviewSaveBtn) reviewSaveBtn.addEventListener('click', () => saveProject());
 }
 
 /* ================================================================
@@ -410,9 +408,7 @@ function addZoomOverlays() {
     btn.addEventListener('click', (e) => {
       e.stopPropagation();
       const src = trigger.dataset.src || trigger.querySelector('img')?.src || '';
-      const alt = trigger.dataset.alt || trigger.querySelector('img')?.alt || '';
       if (src) {
-        // Dispatch a synthetic dblclick to trigger lightbox
         trigger.dispatchEvent(new MouseEvent('dblclick', { bubbles: true }));
       }
     });
@@ -491,19 +487,41 @@ function initLightbox() {
     return trigger.dataset.alt || trigger.querySelector('img')?.alt || '';
   }
 
+  function openFromTrigger(trigger) {
+    const src = getSrc(trigger);
+    const alt = getAlt(trigger);
+    if (!src) return;
+    const { gallery, index } = buildGallery(trigger);
+    openLightbox(src, alt, gallery, index);
+  }
+
   // DOUBLE-CLICK to open lightbox (single click = select)
   document.addEventListener('dblclick', (e) => {
     const trigger = e.target.closest('.lightbox-trigger');
     if (!trigger) return;
     e.stopPropagation();
-
-    const src = getSrc(trigger);
-    const alt = getAlt(trigger);
-    if (!src) return;
-
-    const { gallery, index } = buildGallery(trigger);
-    openLightbox(src, alt, gallery, index);
+    openFromTrigger(trigger);
   });
+
+  let lastTouchTime = 0;
+  let lastTouchTrigger = null;
+  document.addEventListener('touchend', (e) => {
+    const trigger = e.target.closest('.lightbox-trigger');
+    if (!trigger) return;
+
+    const now = Date.now();
+    if (lastTouchTrigger === trigger && now - lastTouchTime < 350) {
+      e.preventDefault();
+      e.stopPropagation();
+      openFromTrigger(trigger);
+      lastTouchTime = 0;
+      lastTouchTrigger = null;
+      return;
+    }
+
+    lastTouchTime = now;
+    lastTouchTrigger = trigger;
+  }, { passive: false });
 
   // Zoom toggle in lightbox
   const lbZoom = document.getElementById('lightbox-zoom');
@@ -748,8 +766,9 @@ function openFullscreenPrintPreview() {
   const is2x6 = printSize === '2x6';
 
   // Responsive: fit within viewport while maintaining exact print ratio
-  const vw = window.innerWidth * 0.92;
-  const vh = window.innerHeight * 0.88;
+  const isPhone = window.matchMedia('(max-width: 700px)').matches;
+  const vw = window.innerWidth * (isPhone ? 0.88 : 0.92);
+  const vh = window.innerHeight * (isPhone ? 0.76 : 0.88);
 
   if (is2x6) {
     const ratio = 430 / 1280; // w:h

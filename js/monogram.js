@@ -784,47 +784,17 @@ function applyPhoneFontSizeRange() {
       el.value = String(max);
     }
   });
-}
 
-function openPreviewZoomModal() {
-  const modal = document.getElementById('zoom-modal');
-  const content = document.getElementById('zoom-modal-content');
-  const sourceCanvas = MonogramState.canvas;
-  if (!modal || !content || !sourceCanvas) return;
-
-  content.innerHTML = '';
-  const zoomCanvas = document.createElement('canvas');
-  zoomCanvas.width = sourceCanvas.width;
-  zoomCanvas.height = sourceCanvas.height;
-  const ctx = zoomCanvas.getContext('2d');
-  ctx.drawImage(sourceCanvas, 0, 0);
-  zoomCanvas.style.width = '100%';
-  zoomCanvas.style.height = 'auto';
-  content.appendChild(zoomCanvas);
-
-  modal.classList.remove('hidden');
-  document.body.style.overflow = 'hidden';
-}
-
-function initPreviewZoomModal() {
-  const trigger = document.getElementById('btn-mobile-preview-zoom');
-  const modal = document.getElementById('zoom-modal');
-  const backdrop = document.getElementById('zoom-modal-backdrop');
-  const closeBtn = document.getElementById('zoom-modal-close');
-  const content = document.getElementById('zoom-modal-content');
-  if (!trigger || !modal || !backdrop || !closeBtn || !content) return;
-
-  const closeModal = () => {
-    modal.classList.add('hidden');
-    content.innerHTML = '';
-    document.body.style.overflow = '';
-  };
-
-  trigger.addEventListener('click', openPreviewZoomModal);
-  backdrop.addEventListener('click', closeModal);
-  closeBtn.addEventListener('click', closeModal);
-  document.addEventListener('keydown', (e) => {
-    if (!modal.classList.contains('hidden') && e.key === 'Escape') closeModal();
+  ['mono-fontsize1', 'mono-fontsize2'].forEach((id) => {
+    const el = document.getElementById(id);
+    if (!el) return;
+    el.max = String(max);
+    el.readOnly = isPhoneViewport();
+    if (isPhoneViewport()) {
+      el.setAttribute('inputmode', 'none');
+    } else {
+      el.removeAttribute('inputmode');
+    }
   });
 }
 
@@ -1189,7 +1159,6 @@ async function initMonogramBuilder() {
 
   /* ---- Position nudge controls ---- */
   initPositionControls();
-  initPreviewZoomModal();
   window.addEventListener('resize', applyPhoneFontSizeRange);
 
   /* ---- Wire controls ---- */
@@ -1240,9 +1209,15 @@ async function initMonogramBuilder() {
   }
 
   if (fontSize1Input) fontSize1Input.addEventListener('input', () => syncFontSize1(fontSize1Input.value));
-  if (fontSize1Range) fontSize1Range.addEventListener('input', () => syncFontSize1(fontSize1Range.value));
+  if (fontSize1Range) fontSize1Range.addEventListener('input', () => {
+    if (fontSize1Input && isPhoneViewport()) fontSize1Input.blur();
+    syncFontSize1(fontSize1Range.value);
+  });
   if (fontSize2Input) fontSize2Input.addEventListener('input', () => syncFontSize2(fontSize2Input.value));
-  if (fontSize2Range) fontSize2Range.addEventListener('input', () => syncFontSize2(fontSize2Range.value));
+  if (fontSize2Range) fontSize2Range.addEventListener('input', () => {
+    if (fontSize2Input && isPhoneViewport()) fontSize2Input.blur();
+    syncFontSize2(fontSize2Range.value);
+  });
   if (fontSize1Reset) fontSize1Reset.addEventListener('click', () => syncFontSize1(0));
   if (fontSize2Reset) fontSize2Reset.addEventListener('click', () => syncFontSize2(0));
 

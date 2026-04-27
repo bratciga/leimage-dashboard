@@ -11,7 +11,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300&display=swap" rel="stylesheet" />
 
-  <link rel="stylesheet" href="css/style.css?v=75" />
+  <link rel="stylesheet" href="css/style.css?v=76" />
 </head>
 <body>
 
@@ -350,10 +350,7 @@
 
         <!-- Preview column (left) -->
         <div class="monogram-preview-wrap">
-          <div class="canvas-label-row">
-            <div class="canvas-label">Live Preview (scaled)</div>
-            <button type="button" id="btn-mobile-preview-zoom" class="preview-zoom-btn" aria-label="Zoom monogram preview">🔍</button>
-          </div>
+          <div class="canvas-label">Live Preview (scaled)</div>
           <div class="canvas-outer" id="canvas-outer"></div>
           <div class="canvas-note">Use +/- buttons below to position text and frame · Transparent background</div>
         </div>
@@ -388,7 +385,7 @@
                 <div class="fontsize-row">
                   <input type="number" id="mono-fontsize1" class="text-input text-input--xs" min="0" max="600" placeholder="auto" />
                   <input type="range" id="mono-fontsize1-range" class="range-input" min="0" max="600" value="0" />
-                  <button type="button" id="mono-fontsize1-reset" class="btn btn-ghost btn-xs font-size-reset-btn">Reset</button>
+                  <button type="button" id="mono-fontsize1-reset" class="font-size-reset-btn" aria-label="Reset name size">↺</button>
                 </div>
               </div>
             </div>
@@ -419,7 +416,7 @@
                 <div class="fontsize-row">
                   <input type="number" id="mono-fontsize2" class="text-input text-input--xs" min="0" max="600" placeholder="auto" />
                   <input type="range" id="mono-fontsize2-range" class="range-input" min="0" max="600" value="0" />
-                  <button type="button" id="mono-fontsize2-reset" class="btn btn-ghost btn-xs font-size-reset-btn">Reset</button>
+                  <button type="button" id="mono-fontsize2-reset" class="font-size-reset-btn" aria-label="Reset date size">↺</button>
                 </div>
               </div>
             </div>
@@ -542,9 +539,6 @@
       </div>
 
       <div class="card--submit-inner">
-        <div class="detail-actions-row" style="justify-content:center;margin-bottom:1rem;">
-          <button type="button" id="review-save-btn" class="btn btn-secondary btn-sm">⬇ Save Progress</button>
-        </div>
         <button type="button" id="submit-btn" class="btn btn-primary btn-large">
           Submit Configuration
         </button>
@@ -564,7 +558,7 @@
 
   </main>
 
-  <footer style="text-align:center;padding:1rem 0 0.5rem;opacity:0.35;font-size:0.7rem;font-family:'Inter',sans-serif;">v75</footer>
+  <footer style="text-align:center;padding:1rem 0 0.5rem;opacity:0.35;font-size:0.7rem;font-family:'Inter',sans-serif;">v76</footer>
 
   <!-- ============================================================
        LIGHTBOX
@@ -619,8 +613,8 @@
   </footer>
 
   <script src="js/frames.js?v=74"></script>
-  <script src="js/monogram.js?v=75"></script>
-  <script src="js/app.js?v=74"></script>
+  <script src="js/monogram.js?v=76"></script>
+  <script src="js/app.js?v=76"></script>
 
 </body>
 </html>
