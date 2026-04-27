@@ -69,6 +69,8 @@ function showAdminContent() {
   $('create-project-btn').addEventListener('click', createProject);
   $('modal-close').addEventListener('click', closeModal);
   $('modal-backdrop').addEventListener('click', closeModal);
+  $('monogram-preview-close').addEventListener('click', closeMonogramPreviewModal);
+  $('monogram-preview-backdrop').addEventListener('click', closeMonogramPreviewModal);
   $('client-name-input').addEventListener('input', syncSlugFromClient);
   $('client-name-input').addEventListener('keydown', handleCreateFieldEnter);
   $('event-date-input').addEventListener('keydown', handleCreateFieldEnter);
@@ -79,7 +81,12 @@ function showAdminContent() {
   });
 
   document.addEventListener('keydown', (e) => {
-    if (e.key === 'Escape') closeModal();
+    if (e.key !== 'Escape') return;
+    if (!$('monogram-preview-modal')?.classList.contains('hidden')) {
+      closeMonogramPreviewModal();
+      return;
+    }
+    closeModal();
   });
 
   loadProjects();
@@ -457,7 +464,7 @@ function openDetailModal(project) {
       <div class="detail-row"><span class="detail-key">Font</span><span class="detail-val">${escHtml(payload.monogram?.font || payload.monogram?.fontFamily || '—')}</span></div>
       <div class="detail-row"><span class="detail-key">Text color</span><span class="detail-val">${escHtml(payload.monogram?.text_color1 || '—')}</span></div>
       <div id="modal-monogram-preview-wrap" style="margin-top:1rem;"></div>
-      ${hasPreview ? '<div class="detail-actions-row" style="margin-top:1rem;"><button class="btn btn-secondary btn-sm" id="modal-download-png">↓ Download PNG</button></div>' : '<p style="color:var(--text-muted);margin-top:1rem;">No monogram saved yet.</p>'}
+      ${hasPreview ? '<div class="detail-actions-row" style="margin-top:1rem;"><button class="btn btn-secondary btn-sm" id="modal-preview-monogram">Preview</button><button class="btn btn-secondary btn-sm" id="modal-download-png">↓ Download PNG</button></div>' : '<p style="color:var(--text-muted);margin-top:1rem;">No monogram saved yet.</p>'}
     </div>
 
     <div class="detail-section">
@@ -480,6 +487,9 @@ function openDetailModal(project) {
   $('detail-modal').classList.remove('hidden');
   document.body.style.overflow = 'hidden';
 
+  $('modal-preview-monogram')?.addEventListener('click', async () => {
+    await openMonogramPreviewModal(project);
+  });
   $('modal-download-png')?.addEventListener('click', () => downloadMonogramPNG(project));
   $('modal-delete-project')?.addEventListener('click', async () => {
     await confirmDeleteProject(project);
@@ -488,6 +498,7 @@ function openDetailModal(project) {
 
 function closeModal() {
   $('detail-modal').classList.add('hidden');
+  closeMonogramPreviewModal();
   document.body.style.overflow = '';
   currentModalProject = null;
 }
@@ -639,6 +650,25 @@ function createFallbackMonogramCanvas(project, className = '') {
   }
 
   return canvas;
+}
+
+async function openMonogramPreviewModal(project) {
+  const modal = $('monogram-preview-modal');
+  const image = $('monogram-preview-image');
+  if (!modal || !image) return;
+
+  const normalizedSrc = await resolveProjectMonogramDataUrl(project);
+  image.src = normalizedSrc || createFallbackMonogramCanvas(project).toDataURL('image/png');
+  image.alt = `${project.client_name || project.event_slug || 'Client'} monogram preview`;
+  modal.classList.remove('hidden');
+}
+
+function closeMonogramPreviewModal() {
+  const modal = $('monogram-preview-modal');
+  const image = $('monogram-preview-image');
+  if (!modal || !image) return;
+  modal.classList.add('hidden');
+  image.src = '';
 }
 
 async function downloadMonogramPNG(project) {

@@ -10,7 +10,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600&family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300&display=swap" rel="stylesheet" />
 
-  <link rel="stylesheet" href="css/style.css?v=81" />
+  <link rel="stylesheet" href="css/style.css?v=82" />
 </head>
 <body class="admin-page">
 
@@ -135,7 +135,7 @@
     </main>
 
     <footer class="site-footer">
-      <p>© <span id="footer-year"></span> Le Image Photography Studio. Admin view · v81</p>
+      <p>© <span id="footer-year"></span> Le Image Photography Studio. Admin view · v82</p>
     </footer>
   </div>
 
@@ -150,8 +150,18 @@
     </div>
   </div>
 
-  <script src="js/frames.js?v=81"></script>
-  <script src="js/monogram.js?v=81"></script>
-  <script src="js/admin.js?v=81"></script>
+  <div id="monogram-preview-modal" class="admin-preview-modal hidden" role="dialog" aria-modal="true" aria-label="Monogram preview">
+    <div class="admin-preview-backdrop" id="monogram-preview-backdrop"></div>
+    <div class="admin-preview-box">
+      <button class="admin-preview-close" id="monogram-preview-close" aria-label="Close preview">✕</button>
+      <div class="admin-preview-stage">
+        <img id="monogram-preview-image" src="" alt="Monogram preview" class="admin-preview-image" />
+      </div>
+    </div>
+  </div>
+
+  <script src="js/frames.js?v=82"></script>
+  <script src="js/monogram.js?v=82"></script>
+  <script src="js/admin.js?v=82"></script>
 </body>
 </html>

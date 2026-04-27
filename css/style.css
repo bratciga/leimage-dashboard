@@ -2112,11 +2112,89 @@ h1, h2, h3 {
   margin-top: 0.5rem;
 }
 
+.admin-preview-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 1400;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+}
+
+.admin-preview-modal.hidden {
+  display: none;
+}
+
+.admin-preview-backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.82);
+}
+
+.admin-preview-box {
+  position: relative;
+  z-index: 1;
+  width: min(96vw, 1200px);
+  max-height: min(92vh, 980px);
+  background: #fff;
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-lg);
+  padding: 3.5rem 1rem 1rem;
+}
+
+.admin-preview-stage {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  max-height: calc(92vh - 5.5rem);
+  overflow: auto;
+}
+
+.admin-preview-image {
+  display: block;
+  width: auto;
+  max-width: 100%;
+  max-height: calc(92vh - 5.5rem);
+  object-fit: contain;
+  margin: 0 auto;
+  border-radius: var(--radius-sm);
+}
+
+.admin-preview-close {
+  position: absolute;
+  top: 0.75rem;
+  right: 0.75rem;
+  width: 2.5rem;
+  height: 2.5rem;
+  border: none;
+  border-radius: 999px;
+  background: rgba(0, 0, 0, 0.72);
+  color: #fff;
+  font-size: 1.1rem;
+  cursor: pointer;
+}
+
+.admin-preview-close:hover {
+  background: rgba(4, 40, 164, 0.85);
+}
+
 /* ================================================================
    RESPONSIVE
 ================================================================ */
 
 @media (max-width: 900px) {
+  .admin-preview-box {
+    width: min(96vw, 900px);
+    max-height: 90vh;
+    padding: 3.25rem 0.85rem 0.85rem;
+  }
+
+  .admin-preview-stage,
+  .admin-preview-image {
+    max-height: calc(90vh - 5rem);
+  }
+
   .header-inner {
     flex-wrap: wrap;
     gap: 0.4rem;
@@ -2156,6 +2234,21 @@ h1, h2, h3 {
 }
 
 @media (max-width: 600px) {
+  .admin-preview-modal {
+    padding: 0.75rem;
+  }
+
+  .admin-preview-box {
+    width: 100%;
+    max-height: 92vh;
+    padding: 3rem 0.6rem 0.6rem;
+  }
+
+  .admin-preview-stage,
+  .admin-preview-image {
+    max-height: calc(92vh - 4.2rem);
+  }
+
   body {
     font-size: 15px;
   }
