@@ -172,3 +172,51 @@ textarea.input { height: 112px; resize: none; padding-top: 14px; }
 .dashboard-page .side-nav { left: 360px; top: 0; width: 1450px; height: 80px; display: flex; }
 .dashboard-page .side-nav button { width: 175px; height: 80px; border-left: 0; border-bottom: 5px solid transparent; font-size: 17px; }
 .dashboard-page .side-nav button.active, .dashboard-page .side-nav button:hover { border-left-color: transparent; border-bottom-color: #fff; }
+
+/* screenshot loop corrections */
+.dashboard-page .side { height: 68px; }
+.dashboard-page .side .logo-box { top: 8px; }
+.dashboard-page .side-nav { height: 68px; }
+.dashboard-page .side-nav button { height: 68px; }
+
+.vendor-card::before,
+.faq-section::before,
+.editor::before,
+.tabs::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: -72px;
+  height: 72px;
+  background: var(--blue);
+}
+.vendor-card h3 {
+  top: -54px;
+  color: #fff;
+  z-index: 1;
+  font-size: 28px;
+}
+.vendor-fields { top: 46px; }
+.faq-section { position: relative; margin-top: 72px; }
+.faq-section h2 {
+  position: absolute;
+  top: -55px;
+  left: 34px;
+  color: #fff;
+  z-index: 1;
+  font-size: 30px;
+}
+.editor { padding-top: 34px; }
+.editor h2 {
+  position: absolute;
+  top: -56px;
+  left: 44px;
+  color: #fff;
+  z-index: 1;
+  font-size: 30px;
+}
+
+/* FAQ screenshot correction */
+.faq-section { margin-top: 0; height: 204px; overflow: hidden; }
+.faq-section + .faq-section { margin-top: 116px; height: 366px; }
