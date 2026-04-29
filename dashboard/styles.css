@@ -255,3 +255,31 @@ body.body-signin, body.body-payments, body.body-timeline, body.body-vendors, bod
 
 /* pass 8 timeline first photographer tab/card header should be white block below blue section headers */
 .tabs .active { background:#ffffff; color:#8296a5; }
+
+/* timeline focused pass 1: split editor into blue header, white title, white body like PNG */
+.editor { top:406px; }
+.editor::before { top:-154px; height:76px; }
+.editor::after { content:""; position:absolute; left:0; right:0; top:-76px; height:74px; background:#fff; z-index:0; }
+.editor h2 { top:-55px; color:#333; z-index:2; }
+.editor > *:not(h2) { position:relative; z-index:1; }
+
+/* timeline focused pass 2: second photographer block is not visible in provided PNG viewport */
+.second-block { display:none; }
+
+/* timeline focused pass 3: later timeslot rows are very pale in PNG, not pure white */
+.slot { background:#f5fafe; }
+.slot:first-child { background:#ffffff; }
+
+/* timeline focused pass 4: section title belongs in blue header */
+.first-title { left:1060px; top:276px; color:#ffffff; font-size:28px; z-index:2; }
+
+/* timeline focused pass 5: warning/note areas are mostly white in PNG, not tinted blocks */
+.warning { background:transparent; color:#fd0747; padding:0; margin:0 0 14px; }
+.note-box { background:transparent; border-left:0; padding:0; margin-bottom:14px; }
+.note-box strong { color:#333333; }
+
+/* timeline focused pass 6: warning text size/coverage */
+.warning { font-size:22px; line-height:1.25; max-width:560px; margin-bottom:18px; }
+
+.editor { background:#ffffff; }
+.editor::after { background:#ffffff; }
