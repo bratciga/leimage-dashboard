@@ -1,6 +1,7 @@
 const state = {
   loggedIn: sessionStorage.getItem('wedding-dashboard-auth') === '1',
   route: location.hash.replace('#', '') || 'home',
+  menuOpen: false,
   vendors: [
     ['Wedding planner', 'Bride and blossom', 'www.brideandblossom.com', 'info@brideandblossom.com'],
     ['Florist', '', '', ''],
@@ -70,7 +71,7 @@ function side() {
   </nav></aside>`;
 }
 function nav(route, label) { return `<button class="${state.route === route ? 'active' : ''}" data-route="${route}">${label}</button>`; }
-function shell(inner) { return `<section class="dashboard-page">${side()}<h1 class="abs page-heading">${pageTitle()}</h1><div class="abs content">${inner}</div></section>`; }
+function shell(inner) { return `<section class="dashboard-page ${state.menuOpen ? 'menu-open' : ''}"><button class="abs menu-toggle" aria-label="Open menu" data-menu-toggle><span></span><span></span><span></span></button>${side()}<h1 class="abs page-heading">${pageTitle()}</h1><div class="abs content">${inner}</div></section>`; }
 function pageTitle() { return ({payments:'Billing', vendors:'Wedding vendors', timeline:'Wedding timeline', faq:'FAQ', contact:'Contact us'})[state.route] || 'Wedding details'; }
 
 function home() {
@@ -107,8 +108,8 @@ function vendors() {
 }
 function timeline() {
   return `<article class="card timeline-info"><h2>Wedding timeline info</h2><p>This timeline will serve as a guideline for our photographers/videographers on your wedding day. Our photographers are great at what they do, however it takes time to create the beautiful shots you see in our wedding photography. Be sure to remember to allow extra time for traveling between venues/locations, wedding party member delays, traffic etc. We have shot tons of weddings and in our experience even the most well planned wedding always has unexpected delays. Therefore we ask that you allot extra time to each category just in case! Please be sure to read our suggestions for each section and assign the time accordingly. If you have more than one photographer or videographer be sure to fill out the info for the “Second Timeline” as well.</p></article>
-  <div class="abs timeline-head head-info"></div><div class="abs timeline-head head-first"></div>
-  <nav class="abs tabs"><button class="active">First photographer</button><button>Second photographer</button><button>USE FIRST PHOTOGRAPHER TIMELINE</button><button>submit all timelines as final</button></nav><h2 class="abs first-title">First photographer timeline</h2><section class="abs slots">${state.timeline.map(slot).join('')}</section><section class="abs second-block"><h2>Second photographer timeline</h2><p>Second photographer</p><button class="blue-btn copy-timeline">USE FIRST PHOTOGRAPHER TIMELINE</button></section>${editor()}`;
+  <nav class="abs timeline-sections"><button>Photographer</button><button>Videographer</button><button>Submit the timeline</button></nav>
+  <h2 class="abs first-title">First photographer timeline</h2><button class="abs add-slot" aria-label="Add another time slot" data-add-slot>+</button><section class="abs slots">${state.timeline.map(slot).join('')}</section>${editor()}`;
 }
 function slot(s, i) { return `<article class="slot"><div class="abs slot-time">${s[0]}<br>${s[1]}</div><div class="abs slot-main"><h3>${s[2]}</h3><p>${s[3]}</p>${s[4]?`<p>${s[4]}</p>`:''}</div><div class="abs slot-actions">${s[5]?'<button class="details-btn">details</button>':''}</div></article>`; }
 function editor() { return `<aside class="abs editor"><h2>Detailed timeslot</h2><div class="warning">You have selected less time then recommended</div><div class="note-box"><strong>NOTE</strong><p>Our photographer will capture your getting ready photos, which will include your dress, shoes, details. Please be sure to have your invitations, rings, bouquet and anything else you would like photographed set aside for our team. We recommend at least 1 hour total for getting ready.</p></div><form id="timeline-form"><label><span class="field-label">Getting ready - spouse 1</span><input class="input" name="title"></label><label><span class="field-label">Define time</span><div class="time-picker"><span>From</span><input class="input" name="from" placeholder="09:00 AM"><span>To</span><input class="input" name="to" placeholder="Set time"><span>7</span><span>30</span><span>AM</span></div></label><label><span class="field-label">Location name</span><input class="input" name="place" placeholder="Restaurant, home address"></label><label><span class="field-label">Location address</span><div class="address-grid"><input class="input" placeholder="Address 1"><input class="input" placeholder="Address 2"></div></label><div class="address-grid"><label><span class="field-label">City</span><input class="input"></label><label><span class="field-label">Zip code</span><input class="input"></label></div><label><span class="field-label">Additional notes</span><textarea class="input" name="note" placeholder="Please write if there is anything else you want us to know"></textarea></label><div class="editor-actions"><button type="button" class="delete">delete timeslot</button><span>or</span><button class="blue-btn save-btn">Save changes</button></div></form></aside>`; }
@@ -117,7 +118,9 @@ function faqSection(title, items) { return `<section class="faq-section"><h2>${t
 
 function bind() {
   document.querySelector('#signin-form')?.addEventListener('submit', e => { e.preventDefault(); state.loggedIn = true; sessionStorage.setItem('wedding-dashboard-auth','1'); state.route='home'; location.hash='home'; render(); });
-  document.querySelectorAll('[data-route]').forEach(b => b.addEventListener('click', () => { state.route=b.dataset.route; location.hash=state.route; render(); }));
+  document.querySelector('[data-menu-toggle]')?.addEventListener('click', () => { state.menuOpen = !state.menuOpen; render(); });
+  document.querySelectorAll('[data-route]').forEach(b => b.addEventListener('click', () => { state.route=b.dataset.route; state.menuOpen=false; location.hash=state.route; render(); }));
+  document.querySelector('[data-add-slot]')?.addEventListener('click', () => { state.timeline.push(['0:00', '0:00', 'NEW TIMESLOT', 'Please define time', '', false]); render(); });
   document.querySelectorAll('[data-delete-time]').forEach(b => b.addEventListener('click', () => { state.timeline.splice(Number(b.dataset.deleteTime),1); render(); }));
   document.querySelector('#timeline-form')?.addEventListener('submit', e => { e.preventDefault(); const f=new FormData(e.currentTarget); state.timeline.push([f.get('from')||'0:00', f.get('to')||'0:00', (f.get('title')||'NEW TIMESLOT').toUpperCase(), 'Please define time', f.get('note')||'', false]); render(); });
 }

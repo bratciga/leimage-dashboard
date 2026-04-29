@@ -342,3 +342,101 @@ body.body-signin, body.body-payments, body.body-timeline, body.body-vendors, bod
 
 /* timeline focused fix: extend left info panel so body text no longer spills */
 .timeline-info { height:700px; }
+
+/* timeline requested fixes 2026-04-29 */
+.dashboard-page .side {
+  left:-330px;
+  top:0;
+  width:330px;
+  height:1340px;
+  background:#0079c4;
+  transition:left .2s ease;
+  z-index:20;
+  box-shadow:18px 0 45px rgba(0,24,39,.18);
+}
+.dashboard-page.menu-open .side { left:0; }
+.dashboard-page .side .logo-box { left:46px; top:54px; width:92px; height:92px; font-size:25px; border-width:3px; }
+.dashboard-page .side-nav { left:0; top:220px; width:330px; height:auto; display:block; }
+.dashboard-page .side-nav button {
+  display:block;
+  width:330px;
+  height:86px;
+  border:0;
+  border-left:7px solid transparent;
+  border-bottom:0;
+  background:transparent;
+  color:rgba(255,255,255,.74);
+  font-size:22px;
+  text-align:left;
+  padding-left:48px;
+  text-transform:lowercase;
+}
+.dashboard-page .side-nav button.active,
+.dashboard-page .side-nav button:hover { background:#005f9d; border-left-color:#fff; border-bottom-color:transparent; color:#fff; }
+.menu-toggle {
+  left:42px;
+  top:22px;
+  width:54px;
+  height:42px;
+  border:0;
+  background:transparent;
+  z-index:30;
+  padding:0;
+}
+.menu-toggle span { display:block; width:54px; height:5px; margin:0 0 11px; background:#fff; border-radius:4px; }
+
+.timeline-head,
+.tabs { display:none; }
+.timeline-sections { left:636px; top:252px; height:76px; display:flex; gap:46px; }
+.timeline-sections button {
+  height:76px;
+  border:0;
+  background:#0079c4;
+  color:#fff;
+  text-transform:uppercase;
+  letter-spacing:.08em;
+  font-size:18px;
+  font-weight:600;
+}
+.timeline-sections button:nth-child(1) { width:340px; }
+.timeline-sections button:nth-child(2) { width:542px; }
+.timeline-sections button:nth-child(3) { width:692px; }
+
+.first-title { left:1022px; top:356px; width:542px; color:#333; font-size:29px; font-weight:300; }
+.add-slot {
+  left:1512px;
+  top:350px;
+  width:48px;
+  height:48px;
+  border:2px solid #0079c4;
+  border-radius:50%;
+  background:#fff;
+  color:#0079c4;
+  font-size:34px;
+  line-height:38px;
+  font-weight:300;
+  z-index:2;
+}
+.slots { left:1022px; top:438px; width:542px; }
+.slot { width:542px; height:74px; margin-bottom:15px; background:transparent; box-shadow:none; }
+.slot-time { left:0; top:10px; width:88px; color:#0079c4; font-size:28px; line-height:1.18; text-align:left; }
+.slot-main {
+  left:110px;
+  top:0;
+  width:432px;
+  min-height:74px;
+  background:#fff;
+  box-shadow:0 12px 30px rgba(0,86,145,.06);
+  padding:14px 92px 10px 22px;
+}
+.slot-main h3 { margin:0 0 7px; color:#333; font-size:16px; letter-spacing:.04em; }
+.slot-main p { margin:0; color:#8fa1af; font-size:14px; line-height:1.25; }
+.slot-actions { right:12px; top:13px; width:76px; text-align:right; }
+
+.editor { height:760px; overflow:visible; }
+.editor::before { top:-154px; height:76px; }
+.editor::after { top:-76px; height:74px; }
+
+/* keep the blue top bar from the design while replacing top links with hamburger drawer */
+.dashboard-page::before { content:""; position:absolute; left:0; top:0; width:2549px; height:68px; background:#0079c4; z-index:10; }
+.page-heading, .content { z-index:1; }
