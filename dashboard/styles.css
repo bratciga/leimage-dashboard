@@ -283,3 +283,62 @@ body.body-signin, body.body-payments, body.body-timeline, body.body-vendors, bod
 
 .editor { background:#ffffff; }
 .editor::after { background:#ffffff; }
+
+/* timeline focused pass 8: list rows in PNG are cleaner, without repeated delete links */
+.slot-main h3 { font-size:16px; font-weight:500; }
+.slot-main p { font-size:14px; line-height:1.25; color:#8fa1af; }
+.slot-actions { width:70px; }
+.details-btn { font-size:13px; padding:6px 14px; }
+
+/* timeline focused pass 9: headers were too large versus PNG */
+.timeline-info { padding:28px 25px; }
+.timeline-info h2 { font-size:20px; line-height:1; }
+.timeline-info p { font-size:14px; line-height:1.42; margin-top:18px; }
+.editor h2 { font-size:22px; font-weight:300; left:30px; top:-50px; }
+
+/* timeline focused pass 10: only selected first row has dark title in PNG */
+.slot:not(:first-child) .slot-main h3,
+.slot:not(:first-child) .slot-main p { color:#8fa1af; font-weight:400; }
+.slot:not(:first-child) .slot-main h3 { font-size:14px; }
+
+/* timeline focused pass 11: editor content starts higher/left and note text is darker in PNG */
+.editor { padding:14px 28px; }
+.warning { margin-top:0; font-size:20px; max-width:610px; }
+.note-box p { color:#333333; font-size:16px; line-height:1.35; }
+.note-box strong { color:#333333; }
+.editor .field-label { margin-top:10px; }
+
+/* revert pass 11: prior editor spacing was closer by screenshot metric */
+.editor { padding:38px 44px; }
+.note-box p { color:#8193a2; font-size:16px; line-height:1.42; }
+.editor .field-label { margin:14px 0 7px; }
+
+/* timeline focused pass 12: editor white body height matched to PNG block */
+.editor { height:610px; }
+
+/* timeline focused pass 13: position editor warning/note text to match target top block */
+.editor .warning { position:absolute; left:28px; top:14px; width:570px; font-size:20px; line-height:1.2; }
+.editor .note-box { position:absolute; left:28px; top:62px; width:570px; }
+.editor .note-box p { color:#333333; line-height:1.35; }
+#timeline-form { position:absolute; left:28px; right:28px; top:190px; }
+
+/* revert pass 13: absolute editor text increased mismatch */
+.editor .warning { position:relative; left:auto; top:auto; width:auto; font-size:22px; line-height:1.25; }
+.editor .note-box { position:relative; left:auto; top:auto; width:auto; }
+.editor .note-box p { color:#8193a2; line-height:1.42; }
+#timeline-form { position:static; }
+
+/* timeline focused pass 14: remove leftover tab pseudo-header that extended blue bar too low */
+.tabs::before { display:none; }
+
+/* timeline focused pass 15: align red warning text to PNG position/scale */
+.warning { transform:translate(-17px,-29px); font-size:26px; max-width:680px; }
+
+/* timeline focused pass 16: target has a taller red warning footprint */
+.warning::after { content:"You have selected less time then recommended"; display:block; margin-top:8px; }
+
+/* revert pass 16 */
+.warning::after { content:none; }
+
+/* timeline focused fix: extend left info panel so body text no longer spills */
+.timeline-info { height:700px; }
