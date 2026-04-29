@@ -231,21 +231,3 @@ textarea.input { height: 112px; resize: none; padding-top: 14px; }
 .head-info { left: 636px; top: 252px; width: 340px; }
 .head-first { left: 1022px; top: 252px; width: 542px; }
 .editor { top: 324px; }
-
-/* pass 4 pixel comparison layer: exact supplied PNG on top, controls underneath remain clickable */
-.artboard::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  z-index: 10;
-  pointer-events: none;
-  background-size: 2549px 1340px;
-  background-repeat: no-repeat;
-  background-position: 0 0;
-}
-.screen-sign_in::before { background-image: url('design-reference/Sign_in.png'); }
-.screen-pocetna::before { background-image: url('design-reference/Pocetna.png'); }
-.screen-payments::before { background-image: url('design-reference/Payments.png'); }
-.screen-timeline::before { background-image: url('design-reference/Timeline.png'); }
-.screen-vendors::before { background-image: url('design-reference/Vendors.png'); }
-.screen-faq::before { background-image: url('design-reference/FAQ.png'); }

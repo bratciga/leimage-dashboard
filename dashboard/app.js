@@ -41,11 +41,7 @@ function render() {
   else app.innerHTML = box(shell(content(state.route)));
   bind();
 }
-function screenName() {
-  if (!state.loggedIn) return 'sign_in';
-  return ({home:'pocetna', payments:'payments', timeline:'timeline', vendors:'vendors', faq:'faq'})[state.route] || 'pocetna';
-}
-function box(html) { return `<div class="fit-box"><section class="artboard screen-${screenName()}">${html}</section></div>`; }
+function box(html) { return `<div class="fit-box"><section class="artboard">${html}</section></div>`; }
 
 function signIn() {
   return `<section class="signin">
