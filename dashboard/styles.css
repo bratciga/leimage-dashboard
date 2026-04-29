@@ -1,4 +1,5 @@
 :root {
+  --ui-scale: 0.82;
   --blue: #0079c4;
   --blue-dark: #0069ad;
   --pale: #ecf5fd;
@@ -19,6 +20,7 @@ html, body { margin: 0; min-height: 100%; background: var(--pale); color: var(--
 button, input, textarea, select { font: inherit; }
 button { cursor: pointer; }
 a { color: inherit; }
+body { overflow-x: auto; font-size: 13px; }
 
 #app { min-height: 100vh; }
 
@@ -31,8 +33,8 @@ a { color: inherit; }
   background: var(--pale);
 }
 .signin-card {
-  width: min(980px, 92vw);
-  min-height: 560px;
+  width: min(1120px, 92vw);
+  min-height: 620px;
   display: grid;
   grid-template-columns: 1fr 410px;
   background: var(--white);
@@ -93,7 +95,7 @@ a { color: inherit; }
 .dashboard {
   min-height: 100vh;
   display: grid;
-  grid-template-columns: 172px minmax(0, 1fr);
+  grid-template-columns: 138px minmax(0, 1fr);
   background: var(--pale);
 }
 .sidebar {
@@ -135,7 +137,8 @@ a { color: inherit; }
 .logout-button { border: 0; background: transparent; color: rgba(255,255,255,.75); font-size: 13px; }
 .main {
   min-width: 0;
-  padding: 62px clamp(36px, 5vw, 96px) 72px;
+  max-width: 1900px;
+  padding: 38px clamp(28px, 4vw, 68px) 48px;
 }
 .page-title {
   display: flex;
@@ -147,7 +150,7 @@ a { color: inherit; }
 .page-title h1 {
   margin: 0;
   color: var(--dark);
-  font-size: clamp(42px, 5vw, 72px);
+  font-size: clamp(34px, 3.6vw, 54px);
   line-height: .95;
   font-weight: 300;
 }
@@ -165,10 +168,10 @@ a { color: inherit; }
 .home-sidebar {
   background: #f4f4f4;
   color: var(--dark);
-  padding: 56px 48px;
+  padding: 42px 38px;
 }
 .home-sidebar .logo-mark { margin: 0 0 54px; border-color: var(--dark); color: var(--dark); }
-.home-sidebar h1 { margin: 0 0 22px; font-size: 42px; line-height: 1.05; font-weight: 300; }
+.home-sidebar h1 { margin: 0 0 22px; font-size: 34px; line-height: 1.05; font-weight: 300; }
 .home-sidebar p { color: #7c7c7c; line-height: 1.75; }
 .settings-title { margin-top: 58px; color: var(--blue); text-transform: lowercase; font-size: 20px; }
 .home-nav { display: grid; gap: 0; margin-top: 18px; }
@@ -181,8 +184,8 @@ a { color: inherit; }
   color: #4c4c4c;
   text-transform: lowercase;
 }
-.home-main { padding: 58px clamp(36px, 6vw, 96px); }
-.client-name { margin: 0 0 40px; font-size: clamp(42px, 5vw, 76px); font-weight: 300; line-height: 1; }
+.home-main { padding: 44px clamp(32px, 5vw, 76px); }
+.client-name { margin: 0 0 40px; font-size: clamp(38px, 4vw, 58px); font-weight: 300; line-height: 1; }
 .home-grid { display: grid; grid-template-columns: 1.05fr 1fr; gap: 34px; align-items: start; }
 .welcome-block h2, .package-block h2 { margin: 0 0 22px; color: white; font-size: 35px; font-weight: 300; }
 .welcome-block p, .package-block p { color: rgba(255,255,255,.72); line-height: 1.8; }
@@ -199,11 +202,11 @@ a { color: inherit; }
   background: white;
   box-shadow: 0 20px 45px rgba(0, 86, 145, .08);
 }
-.card { padding: 36px; }
+.card { padding: 26px; }
 .section-grid { display: grid; gap: 36px; }
 .two-col { grid-template-columns: minmax(0, .9fr) minmax(0, 1.1fr); }
 .three-col { grid-template-columns: repeat(3, minmax(0, 1fr)); }
-.card h2, .form-card h2 { margin: 0 0 18px; color: var(--dark); font-size: 32px; font-weight: 300; }
+.card h2, .form-card h2 { margin: 0 0 18px; color: var(--dark); font-size: 24px; font-weight: 300; }
 .card p { color: #8395a4; line-height: 1.7; }
 .muted { color: #8aa0b1; }
 
@@ -227,21 +230,22 @@ a { color: inherit; }
 .vendor-fields { display: grid; grid-template-columns: repeat(3, minmax(0,1fr)); gap: 22px; }
 
 /* Timeline.psd */
-.timeline-info { margin-bottom: 24px; }
-.photographer-tabs { display: flex; flex-wrap: wrap; gap: 0; margin: 0 0 26px; background: white; box-shadow: 0 18px 36px rgba(0,86,145,.07); }
-.photographer-tabs button { border: 0; border-right: 1px solid var(--line); padding: 18px 22px; background: white; color: #8296a5; text-transform: uppercase; font-size: 12px; letter-spacing: .06em; }
+.timeline-info { margin-bottom: 18px; }
+.timeline-info p { max-width: 1160px; }
+.photographer-tabs { display: flex; flex-wrap: wrap; gap: 0; margin: 0 0 18px; background: white; box-shadow: 0 12px 28px rgba(0,86,145,.06); }
+.photographer-tabs button { border: 0; border-right: 1px solid var(--line); padding: 13px 16px; background: white; color: #8296a5; text-transform: uppercase; font-size: 10px; letter-spacing: .06em; }
 .photographer-tabs button.active { background: var(--blue); color: white; }
 .subhead { margin: 0 0 16px; color: var(--dark); font-weight: 300; }
-.timeline-workspace { display: grid; grid-template-columns: 1fr 440px; gap: 38px; align-items: start; }
-.timeslots { display: grid; gap: 18px; }
-.timeslot { display: grid; grid-template-columns: 100px 1fr 90px; gap: 22px; align-items: center; background: white; padding: 22px 26px; box-shadow: 0 18px 36px rgba(0,86,145,.07); }
-.timeslot-time { color: var(--blue); font-size: 26px; font-weight: 300; }
-.timeslot h3 { margin: 0 0 7px; font-size: 18px; letter-spacing: .04em; text-transform: uppercase; }
-.timeslot p { margin: 0; color: #8193a2; line-height: 1.55; }
-.delete-link { border: 0; background: transparent; color: var(--danger); font-size: 12px; text-transform: lowercase; }
-.timeline-editor { padding: 34px; background: white; box-shadow: 0 20px 45px rgba(0,86,145,.08); }
-.warning { background: #fff6d9; color: #9d7417; padding: 13px 15px; margin: 0 0 18px; font-size: 13px; }
-.time-row { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+.timeline-workspace { display: grid; grid-template-columns: minmax(0, 1fr) 360px; gap: 26px; align-items: start; }
+.timeslots { display: grid; gap: 10px; }
+.timeslot { display: grid; grid-template-columns: 72px 1fr 78px; gap: 16px; align-items: center; background: white; padding: 13px 16px; box-shadow: 0 12px 28px rgba(0,86,145,.06); }
+.timeslot-time { color: var(--blue); font-size: 20px; font-weight: 300; line-height: 1.15; }
+.timeslot h3 { margin: 0 0 7px; font-size: 13px; letter-spacing: .04em; text-transform: uppercase; }
+.timeslot p { margin: 0; color: #8193a2; line-height: 1.38; font-size: 12px; }
+.delete-link { border: 0; background: transparent; color: var(--danger); font-size: 11px; text-transform: lowercase; }
+.timeline-editor { padding: 22px; background: white; box-shadow: 0 14px 34px rgba(0,86,145,.07); }
+.warning { background: #fff6d9; color: #9d7417; padding: 10px 12px; margin: 0 0 12px; font-size: 12px; }
+.time-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
 
 /* FAQ.psd */
 .faq-layout { display: grid; grid-template-columns: 360px 1fr; gap: 56px; }

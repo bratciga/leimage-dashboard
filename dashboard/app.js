@@ -9,9 +9,12 @@ const state = {
     { role: 'Hair/Makeup', name: '', website: 'Hair/Makeup website', email: '' }
   ],
   timeline: [
-    { from: '1:45', to: '2:15', title: 'Getting ready - spouse 1', place: 'Our house', note: 'Our photographer will capture your getting ready photos, dress, shoes, details and invitations.' },
-    { from: '2:20', to: '2:40', title: 'First look and pictures at venue', place: 'Venue', note: 'First look and couple portraits.' },
-    { from: '0:00', to: '0:00', title: 'Ceremony', place: 'Please define time', note: 'Please define time.' }
+    { from: '1:45', to: '2:15', title: 'GETTING READY - SPOUSE 1', place: 'Our house', note: 'Our photographer will capture your getting ready photos, which will include your dress, shoes, details. Please have invitations, rings, bouquet and anything else you would like photographed set aside.' },
+    { from: '2:20', to: '2:40', title: 'FIRST LOOK AND PICTURES AT VENUE', place: 'Venue', note: 'First look and pictures at the venue.' },
+    { from: '0:00', to: '0:00', title: 'CEREMONY', place: 'Please define time', note: 'Please define time.' },
+    { from: '0:00', to: '0:00', title: 'COCKTAIL HOUR', place: 'Please define time', note: 'Details and cocktail hour coverage.' },
+    { from: '0:00', to: '0:00', title: 'RECEPTION', place: 'Please define time', note: 'Reception formalities, dancing and candid coverage.' },
+    { from: '0:00', to: '0:00', title: 'PHOTOGRAPHER LEAVE', place: 'Please define time', note: 'End of photography coverage.' }
   ]
 };
 
