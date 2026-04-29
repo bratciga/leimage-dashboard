@@ -4,3 +4,5 @@ node_modules/
 .env
 data/projects/*.json
 !data/projects/.gitkeep
+
+dashboard/tmp-screens/

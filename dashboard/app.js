@@ -20,9 +20,16 @@ const state = {
 
 const app = document.querySelector('#app');
 const routes = ['home', 'vendors', 'timeline', 'payments', 'faq', 'contact'];
+const params = new URLSearchParams(location.search);
+if (params.get('preview') === '1') {
+  state.loggedIn = true;
+  state.route = params.get('route') || state.route;
+}
 
 function fit() {
-  const scale = Math.min(window.innerWidth / 2549, window.innerHeight / 1340);
+  // Match the supplied 2549px wide design canvas. Scale by width only so the
+  // dashboard keeps the same proportions as the PNG and scrolls vertically if needed.
+  const scale = window.innerWidth / 2549;
   document.documentElement.style.setProperty('--scale', Math.max(scale, 0.2));
 }
 window.addEventListener('resize', fit);

@@ -27,6 +27,7 @@ button { cursor: pointer; }
 }
 .fit-box { width: calc(2549px * var(--scale, 1)); height: calc(1340px * var(--scale, 1)); }
 .abs { position: absolute; }
+.signin, .home, .dashboard-page { position: absolute; inset: 0; width: 2549px; height: 1340px; }
 
 .logo-box { width: 92px; height: 92px; border: 3px solid currentColor; display: grid; place-items: center; font-size: 25px; font-weight: 700; letter-spacing: .07em; }
 .hairline { border: 0; border-bottom: 2px solid #c8ddec; background: transparent; outline: none; color: #333; }
@@ -51,10 +52,10 @@ button { cursor: pointer; }
 
 /* Common light screens */
 .dashboard-page { background: var(--pale); }
-.side { left: 0; top: 0; width: 168px; height: 1340px; background: var(--blue); color: #fff; }
-.side .logo-box { left: 38px; top: 54px; }
-.side-nav { left: 0; top: 220px; width: 168px; }
-.side-nav button { display: block; width: 168px; height: 86px; border: 0; border-left: 7px solid transparent; background: transparent; color: rgba(255,255,255,.72); font-size: 20px; text-transform: lowercase; }
+.side { left: 0; top: 0; width: 185px; height: 1340px; background: var(--blue); color: #fff; }
+.side .logo-box { left: 46px; top: 54px; }
+.side-nav { left: 0; top: 220px; width: 185px; }
+.side-nav button { display: block; width: 185px; height: 86px; border: 0; border-left: 7px solid transparent; background: transparent; color: rgba(255,255,255,.72); font-size: 20px; text-transform: lowercase; }
 .side-nav button.active, .side-nav button:hover { background: var(--blue-dark); border-left-color: #fff; color: #fff; }
 .page-heading { left: 255px; top: 90px; font-size: 70px; font-weight: 300; color: #333; }
 .content { left: 255px; top: 210px; width: 2190px; }
@@ -68,16 +69,16 @@ textarea.input { height: 112px; resize: none; padding-top: 14px; }
 
 /* HOME */
 .home { background: var(--dark-home); color: #fff; }
-.home-left { left: 0; top: 0; width: 790px; height: 1340px; background: #f4f4f4; color: #333; padding: 76px 72px; }
-.home-left .logo-box { position: static; margin-bottom: 85px; }
-.home-left h1 { margin: 0 0 26px; font-size: 64px; font-weight: 300; line-height: 1.05; }
-.home-left p { width: 380px; margin: 0; color: #7c7c7c; font-size: 22px; line-height: 1.55; }
-.settings { margin-top: 76px; color: var(--blue); font-size: 29px; text-transform: lowercase; }
-.home-menu { margin-top: 28px; width: 520px; }
-.home-menu button { display: block; width: 100%; height: 56px; border: 0; border-bottom: 1px solid #ddd; background: transparent; text-align: left; color: #4c4c4c; font-size: 20px; text-transform: none; }
-.client-name { left: 895px; top: 84px; font-size: 72px; font-weight: 300; color: #fff; }
-.welcome { left: 895px; top: 228px; width: 650px; }
-.package { left: 1600px; top: 228px; width: 720px; }
+.home-left { left: 0; top: 0; width: 280px; height: 1340px; background: #f4f4f4; color: #333; padding: 56px 38px; }
+.home-left .logo-box { position: static; margin-bottom: 48px; }
+.home-left h1 { margin: 0 0 26px; font-size: 37px; font-weight: 300; line-height: 1.05; }
+.home-left p { width: 195px; margin: 0; color: #7c7c7c; font-size: 16px; line-height: 1.55; }
+.settings { margin-top: 48px; color: var(--blue); font-size: 21px; text-transform: lowercase; }
+.home-menu { margin-top: 18px; width: 210px; }
+.home-menu button { display: block; width: 100%; height: 44px; border: 0; border-bottom: 1px solid #ddd; background: transparent; text-align: left; color: #4c4c4c; font-size: 15px; text-transform: none; }
+.client-name { left: 405px; top: 84px; font-size: 64px; font-weight: 300; color: #fff; }
+.welcome { left: 405px; top: 228px; width: 640px; }
+.package { left: 1135px; top: 228px; width: 700px; }
 .home h2 { font-size: 43px; font-weight: 300; margin: 0 0 24px; }
 .home p { color: rgba(255,255,255,.72); font-size: 22px; line-height: 1.55; }
 .contract { margin-top: 30px; width: 300px; height: 62px; font-size: 17px; }
@@ -85,10 +86,10 @@ textarea.input { height: 112px; resize: none; padding-top: 14px; }
 .tile h3 { margin: 0 0 22px; font-size: 34px; font-weight: 300; color: #fff; }
 .tile p { font-size: 18px; line-height: 1.45; }
 .tile button { color: var(--blue); font-size: 20px; }
-.tile-pay { left: 895px; top: 720px; }
-.tile-vendors { left: 1410px; top: 720px; }
-.tile-timeline { left: 895px; top: 990px; }
-.tile-book { left: 1410px; top: 990px; }
+.tile-pay { left: 405px; top: 720px; }
+.tile-vendors { left: 900px; top: 720px; }
+.tile-timeline { left: 405px; top: 990px; }
+.tile-book { left: 900px; top: 990px; }
 
 /* PAYMENTS */
 .pay-total { left: 0; top: 0; width: 560px; height: 390px; padding: 58px; }
@@ -162,3 +163,11 @@ textarea.input { height: 112px; resize: none; padding-top: 14px; }
 @media (max-width: 900px) {
   .artboard { transform-origin: top left; }
 }
+
+
+/* PNG correction: light screens use a top blue bar, not a vertical sidebar. */
+.dashboard-page .side { left: 0; top: 0; width: 2549px; height: 80px; background: var(--blue); color: #fff; }
+.dashboard-page .side .logo-box { left: 48px; top: 14px; width: 52px; height: 52px; font-size: 15px; border-width: 2px; }
+.dashboard-page .side-nav { left: 360px; top: 0; width: 1450px; height: 80px; display: flex; }
+.dashboard-page .side-nav button { width: 175px; height: 80px; border-left: 0; border-bottom: 5px solid transparent; font-size: 17px; }
+.dashboard-page .side-nav button.active, .dashboard-page .side-nav button:hover { border-left-color: transparent; border-bottom-color: #fff; }
