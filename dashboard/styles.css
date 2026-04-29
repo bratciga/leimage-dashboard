@@ -238,14 +238,25 @@ body { overflow-x: auto; font-size: 13px; }
 .subhead { margin: 0 0 16px; color: var(--dark); font-weight: 300; }
 .timeline-workspace { display: grid; grid-template-columns: minmax(0, 1fr) 360px; gap: 26px; align-items: start; }
 .timeslots { display: grid; gap: 10px; }
-.timeslot { display: grid; grid-template-columns: 72px 1fr 78px; gap: 16px; align-items: center; background: white; padding: 13px 16px; box-shadow: 0 12px 28px rgba(0,86,145,.06); }
-.timeslot-time { color: var(--blue); font-size: 20px; font-weight: 300; line-height: 1.15; }
+.timeslot { display: grid; grid-template-columns: 72px 1fr 92px; gap: 16px; align-items: center; background: white; padding: 13px 16px; box-shadow: 0 12px 28px rgba(0,86,145,.06); }
+.timeslot-time { color: var(--blue); font-size: 20px; font-weight: 300; line-height: 1.15; display: grid; gap: 3px; }
 .timeslot h3 { margin: 0 0 7px; font-size: 13px; letter-spacing: .04em; text-transform: uppercase; }
 .timeslot p { margin: 0; color: #8193a2; line-height: 1.38; font-size: 12px; }
+.slot-actions { display: grid; gap: 7px; justify-items: end; }
+.slot-actions button:not(.delete-link), .second-timeline button { border: 0; background: var(--blue); color: white; padding: 7px 10px; text-transform: lowercase; font-size: 11px; }
 .delete-link { border: 0; background: transparent; color: var(--danger); font-size: 11px; text-transform: lowercase; }
+.second-timeline { margin-top: 18px; padding: 16px; background: white; box-shadow: 0 12px 28px rgba(0,86,145,.06); }
+.second-timeline p { color: #8193a2; margin: 0 0 12px; }
 .timeline-editor { padding: 22px; background: white; box-shadow: 0 14px 34px rgba(0,86,145,.07); }
 .warning { background: #fff6d9; color: #9d7417; padding: 10px 12px; margin: 0 0 12px; font-size: 12px; }
+.note-box { border-left: 3px solid var(--blue); background: #f5fafe; padding: 12px 14px; margin-bottom: 14px; }
+.note-box strong { display: block; color: var(--blue); margin-bottom: 6px; font-size: 11px; letter-spacing: .08em; }
+.note-box p { margin: 0; color: #8193a2; font-size: 12px; line-height: 1.45; }
 .time-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.time-picker { display: grid; grid-template-columns: auto 1fr auto 1fr 34px 34px 34px; gap: 8px; align-items: center; }
+.time-picker span { color: #8193a2; font-size: 12px; }
+.editor-actions { display: flex; align-items: center; gap: 12px; justify-content: flex-end; }
+.editor-actions span { color: #8193a2; }
 
 /* FAQ.psd */
 .faq-layout { display: grid; grid-template-columns: 360px 1fr; gap: 56px; }

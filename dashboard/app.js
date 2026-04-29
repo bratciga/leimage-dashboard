@@ -9,7 +9,7 @@ const state = {
     { role: 'Hair/Makeup', name: '', website: 'Hair/Makeup website', email: '' }
   ],
   timeline: [
-    { from: '1:45', to: '2:15', title: 'GETTING READY - SPOUSE 1', place: 'Our house', note: 'Our photographer will capture your getting ready photos, which will include your dress, shoes, details. Please have invitations, rings, bouquet and anything else you would like photographed set aside.' },
+    { from: '1:45', to: '2:15', title: 'GETTING READY - SPOUSE 1', place: 'Our house', note: 'Our photographer will capture your getting ready photos, which will include your dress, shoes, details. Please be sure to have your invitations, rings, bouquet and anything else you would like photographed set aside for our team. We recommend at least 1 hour total for getting ready.', hasDetails: true },
     { from: '2:20', to: '2:40', title: 'FIRST LOOK AND PICTURES AT VENUE', place: 'Venue', note: 'First look and pictures at the venue.' },
     { from: '0:00', to: '0:00', title: 'CEREMONY', place: 'Please define time', note: 'Please define time.' },
     { from: '0:00', to: '0:00', title: 'COCKTAIL HOUR', place: 'Please define time', note: 'Details and cocktail hour coverage.' },
@@ -183,21 +183,22 @@ function vendorCard(vendor, index) {
 
 function timeline() {
   return `${pageHeader('Wedding timeline')}
-    <section class="timeline-info card"><h2>Wedding timeline info</h2><p>This timeline will serve as a guideline for our photographers/videographers on your wedding day. Our photographers are great at what they do, however it takes time to create the beautiful shots you see in our wedding photography. Be sure to remember to allow enough time for each section.</p></section>
+    <section class="timeline-info card"><h2>Wedding timeline info</h2><p>This timeline will serve as a guideline for our photographers/videographers on your wedding day. Our photographers are great at what they do, however it takes time to create the beautiful shots you see in our wedding photography. Be sure to remember to allow extra time for traveling between venues/locations, wedding party member delays, traffic etc. We have shot tons of weddings and in our experience even the most well planned wedding always has unexpected delays. Therefore we ask that you allot extra time to each category just in case! Please be sure to read our suggestions for each section and assign the time accordingly. If you have more than one photographer or videographer be sure to fill out the info for the “Second Timeline” as well.</p></section>
     <section class="photographer-tabs"><button class="active">First photographer</button><button>Second photographer</button><button>USE FIRST PHOTOGRAPHER TIMELINE</button><button>submit all timelines as final</button></section>
     <section class="timeline-workspace">
-      <div><h2 class="subhead">First photographer timeline</h2><div class="timeslots">${state.timeline.map((item, i) => `<article class="timeslot"><div class="timeslot-time">${item.from}<br>${item.to}</div><div><h3>${item.title}</h3><p>${item.from}PM - ${item.to}PM | ${item.place}</p><p>${item.note}</p></div><button class="delete-link" data-delete-time="${i}">delete timeslot</button></article>`).join('')}</div></div>
+      <div><h2 class="subhead">First photographer timeline</h2><div class="timeslots">${state.timeline.map((item, i) => `<article class="timeslot"><div class="timeslot-time"><span>${item.from}</span><span>${item.to}</span></div><div><h3>${item.title}</h3><p>${item.from}PM - ${item.to}PM | ${item.place}</p><p>${item.hasDetails ? 'NOTE' : item.note}</p></div><div class="slot-actions">${item.hasDetails ? '<button type="button">details</button>' : ''}<button class="delete-link" data-delete-time="${i}">delete timeslot</button></div></article>`).join('')}</div><section class="second-timeline"><h2 class="subhead">Second photographer timeline</h2><p>Second photographer</p><button type="button">USE FIRST PHOTOGRAPHER TIMELINE</button></section></div>
       <aside class="timeline-editor">
         <h2>Detailed timeslot</h2>
         <p class="warning">You have selected less time then recommended</p>
+        <div class="note-box"><strong>NOTE</strong><p>Our photographer will capture your getting ready photos, which will include your dress, shoes, details. Please be sure to have your invitations, rings, bouquet and anything else you would like photographed set aside for our team. We recommend at least 1 hour total for getting ready.</p></div>
         <form id="timeline-form">
           <div class="field"><label>Getting ready - spouse 1</label><input class="input" name="title" placeholder="Timeslot name" required></div>
-          <div class="time-row"><div class="field"><label>Define time / From</label><input class="input" name="from" placeholder="09:00 AM" required></div><div class="field"><label>To</label><input class="input" name="to" placeholder="Set time" required></div></div>
+          <div class="field"><label>Define time</label><div class="time-picker"><span>From</span><input class="input" name="from" placeholder="09:00 AM" required><span>To</span><input class="input" name="to" placeholder="Set time" required><span>7</span><span>30</span><span>AM</span></div></div>
           <div class="field"><label>Location name</label><input class="input" name="place" placeholder="Restaurant, home address"></div>
-          <div class="time-row"><div class="field"><label>Address 1</label><input class="input"></div><div class="field"><label>Address 2</label><input class="input"></div></div>
+          <div class="field"><label>Location address</label><div class="time-row"><input class="input" placeholder="Address 1"><input class="input" placeholder="Address 2"></div></div>
           <div class="time-row"><div class="field"><label>City</label><input class="input"></div><div class="field"><label>Zip code</label><input class="input"></div></div>
           <div class="field"><label>Additional notes</label><textarea class="textarea" name="note" placeholder="Please write if there is anything else you want us to know"></textarea></div>
-          <button class="primary-button" type="submit">Save changes</button>
+          <div class="editor-actions"><button class="delete-link" type="button">delete timeslot</button><span>or</span><button class="primary-button" type="submit">Save changes</button></div>
         </form>
       </aside>
     </section>`;
