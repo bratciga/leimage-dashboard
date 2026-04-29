@@ -36,12 +36,18 @@ window.addEventListener('resize', fit);
 fit();
 
 function render() {
+  document.body.className = `body-${screenName()}`;
+  document.documentElement.style.background = screenName() === 'home' ? '#2f3133' : '#ebf5fd';
   if (!state.loggedIn) app.innerHTML = box(signIn());
   else if (state.route === 'home') app.innerHTML = box(home());
   else app.innerHTML = box(shell(content(state.route)));
   bind();
 }
-function box(html) { return `<div class="fit-box"><section class="artboard">${html}</section></div>`; }
+function screenName() {
+  if (!state.loggedIn) return 'signin';
+  return state.route || 'home';
+}
+function box(html) { return `<div class="fit-box screen-${screenName()}"><section class="artboard screen-${screenName()}">${html}</section></div>`; }
 
 function signIn() {
   return `<section class="signin">

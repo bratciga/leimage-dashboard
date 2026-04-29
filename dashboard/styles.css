@@ -231,3 +231,27 @@ textarea.input { height: 112px; resize: none; padding-top: 14px; }
 .head-info { left: 636px; top: 252px; width: 340px; }
 .head-first { left: 1022px; top: 252px; width: 542px; }
 .editor { top: 324px; }
+
+/* pass 5 route backgrounds and home bottom alignment */
+.fit-box.screen-home, .artboard.screen-home { background:#2f3133; }
+.fit-box.screen-signin, .artboard.screen-signin,
+.fit-box.screen-payments, .artboard.screen-payments,
+.fit-box.screen-timeline, .artboard.screen-timeline,
+.fit-box.screen-vendors, .artboard.screen-vendors,
+.fit-box.screen-faq, .artboard.screen-faq { background:#ebf5fd; }
+.screen-home .home { min-height:1340px; }
+.screen-home .tile { background:#333333; }
+.screen-home .home-left { min-height:1340px; }
+body.body-home { background:#2f3133; }
+body.body-signin, body.body-payments, body.body-timeline, body.body-vendors, body.body-faq { background:#ebf5fd; }
+
+/* pass 6 home lower-left white footer block from PNG */
+.home-left::after { content:""; position:absolute; left:0; bottom:0; width:280px; height:140px; background:#ffffff; z-index:0; }
+
+/* pass 7 FAQ help panel is white in PNG */
+.faq-help { background:#ffffff; color:#333333; }
+.faq-help h2 { color:#333333; }
+.faq-help p { color:#8397a6; }
+
+/* pass 8 timeline first photographer tab/card header should be white block below blue section headers */
+.tabs .active { background:#ffffff; color:#8296a5; }
