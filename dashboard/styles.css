@@ -440,3 +440,28 @@ body.body-signin, body.body-payments, body.body-timeline, body.body-vendors, bod
 /* keep the blue top bar from the design while replacing top links with hamburger drawer */
 .dashboard-page::before { content:""; position:absolute; left:0; top:0; width:2549px; height:68px; background:#0079c4; z-index:10; }
 .page-heading, .content { z-index:1; }
+
+/* timeline requested fixes 2: clean drawer and stack timeline action boxes */
+.dashboard-page .side .logo-box { display:none; }
+.dashboard-page .side-nav { top:88px; }
+.timeline-sections {
+  left:636px;
+  top:252px;
+  width:340px;
+  height:auto;
+  display:flex;
+  flex-direction:column;
+  gap:24px;
+}
+.timeline-sections button,
+.timeline-sections button:nth-child(1),
+.timeline-sections button:nth-child(2),
+.timeline-sections button:nth-child(3) {
+  width:340px;
+  height:76px;
+  text-align:left;
+  padding-left:34px;
+}
+.first-title { display:none; }
+.add-slot { left:928px; top:266px; }
+.slots { left:1022px; top:438px; }
