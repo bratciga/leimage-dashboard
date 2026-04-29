@@ -465,3 +465,73 @@ body.body-signin, body.body-payments, body.body-timeline, body.body-vendors, bod
 .first-title { display:none; }
 .add-slot { left:928px; top:266px; }
 .slots { left:1022px; top:438px; }
+
+/* timeline requested fixes 3 */
+.timeline-sections button:first-child { font-size:0; }
+.timeline-sections button:first-child::before { content:"Photographer"; font-size:18px; }
+.timeline-sections { gap:18px; }
+.timeline-sections button:nth-child(3) { margin-top:22px; position:relative; }
+.timeline-sections button:nth-child(3)::before { content:""; position:absolute; left:0; right:0; top:-22px; height:1px; background:#b7d1e5; }
+.timeline-list-head {
+  left:1022px;
+  top:252px;
+  width:542px;
+  height:76px;
+  background:#0079c4;
+  color:#fff;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding:0 24px 0 34px;
+  text-transform:uppercase;
+  letter-spacing:.08em;
+  font-size:18px;
+  font-weight:600;
+}
+.timeline-list-head .add-slot {
+  position:static;
+  width:48px;
+  height:48px;
+  border:2px solid #fff;
+  border-radius:50%;
+  background:#0079c4;
+  color:#fff;
+  font-size:34px;
+  line-height:38px;
+  font-weight:300;
+}
+body .add-slot.abs { display:none; }
+.slots { top:352px; }
+.editor h2 {
+  top:-132px;
+  left:34px;
+  color:#fff;
+  font-size:22px;
+  text-transform:uppercase;
+  letter-spacing:.08em;
+  font-weight:600;
+}
+.warning {
+  display:none;
+  position:absolute;
+  left:44px;
+  top:130px;
+  width:470px;
+  padding:20px 24px;
+  background:#fff;
+  color:#fd0747;
+  box-shadow:0 18px 42px rgba(0,86,145,.18);
+  border-left:4px solid #fd0747;
+  transform:none;
+  font-size:18px;
+  line-height:1.3;
+  z-index:6;
+}
+.warning.show { display:block; }
+.time-picker { grid-template-columns:auto 1fr auto 1fr; }
+.time-picker select.input { appearance:auto; }
+.slot:first-child .slot-main { background:transparent; box-shadow:none; }
+
+/* cleanup: actual first action label is Photographer, no generated duplicate */
+.timeline-sections button:first-child { font-size:18px; }
+.timeline-sections button:first-child::before { content:none; }
