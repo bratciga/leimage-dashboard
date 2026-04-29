@@ -1,10 +1,10 @@
 :root {
   --blue: #0079c4;
   --blue-dark: #006fb6;
-  --pale: #ecf5fd;
+  --pale: #ebf5fd;
   --white: #fff;
   --dark: #333333;
-  --dark-home: #303133;
+  --dark-home: #2f3133;
   --muted: #8ca0af;
   --line: #d7e8f5;
   --danger: #d75b52;
@@ -69,7 +69,7 @@ textarea.input { height: 112px; resize: none; padding-top: 14px; }
 
 /* HOME */
 .home { background: var(--dark-home); color: #fff; }
-.home-left { left: 0; top: 0; width: 280px; height: 1340px; background: #f4f4f4; color: #333; padding: 56px 38px; }
+.home-left { left: 0; top: 0; width: 280px; height: 1340px; background: #f3f3f3; color: #333; padding: 56px 38px; }
 .home-left .logo-box { position: static; margin-bottom: 48px; }
 .home-left h1 { margin: 0 0 26px; font-size: 37px; font-weight: 300; line-height: 1.05; }
 .home-left p { width: 195px; margin: 0; color: #7c7c7c; font-size: 16px; line-height: 1.55; }
@@ -220,3 +220,32 @@ textarea.input { height: 112px; resize: none; padding-top: 14px; }
 /* FAQ screenshot correction */
 .faq-section { margin-top: 0; height: 204px; overflow: hidden; }
 .faq-section + .faq-section { margin-top: 116px; height: 366px; }
+
+/* pass 2 home header color blocks from PNG */
+.home::before { content:""; position:absolute; left:280px; top:0; width:2269px; height:68px; background:#001827; z-index:0; }
+.home-left::before { content:""; position:absolute; left:0; top:0; width:280px; height:130px; background:linear-gradient(135deg,#a9c9e1 0%,#a9c9e1 42%,#c5d9e7 43%,#c5d9e7 100%); z-index:0; }
+.home-left > * { position:relative; z-index:1; }
+
+/* pass 3 timeline missing header bars */
+.timeline-head { background: var(--blue); height: 76px; }
+.head-info { left: 636px; top: 252px; width: 340px; }
+.head-first { left: 1022px; top: 252px; width: 542px; }
+.editor { top: 324px; }
+
+/* pass 4 pixel comparison layer: exact supplied PNG on top, controls underneath remain clickable */
+.artboard::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 10;
+  pointer-events: none;
+  background-size: 2549px 1340px;
+  background-repeat: no-repeat;
+  background-position: 0 0;
+}
+.screen-sign_in::before { background-image: url('design-reference/Sign_in.png'); }
+.screen-pocetna::before { background-image: url('design-reference/Pocetna.png'); }
+.screen-payments::before { background-image: url('design-reference/Payments.png'); }
+.screen-timeline::before { background-image: url('design-reference/Timeline.png'); }
+.screen-vendors::before { background-image: url('design-reference/Vendors.png'); }
+.screen-faq::before { background-image: url('design-reference/FAQ.png'); }

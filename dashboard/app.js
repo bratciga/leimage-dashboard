@@ -41,7 +41,11 @@ function render() {
   else app.innerHTML = box(shell(content(state.route)));
   bind();
 }
-function box(html) { return `<div class="fit-box"><section class="artboard">${html}</section></div>`; }
+function screenName() {
+  if (!state.loggedIn) return 'sign_in';
+  return ({home:'pocetna', payments:'payments', timeline:'timeline', vendors:'vendors', faq:'faq'})[state.route] || 'pocetna';
+}
+function box(html) { return `<div class="fit-box"><section class="artboard screen-${screenName()}">${html}</section></div>`; }
 
 function signIn() {
   return `<section class="signin">
@@ -101,6 +105,7 @@ function vendors() {
 }
 function timeline() {
   return `<article class="card timeline-info"><h2>Wedding timeline info</h2><p>This timeline will serve as a guideline for our photographers/videographers on your wedding day. Our photographers are great at what they do, however it takes time to create the beautiful shots you see in our wedding photography. Be sure to remember to allow extra time for traveling between venues/locations, wedding party member delays, traffic etc. We have shot tons of weddings and in our experience even the most well planned wedding always has unexpected delays. Therefore we ask that you allot extra time to each category just in case! Please be sure to read our suggestions for each section and assign the time accordingly. If you have more than one photographer or videographer be sure to fill out the info for the “Second Timeline” as well.</p></article>
+  <div class="abs timeline-head head-info"></div><div class="abs timeline-head head-first"></div>
   <nav class="abs tabs"><button class="active">First photographer</button><button>Second photographer</button><button>USE FIRST PHOTOGRAPHER TIMELINE</button><button>submit all timelines as final</button></nav><h2 class="abs first-title">First photographer timeline</h2><section class="abs slots">${state.timeline.map(slot).join('')}</section><section class="abs second-block"><h2>Second photographer timeline</h2><p>Second photographer</p><button class="blue-btn copy-timeline">USE FIRST PHOTOGRAPHER TIMELINE</button></section>${editor()}`;
 }
 function slot(s, i) { return `<article class="slot"><div class="abs slot-time">${s[0]}<br>${s[1]}</div><div class="abs slot-main"><h3>${s[2]}</h3><p>${s[3]}</p>${s[4]?`<p>${s[4]}</p>`:''}</div><div class="abs slot-actions">${s[5]?'<button class="details-btn">details</button>':''}<button class="delete" data-delete-time="${i}">delete timeslot</button></div></article>`; }
