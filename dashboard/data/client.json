@@ -1,0 +1,40 @@
+{
+  "client": {
+    "names": "Sophia & Daniel",
+    "eventType": "Wedding",
+    "eventDate": "October 18, 2026",
+    "venue": "The Foundry, Long Island City",
+    "status": "Confirmed"
+  },
+  "payments": {
+    "total": 5000,
+    "paid": 3750,
+    "balance": 1250,
+    "dueDate": "September 18, 2026",
+    "schedule": [
+      { "description": "Retainer", "due": "Jan 12, 2026", "status": "Paid", "amount": 1000 },
+      { "description": "Second payment", "due": "Jun 18, 2026", "status": "Paid", "amount": 2750 },
+      { "description": "Final balance", "due": "Sep 18, 2026", "status": "Open", "amount": 1250 }
+    ]
+  },
+  "timeline": [
+    { "time": "12:00 PM", "title": "Photography starts", "note": "Getting ready details, flat lays, and candid prep coverage." },
+    { "time": "2:00 PM", "title": "First look", "note": "Couple first look near the venue courtyard." },
+    { "time": "2:30 PM", "title": "Family portraits", "note": "Immediate family first, then extended family combinations." },
+    { "time": "5:30 PM", "title": "Ceremony", "note": "Outdoor courtyard ceremony." },
+    { "time": "6:00 PM", "title": "Cocktail hour", "note": "Room details, candids, and remaining portraits." },
+    { "time": "7:00 PM", "title": "Reception", "note": "Introductions, first dance, speeches, parent dances, and open dance floor." }
+  ],
+  "vendors": [
+    { "role": "Venue", "name": "The Foundry", "contact": "events@thefoundrylic.com", "phone": "718 555 0100" },
+    { "role": "Planner", "name": "Mia Events", "contact": "mia@miaevents.com", "phone": "917 555 0112" },
+    { "role": "DJ", "name": "SoundHouse NYC", "contact": "bookings@soundhouse.com", "phone": "646 555 0148" },
+    { "role": "Florist", "name": "Brooklyn Blooms", "contact": "studio@brooklynblooms.com", "phone": "718 555 0189" }
+  ],
+  "faq": [
+    { "question": "When is our final payment due?", "answer": "Final payment is due 30 days before the event unless your contract says otherwise." },
+    { "question": "Can we update the timeline?", "answer": "Yes. Use the timeline editor to keep the studio updated while planning." },
+    { "question": "Where do we send vendor contacts?", "answer": "Add vendor contacts in the vendor panel so the team has one clean contact list." },
+    { "question": "How does the photo booth monogram work?", "answer": "Open the photo booth design studio from the dashboard once the monogram section is connected." }
+  ]
+}
