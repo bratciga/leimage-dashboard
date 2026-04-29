@@ -535,3 +535,85 @@ body .add-slot.abs { display:none; }
 /* cleanup: actual first action label is Photographer, no generated duplicate */
 .timeline-sections button:first-child { font-size:18px; }
 .timeline-sections button:first-child::before { content:none; }
+
+/* timeline requested fixes 4 */
+.screen-timeline .page-heading {
+  left:248px;
+  top:132px;
+}
+.timeline-sections button:nth-child(3) {
+  background:#fff;
+  color:#0079c4;
+  border:2px solid #0079c4;
+}
+.editor {
+  top:352px;
+  height:814px;
+}
+.editor::before {
+  top:-100px;
+  height:76px;
+}
+.editor::after {
+  display:none;
+}
+.editor h2 {
+  top:-80px;
+  left:34px;
+  color:#fff;
+}
+.note-box {
+  margin-top:0;
+  padding:0 0 18px;
+  border-left:0;
+  border-bottom:2px solid #c8ddec;
+  background:transparent;
+}
+.note-box strong {
+  color:#333;
+  display:block;
+  margin-bottom:10px;
+}
+.note-box p {
+  margin:0;
+}
+.warning {
+  left:420px;
+  top:242px;
+  width:250px;
+  padding:16px 18px;
+  border-left:0;
+  border-radius:6px;
+  box-shadow:0 14px 34px rgba(0,86,145,.22);
+}
+.warning::before {
+  content:"";
+  position:absolute;
+  left:-12px;
+  top:22px;
+  border-top:10px solid transparent;
+  border-bottom:10px solid transparent;
+  border-right:12px solid #fff;
+}
+
+/* timeline requested fixes 4b */
+.editor { padding:0 44px 38px; }
+.editor .warning {
+  position:absolute;
+  left:420px;
+  top:390px;
+  width:250px;
+  padding:16px 18px;
+  border-radius:6px;
+  background:#fff;
+  color:#fd0747;
+  box-shadow:0 14px 34px rgba(0,86,145,.22);
+  transform:none;
+  z-index:6;
+}
+
+/* timeline requested fixes 4c: warning bubble aligns beside the To dropdown */
+.editor .warning { top:275px; }
+
+/* timeline requested fixes 4d: place warning bubble to the right of To */
+.editor .warning { left:680px; top:275px; }
