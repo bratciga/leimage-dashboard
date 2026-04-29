@@ -4,9 +4,9 @@ const state = {
   vendors: [
     { role: 'Wedding planner', name: 'Bride and blossom', website: 'www.brideandblossom.com', email: 'info@brideandblossom.com' },
     { role: 'Florist', name: '', website: '', email: '' },
-    { role: 'DJ/Band', name: '', website: '', email: '' },
-    { role: 'Officiant/Reverend', name: '', website: '', email: '' },
-    { role: 'Hair/Makeup', name: '', website: '', email: '' }
+    { role: 'DJ/Band', name: '', website: '', email: 'DJ/Bands email' },
+    { role: 'Officiant/Reverend', name: '', website: 'Officiant/Reverends website', email: '' },
+    { role: 'Hair/Makeup', name: '', website: 'Hair/Makeup website', email: '' }
   ],
   timeline: [
     { from: '1:45', to: '2:15', title: 'Getting ready - spouse 1', place: 'Our house', note: 'Our photographer will capture your getting ready photos, dress, shoes, details and invitations.' },
@@ -74,19 +74,19 @@ function home() {
           <article class="welcome-block">
             <h2>Welcome</h2>
             <p>Thank you for allowing Le Image to share in your big day, we are truly honored!</p>
-            <p>As you know there is a lot of preparation that goes into planning a wedding! We are here to help and have set up this app to help you organize all of the important information in one place.</p>
+            <p>As you know there is a lot of preparation that goes into planning a wedding! We are here to help and have set up this app to help you organize and manage the photography and/or video aspects of your wedding. There is a drop down menu at the top right hand corner of each section to help you navigate the app.</p>
             <a class="contract-button" href="#contract">Download your contract</a>
           </article>
           <article class="package-block">
             <h2>Your wedding package</h2>
-            <p>2 Photographers/1 Videographer 8hr photo/video shoot with full HD camera. Fully edited video. Traditional Style Color Corrected Images. Online photo gallery store. Wedding Website. All high-res photos/video on DVD. Raw video footage on DVD. Full printing rights to images.</p>
+            <p>2 Photographers/1 Videographer 8hr photo/video shoot with full HD camera<br>Fully edited video – Traditional Style Color Corrected Images (average of 1000 images)<br>Online photo gallery store<br>Wedding Website – fully customizable<br>All high-res photos/video on DVD<br>Raw video footage on DVD<br>Full printing rights to images</p>
             <p class="balance-note">Your current balance is $1800.00 due in full by September 28, 2014. Balance includes a 3% credit card fee.</p>
           </article>
         </div>
         <section class="tiles">
           <article class="tile"><h3>Payments</h3><p>Your current balance is $1800.00 due in full by September 28, 2014.</p><button data-route="payments">view</button></article>
-          <article class="tile"><h3>Wedding vendors</h3><p>Coordinating with all parties involved helps us to provide you with the best photos/video possible.</p><button data-route="vendors">view</button></article>
-          <article class="tile"><h3>Weeding timeline</h3><p>The timeline will serve as a guideline for our photographers/videographers on your wedding day.</p><button data-route="timeline">view</button></article>
+          <article class="tile"><h3>Wedding vendors</h3><p>Coordinating with all parties involved helps us to provide you with the best photos/video possible, please take a moment to fill out the contact info for your vendors.</p><button data-route="vendors">view</button></article>
+          <article class="tile"><h3>Weeding timeline</h3><p>The timeline will serve as a guideline for our photographers/videographers on your wedding day. Please be sure to read our suggestions for each section and assign the time accordingly.</p><button data-route="timeline">view</button></article>
           <article class="tile"><h3>Photo book</h3><p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt.</p><button data-route="photobook">view</button></article>
         </section>
       </section>
@@ -140,7 +140,7 @@ function payments() {
       </article>
       <article class="card">
         <h2>Payment history</h2>
-        <p>Here you can find your previous payments.</p>
+        <p>Here you can find your prveious payments, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore.</p>
         <table class="payment-history">
           <thead><tr><th>Amount</th><th>Date</th><th>Method</th></tr></thead>
           <tbody>
@@ -153,8 +153,9 @@ function payments() {
       <article class="card" style="grid-column: 1 / -1;">
         <h2>Make a payment</h2>
         <form class="payment-form">
+          <div class="field wide"><label>Choose your payment method</label><div class="card-radio">Credit card <span>All transactions are secure and encrypted.</span></div></div>
           ${input('First name')} ${input('Last name')} ${input('Credit card number','wide')} ${input('Month')} ${input('Year')} ${input('CVV')} ${input('Address 1')} ${input('Address 2')} ${input('City')} ${input('Zip code')} ${input('State')} ${input('Country')}
-          <div class="field wide"><label>Choose your payment amount</label><input class="input" value="$50.00"></div>
+          <div class="field wide"><label>Choose your payment amount</label><input class="input" value="$50,00"><small class="muted">Enter payment amount here</small></div>
           <button class="primary-button wide" type="button">make payment</button>
         </form>
       </article>
@@ -164,7 +165,7 @@ function payments() {
 function vendors() {
   return `${pageHeader('Wedding vendors')}
     <section class="section-grid two-col">
-      <article class="card vendor-intro"><h2>Your vendors</h2><p>Coordinating with all parties involved helps us to provide you with the best photos/video possible, please take a moment to fill out the contact information for your vendors.</p></article>
+      <article class="card vendor-intro"><h2>Your vendors</h2><p>Coordinating with all parties involved helps us to provide you with the best photos/video possible, please take a moment to fill out the contact info for the following vendors.</p><button class="primary-button submit-vendors" type="button">SUBMIT VENDORS LIST</button></article>
       <div class="vendor-forms">${state.vendors.map((vendor, i) => vendorCard(vendor, i)).join('')}</div>
     </section>`;
 }
@@ -179,14 +180,19 @@ function vendorCard(vendor, index) {
 
 function timeline() {
   return `${pageHeader('Wedding timeline')}
+    <section class="timeline-info card"><h2>Wedding timeline info</h2><p>This timeline will serve as a guideline for our photographers/videographers on your wedding day. Our photographers are great at what they do, however it takes time to create the beautiful shots you see in our wedding photography. Be sure to remember to allow enough time for each section.</p></section>
+    <section class="photographer-tabs"><button class="active">First photographer</button><button>Second photographer</button><button>USE FIRST PHOTOGRAPHER TIMELINE</button><button>submit all timelines as final</button></section>
     <section class="timeline-workspace">
-      <div class="timeslots">${state.timeline.map((item, i) => `<article class="timeslot"><div class="timeslot-time">${item.from}<br>${item.to}</div><div><h3>${item.title}</h3><p>${item.from}PM - ${item.to}PM | ${item.place}</p><p>${item.note}</p></div><button class="delete-link" data-delete-time="${i}">delete timeslot</button></article>`).join('')}</div>
+      <div><h2 class="subhead">First photographer timeline</h2><div class="timeslots">${state.timeline.map((item, i) => `<article class="timeslot"><div class="timeslot-time">${item.from}<br>${item.to}</div><div><h3>${item.title}</h3><p>${item.from}PM - ${item.to}PM | ${item.place}</p><p>${item.note}</p></div><button class="delete-link" data-delete-time="${i}">delete timeslot</button></article>`).join('')}</div></div>
       <aside class="timeline-editor">
         <h2>Detailed timeslot</h2>
+        <p class="warning">You have selected less time then recommended</p>
         <form id="timeline-form">
           <div class="field"><label>Getting ready - spouse 1</label><input class="input" name="title" placeholder="Timeslot name" required></div>
-          <div class="time-row"><div class="field"><label>From</label><input class="input" name="from" placeholder="09:00 AM" required></div><div class="field"><label>To</label><input class="input" name="to" placeholder="Set time" required></div></div>
+          <div class="time-row"><div class="field"><label>Define time / From</label><input class="input" name="from" placeholder="09:00 AM" required></div><div class="field"><label>To</label><input class="input" name="to" placeholder="Set time" required></div></div>
           <div class="field"><label>Location name</label><input class="input" name="place" placeholder="Restaurant, home address"></div>
+          <div class="time-row"><div class="field"><label>Address 1</label><input class="input"></div><div class="field"><label>Address 2</label><input class="input"></div></div>
+          <div class="time-row"><div class="field"><label>City</label><input class="input"></div><div class="field"><label>Zip code</label><input class="input"></div></div>
           <div class="field"><label>Additional notes</label><textarea class="textarea" name="note" placeholder="Please write if there is anything else you want us to know"></textarea></div>
           <button class="primary-button" type="submit">Save changes</button>
         </form>

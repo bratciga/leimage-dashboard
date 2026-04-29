@@ -215,15 +215,23 @@ a { color: inherit; }
 .amount-due { color: var(--blue); font-size: 38px; font-weight: 300; }
 .payment-form { display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 20px 28px; }
 .payment-form .wide { grid-column: 1 / -1; }
+.card-radio { border: 1px solid var(--line); padding: 18px; color: var(--dark); background: #f9fcff; }
+.card-radio span { display: block; margin-top: 6px; color: #8aa0b1; font-size: 13px; }
 
 /* Vendors.psd */
-.vendor-intro { max-width: 480px; }
+.vendor-intro { max-width: 480px; align-self: start; }
+.submit-vendors { margin-top: 28px; }
 .vendor-forms { display: grid; gap: 28px; }
 .vendor-card { padding: 30px 34px; background: white; box-shadow: 0 20px 45px rgba(0,86,145,.08); }
 .vendor-card h3 { margin: 0 0 26px; color: var(--dark); font-size: 28px; font-weight: 300; }
 .vendor-fields { display: grid; grid-template-columns: repeat(3, minmax(0,1fr)); gap: 22px; }
 
 /* Timeline.psd */
+.timeline-info { margin-bottom: 24px; }
+.photographer-tabs { display: flex; flex-wrap: wrap; gap: 0; margin: 0 0 26px; background: white; box-shadow: 0 18px 36px rgba(0,86,145,.07); }
+.photographer-tabs button { border: 0; border-right: 1px solid var(--line); padding: 18px 22px; background: white; color: #8296a5; text-transform: uppercase; font-size: 12px; letter-spacing: .06em; }
+.photographer-tabs button.active { background: var(--blue); color: white; }
+.subhead { margin: 0 0 16px; color: var(--dark); font-weight: 300; }
 .timeline-workspace { display: grid; grid-template-columns: 1fr 440px; gap: 38px; align-items: start; }
 .timeslots { display: grid; gap: 18px; }
 .timeslot { display: grid; grid-template-columns: 100px 1fr 90px; gap: 22px; align-items: center; background: white; padding: 22px 26px; box-shadow: 0 18px 36px rgba(0,86,145,.07); }
@@ -232,6 +240,7 @@ a { color: inherit; }
 .timeslot p { margin: 0; color: #8193a2; line-height: 1.55; }
 .delete-link { border: 0; background: transparent; color: var(--danger); font-size: 12px; text-transform: lowercase; }
 .timeline-editor { padding: 34px; background: white; box-shadow: 0 20px 45px rgba(0,86,145,.08); }
+.warning { background: #fff6d9; color: #9d7417; padding: 13px 15px; margin: 0 0 18px; font-size: 13px; }
 .time-row { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
 
 /* FAQ.psd */
