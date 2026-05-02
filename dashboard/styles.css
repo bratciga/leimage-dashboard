@@ -2270,3 +2270,339 @@ body .add-slot.abs { display:none; }
 .slot.selected.slot-empty .slot-main::before {
   border-right-color:rgba(255,255,255,.5) !important;
 }
+
+/* local-only team member timeline controls v98 */
+.timeline-sections {
+  gap:18px !important;
+}
+.timeline-sections .team-head {
+  position:relative !important;
+  width:340px !important;
+  height:76px !important;
+  display:flex !important;
+  align-items:center !important;
+  justify-content:space-between !important;
+  padding:0 22px 0 34px !important;
+  background:#0079c4 !important;
+  color:#fff !important;
+  text-transform:uppercase !important;
+  letter-spacing:.08em !important;
+  font-size:18px !important;
+  font-weight:600 !important;
+  z-index:81 !important;
+}
+.timeline-sections .team-add {
+  position:static !important;
+  width:48px !important;
+  height:48px !important;
+  min-width:48px !important;
+  padding:0 !important;
+  display:flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+  border:2px solid #fff !important;
+  border-radius:50% !important;
+  background:#0079c4 !important;
+  color:#fff !important;
+  font-size:34px !important;
+  line-height:40px !important;
+  font-weight:300 !important;
+  letter-spacing:0 !important;
+  text-align:center !important;
+}
+.timeline-sections .team-member,
+.timeline-sections .team-member > button:first-child {
+  width:340px !important;
+  height:76px !important;
+}
+.timeline-sections .team-member > button:first-child {
+  display:flex !important;
+  align-items:center !important;
+  justify-content:space-between !important;
+  padding:0 28px 0 34px !important;
+  background:#0079c4 !important;
+  color:#fff !important;
+  border:0 !important;
+  opacity:.45 !important;
+  text-align:left !important;
+  text-transform:uppercase !important;
+  letter-spacing:.08em !important;
+  font-size:18px !important;
+  font-weight:600 !important;
+}
+.timeline-sections .team-member > button.active {
+  opacity:1 !important;
+}
+.timeline-sections .primary-team-member .link-timeline {
+  display:none !important;
+}
+.timeline-sections .team-member .link-timeline {
+  position:static !important;
+  flex:0 0 auto !important;
+  display:inline-flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+  width:28px !important;
+  height:28px !important;
+  color:#fff !important;
+  -webkit-text-fill-color:#fff !important;
+  font-size:20px !important;
+  line-height:1 !important;
+  margin:0 !important;
+  transform:none !important;
+  background:transparent !important;
+  border:0 !important;
+}
+.timeline-sections .submit-timeline {
+  margin-top:22px !important;
+}
+
+/* local-only team member delete and submit separation v99 */
+.timeline-sections .team-delete {
+  width:340px !important;
+  height:34px !important;
+  display:inline-flex !important;
+  align-items:center !important;
+  justify-content:flex-start !important;
+  gap:4px !important;
+  padding:0 0 0 34px !important;
+  border:0 !important;
+  background:transparent !important;
+  color:#333 !important;
+  opacity:1 !important;
+  text-align:left !important;
+  text-transform:none !important;
+  letter-spacing:0 !important;
+  font-size:16px !important;
+  font-weight:400 !important;
+}
+.timeline-sections .team-delete .delete-x {
+  color:#fd0747 !important;
+  font-size:24px !important;
+  line-height:1 !important;
+}
+.timeline-sections .team-delete .delete-text {
+  color:#333 !important;
+  padding-bottom:4px !important;
+  background-image:radial-gradient(circle, #333 1.2px, transparent 1.3px) !important;
+  background-size:8px 2px !important;
+  background-repeat:repeat-x !important;
+  background-position:left bottom !important;
+}
+.timeline-sections .submit-timeline {
+  margin-top:72px !important;
+  position:relative !important;
+}
+.timeline-sections .submit-timeline::before {
+  content:"" !important;
+  position:absolute !important;
+  left:0 !important;
+  right:0 !important;
+  top:-45px !important;
+  height:1px !important;
+  background:#b7d1e5 !important;
+}
+
+/* local-only team controls fixes v100 */
+.timeline-sections .team-add {
+  color:#fff !important;
+  -webkit-text-fill-color:#fff !important;
+  border-color:#fff !important;
+  opacity:1 !important;
+  z-index:90 !important;
+  pointer-events:auto !important;
+}
+.timeline-sections .team-delete {
+  justify-content:flex-end !important;
+  padding:0 !important;
+  text-align:right !important;
+}
+.timeline-sections .team-delete .delete-x {
+  flex:0 0 auto !important;
+}
+.timeline-sections .team-delete .delete-text {
+  flex:0 0 auto !important;
+}
+
+/* local-only in-page add team member popup v101 */
+.team-name-popover {
+  left:248px !important;
+  top:424px !important;
+  width:340px !important;
+  padding:22px 24px !important;
+  background:#fff !important;
+  box-shadow:0 24px 70px rgba(0,86,145,.32) !important;
+  z-index:520 !important;
+}
+.team-name-popover::before {
+  content:"" !important;
+  position:absolute !important;
+  left:50% !important;
+  top:-12px !important;
+  transform:translateX(-50%) !important;
+  border-left:10px solid transparent !important;
+  border-right:10px solid transparent !important;
+  border-bottom:12px solid #fff !important;
+}
+.team-name-popover strong {
+  display:block !important;
+  margin-bottom:14px !important;
+  color:#333 !important;
+  font-size:17px !important;
+}
+.team-name-popover input {
+  width:100% !important;
+  margin-bottom:18px !important;
+}
+.team-name-popover div {
+  display:flex !important;
+  gap:14px !important;
+  align-items:center !important;
+}
+.team-name-popover .blue-btn {
+  width:90px !important;
+  height:42px !important;
+  font-size:13px !important;
+}
+.team-name-popover [data-cancel-team-name] {
+  border:0 !important;
+  background:transparent !important;
+  color:#8193a2 !important;
+  font-size:15px !important;
+}
+
+/* local-only team rename and timeline drag v102 */
+.team-name-popover {
+  top:526px !important;
+}
+.slot[draggable="true"] .slot-main {
+  cursor:grab !important;
+}
+.slot.dragging {
+  opacity:.55 !important;
+}
+
+/* local-only timeline drag/delete fixes v103 */
+.timeline-sections .team-add {
+  width:44px !important;
+  height:44px !important;
+  min-width:44px !important;
+  font-size:30px !important;
+  line-height:1 !important;
+}
+.slots {
+  height:760px !important;
+  overflow-y:auto !important;
+  overflow-x:visible !important;
+  padding:0 18px 120px 0 !important;
+  scrollbar-width:thin !important;
+}
+.slot {
+  transition:transform .18s ease, opacity .18s ease !important;
+}
+.slot-main {
+  transition:transform .18s ease, box-shadow .18s ease, outline-color .18s ease !important;
+}
+.slot[draggable="true"] { cursor:default !important; }
+.slot-main[draggable="true"] {
+  cursor:grab !important;
+  z-index:4 !important;
+}
+.slot-main[draggable="true"]:active { cursor:grabbing !important; }
+.slot.dragging .slot-main {
+  opacity:.55 !important;
+  transform:scale(.985) !important;
+}
+.slot.drop-target .slot-main {
+  transform:translateY(8px) !important;
+  box-shadow:0 0 0 3px rgba(0,121,196,.35), 0 18px 42px rgba(0,86,145,.16) !important;
+}
+.confirm-popover {
+  left:1030px !important;
+  top:560px !important;
+  width:360px !important;
+  padding:26px 28px !important;
+  background:#fff !important;
+  box-shadow:0 24px 70px rgba(0,86,145,.32) !important;
+  z-index:700 !important;
+}
+.confirm-popover strong {
+  display:block !important;
+  margin-bottom:10px !important;
+  color:#333 !important;
+  font-size:22px !important;
+  font-weight:400 !important;
+}
+.confirm-popover p {
+  margin:0 0 20px !important;
+  color:#8193a2 !important;
+  font-size:16px !important;
+}
+.confirm-popover div {
+  display:flex !important;
+  gap:14px !important;
+  align-items:center !important;
+}
+.confirm-popover .confirm-yes {
+  width:120px !important;
+  height:44px !important;
+  background:#fd0747 !important;
+  font-size:13px !important;
+}
+.confirm-popover [data-confirm-no] {
+  border:0 !important;
+  background:transparent !important;
+  color:#8193a2 !important;
+  font-size:15px !important;
+}
+
+/* local-only remove horizontal scroll from timeline list v104 */
+.slots {
+  overflow-x:hidden !important;
+}
+
+/* local-only hard fix team plus, page scroll, and drag overlay v105 */
+.timeline-sections .team-add {
+  width:34px !important;
+  height:34px !important;
+  min-width:34px !important;
+  max-width:34px !important;
+  min-height:34px !important;
+  max-height:34px !important;
+  border-width:2px !important;
+  font-size:24px !important;
+  line-height:28px !important;
+  padding:0 !important;
+}
+.screen-timeline.artboard,
+.artboard.screen-timeline,
+.screen-timeline .dashboard-page,
+.screen-timeline .content {
+  height:2200px !important;
+  overflow:visible !important;
+}
+.fit-box.screen-timeline {
+  height:calc(2200px * var(--scale, 1)) !important;
+}
+.screen-timeline .slots {
+  height:auto !important;
+  max-height:none !important;
+  overflow:visible !important;
+  padding:0 !important;
+}
+.screen-timeline .slot-click {
+  pointer-events:none !important;
+}
+.screen-timeline .slot-main[draggable="true"] {
+  position:absolute !important;
+  pointer-events:auto !important;
+  cursor:grab !important;
+  user-select:none !important;
+}
+.screen-timeline .slot-main[draggable="true"] * {
+  pointer-events:none !important;
+}
+.screen-timeline .slot.drop-target .slot-main {
+  transform:translateY(10px) scale(1.01) !important;
+  box-shadow:0 0 0 3px rgba(0,121,196,.45), 0 18px 42px rgba(0,86,145,.22) !important;
+}
