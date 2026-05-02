@@ -2606,3 +2606,96 @@ body .add-slot.abs { display:none; }
   transform:translateY(10px) scale(1.01) !important;
   box-shadow:0 0 0 3px rgba(0,121,196,.45), 0 18px 42px rgba(0,86,145,.22) !important;
 }
+
+/* local-only wheel time picker trial v107 */
+.clock-panel {
+  width:360px !important;
+  max-height:none !important;
+  overflow:visible !important;
+  padding:14px !important;
+  grid-template-columns:1fr !important;
+  gap:0 !important;
+}
+.clock-panel.open {
+  display:block !important;
+}
+.time-wheel {
+  display:grid !important;
+  grid-template-columns:1fr 1fr 1fr !important;
+  gap:10px !important;
+}
+.wheel-col {
+  height:184px !important;
+  overflow-y:auto !important;
+  border:1px solid #c8ddec !important;
+  background:#f7fbff !important;
+  scrollbar-width:thin !important;
+}
+.wheel-col strong {
+  position:sticky !important;
+  top:0 !important;
+  z-index:2 !important;
+  display:block !important;
+  height:34px !important;
+  line-height:34px !important;
+  background:#fff !important;
+  color:#8193a2 !important;
+  text-align:center !important;
+  text-transform:uppercase !important;
+  letter-spacing:.08em !important;
+  font-size:11px !important;
+  border-bottom:1px solid #c8ddec !important;
+}
+.clock-panel .wheel-col button {
+  display:block !important;
+  width:100% !important;
+  height:36px !important;
+  border:0 !important;
+  border-bottom:1px solid rgba(200,221,236,.7) !important;
+  background:transparent !important;
+  color:#333 !important;
+  font-size:15px !important;
+  text-align:center !important;
+}
+.clock-panel .wheel-col button:hover,
+.clock-panel .wheel-col button.active {
+  background:#0079c4 !important;
+  color:#fff !important;
+}
+.wheel-col.ampm {
+  overflow:hidden !important;
+}
+
+/* local-only wheel time picker no am-pm and autosave v108 */
+.time-wheel {
+  grid-template-columns:1fr 1fr !important;
+}
+.clock-panel {
+  width:250px !important;
+}
+
+/* local-only picker AMPM restored, card notes clamped v109 */
+.time-wheel {
+  grid-template-columns:1fr 1fr 1fr !important;
+}
+.clock-panel {
+  width:360px !important;
+}
+.slot-main .slot-note {
+  white-space:nowrap !important;
+  overflow:hidden !important;
+  text-overflow:clip !important;
+  max-width:calc(100% - 8px) !important;
+}
+.wheel-col.ampm {
+  overflow:hidden !important;
+}
+
+/* local-only card note spacing and ellipsis v110 */
+.slot-main .slot-note {
+  margin-top:7px !important;
+  white-space:nowrap !important;
+  overflow:hidden !important;
+  text-overflow:ellipsis !important;
+  max-width:calc(100% - 8px) !important;
+}

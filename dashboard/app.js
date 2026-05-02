@@ -35,6 +35,7 @@ if (params.get('preview') === '1') {
   state.loggedIn = true;
   state.route = params.get('route') || state.route;
   if (params.has('team')) state.timelineMode = `team-${params.get('team')}`;
+  if (params.has('clock')) setTimeout(() => openTimeWheel(params.get('clock')), 0);
 }
 
 function fit() {
@@ -130,10 +131,13 @@ function timeline() {
 function teamNamePopup() { const editing = state.teamNameIndex !== null; const value = editing ? state.teamMembers[state.teamNameIndex] : ''; return `<form class="abs team-name-popover" data-team-name-form><strong>${editing ? 'Rename Team Member' : 'Add Team Member'}</strong><input class="input" name="teamName" value="${value}" placeholder="Assistant Photographer" autofocus><div><button type="submit" class="blue-btn">${editing ? 'Save' : 'Add'}</button><button type="button" data-cancel-team-name>Cancel</button></div></form>`; }
 function linkTimelinePopup() { const activeTeamIndex = Number(String(state.timelineMode).replace('team-', '')) || 0; const choices = state.teamMembers.map((member, index) => ({member, index})).filter(item => item.index !== activeTeamIndex); return `<aside class="abs link-popover"><strong>Link this timeline with:</strong>${choices.map(item => `<button data-link-choice="team-${item.index}">${item.member}</button>`).join('')}</aside>`; }
 function confirmPopup() { const isTeam = state.confirmAction?.type === 'team'; return `<aside class="abs confirm-popover"><strong>${isTeam ? 'Delete team member?' : 'Delete timeline slot?'}</strong><p>This cannot be undone.</p><div><button type="button" class="blue-btn confirm-yes" data-confirm-yes>Delete</button><button type="button" data-confirm-no>Cancel</button></div></aside>`; }
-function slot(s, i) { const hasInfo = Boolean(s[3] && !String(s[3]).toLowerCase().includes('please define')); const short = state.shortSlots.includes(i); const status = hasInfo ? (short ? 'bad' : 'complete') : 'empty'; return `<article class="slot ${state.selectedSlot === i ? 'selected' : ''} slot-${status}" data-slot="${i}"><button class="slot-click" data-slot="${i}" aria-label="Edit ${s[2]}"></button><div class="slot-node"><i></i></div><div class="abs slot-time ${status}"><span>${s[0]}</span><i></i><span>${s[1]}</span></div><div class="abs slot-main" draggable="true" data-drag-slot="${i}"><h3>${s[2]}</h3><p>${s[3]}</p>${s[4]?`<p>${s[4]}</p>`:''}</div></article>`; }
-function timeOptions() { const out = []; for (let h = 12; h <= 23; h++) { for (const m of [0, 15, 30, 45]) { const hour12 = h === 12 ? 12 : h - 12; const t = `${String(hour12).padStart(2, '0')}:${String(m).padStart(2, '0')}`; out.push(`<button type="button" data-time="${t}">${t}</button>`); } } return out.join(''); }
+function displayCardTime(value) { return String(value || '').replace(/\s*(AM|PM)$/i, ''); }
+function displayCardDetail(value) { return String(value || '').replace(/(\d{1,2}:\d{2})\s*(AM|PM)/gi, '$1'); }
+function slot(s, i) { const hasInfo = Boolean(s[3] && !String(s[3]).toLowerCase().includes('please define')); const short = state.shortSlots.includes(i); const status = hasInfo ? (short ? 'bad' : 'complete') : 'empty'; return `<article class="slot ${state.selectedSlot === i ? 'selected' : ''} slot-${status}" data-slot="${i}"><button class="slot-click" data-slot="${i}" aria-label="Edit ${s[2]}"></button><div class="slot-node"><i></i></div><div class="abs slot-time ${status}"><span>${displayCardTime(s[0])}</span><i></i><span>${displayCardTime(s[1])}</span></div><div class="abs slot-main" draggable="true" data-drag-slot="${i}"><h3>${s[2]}</h3><p>${displayCardDetail(s[3])}</p>${s[4]?`<p class="slot-note">${s[4]}</p>`:''}</div></article>`; }
+function timeOptions() { const hours = Array.from({length:12}, (_, i) => i + 1); const minutes = Array.from({length:60}, (_, i) => String(i).padStart(2, '0')); return `<div class="time-wheel" data-time-wheel><div class="wheel-col" data-wheel="hour"><strong>Hour</strong>${hours.map(h => `<button type="button" data-time-part="hour" data-value="${h}">${h}</button>`).join('')}</div><div class="wheel-col" data-wheel="minute"><strong>Min</strong>${minutes.map(m => `<button type="button" data-time-part="minute" data-value="${m}">${m}</button>`).join('')}</div><div class="wheel-col ampm" data-wheel="ampm"><strong>AM/PM</strong><button type="button" data-time-part="ampm" data-value="AM">AM</button><button type="button" data-time-part="ampm" data-value="PM">PM</button></div></div>`; }
+function slotLocationText(slot) { const text = slot?.[3] || ''; if (text.toLowerCase().includes('please define')) return ''; return text.includes('|') ? text.split('|').slice(1).join('|').trim() : text; }
 function selectedTimelineSlot() { return state.timeline[Math.min(state.selectedSlot, state.timeline.length - 1)] || ['0:00','0:00','NEW TIMESLOT','Please define time','',false]; }
-function editor() { const s = selectedTimelineSlot(); return `<aside class="abs editor"><h2><span class="editor-title-text">${s[2]}</span><button class="edit-title" type="button" aria-label="Edit timeslot title">✎</button></h2><div class="warning" role="alert">You have selected less time than recommended</div><div class="note-box"><strong>NOTE</strong><p>Our photographer will capture your getting ready photos, which will include your dress, shoes, details. Please be sure to have your invitations, rings, bouquet and anything else you would like photographed set aside for our team. We recommend at least 1 hour total for getting ready.</p></div><form id="timeline-form"><label><span class="field-label">Timeslot title</span><input class="input" name="title" value="${s[2]}"></label><label><span class="field-label">Define time</span><div class="time-picker"><span>From</span><div class="time-control"><input class="input" name="from" value="" placeholder="From" readonly data-clock-input="from"><button type="button" class="clock-btn" data-clock="from">◷</button><div class="clock-panel" data-clock-panel="from">${timeOptions()}</div></div><span>To</span><div class="time-control"><input class="input" name="to" value="" placeholder="To" readonly data-clock-input="to"><button type="button" class="clock-btn" data-clock="to">◷</button><div class="clock-panel" data-clock-panel="to">${timeOptions()}</div></div></div></label><label><span class="field-label">Location name</span><input class="input" name="place" list="venue-suggestions" placeholder="Restaurant, hotel, venue" data-place-name><datalist id="venue-suggestions"><option value="The Plaza Hotel"><option value="Brooklyn Botanic Garden"><option value="The River Cafe"><option value="501 Union"><option value="The Foundry"></datalist></label><label><span class="field-label">Location address</span><div class="address-grid"><input class="input" name="address1" list="address-suggestions" placeholder="Address 1" data-address-one><input class="input" name="address2" placeholder="Address 2"></div><datalist id="address-suggestions"><option value="768 5th Ave, New York, NY 10019"><option value="990 Washington Ave, Brooklyn, NY 11225"><option value="1 Water St, Brooklyn, NY 11201"><option value="501 Union St, Brooklyn, NY 11231"></datalist></label><div class="address-grid address-grid--cityzip"><label><span class="field-label field-label--visually-hidden">City</span><input class="input" name="city" placeholder="City"></label><label><span class="field-label field-label--visually-hidden">Zip code</span><input class="input" name="zip" placeholder="Zip code"></label></div><label><span class="field-label">Additional notes</span><textarea class="input" name="note" placeholder="Please write if there is anything else you want us to know">${s[4] || ''}</textarea></label><div class="editor-actions"><button type="button" class="delete" data-delete-selected><span class="delete-x">×</span><span class="delete-text">delete timeslot</span></button><span>or</span><button type="button" class="blue-btn save-btn">Save changes</button></div></form></aside>`; }
+function editor() { const s = selectedTimelineSlot(); const place = slotLocationText(s); return `<aside class="abs editor"><h2><span class="editor-title-text">${s[2]}</span><button class="edit-title" type="button" aria-label="Edit timeslot title">✎</button></h2><div class="warning" role="alert">You have selected less time than recommended</div><div class="note-box"><strong>NOTE</strong><p>Our photographer will capture your getting ready photos, which will include your dress, shoes, details. Please be sure to have your invitations, rings, bouquet and anything else you would like photographed set aside for our team. We recommend at least 1 hour total for getting ready.</p></div><form id="timeline-form"><label><span class="field-label">Timeslot title</span><input class="input" name="title" value="${s[2]}"></label><label><span class="field-label">Define time</span><div class="time-picker"><span>From</span><div class="time-control"><input class="input" name="from" value="${s[0]}" placeholder="From" readonly data-clock-input="from"><button type="button" class="clock-btn" data-clock="from">◷</button><div class="clock-panel" data-clock-panel="from">${timeOptions()}</div></div><span>To</span><div class="time-control"><input class="input" name="to" value="${s[1]}" placeholder="To" readonly data-clock-input="to"><button type="button" class="clock-btn" data-clock="to">◷</button><div class="clock-panel" data-clock-panel="to">${timeOptions()}</div></div></div></label><label><span class="field-label">Location name</span><input class="input" name="place" value="${place}" list="venue-suggestions" placeholder="Restaurant, hotel, venue" data-place-name><datalist id="venue-suggestions"><option value="The Plaza Hotel"><option value="Brooklyn Botanic Garden"><option value="The River Cafe"><option value="501 Union"><option value="The Foundry"></datalist></label><label><span class="field-label">Location address</span><div class="address-grid"><input class="input" name="address1" list="address-suggestions" placeholder="Address 1" data-address-one><input class="input" name="address2" placeholder="Address 2"></div><datalist id="address-suggestions"><option value="768 5th Ave, New York, NY 10019"><option value="990 Washington Ave, Brooklyn, NY 11225"><option value="1 Water St, Brooklyn, NY 11201"><option value="501 Union St, Brooklyn, NY 11231"></datalist></label><div class="address-grid address-grid--cityzip"><label><span class="field-label field-label--visually-hidden">City</span><input class="input" name="city" placeholder="City"></label><label><span class="field-label field-label--visually-hidden">Zip code</span><input class="input" name="zip" placeholder="Zip code"></label></div><label><span class="field-label">Additional notes</span><textarea class="input" name="note" placeholder="Please write if there is anything else you want us to know">${s[4] || ''}</textarea></label><div class="editor-actions"><button type="button" class="delete" data-delete-selected><span class="delete-x">×</span><span class="delete-text">delete timeslot</span></button><span>or</span><button type="button" class="blue-btn save-btn">Save changes</button></div></form></aside>`; }
 function faq() { return `<aside class="abs faq-help"><h2>Got questions?</h2><p>Hopefully this will help, but if there’s anything else you want to ask us about, call us at 718.971.9710</p></aside><section class="abs faq-content">${faqSection('Your contract', [['Where can I find my contract?', 'The copy of your contract is located on Wedding info tab.'], ['There are parts of my contract I don’t understand, what do I do?', 'Give us a call at the studio for clarification']])}${faqSection('Payments', [['How do I make a payment or see my current balance?', 'Click on the Payments/Billing Tab and your current balance will be listed'], ['When is my final payment due?', 'Your final payment is due 14 days prior to your wedding'], ['What are my payment options?', 'We accept card, check, money order and cash, however you can only use this app for payments with cards. For other methods of payment contact our studio directly.'], ['Why is the total balance higher than the price listed on your website?', 'The prices on our website do not include NY State sales tax and/or any applicable fees.']])}</section>`; }
 function faqSection(title, items) { return `<section class="faq-section"><h2>${title}</h2>${items.map(i=>`<article class="faq-item"><h3>${i[0]}</h3><p>${i[1]}</p></article>`).join('')}</section>`; }
 
@@ -164,10 +168,11 @@ function bind() {
   document.querySelector('[data-delete-selected]')?.addEventListener('click', e => { e.preventDefault(); e.stopPropagation(); if (state.timeline.length > 1) { state.confirmAction = {type:'slot', index:state.selectedSlot}; render(); } });
   document.querySelector('[data-confirm-no]')?.addEventListener('click', e => { e.preventDefault(); state.confirmAction = null; render(); });
   document.querySelector('[data-confirm-yes]')?.addEventListener('click', e => { e.preventDefault(); const action = state.confirmAction; if (!action) return; if (action.type === 'team') { state.teamMembers.splice(action.index, 1); state.timelineMode = `team-${Math.max(0, action.index - 1)}`; } else if (action.type === 'slot' && state.timeline.length > 1) { state.timeline.splice(action.index, 1); state.selectedSlot = Math.max(0, Math.min(action.index - 1, state.timeline.length - 1)); } state.confirmAction = null; state.teamNamePopup=false; state.linkPopup=false; render(); });
-  document.querySelectorAll('#timeline-form [name=from], #timeline-form [name=to]').forEach(s => s.addEventListener('change', checkTimelineDuration));
-  document.querySelectorAll('[data-clock-input]').forEach(input => input.addEventListener('click', () => document.querySelector(`[data-clock-panel="${input.dataset.clockInput}"]`)?.classList.toggle('open')));
-  document.querySelectorAll('[data-clock]').forEach(b => b.addEventListener('click', () => document.querySelector(`[data-clock-panel="${b.dataset.clock}"]`)?.classList.toggle('open')));
-  document.querySelectorAll('[data-time]').forEach(b => b.addEventListener('click', () => { const panel = b.closest('[data-clock-panel]'); const input = document.querySelector(`[name="${panel.dataset.clockPanel}"]`); input.value = b.dataset.time; panel.classList.remove('open'); input.dispatchEvent(new Event('change', {bubbles:true})); }));
+  document.querySelectorAll('#timeline-form input, #timeline-form textarea').forEach(input => input.addEventListener('input', () => autoSaveSelectedSlot(true)));
+  document.querySelectorAll('#timeline-form [name=from], #timeline-form [name=to]').forEach(s => s.addEventListener('change', () => autoSaveSelectedSlot(true)));
+  document.querySelectorAll('[data-clock-input]').forEach(input => input.addEventListener('click', () => openTimeWheel(input.dataset.clockInput)));
+  document.querySelectorAll('[data-clock]').forEach(b => b.addEventListener('click', () => openTimeWheel(b.dataset.clock)));
+  document.querySelectorAll('[data-time-part]').forEach(b => b.addEventListener('click', () => chooseTimePart(b)));
   document.querySelectorAll('[data-place-name],[data-address-one]').forEach(i => i.addEventListener('change', fillSuggestedAddress));
   document.querySelector('#timeline-form')?.addEventListener('submit', e => { e.preventDefault(); });
   document.querySelector('.save-btn')?.addEventListener('click', e => { e.preventDefault(); saveSelectedSlot(); });
@@ -175,11 +180,77 @@ function bind() {
 window.addEventListener('hashchange', () => { const r=location.hash.replace('#','') || 'home'; if (state.loggedIn && routes.includes(r) && r!==state.route) { state.route=r; render(); }});
 render();
 
+
+function parsedWheelTime(value) {
+  const m = /^(\d{1,2})(?::(\d{2}))?(?:\s*(AM|PM))?/i.exec(value || '');
+  return {hour: m ? String(Math.max(1, Math.min(12, Number(m[1]) || 12))) : '12', minute: m && m[2] ? m[2] : '00', ampm: m && m[3] ? m[3].toUpperCase() : 'PM'};
+}
+function openTimeWheel(name) {
+  document.querySelectorAll('.clock-panel.open').forEach(p => { if (p.dataset.clockPanel !== name) p.classList.remove('open'); });
+  const panel = document.querySelector(`[data-clock-panel="${name}"]`);
+  const input = document.querySelector(`[name="${name}"]`);
+  if (!panel || !input) return;
+  const selected = parsedWheelTime(input.value);
+  panel.dataset.hour = selected.hour;
+  panel.dataset.minute = selected.minute;
+  panel.dataset.ampm = selected.ampm;
+  syncTimeWheel(panel);
+  panel.classList.toggle('open');
+}
+function chooseTimePart(button) {
+  const panel = button.closest('[data-clock-panel]');
+  if (!panel) return;
+  panel.dataset[button.dataset.timePart] = button.dataset.value;
+  syncTimeWheel(panel);
+  const input = document.querySelector(`[name="${panel.dataset.clockPanel}"]`);
+  if (!input) return;
+  const h = panel.dataset.hour || '12';
+  const m = panel.dataset.minute || '00';
+  const ap = panel.dataset.ampm || 'PM';
+  input.value = `${h}:${m} ${ap}`;
+  input.dispatchEvent(new Event('change', {bubbles:true}));
+  autoSaveSelectedSlot(false);
+}
+function syncTimeWheel(panel) {
+  panel.querySelectorAll('[data-time-part]').forEach(btn => btn.classList.toggle('active', panel.dataset[btn.dataset.timePart] === btn.dataset.value));
+}
+
 function minutesFromTime(value) { const m = /^(\d{1,2}):(\d{2})(?:\s*(AM|PM))?$/.exec(value || ''); if (!m) return null; let h = Number(m[1]); if (m[3]) { h = h % 12; if (m[3] === 'PM') h += 12; } return h * 60 + Number(m[2]); }
 function slotTooShort(fromValue, toValue) { const from = minutesFromTime(normalizeSlotTime(fromValue)); const to = minutesFromTime(normalizeSlotTime(toValue)); return from !== null && to !== null && to > from && (to - from) < 60; }
 function normalizeSlotTime(value) { if (/^\d{1,2}:\d{2}(?:\s*(AM|PM))?$/.test(value || '')) return value; return value || '0:00'; }
-function checkTimelineDuration() { const form = document.querySelector('#timeline-form'); const warning = document.querySelector('.warning'); if (!form || !warning) return false; const short = slotTooShort(form.from.value, form.to.value); warning.classList.toggle('show', short); state.shortSlots = state.shortSlots.filter(i => i !== state.selectedSlot); if (short) state.shortSlots.push(state.selectedSlot); const activeSlot = document.querySelector(`.slot[data-slot="${state.selectedSlot}"]`); if (activeSlot && form.from.value && form.to.value) { activeSlot.classList.toggle('slot-bad', short); activeSlot.classList.toggle('slot-complete', !short); activeSlot.classList.remove('slot-empty'); activeSlot.querySelector('.slot-time span:first-child').textContent = form.from.value; activeSlot.querySelector('.slot-time span:last-child').textContent = form.to.value; } return short; }
-function saveSelectedSlot() { const form = document.querySelector('#timeline-form'); if (!form) return; const slot = selectedTimelineSlot(); slot[0] = form.from.value || slot[0]; slot[1] = form.to.value || slot[1]; slot[2] = (form.title.value || slot[2]).toUpperCase(); slot[3] = `${slot[0]} - ${slot[1]} | ${form.place.value || form.address1.value || 'Please define location'}`; slot[4] = form.note.value || ''; const short = checkTimelineDuration(); state.shortSlots = state.shortSlots.filter(i => i !== state.selectedSlot); if (short) state.shortSlots.push(state.selectedSlot); render(); }
+function checkTimelineDuration() { const form = document.querySelector('#timeline-form'); const warning = document.querySelector('.warning'); if (!form || !warning) return false; const short = slotTooShort(form.from.value, form.to.value); warning.classList.toggle('show', short); state.shortSlots = state.shortSlots.filter(i => i !== state.selectedSlot); if (short) state.shortSlots.push(state.selectedSlot); const activeSlot = document.querySelector(`.slot[data-slot="${state.selectedSlot}"]`); if (activeSlot && form.from.value && form.to.value) { activeSlot.classList.toggle('slot-bad', short); activeSlot.classList.toggle('slot-complete', !short); activeSlot.classList.remove('slot-empty'); activeSlot.querySelector('.slot-time span:first-child').textContent = displayCardTime(form.from.value); activeSlot.querySelector('.slot-time span:last-child').textContent = displayCardTime(form.to.value); } return short; }
+function autoSaveSelectedSlot(updateCard = true) {
+  const form = document.querySelector('#timeline-form');
+  if (!form) return;
+  const slot = selectedTimelineSlot();
+  slot[0] = form.from.value || slot[0];
+  slot[1] = form.to.value || slot[1];
+  slot[2] = (form.title.value || slot[2]).toUpperCase();
+  const location = form.place.value || form.address1.value || '';
+  slot[3] = location ? `${slot[0]} - ${slot[1]} | ${location}` : 'Please define time';
+  slot[4] = form.note.value || '';
+  const short = checkTimelineDuration();
+  state.shortSlots = state.shortSlots.filter(i => i !== state.selectedSlot);
+  if (short) state.shortSlots.push(state.selectedSlot);
+  if (updateCard) updateSelectedSlotCard();
+}
+function updateSelectedSlotCard() {
+  const activeSlot = document.querySelector(`.slot[data-slot="${state.selectedSlot}"]`);
+  const slot = selectedTimelineSlot();
+  if (!activeSlot || !slot) return;
+  activeSlot.querySelector('.slot-time span:first-child').textContent = displayCardTime(slot[0]);
+  activeSlot.querySelector('.slot-time span:last-child').textContent = displayCardTime(slot[1]);
+  activeSlot.querySelector('.slot-main h3').textContent = slot[2];
+  const main = activeSlot.querySelector('.slot-main');
+  const ps = main.querySelectorAll('p');
+  if (ps[0]) ps[0].textContent = displayCardDetail(slot[3]);
+  let note = main.querySelector('.slot-note');
+  if (slot[4]) {
+    if (!note) { note = document.createElement('p'); note.className = 'slot-note'; main.appendChild(note); }
+    note.textContent = slot[4];
+  } else if (note) note.remove();
+}
+function saveSelectedSlot() { autoSaveSelectedSlot(false); render(); }
 function fillSuggestedAddress(e) { const map = {'The Plaza Hotel':['768 5th Ave','New York','10019'],'Brooklyn Botanic Garden':['990 Washington Ave','Brooklyn','11225'],'The River Cafe':['1 Water St','Brooklyn','11201'],'501 Union':['501 Union St','Brooklyn','11231'],'768 5th Ave, New York, NY 10019':['768 5th Ave','New York','10019'],'990 Washington Ave, Brooklyn, NY 11225':['990 Washington Ave','Brooklyn','11225'],'1 Water St, Brooklyn, NY 11201':['1 Water St','Brooklyn','11201'],'501 Union St, Brooklyn, NY 11231':['501 Union St','Brooklyn','11231']}; const hit = map[e.target.value]; const form = document.querySelector('#timeline-form'); if (!hit || !form) return; form.address1.value = hit[0]; form.city.value = hit[1]; form.zip.value = hit[2]; }
 
 function closeClockPanels(e) { if (!e.target.closest('.time-control')) document.querySelectorAll('.clock-panel.open').forEach(p => p.classList.remove('open')); if (state.linkPopup && !e.target.closest('.link-popover') && !e.target.closest('[data-link-team]')) { state.linkPopup = false; render(); } }
