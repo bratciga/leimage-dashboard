@@ -1974,3 +1974,299 @@ body .add-slot.abs { display:none; }
 .slot.selected .slot-main::before {
   filter:drop-shadow(-1px 0 0 rgba(0,0,0,.7)) drop-shadow(0 -1px 0 rgba(0,0,0,.7)) drop-shadow(0 1px 0 rgba(0,0,0,.7)) !important;
 }
+
+/* local-only time label compacting pass v78 */
+.slot-time span {
+  white-space:nowrap !important;
+}
+
+/* local-only timeline connector status pass v79 */
+.slot.complete::before {
+  border-left-style:solid !important;
+  border-left-color:#50ae55 !important;
+}
+.slot.bad::before {
+  border-left-style:solid !important;
+  border-left-color:#fd0747 !important;
+}
+.slot.empty::before,
+.slot.slot-empty::before {
+  border-left-style:dotted !important;
+  border-left-color:rgba(80,174,85,.55) !important;
+}
+
+/* local-only fix: app uses slot-complete / slot-bad / slot-empty status classes */
+.slot.slot-complete::before {
+  border-left-style:solid !important;
+  border-left-color:#50ae55 !important;
+}
+.slot.slot-bad::before {
+  border-left-style:solid !important;
+  border-left-color:#fd0747 !important;
+}
+.slot.slot-empty::before {
+  border-left-style:dotted !important;
+  border-left-color:rgba(80,174,85,.55) !important;
+}
+
+/* local-only timeline connector and circle status pass v81 */
+/* Connector starts at bottom center of current circle and reaches next circle. */
+.slot::before {
+  top:58px !important;
+  height:87px !important;
+}
+
+/* Status circles: green filled when complete, red outline and empty when too short. */
+.slot.slot-complete .slot-node {
+  background:#50ae55 !important;
+  border-color:#50ae55 !important;
+}
+.slot.slot-bad .slot-node {
+  background:#ebf5fd !important;
+  border-color:#fd0747 !important;
+}
+.slot.slot-empty .slot-node {
+  background:#ebf5fd !important;
+  border-color:rgba(80,174,85,.55) !important;
+}
+
+/* local-only timeline connector/selection refinement v82 */
+/* Extend connector down to the next circle. */
+.slot::before {
+  height:106px !important;
+}
+
+/* Avoid rectangular outline cutting through the pointer arrow. Use a subtle ring shadow instead. */
+.slot.selected .slot-main {
+  outline:0 !important;
+  box-shadow:
+    0 0 0 1px rgba(0,0,0,.7),
+    0 18px 42px rgba(0,86,145,.16) !important;
+}
+.slot.selected .slot-main::before {
+  filter:drop-shadow(-1px 0 0 rgba(0,0,0,.7)) drop-shadow(0 -1px 0 rgba(0,0,0,.7)) drop-shadow(0 1px 0 rgba(0,0,0,.7)) !important;
+}
+
+/* local-only selected pointer fix v83: shape-based selection, no rectangular ring */
+.slot.selected .slot-main {
+  outline:0 !important;
+  box-shadow:0 18px 42px rgba(0,86,145,.16) !important;
+  filter:
+    drop-shadow(1px 0 0 rgba(0,0,0,.7))
+    drop-shadow(-1px 0 0 rgba(0,0,0,.7))
+    drop-shadow(0 1px 0 rgba(0,0,0,.7))
+    drop-shadow(0 -1px 0 rgba(0,0,0,.7)) !important;
+}
+.slot.selected .slot-main::before {
+  filter:none !important;
+}
+
+/* local-only selected card shadow fix v84: no slice through pointer, tighter shadow */
+.slot.selected .slot-main {
+  outline:0 !important;
+  filter:none !important;
+  box-shadow:0 4px 10px rgba(0,86,145,.16), 0 0 0 1px rgba(0,0,0,.28) !important;
+}
+.slot.selected .slot-main::before {
+  filter:none !important;
+  border-right-color:#fff !important;
+}
+
+/* local-only selected card pointer outline v85 */
+.slot.selected .slot-main::before {
+  filter:drop-shadow(-1px 0 0 rgba(0,0,0,.28)) drop-shadow(0 -1px 0 rgba(0,0,0,.28)) drop-shadow(0 1px 0 rgba(0,0,0,.28)) !important;
+}
+
+/* local-only revert v85 pointer outline because it sliced through the pointer */
+.slot.selected .slot-main::before {
+  filter:none !important;
+}
+
+/* local-only pointer outline without slicing v87 */
+.slot.selected .slot-main::after {
+  content:"" !important;
+  position:absolute !important;
+  left:-17px !important;
+  top:33px !important;
+  width:0 !important;
+  height:0 !important;
+  border-top:15px solid transparent !important;
+  border-bottom:15px solid transparent !important;
+  border-right:17px solid rgba(0,0,0,.28) !important;
+  background:transparent !important;
+  z-index:1 !important;
+}
+.slot.selected .slot-main::before {
+  z-index:2 !important;
+  filter:none !important;
+}
+
+/* local-only selected card option 2 v88: tint + tight shadow, no pointer outline */
+.slot.selected .slot-main {
+  outline:0 !important;
+  background:#f9fcff !important;
+  filter:none !important;
+  box-shadow:0 5px 12px rgba(0,86,145,.18), 0 0 0 1px rgba(0,121,196,.22) !important;
+}
+.slot.selected .slot-main::before {
+  border-right-color:#f9fcff !important;
+  filter:none !important;
+  z-index:2 !important;
+}
+.slot.selected .slot-main::after {
+  display:none !important;
+  content:none !important;
+}
+
+/* local-only selected card structural outline v89 */
+.slot { position:relative !important; }
+.slot.selected::after {
+  content:"" !important;
+  position:absolute !important;
+  left:232px !important;
+  top:17px !important;
+  width:540px !important;
+  height:98px !important;
+  background:rgba(0,0,0,.35) !important;
+  clip-path:polygon(0 50%, 17px 34px, 17px 0, 100% 0, 100% 100%, 17px 100%, 17px 64px) !important;
+  z-index:0 !important;
+  pointer-events:none !important;
+}
+.slot.selected .slot-main {
+  background:#fff !important;
+  outline:0 !important;
+  filter:none !important;
+  box-shadow:0 5px 12px rgba(0,86,145,.16) !important;
+  z-index:2 !important;
+}
+.slot.selected .slot-main::before {
+  border-right-color:#fff !important;
+  filter:none !important;
+  z-index:3 !important;
+}
+.slot.selected .slot-main::after {
+  content:none !important;
+  display:none !important;
+}
+
+/* local-only align structural selected outline v90 */
+.slot.selected::after {
+  left:232px !important;
+  top:-1px !important;
+  width:540px !important;
+  height:90px !important;
+  clip-path:polygon(0 50%, 17px 33px, 17px 0, 100% 0, 100% 100%, 17px 100%, 17px 63px) !important;
+}
+
+/* local-only grow selected backing shape into visible outline v91 */
+.slot.selected::after {
+  left:229px !important;
+  top:-3px !important;
+  width:544px !important;
+  height:102px !important;
+  clip-path:polygon(0 50%, 20px 31px, 20px 0, 100% 0, 100% 100%, 20px 100%, 20px 71px) !important;
+}
+
+/* local-only selected card outline sizing and empty state v92 */
+/* Grow the backing shape more around the pointer so the left angled outline is visible. */
+.slot.selected::after {
+  left:226px !important;
+  top:-4px !important;
+  width:548px !important;
+  height:104px !important;
+  background:rgba(0,0,0,.42) !important;
+  clip-path:polygon(0 50%, 23px 30px, 23px 0, 100% 0, 100% 100%, 23px 100%, 23px 74px) !important;
+}
+
+/* Empty selected cards should look hollow: page background fill, but still outlined. */
+.slot.selected.slot-empty .slot-main {
+  background:#ebf5fd !important;
+}
+.slot.selected.slot-empty .slot-main::before {
+  border-right-color:#ebf5fd !important;
+}
+
+/* local-only selected outline and short-time warning pass v93 */
+/* One-pixel selected backing shape, just larger than card + pointer. */
+.slot.selected::after {
+  left:232px !important;
+  top:-1px !important;
+  width:539px !important;
+  height:98px !important;
+  background:rgba(0,121,196,.35) !important;
+  clip-path:polygon(0 50%, 17px 33px, 17px 0, 100% 0, 100% 100%, 17px 100%, 17px 63px) !important;
+}
+
+/* Keep selected empty cards hollow, but leave the one-pixel outline visible. */
+.slot.selected.slot-empty .slot-main,
+.slot.selected.slot-empty .slot-main::before {
+  filter:none !important;
+}
+
+/* Center warning bubble under the To line. */
+.editor .warning {
+  left:500px !important;
+  top:42px !important;
+  transform:translateX(-50%) !important;
+}
+.editor .warning::before {
+  left:50% !important;
+  transform:translateX(-50%) !important;
+}
+
+/* local-only warning bubble vertical tweak v94 */
+.editor .warning {
+  top:18px !important;
+}
+
+/* local-only empty timeline card hollow state v95 */
+.slot.slot-empty .slot-main {
+  background:#ebf5fd !important;
+  box-shadow:none !important;
+  border:1px solid rgba(80,174,85,.45) !important;
+}
+.slot.slot-empty:not(.selected) .slot-main::before {
+  content:"" !important;
+  display:block !important;
+  position:absolute !important;
+  left:-10px !important;
+  top:39px !important;
+  width:20px !important;
+  height:20px !important;
+  border:0 !important;
+  border-left:1px solid rgba(80,174,85,.45) !important;
+  border-bottom:1px solid rgba(80,174,85,.45) !important;
+  background:#ebf5fd !important;
+  transform:rotate(45deg) !important;
+  filter:none !important;
+  z-index:2 !important;
+}
+.slot.slot-empty:not(.selected) .slot-main::after {
+  content:none !important;
+  display:none !important;
+}
+.slot.slot-empty .slot-main h3,
+.slot.slot-empty .slot-main p {
+  color:rgba(51,51,51,.45) !important;
+}
+.slot.selected.slot-empty .slot-main {
+  border:0 !important;
+  box-shadow:none !important;
+}
+
+/* local-only selected empty card translucent white v96 */
+.slot.selected.slot-empty .slot-main {
+  background:rgba(255,255,255,.5) !important;
+}
+.slot.selected.slot-empty .slot-main::before {
+  border-right-color:rgba(255,255,255,.5) !important;
+}
+
+/* local-only selected empty card 50 percent white v97 */
+.slot.selected.slot-empty .slot-main {
+  background:rgba(255,255,255,.5) !important;
+  box-shadow:none !important;
+}
+.slot.selected.slot-empty .slot-main::before {
+  border-right-color:rgba(255,255,255,.5) !important;
+}
