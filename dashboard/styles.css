@@ -1,5 +1,5 @@
 :root {
-  --blue: #0079c4;
+  --blue: #0428a4;
   --blue-dark: #006fb6;
   --pale: #ebf5fd;
   --white: #fff;
@@ -11,11 +11,11 @@
 }
 
 * { box-sizing: border-box; }
-html, body { margin: 0; min-height: 100%; background: var(--pale); font-family: Arial, Helvetica, sans-serif; color: var(--dark); }
-body { overflow: auto; }
+html, body { margin: 0; min-height: 100%; background: var(--pale); font-family: Arial, Helvetica, sans-serif; color: var(--dark); overflow-x: hidden; }
+body { overflow-y: auto; overflow-x: hidden; }
 button, input, textarea { font: inherit; }
 button { cursor: pointer; }
-.stage { width: 100vw; min-height: 100vh; overflow: auto; }
+.stage { width: 100%; min-height: 100vh; overflow: visible; }
 .artboard {
   position: relative;
   width: 2549px;
@@ -349,7 +349,7 @@ body.body-signin, body.body-payments, body.body-timeline, body.body-vendors, bod
   top:0;
   width:330px;
   height:1340px;
-  background:#0079c4;
+  background:#0428a4;
   transition:left .2s ease;
   z-index:20;
   box-shadow:18px 0 45px rgba(0,24,39,.18);
@@ -391,7 +391,7 @@ body.body-signin, body.body-payments, body.body-timeline, body.body-vendors, bod
 .timeline-sections button {
   height:76px;
   border:0;
-  background:#0079c4;
+  background:#0428a4;
   color:#fff;
   text-transform:uppercase;
   letter-spacing:.08em;
@@ -408,10 +408,10 @@ body.body-signin, body.body-payments, body.body-timeline, body.body-vendors, bod
   top:350px;
   width:48px;
   height:48px;
-  border:2px solid #0079c4;
+  border:2px solid #0428a4;
   border-radius:50%;
   background:#fff;
-  color:#0079c4;
+  color:#0428a4;
   font-size:34px;
   line-height:38px;
   font-weight:300;
@@ -419,7 +419,7 @@ body.body-signin, body.body-payments, body.body-timeline, body.body-vendors, bod
 }
 .slots { left:1022px; top:438px; width:542px; }
 .slot { width:542px; height:74px; margin-bottom:15px; background:transparent; box-shadow:none; }
-.slot-time { left:0; top:10px; width:88px; color:#0079c4; font-size:28px; line-height:1.18; text-align:left; }
+.slot-time { left:0; top:10px; width:88px; color:#0428a4; font-size:28px; line-height:1.18; text-align:left; }
 .slot-main {
   left:110px;
   top:0;
@@ -438,7 +438,7 @@ body.body-signin, body.body-payments, body.body-timeline, body.body-vendors, bod
 .editor::after { top:-76px; height:74px; }
 
 /* keep the blue top bar from the design while replacing top links with hamburger drawer */
-.dashboard-page::before { content:""; position:absolute; left:0; top:0; width:2549px; height:68px; background:#0079c4; z-index:10; }
+.dashboard-page::before { content:""; position:absolute; left:0; top:0; width:2549px; height:68px; background:#0428a4; z-index:10; }
 .page-heading, .content { z-index:1; }
 
 /* timeline requested fixes 2: clean drawer and stack timeline action boxes */
@@ -477,7 +477,7 @@ body.body-signin, body.body-payments, body.body-timeline, body.body-vendors, bod
   top:252px;
   width:542px;
   height:76px;
-  background:#0079c4;
+  background:#0428a4;
   color:#fff;
   display:flex;
   align-items:center;
@@ -494,7 +494,7 @@ body.body-signin, body.body-payments, body.body-timeline, body.body-vendors, bod
   height:48px;
   border:2px solid #fff;
   border-radius:50%;
-  background:#0079c4;
+  background:#0428a4;
   color:#fff;
   font-size:34px;
   line-height:38px;
@@ -543,8 +543,8 @@ body .add-slot.abs { display:none; }
 }
 .timeline-sections button:nth-child(3) {
   background:#fff;
-  color:#0079c4;
-  border:2px solid #0079c4;
+  color:#0428a4;
+  border:2px solid #0428a4;
 }
 .editor {
   top:352px;
@@ -619,16 +619,16 @@ body .add-slot.abs { display:none; }
 .editor .warning { left:680px; top:275px; }
 
 /* timeline requested behavior pass 5 */
-.timeline-sections button { background:#fff; color:#0079c4; border:2px solid #0079c4; }
-.timeline-sections button.active { background:#0079c4; color:#fff; }
-.timeline-sections .submit-timeline { background:#fff; color:#0079c4; border:2px solid #0079c4; }
+.timeline-sections button { background:#fff; color:#0428a4; border:2px solid #0428a4; }
+.timeline-sections button.active { background:#0428a4; color:#fff; }
+.timeline-sections .submit-timeline { background:#fff; color:#0428a4; border:2px solid #0428a4; }
 .same-timeline { left:636px; top:568px; width:340px; color:#8193a2; font-size:16px; line-height:1.35; }
 .same-timeline input { width:20px; height:20px; vertical-align:middle; margin-right:8px; }
 .slot { height:96px; margin-bottom:17px; cursor:pointer; }
-.slot.selected .slot-main { outline:3px solid rgba(0,121,196,.24); }
+.slot.selected .slot-main { outline:3px solid rgba(4,40,164,.24); }
 .slot-click { position:absolute; inset:0; z-index:3; border:0; background:transparent; cursor:pointer; }
 .slot-actions { z-index:4; }
-.slot-time { left:0; top:27px; width:100px; display:flex; align-items:center; gap:8px; color:#0079c4; font-size:22px; line-height:1; }
+.slot-time { left:0; top:27px; width:100px; display:flex; align-items:center; gap:8px; color:#0428a4; font-size:22px; line-height:1; }
 .slot-time span { white-space:nowrap; }
 .slot-time i { position:relative; display:block; width:34px; height:2px; background:#50ae55; }
 .slot-time i::before { content:""; position:absolute; left:-5px; top:-4px; width:10px; height:10px; border-radius:50%; background:#50ae55; }
@@ -690,7 +690,7 @@ body .add-slot.abs { display:none; }
 }
 .link-popover::before { content:""; position:absolute; left:-12px; top:32px; border-top:10px solid transparent; border-bottom:10px solid transparent; border-right:12px solid #fff; }
 .link-popover strong { display:block; color:#333; font-size:17px; margin-bottom:14px; }
-.link-popover button { display:block; width:100%; height:42px; border:0; border-bottom:1px solid #c8ddec; background:#fff; color:#0079c4; text-align:left; font-size:16px; }
+.link-popover button { display:block; width:100%; height:42px; border:0; border-bottom:1px solid #c8ddec; background:#fff; color:#0428a4; text-align:left; font-size:16px; }
 .same-timeline { display:none; }
 .timeline-list-head { left:636px; top:352px; width:690px; }
 .slots { left:636px; top:452px; width:690px; }
@@ -716,7 +716,7 @@ body .add-slot.abs { display:none; }
 .editor.editing-title .editor-title-text { background:rgba(255,255,255,.22); outline:2px solid rgba(255,255,255,.9); padding:4px 8px; }
 .editor .warning { left:690px; }
 /* local-only polish: link icon follows Videographer button state */
-.link-timeline { color:#0079c4 !important; }
+.link-timeline { color:#0428a4 !important; }
 .timeline-option button.active + .link-timeline { color:#fff !important; border-color:#fff !important; }
 
 /* local-only detailed timeline polish pass */
@@ -730,7 +730,7 @@ body .add-slot.abs { display:none; }
 .timeline-info h2 { font-size:34px; }
 .timeline-info p { font-size:18px; line-height:1.42; }
 .timeline-sections { top:402px; }
-.timeline-sections button { background:#0079c4; color:#fff; border:0; opacity:.5; }
+.timeline-sections button { background:#0428a4; color:#fff; border:0; opacity:.5; }
 .timeline-sections button.active { opacity:1; }
 .timeline-sections .submit-timeline,
 .timeline-sections button.submit-timeline {
@@ -739,7 +739,7 @@ body .add-slot.abs { display:none; }
   border:2px solid #3aa956;
   opacity:1;
 }
-.link-timeline { border:0 !important; font-size:24px !important; width:34px !important; height:34px !important; color:#0079c4 !important; background:transparent !important; }
+.link-timeline { border:0 !important; font-size:24px !important; width:34px !important; height:34px !important; color:#0428a4 !important; background:transparent !important; }
 .timeline-option button.active + .link-timeline { color:#fff !important; }
 .link-popover { top:474px; }
 .timeline-list-head { top:402px; left:636px; width:740px; }
@@ -828,7 +828,7 @@ body .add-slot.abs { display:none; }
   height:30px;
   border:0;
   background:transparent;
-  color:#0079c4;
+  color:#0428a4;
   font-size:22px;
 }
 .time-control input { padding-right:44px; cursor:pointer; }
@@ -1053,7 +1053,7 @@ body .add-slot.abs { display:none; }
   background:transparent !important;
 }
 .timeline-option button.active + .link-timeline { color:#fff !important; }
-.timeline-option button:not(.active) + .link-timeline { color:#0079c4 !important; }
+.timeline-option button:not(.active) + .link-timeline { color:#0428a4 !important; }
 
 /* local-only repair: link icon is now inside the Videographer button markup */
 .timeline-option > button:first-child {
@@ -1757,7 +1757,7 @@ body .add-slot.abs { display:none; }
   height:30px !important;
   border:0 !important;
   background:transparent !important;
-  color:#0079c4 !important;
+  color:#0428a4 !important;
   font-size:22px !important;
 }
 
@@ -2106,7 +2106,7 @@ body .add-slot.abs { display:none; }
   outline:0 !important;
   background:#f9fcff !important;
   filter:none !important;
-  box-shadow:0 5px 12px rgba(0,86,145,.18), 0 0 0 1px rgba(0,121,196,.22) !important;
+  box-shadow:0 5px 12px rgba(0,86,145,.18), 0 0 0 1px rgba(4,40,164,.22) !important;
 }
 .slot.selected .slot-main::before {
   border-right-color:#f9fcff !important;
@@ -2193,7 +2193,7 @@ body .add-slot.abs { display:none; }
   top:-1px !important;
   width:539px !important;
   height:98px !important;
-  background:rgba(0,121,196,.35) !important;
+  background:rgba(4,40,164,.35) !important;
   clip-path:polygon(0 50%, 17px 33px, 17px 0, 100% 0, 100% 100%, 17px 100%, 17px 63px) !important;
 }
 
@@ -2283,7 +2283,7 @@ body .add-slot.abs { display:none; }
   align-items:center !important;
   justify-content:space-between !important;
   padding:0 22px 0 34px !important;
-  background:#0079c4 !important;
+  background:#0428a4 !important;
   color:#fff !important;
   text-transform:uppercase !important;
   letter-spacing:.08em !important;
@@ -2302,7 +2302,7 @@ body .add-slot.abs { display:none; }
   justify-content:center !important;
   border:2px solid #fff !important;
   border-radius:50% !important;
-  background:#0079c4 !important;
+  background:#0428a4 !important;
   color:#fff !important;
   font-size:34px !important;
   line-height:40px !important;
@@ -2320,7 +2320,7 @@ body .add-slot.abs { display:none; }
   align-items:center !important;
   justify-content:space-between !important;
   padding:0 28px 0 34px !important;
-  background:#0079c4 !important;
+  background:#0428a4 !important;
   color:#fff !important;
   border:0 !important;
   opacity:.45 !important;
@@ -2515,7 +2515,7 @@ body .add-slot.abs { display:none; }
 }
 .slot.drop-target .slot-main {
   transform:translateY(8px) !important;
-  box-shadow:0 0 0 3px rgba(0,121,196,.35), 0 18px 42px rgba(0,86,145,.16) !important;
+  box-shadow:0 0 0 3px rgba(4,40,164,.35), 0 18px 42px rgba(0,86,145,.16) !important;
 }
 .confirm-popover {
   left:1030px !important;
@@ -2604,7 +2604,7 @@ body .add-slot.abs { display:none; }
 }
 .screen-timeline .slot.drop-target .slot-main {
   transform:translateY(10px) scale(1.01) !important;
-  box-shadow:0 0 0 3px rgba(0,121,196,.45), 0 18px 42px rgba(0,86,145,.22) !important;
+  box-shadow:0 0 0 3px rgba(4,40,164,.45), 0 18px 42px rgba(0,86,145,.22) !important;
 }
 
 /* local-only wheel time picker trial v107 */
@@ -2659,7 +2659,7 @@ body .add-slot.abs { display:none; }
 }
 .clock-panel .wheel-col button:hover,
 .clock-panel .wheel-col button.active {
-  background:#0079c4 !important;
+  background:#0428a4 !important;
   color:#fff !important;
 }
 .wheel-col.ampm {
@@ -2767,7 +2767,7 @@ body .add-slot.abs { display:none; }
   border:0 !important;
   border-bottom:1px solid #c8ddec !important;
   background:#fff !important;
-  color:#0079c4 !important;
+  color:#0428a4 !important;
   text-align:left !important;
   font-size:14px !important;
   letter-spacing:.04em !important;
@@ -2777,7 +2777,7 @@ body .add-slot.abs { display:none; }
 }
 .add-card-popover .custom-card {
   margin-top:8px !important;
-  border:2px solid #0079c4 !important;
+  border:2px solid #0428a4 !important;
   padding-left:14px !important;
 }
 
@@ -2805,7 +2805,7 @@ body .add-slot.abs { display:none; }
   padding:10px !important;
   border:2px solid #c8ddec !important;
   background:#f8fcff !important;
-  color:#0079c4 !important;
+  color:#0428a4 !important;
   text-align:center !important;
   font-size:12px !important;
   line-height:1.25 !important;
@@ -2813,13 +2813,13 @@ body .add-slot.abs { display:none; }
   vertical-align:top !important;
 }
 .add-card-popover button:hover {
-  border-color:#0079c4 !important;
+  border-color:#0428a4 !important;
   background:#fff !important;
   box-shadow:0 8px 22px rgba(0,86,145,.12) !important;
 }
 .add-card-popover .custom-card {
   margin-top:0 !important;
-  border:2px solid #0079c4 !important;
+  border:2px solid #0428a4 !important;
   background:#fff !important;
 }
 
@@ -3013,7 +3013,7 @@ body .add-slot.abs { display:none; }
   display:block !important;
 }
 .saved-location-dropdown strong {
-  color:#0079c4 !important;
+  color:#0428a4 !important;
   font-size:14px !important;
   margin-bottom:3px !important;
 }
@@ -3066,7 +3066,7 @@ div.location-address-fields.is-hidden {
   cursor:pointer !important;
 }
 .pac-item-query {
-  color:#0079c4 !important;
+  color:#0428a4 !important;
 }
 
 /* local-only keep location name underline consistent v137 */
@@ -3109,11 +3109,11 @@ div.location-address-fields.is-hidden {
 
 /* local-only location active cursor and card time restore v148 */
 .location-name-label input[name="place"] {
-  caret-color:#0079c4 !important;
+  caret-color:#0428a4 !important;
   cursor:text !important;
 }
 .location-name-label input[name="place"]:focus {
-  outline:1px solid rgba(0,121,196,.18) !important;
+  outline:1px solid rgba(4,40,164,.18) !important;
   outline-offset:2px !important;
 }
 
@@ -3266,3 +3266,4736 @@ div.location-address-fields.is-hidden {
 .address-grid--cityzip label:nth-child(1) { grid-column:1 !important; }
 .address-grid--cityzip label:nth-child(2) { grid-column:3 !important; }
 .address-grid--cityzip label:nth-child(3) { grid-column:5 !important; }
+
+/* local-only wedding info card layout v166 */
+.screen-home .home {
+  background:var(--pale) !important;
+  color:#333 !important;
+}
+.screen-home .client-name {
+  color:#333 !important;
+  left:405px !important;
+  top:92px !important;
+  font-size:54px !important;
+}
+.screen-home .welcome,
+.screen-home .package,
+.screen-home .tile {
+  background:#fff !important;
+  box-shadow:0 22px 55px rgba(0,86,145,.08) !important;
+  color:#333 !important;
+  padding:36px !important;
+  box-sizing:border-box !important;
+}
+.screen-home .welcome,
+.screen-home .package {
+  top:220px !important;
+  width:780px !important;
+  min-height:390px !important;
+}
+.screen-home .welcome { left:405px !important; }
+.screen-home .package { left:1225px !important; }
+.screen-home .home h2,
+.screen-home .tile h3 {
+  color:#333 !important;
+}
+.screen-home .home p,
+.screen-home .tile p {
+  color:#8397a6 !important;
+}
+.screen-home .tile {
+  top:680px !important;
+  width:365px !important;
+  height:260px !important;
+}
+.screen-home .tile-pay { left:405px !important; }
+.screen-home .tile-vendors { left:800px !important; }
+.screen-home .tile-timeline { left:1195px !important; }
+.screen-home .tile-book { left:1590px !important; }
+.screen-home .tile h3 {
+  font-size:28px !important;
+  margin-bottom:16px !important;
+}
+.screen-home .tile p {
+  font-size:15px !important;
+  line-height:1.42 !important;
+}
+.screen-home .tile button {
+  color:#0428a4 !important;
+}
+
+/* local-only wedding info aligned grid v167 */
+.screen-home .welcome,
+.screen-home .package {
+  top:220px !important;
+  width:770px !important;
+}
+.screen-home .welcome { left:405px !important; }
+.screen-home .package { left:1215px !important; }
+.screen-home .tile {
+  top:770px !important;
+  width:365px !important;
+  height:250px !important;
+}
+.screen-home .tile-pay { left:405px !important; }
+.screen-home .tile-vendors { left:810px !important; }
+.screen-home .tile-timeline { left:1215px !important; }
+.screen-home .tile-book { left:1620px !important; }
+
+/* local-only wedding info package priority layout v168 */
+.screen-home .package {
+  left:1215px !important;
+  width:980px !important;
+  min-height:800px !important;
+}
+.screen-home .tile {
+  width:365px !important;
+  height:250px !important;
+}
+.screen-home .tile-pay,
+.screen-home .tile-vendors {
+  top:770px !important;
+}
+.screen-home .tile-timeline,
+.screen-home .tile-book {
+  top:1050px !important;
+}
+.screen-home .tile-pay,
+.screen-home .tile-timeline {
+  left:405px !important;
+}
+.screen-home .tile-vendors,
+.screen-home .tile-book {
+  left:810px !important;
+}
+
+/* local-only wedding package bullets v169 */
+.screen-home .package-list {
+  margin:0 0 28px 0 !important;
+  padding-left:24px !important;
+  color:#8397a6 !important;
+  font-size:22px !important;
+  line-height:1.55 !important;
+}
+.screen-home .package-list li {
+  margin:0 0 8px 0 !important;
+  padding-left:8px !important;
+}
+.screen-home .package-list li::marker {
+  color:#0428a4 !important;
+}
+
+/* local-only wedding info left package and right action grid v170 */
+.screen-home .package {
+  left:405px !important;
+  top:220px !important;
+  width:770px !important;
+  min-height:800px !important;
+}
+.screen-home .package-list li::marker {
+  color:#8397a6 !important;
+}
+.screen-home .tile {
+  width:365px !important;
+  height:250px !important;
+}
+.screen-home .tile-pay,
+.screen-home .tile-timeline {
+  left:1215px !important;
+}
+.screen-home .tile-vendors,
+.screen-home .tile-book {
+  left:1620px !important;
+}
+.screen-home .tile-pay,
+.screen-home .tile-vendors {
+  top:220px !important;
+}
+.screen-home .tile-timeline,
+.screen-home .tile-book {
+  top:500px !important;
+}
+
+/* local-only wedding info header and details card v172 */
+.screen-home .client-name {
+  font-size:28px !important;
+  top:94px !important;
+  line-height:1.2 !important;
+}
+.screen-home .couple-info {
+  left:405px !important;
+  top:145px !important;
+  width:1790px !important;
+  height:220px !important;
+  background:#fff !important;
+  box-shadow:0 22px 55px rgba(0,86,145,.08) !important;
+  color:#333 !important;
+  padding:28px 32px !important;
+  box-sizing:border-box !important;
+  display:flex !important;
+  gap:32px !important;
+  align-items:stretch !important;
+}
+.screen-home .couple-info-photo {
+  width:164px !important;
+  height:164px !important;
+  flex:0 0 164px !important;
+  border-radius:4px !important;
+  background:linear-gradient(135deg, #d8e7ef 0%, #f8efe7 100%) !important;
+  position:relative !important;
+  overflow:hidden !important;
+}
+.screen-home .couple-info-photo::after {
+  content:"Couple photo";
+  position:absolute;
+  inset:auto 0 22px 0;
+  text-align:center;
+  color:#8397a6;
+  font-size:15px;
+  letter-spacing:.02em;
+}
+.screen-home .couple-info h2 {
+  font-size:26px !important;
+  margin:0 0 18px !important;
+  color:#333 !important;
+  font-weight:300 !important;
+}
+.screen-home .couple-info-details {
+  flex:1 !important;
+  min-width:0 !important;
+}
+.screen-home .couple-info dl {
+  display:grid !important;
+  grid-template-columns:repeat(5, 1fr) !important;
+  gap:20px !important;
+  margin:0 !important;
+}
+.screen-home .couple-info dt {
+  color:#333 !important;
+  font-size:14px !important;
+  text-transform:uppercase !important;
+  letter-spacing:.06em !important;
+  margin:0 0 8px !important;
+}
+.screen-home .couple-info dd {
+  color:#8397a6 !important;
+  font-size:17px !important;
+  line-height:1.35 !important;
+  margin:0 !important;
+}
+.screen-home .package {
+  top:405px !important;
+  left:405px !important;
+  width:770px !important;
+  min-height:760px !important;
+}
+.screen-home .package h2 {
+  font-size:34px !important;
+  line-height:1.18 !important;
+  margin-bottom:22px !important;
+}
+.screen-home .tile-pay,
+.screen-home .tile-vendors {
+  top:405px !important;
+}
+.screen-home .tile-timeline,
+.screen-home .tile-book {
+  top:685px !important;
+}
+
+/* local-only wedding info expanded right boxes v173 */
+.screen-home .package {
+  min-height:735px !important;
+}
+.screen-home .tile {
+  height:170px !important;
+}
+.screen-home .tile-pay,
+.screen-home .tile-vendors {
+  top:405px !important;
+}
+.screen-home .tile-timeline,
+.screen-home .tile-book {
+  top:595px !important;
+}
+.screen-home .tile-guest-upload {
+  left:1215px !important;
+  top:785px !important;
+  width:770px !important;
+  height:205px !important;
+}
+.screen-home .tile-video-details,
+.screen-home .tile-misc {
+  top:1010px !important;
+}
+.screen-home .tile-video-details {
+  left:1215px !important;
+}
+.screen-home .tile-misc {
+  left:1620px !important;
+}
+.screen-home .tile-guest-upload h3 {
+  font-size:28px !important;
+  margin-bottom:12px !important;
+}
+.screen-home .tile-guest-upload p {
+  font-size:16px !important;
+  line-height:1.38 !important;
+  margin:0 0 10px !important;
+}
+
+/* local-only event naming and timeline/package layout v174 */
+.screen-home .package {
+  min-height:680px !important;
+}
+.screen-home .tile-timeline {
+  left:405px !important;
+  top:1090px !important;
+  width:770px !important;
+  height:170px !important;
+}
+.screen-home .tile-pay,
+.screen-home .tile-vendors {
+  top:405px !important;
+}
+.screen-home .tile-book,
+.screen-home .tile-photo-booth {
+  top:595px !important;
+}
+.screen-home .tile-book {
+  left:1215px !important;
+}
+.screen-home .tile-photo-booth {
+  left:1620px !important;
+}
+.screen-home .tile-guest-upload {
+  left:1215px !important;
+  top:785px !important;
+  width:770px !important;
+  height:205px !important;
+}
+.screen-home .tile-video-details,
+.screen-home .tile-misc {
+  top:1010px !important;
+}
+
+/* local-only event timeline below package spacing v175 */
+.screen-home .tile-timeline {
+  top:1185px !important;
+}
+
+/* local-only wider right grid aligned to event info and timeline v176 */
+.screen-home .tile-timeline {
+  top:1110px !important;
+  width:770px !important;
+  height:175px !important;
+}
+.screen-home .tile {
+  width:470px !important;
+  height:190px !important;
+}
+.screen-home .tile-pay,
+.screen-home .tile-book,
+.screen-home .tile-video-details {
+  left:1215px !important;
+}
+.screen-home .tile-vendors,
+.screen-home .tile-photo-booth,
+.screen-home .tile-misc {
+  left:1725px !important;
+}
+.screen-home .tile-pay,
+.screen-home .tile-vendors {
+  top:405px !important;
+}
+.screen-home .tile-book,
+.screen-home .tile-photo-booth {
+  top:615px !important;
+}
+.screen-home .tile-guest-upload {
+  left:1215px !important;
+  top:825px !important;
+  width:980px !important;
+  height:240px !important;
+}
+.screen-home .tile-video-details,
+.screen-home .tile-misc {
+  top:1085px !important;
+  height:200px !important;
+}
+.screen-home .tile p {
+  font-size:16px !important;
+  line-height:1.4 !important;
+}
+
+/* local-only event timeline final alignment v177 */
+.screen-home .tile-timeline {
+  left:405px !important;
+  top:1170px !important;
+  width:770px !important;
+  height:190px !important;
+}
+.screen-home .tile-video-details,
+.screen-home .tile-misc {
+  top:1170px !important;
+  height:190px !important;
+}
+
+/* local-only home page vertical scroll fix v178 */
+.artboard.screen-home,
+.screen-home.artboard {
+  height:1460px !important;
+  overflow:visible !important;
+}
+.fit-box.screen-home {
+  height:calc(1460px * var(--scale, 1)) !important;
+}
+.screen-home .home {
+  height:1460px !important;
+  min-height:1460px !important;
+}
+.screen-home .home-left {
+  height:1460px !important;
+  min-height:1460px !important;
+}
+
+/* local-only home page scroll breathing room v179 */
+.artboard.screen-home,
+.screen-home.artboard {
+  height:1700px !important;
+}
+.fit-box.screen-home {
+  height:calc(1700px * var(--scale, 1)) !important;
+}
+.screen-home .home,
+.screen-home .home-left {
+  height:1700px !important;
+  min-height:1700px !important;
+}
+
+/* local-only home box shadows and right column gap fill v180 */
+.screen-home .client-name {
+  top:78px !important;
+}
+.screen-home .couple-info,
+.screen-home .package,
+.screen-home .tile {
+  box-shadow:0 24px 60px rgba(0,86,145,.14) !important;
+}
+.screen-home .tile-guest-upload {
+  height:300px !important;
+}
+.screen-home .tile-video-details,
+.screen-home .tile-misc {
+  top:1145px !important;
+}
+
+/* local-only close guest upload to video row v181 */
+.screen-home .tile-guest-upload {
+  height:320px !important;
+}
+
+/* local-only 3D cards and balanced right grid v182 */
+.screen-home .couple-info,
+.screen-home .package,
+.screen-home .tile {
+  border:1px solid rgba(255,255,255,.86) !important;
+  box-shadow:
+    0 2px 0 rgba(255,255,255,.95) inset,
+    0 18px 28px rgba(0,86,145,.10),
+    0 42px 80px rgba(0,86,145,.16) !important;
+}
+.screen-home .tile {
+  height:210px !important;
+}
+.screen-home .tile-pay,
+.screen-home .tile-vendors {
+  top:405px !important;
+}
+.screen-home .tile-book,
+.screen-home .tile-photo-booth {
+  top:635px !important;
+}
+.screen-home .tile-guest-upload {
+  top:865px !important;
+  height:205px !important;
+}
+.screen-home .tile-video-details,
+.screen-home .tile-misc {
+  top:1090px !important;
+  height:210px !important;
+}
+.screen-home .tile-timeline {
+  top:1110px !important;
+  height:210px !important;
+}
+.screen-home .tile h3 {
+  text-shadow:0 1px 0 rgba(255,255,255,.8) !important;
+}
+
+/* local-only align balanced rows v183 */
+.screen-home .tile-timeline {
+  top:1090px !important;
+}
+
+/* local-only separate event timeline from package and keep bottom row aligned v184 */
+.screen-home .tile-timeline,
+.screen-home .tile-video-details,
+.screen-home .tile-misc {
+  top:1170px !important;
+}
+
+/* local-only expand right boxes to absorb vertical gap v185 */
+.screen-home .tile-pay,
+.screen-home .tile-vendors,
+.screen-home .tile-book,
+.screen-home .tile-photo-booth,
+.screen-home .tile-video-details,
+.screen-home .tile-misc {
+  height:230px !important;
+}
+.screen-home .tile-pay,
+.screen-home .tile-vendors {
+  top:405px !important;
+}
+.screen-home .tile-book,
+.screen-home .tile-photo-booth {
+  top:655px !important;
+}
+.screen-home .tile-guest-upload {
+  top:905px !important;
+  height:245px !important;
+}
+.screen-home .tile-timeline,
+.screen-home .tile-video-details,
+.screen-home .tile-misc {
+  top:1170px !important;
+}
+
+/* local-only keep event timeline aligned after right box expansion v186 */
+.screen-home .tile-timeline {
+  height:230px !important;
+}
+
+/* local-only dynamic event home grid v187 */
+.screen-home .event-dashboard-grid {
+  left:405px !important;
+  top:405px !important;
+  width:1790px !important;
+  display:grid !important;
+  grid-template-columns:770px 980px !important;
+  column-gap:40px !important;
+  align-items:stretch !important;
+}
+.screen-home .event-dashboard-grid .abs,
+.screen-home .event-dashboard-grid .package,
+.screen-home .event-dashboard-grid .tile {
+  position:static !important;
+  left:auto !important;
+  top:auto !important;
+  right:auto !important;
+  bottom:auto !important;
+}
+.screen-home .event-left-column {
+  display:grid !important;
+  grid-template-rows:auto 230px !important;
+  gap:34px !important;
+  min-height:0 !important;
+}
+.screen-home .event-right-grid {
+  display:grid !important;
+  grid-template-columns:repeat(2, minmax(0, 1fr)) !important;
+  grid-template-rows:repeat(4, minmax(0, 1fr)) !important;
+  gap:20px !important;
+  align-self:stretch !important;
+  min-height:0 !important;
+}
+.screen-home .event-dashboard-grid .package,
+.screen-home .event-dashboard-grid .tile {
+  width:auto !important;
+  height:auto !important;
+  min-height:0 !important;
+}
+.screen-home .event-dashboard-grid .package {
+  min-height:0 !important;
+}
+.screen-home .event-dashboard-grid .tile-timeline {
+  width:auto !important;
+  height:auto !important;
+}
+.screen-home .event-dashboard-grid .tile-guest-upload {
+  grid-column:1 / -1 !important;
+  width:auto !important;
+  height:auto !important;
+}
+.screen-home .event-dashboard-grid .tile h3 {
+  font-size:28px !important;
+  margin-bottom:14px !important;
+}
+.screen-home .event-dashboard-grid .tile p {
+  font-size:16px !important;
+  line-height:1.42 !important;
+}
+.screen-home .event-dashboard-grid .tile button {
+  margin-top:12px !important;
+}
+
+/* local-only measured dynamic home grid v188 */
+.screen-home .event-dashboard-grid {
+  align-items:start !important;
+}
+.screen-home .event-left-column,
+.screen-home .event-right-grid {
+  height:auto !important;
+}
+.screen-home .event-right-grid {
+  align-self:start !important;
+}
+.screen-home .event-right-grid .tile {
+  overflow:hidden !important;
+}
+
+/* local-only dynamic grid measured height application v189 */
+.screen-home .event-dashboard-grid {
+  height:var(--event-grid-height, auto) !important;
+}
+.screen-home .event-right-grid {
+  height:var(--event-grid-height, auto) !important;
+}
+
+/* local-only apply measured height to both columns v190 */
+.screen-home .event-left-column,
+.screen-home .event-right-grid {
+  height:var(--event-grid-height, auto) !important;
+}
+
+/* local-only card footer strips and bottom-right view buttons v192 */
+.screen-home .event-dashboard-grid .tile {
+  position:relative !important;
+  padding-bottom:78px !important;
+  overflow:hidden !important;
+}
+.screen-home .event-dashboard-grid .tile::after {
+  content:"";
+  position:absolute;
+  left:0;
+  right:0;
+  bottom:0;
+  height:58px;
+  background:#f4f9fd;
+  border-top:1px solid rgba(4,40,164,.08);
+  z-index:0;
+}
+.screen-home .event-dashboard-grid .tile button {
+  position:absolute !important;
+  right:26px !important;
+  bottom:18px !important;
+  z-index:1 !important;
+  margin:0 !important;
+}
+.screen-home .event-dashboard-grid .tile h3,
+.screen-home .event-dashboard-grid .tile p {
+  position:relative !important;
+  z-index:1 !important;
+}
+
+/* local-only package footer contract actions v193 */
+.screen-home .event-dashboard-grid .package {
+  position:relative !important;
+  padding-bottom:82px !important;
+  overflow:hidden !important;
+}
+.screen-home .event-dashboard-grid .package::after {
+  content:"";
+  position:absolute;
+  left:0;
+  right:0;
+  bottom:0;
+  height:62px;
+  background:#f4f9fd;
+  border-top:1px solid rgba(4,40,164,.08);
+  z-index:0;
+}
+.screen-home .package-actions {
+  position:absolute;
+  right:24px;
+  bottom:13px;
+  z-index:1;
+  display:flex;
+  gap:16px;
+  align-items:center;
+}
+.screen-home .package-action {
+  display:flex;
+  align-items:center;
+  gap:8px;
+  border:0;
+  background:transparent;
+  color:#0428a4;
+  font-size:14px;
+  text-transform:uppercase;
+  letter-spacing:.08em;
+  font-weight:700;
+  padding:8px 0;
+}
+.screen-home .package-action-icon {
+  width:24px;
+  height:24px;
+  border:1px solid rgba(4,40,164,.35);
+  border-radius:50%;
+  display:grid;
+  place-items:center;
+  font-size:14px;
+  line-height:1;
+}
+
+/* local-only package icon-only contract buttons v194 */
+.screen-home .package-actions {
+  gap:18px !important;
+}
+.screen-home .package-action {
+  position:relative;
+  width:42px;
+  height:42px;
+  padding:0 !important;
+  justify-content:center;
+}
+.screen-home .package-action-text {
+  position:absolute;
+  right:50%;
+  bottom:52px;
+  transform:translateX(50%) translateY(6px);
+  opacity:0;
+  pointer-events:none;
+  white-space:nowrap;
+  background:#333;
+  color:#fff;
+  border-radius:4px;
+  padding:7px 10px;
+  font-size:12px;
+  letter-spacing:.04em;
+  text-transform:none;
+  transition:opacity .16s ease, transform .16s ease;
+}
+.screen-home .package-action:hover .package-action-text,
+.screen-home .package-action:focus-visible .package-action-text {
+  opacity:1;
+  transform:translateX(50%) translateY(0);
+}
+.screen-home .package-action-icon {
+  width:42px !important;
+  height:42px !important;
+  border:1px solid rgba(4,40,164,.35) !important;
+  background:#fff !important;
+  box-shadow:0 8px 18px rgba(0,86,145,.12) !important;
+  color:#0428a4 !important;
+}
+.screen-home .package-action-download {
+  font-size:34px !important;
+  font-weight:300 !important;
+  line-height:.8 !important;
+  padding-bottom:5px !important;
+}
+.screen-home .package-action-view {
+  font-size:24px !important;
+  font-family:Arial, Helvetica, sans-serif !important;
+}
+
+/* local-only selected option 1 contract icons v196 */
+.screen-home .package-action-icon svg {
+  width:25px !important;
+  height:25px !important;
+  stroke:currentColor !important;
+  fill:none !important;
+  stroke-width:1.9 !important;
+  stroke-linecap:round !important;
+  stroke-linejoin:round !important;
+}
+.screen-home .package-action-download,
+.screen-home .package-action-view {
+  font-size:initial !important;
+  font-weight:initial !important;
+  line-height:1 !important;
+  padding-bottom:0 !important;
+}
+
+/* local-only grouped sidebar matching supplied mockup v197 */
+.screen-home .home-left {
+  padding:0 !important;
+  width:280px !important;
+  background:#fff !important;
+  color:#333 !important;
+  box-shadow:8px 0 24px rgba(0,35,60,.06) !important;
+}
+.screen-home .home-left::before {
+  height:130px !important;
+}
+.screen-home .home-left::after {
+  display:none !important;
+}
+.screen-home .sidebar-brand {
+  position:relative !important;
+  z-index:1 !important;
+  height:130px !important;
+  display:flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+}
+.screen-home .sidebar-brand .logo-box {
+  width:74px !important;
+  height:74px !important;
+  color:#fff !important;
+  border-color:rgba(255,255,255,.86) !important;
+  font-size:21px !important;
+  margin:0 !important;
+}
+.screen-home .sidebar-menu,
+.screen-home .sidebar-bottom {
+  position:relative !important;
+  z-index:1 !important;
+  width:100% !important;
+}
+.screen-home .sidebar-section {
+  border-bottom:1px solid #edf1f4 !important;
+}
+.screen-home .sidebar-section-title {
+  height:56px !important;
+  display:flex !important;
+  align-items:center !important;
+  padding:0 32px !important;
+  background:#f4f4f4 !important;
+  color:#a7b2bb !important;
+  font-size:13px !important;
+  text-transform:uppercase !important;
+  letter-spacing:.13em !important;
+  font-weight:700 !important;
+}
+.screen-home .sidebar-menu button,
+.screen-home .sidebar-bottom button {
+  width:100% !important;
+  height:58px !important;
+  border:0 !important;
+  border-bottom:1px solid #edf1f4 !important;
+  background:#fff !important;
+  color:#667782 !important;
+  display:flex !important;
+  align-items:center !important;
+  gap:16px !important;
+  padding:0 32px !important;
+  text-align:left !important;
+  font-size:15px !important;
+  text-transform:none !important;
+  letter-spacing:0 !important;
+}
+.screen-home .sidebar-menu button:hover,
+.screen-home .sidebar-bottom button:hover {
+  background:#f8fbfd !important;
+  color:#0428a4 !important;
+}
+.screen-home .sidebar-icon {
+  width:18px !important;
+  flex:0 0 18px !important;
+  display:inline-flex !important;
+  justify-content:center !important;
+  color:#0428a4 !important;
+  font-size:14px !important;
+  line-height:1 !important;
+}
+.screen-home .sidebar-bottom {
+  position:absolute !important;
+  left:0 !important;
+  bottom:0 !important;
+  border-top:1px solid #edf1f4 !important;
+}
+.screen-home .sidebar-bottom button {
+  height:52px !important;
+}
+.screen-home .home-left h1,
+.screen-home .home-left p,
+.screen-home .home-left .settings,
+.screen-home .home-menu {
+  display:none !important;
+}
+
+/* local-only sidebar closer to supplied Pocetna PNG v198 */
+.screen-home .home-left {
+  width:280px !important;
+  background:#fff !important;
+  box-shadow:none !important;
+  border-right:1px solid #e8eef2 !important;
+}
+.screen-home .home-left::before {
+  height:68px !important;
+  background:linear-gradient(135deg,#a9c9e1 0%,#a9c9e1 46%,#c8dce9 47%,#c8dce9 100%) !important;
+}
+.screen-home .sidebar-brand {
+  height:68px !important;
+  justify-content:flex-start !important;
+}
+.screen-home .sidebar-brand .logo-box {
+  display:none !important;
+}
+.screen-home .sidebar-section-title {
+  height:62px !important;
+  padding:0 31px !important;
+  background:#f4f4f4 !important;
+  color:#aeb8c1 !important;
+  font-size:13px !important;
+  line-height:1 !important;
+  letter-spacing:.16em !important;
+  font-weight:700 !important;
+}
+.screen-home .sidebar-menu button,
+.screen-home .sidebar-bottom button {
+  height:62px !important;
+  padding:0 31px !important;
+  gap:16px !important;
+  background:#fff !important;
+  border-bottom:0 !important;
+  color:#60727f !important;
+  font-size:15px !important;
+  font-weight:400 !important;
+}
+.screen-home .sidebar-section {
+  border-bottom:26px solid #fff !important;
+}
+.screen-home .sidebar-icon {
+  color:#0428a4 !important;
+  font-size:13px !important;
+  width:16px !important;
+  flex-basis:16px !important;
+  opacity:.9 !important;
+}
+.screen-home .sidebar-bottom {
+  border-top:1px solid #eef2f5 !important;
+  background:#fff !important;
+}
+.screen-home .sidebar-bottom button {
+  height:50px !important;
+  border-top:1px solid #eef2f5 !important;
+}
+.screen-home .sidebar-menu button:hover,
+.screen-home .sidebar-bottom button:hover {
+  background:#fbfdff !important;
+}
+
+/* local-only fit full sidebar link set v199 */
+.screen-home .sidebar-section-title {
+  height:46px !important;
+}
+.screen-home .sidebar-menu button,
+.screen-home .sidebar-bottom button {
+  height:44px !important;
+}
+.screen-home .sidebar-section {
+  border-bottom:14px solid #fff !important;
+}
+.screen-home .sidebar-bottom button {
+  height:46px !important;
+}
+.screen-home .sidebar-menu button,
+.screen-home .sidebar-bottom button {
+  font-size:14px !important;
+}
+.screen-home .sidebar-section-title {
+  font-size:12px !important;
+}
+
+/* local-only keep short packages roomy and readable v201 */
+.screen-home .event-left-column {
+  grid-template-rows:minmax(max-content, 1fr) minmax(230px, .45fr) !important;
+}
+.screen-home .event-right-grid {
+  grid-template-rows:repeat(4, minmax(0, 1fr)) !important;
+}
+.screen-home .event-dashboard-grid .tile {
+  padding-bottom:88px !important;
+}
+.screen-home .event-dashboard-grid .tile p {
+  font-size:15px !important;
+  line-height:1.34 !important;
+}
+.screen-home .event-dashboard-grid .tile::after {
+  height:64px !important;
+}
+
+/* local-only centered home card copy v202 */
+.screen-home .event-dashboard-grid .tile {
+  text-align:center !important;
+}
+.screen-home .event-dashboard-grid .tile h3,
+.screen-home .event-dashboard-grid .tile p {
+  text-align:center !important;
+}
+.screen-home .event-dashboard-grid .tile p {
+  margin-left:auto !important;
+  margin-right:auto !important;
+}
+
+/* local-only restore left aligned card text with vertically centered copy v203 */
+.screen-home .event-dashboard-grid .tile {
+  text-align:left !important;
+  display:flex !important;
+  flex-direction:column !important;
+}
+.screen-home .event-dashboard-grid .tile h3,
+.screen-home .event-dashboard-grid .tile p {
+  text-align:left !important;
+}
+.screen-home .event-dashboard-grid .tile h3 {
+  flex:0 0 auto !important;
+}
+.screen-home .event-dashboard-grid .tile p:first-of-type {
+  margin-top:auto !important;
+}
+.screen-home .event-dashboard-grid .tile p:last-of-type {
+  margin-bottom:auto !important;
+}
+.screen-home .event-dashboard-grid .tile button {
+  flex:0 0 auto !important;
+}
+
+/* local-only vertically center QR code copy group v204 */
+.screen-home .event-dashboard-grid .tile-guest-upload .tile-copy {
+  margin-top:auto !important;
+  margin-bottom:auto !important;
+  position:relative !important;
+  z-index:1 !important;
+}
+.screen-home .event-dashboard-grid .tile-guest-upload .tile-copy p {
+  margin:0 0 8px 0 !important;
+  font-size:14px !important;
+  line-height:1.28 !important;
+  text-align:left !important;
+}
+.screen-home .event-dashboard-grid .tile-guest-upload .tile-copy p:last-child {
+  margin-bottom:0 !important;
+}
+
+/* local-only photo only package inactive boxes v205 */
+.screen-home .event-dashboard-grid.is-photo-only .tile-video-details,
+.screen-home .event-dashboard-grid.is-photo-only .tile-photo-booth,
+.screen-home .event-dashboard-grid.is-photo-only .tile-book {
+  opacity:.5 !important;
+}
+
+/* local-only optional add on card state v206 */
+.screen-home .event-dashboard-grid .addon-badge,
+.screen-home .event-dashboard-grid .addon-copy,
+.screen-home .event-dashboard-grid .addon-action {
+  display:none !important;
+}
+.screen-home .event-dashboard-grid.is-photo-only .tile-video-details .addon-badge,
+.screen-home .event-dashboard-grid.is-photo-only .tile-photo-booth .addon-badge,
+.screen-home .event-dashboard-grid.is-photo-only .tile-book .addon-badge {
+  display:inline-flex !important;
+}
+.screen-home .event-dashboard-grid.is-photo-only .tile-video-details .addon-copy,
+.screen-home .event-dashboard-grid.is-photo-only .tile-photo-booth .addon-copy,
+.screen-home .event-dashboard-grid.is-photo-only .tile-book .addon-copy,
+.screen-home .event-dashboard-grid.is-photo-only .tile-video-details .addon-action,
+.screen-home .event-dashboard-grid.is-photo-only .tile-photo-booth .addon-action,
+.screen-home .event-dashboard-grid.is-photo-only .tile-book .addon-action {
+  display:block !important;
+}
+.screen-home .event-dashboard-grid.is-photo-only .tile-video-details .included-copy,
+.screen-home .event-dashboard-grid.is-photo-only .tile-photo-booth .included-copy,
+.screen-home .event-dashboard-grid.is-photo-only .tile-book .included-copy,
+.screen-home .event-dashboard-grid.is-photo-only .tile-video-details .included-action,
+.screen-home .event-dashboard-grid.is-photo-only .tile-photo-booth .included-action,
+.screen-home .event-dashboard-grid.is-photo-only .tile-book .included-action {
+  display:none !important;
+}
+.screen-home .event-dashboard-grid .addon-badge {
+  vertical-align:middle;
+  margin-left:8px;
+  padding:4px 7px;
+  border-radius:999px;
+  background:#eef7fd;
+  color:#0428a4;
+  font-size:9px;
+  line-height:1;
+  letter-spacing:.08em;
+  text-transform:uppercase;
+  font-weight:700;
+}
+.screen-home .event-dashboard-grid.is-photo-only .tile-video-details,
+.screen-home .event-dashboard-grid.is-photo-only .tile-photo-booth,
+.screen-home .event-dashboard-grid.is-photo-only .tile-book {
+  opacity:.72 !important;
+}
+.screen-home .event-dashboard-grid.is-photo-only .tile-video-details .addon-action,
+.screen-home .event-dashboard-grid.is-photo-only .tile-photo-booth .addon-action,
+.screen-home .event-dashboard-grid.is-photo-only .tile-book .addon-action {
+  color:#0428a4 !important;
+}
+
+/* local-only right grid rearrangement with double-height payments v207 */
+.screen-home .event-right-grid {
+  grid-template-rows:repeat(4, minmax(0, 1fr)) !important;
+}
+.screen-home .event-right-grid .tile-pay {
+  grid-column:1 !important;
+  grid-row:1 / span 2 !important;
+}
+.screen-home .event-right-grid .tile-video-details {
+  grid-column:2 !important;
+  grid-row:1 !important;
+}
+.screen-home .event-right-grid .tile-photo-booth {
+  grid-column:2 !important;
+  grid-row:2 !important;
+}
+.screen-home .event-right-grid .tile-guest-upload {
+  grid-column:1 !important;
+  grid-row:3 !important;
+  width:auto !important;
+}
+.screen-home .event-right-grid .tile-book {
+  grid-column:2 !important;
+  grid-row:3 !important;
+}
+.screen-home .event-right-grid .tile-misc {
+  grid-column:1 !important;
+  grid-row:4 !important;
+}
+.screen-home .event-right-grid .tile-vendors {
+  grid-column:2 !important;
+  grid-row:4 !important;
+}
+
+/* local-only tighter footer strip and true vertical copy centering v209 */
+.screen-home .event-dashboard-grid .tile {
+  padding-bottom:62px !important;
+}
+.screen-home .event-dashboard-grid .tile::after {
+  height:46px !important;
+}
+.screen-home .event-dashboard-grid .tile button {
+  bottom:12px !important;
+}
+.screen-home .event-dashboard-grid .tile p:first-of-type,
+.screen-home .event-dashboard-grid .tile p:last-of-type,
+.screen-home .event-dashboard-grid .tile-guest-upload .tile-copy {
+  margin-top:0 !important;
+  margin-bottom:0 !important;
+}
+.screen-home .event-dashboard-grid .tile h3 {
+  margin-bottom:0 !important;
+}
+.screen-home .event-dashboard-grid .tile p:first-of-type,
+.screen-home .event-dashboard-grid .tile-guest-upload .tile-copy {
+  margin-top:auto !important;
+}
+.screen-home .event-dashboard-grid .tile p:last-of-type,
+.screen-home .event-dashboard-grid .tile-guest-upload .tile-copy {
+  margin-bottom:auto !important;
+}
+.screen-home .event-dashboard-grid .tile p {
+  line-height:1.32 !important;
+}
+
+/* local-only center copy between title and footer strip v210 */
+.screen-home .event-dashboard-grid .tile {
+  display:grid !important;
+  grid-template-rows:auto 1fr !important;
+  align-content:stretch !important;
+}
+.screen-home .event-dashboard-grid .tile h3 {
+  grid-row:1 !important;
+}
+.screen-home .event-dashboard-grid .tile p,
+.screen-home .event-dashboard-grid .tile .tile-copy {
+  grid-row:2 !important;
+  align-self:center !important;
+  margin-top:0 !important;
+  margin-bottom:0 !important;
+}
+.screen-home .event-dashboard-grid .tile p + p {
+  margin-top:8px !important;
+}
+.screen-home .event-dashboard-grid .tile .tile-copy p {
+  align-self:auto !important;
+}
+.screen-home .event-dashboard-grid .tile button {
+  grid-row:auto !important;
+}
+
+/* local-only center optional add on copy between title and strip v211 */
+.screen-home .event-dashboard-grid.is-photo-only .tile-video-details .addon-copy,
+.screen-home .event-dashboard-grid.is-photo-only .tile-photo-booth .addon-copy,
+.screen-home .event-dashboard-grid.is-photo-only .tile-book .addon-copy {
+  grid-row:2 !important;
+  align-self:center !important;
+  margin-top:0 !important;
+  margin-bottom:0 !important;
+}
+.screen-home .event-dashboard-grid.is-photo-only .tile-video-details .addon-action,
+.screen-home .event-dashboard-grid.is-photo-only .tile-photo-booth .addon-action,
+.screen-home .event-dashboard-grid.is-photo-only .tile-book .addon-action {
+  position:absolute !important;
+  right:26px !important;
+  bottom:12px !important;
+}
+
+/* local-only center included package feature copy v213 */
+.screen-home .event-dashboard-grid:not(.is-photo-only) .tile-video-details .included-copy,
+.screen-home .event-dashboard-grid:not(.is-photo-only) .tile-photo-booth .included-copy,
+.screen-home .event-dashboard-grid:not(.is-photo-only) .tile-book .included-copy {
+  grid-row:2 !important;
+  align-self:center !important;
+  margin-top:0 !important;
+  margin-bottom:0 !important;
+}
+.screen-home .event-dashboard-grid:not(.is-photo-only) .tile-video-details .included-action,
+.screen-home .event-dashboard-grid:not(.is-photo-only) .tile-photo-booth .included-action,
+.screen-home .event-dashboard-grid:not(.is-photo-only) .tile-book .included-action {
+  position:absolute !important;
+  right:26px !important;
+  bottom:12px !important;
+}
+
+/* local-only package upgrade options v216 */
+.screen-home .package-upgrades {
+  display:none;
+  position:relative;
+  z-index:1;
+  margin:28px 0 4px;
+  padding-top:22px;
+  border-top:1px solid #dfeaf2;
+}
+.screen-home .event-dashboard-grid.is-photo-only .package-upgrades {
+  display:block;
+}
+.screen-home .package-upgrades h3 {
+  margin:0 0 8px;
+  color:#333;
+  font-size:22px;
+  font-weight:300;
+}
+.screen-home .package-upgrades > p {
+  margin:0 0 16px;
+  color:#8397a6;
+  font-size:14px;
+  line-height:1.35;
+}
+.screen-home .upgrade-card {
+  border:1px solid #e2eef6;
+  background:#f8fcff;
+  padding:16px 16px 14px;
+  margin-bottom:12px;
+}
+.screen-home .upgrade-card h4 {
+  margin:0 0 10px;
+  color:#333;
+  font-size:17px;
+  font-weight:700;
+}
+.screen-home .upgrade-card ul {
+  margin:0 0 12px 18px;
+  padding:0;
+  color:#8397a6;
+  font-size:13px;
+  line-height:1.34;
+}
+.screen-home .upgrade-card a {
+  display:inline-block;
+  color:#0428a4;
+  font-size:13px;
+  text-decoration:none;
+  border-bottom:1px solid rgba(4,40,164,.35);
+  margin:0 0 12px;
+}
+.screen-home .upgrade-card button {
+  border:0;
+  background:transparent;
+  color:#0428a4;
+  padding:0;
+  font-size:12px;
+  font-weight:700;
+  letter-spacing:.08em;
+  text-transform:uppercase;
+}
+.screen-home .upgrade-card.is-added,
+.screen-home .upgrade-card.is-included {
+  background:#eef7fd;
+  border-color:#cce5f5;
+}
+.screen-home .upgrade-card.is-added button,
+.screen-home .upgrade-card.is-included button {
+  color:#6d8798;
+}
+
+/* local-only upgrade pricing and left column alignment v217 */
+.screen-home .event-left-column > .package,
+.screen-home .event-left-column > .tile-timeline {
+  height:100% !important;
+}
+.screen-home .upgrade-card h4 {
+  display:flex;
+  justify-content:space-between;
+  gap:12px;
+  align-items:baseline;
+}
+.screen-home .upgrade-card h4 span {
+  color:#0428a4;
+  font-size:15px;
+  font-weight:700;
+  white-space:nowrap;
+}
+
+/* local-only force left column to fill full grid height v218 */
+.screen-home .event-left-column {
+  grid-template-rows:minmax(0, 1fr) 300px !important;
+}
+
+/* local-only taller home background and separated package upgrades v219 */
+.artboard.screen-home,
+.screen-home.artboard {
+  height:2100px !important;
+  background:var(--pale) !important;
+}
+.fit-box.screen-home {
+  height:calc(2100px * var(--scale, 1)) !important;
+  background:var(--pale) !important;
+}
+.screen-home .home,
+.screen-home .home-left {
+  height:2100px !important;
+  min-height:2100px !important;
+}
+.screen-home .package-upgrades {
+  margin:36px -14px 4px !important;
+  padding:26px 14px 0 !important;
+  border-top:2px solid #d5e6f2 !important;
+  background:linear-gradient(#f7fbfe, #fff) !important;
+}
+.screen-home .package-upgrades h3 {
+  font-size:24px !important;
+}
+.screen-home .package-upgrades > p {
+  max-width:620px !important;
+}
+.screen-home .upgrade-card {
+  background:#fff !important;
+  box-shadow:0 10px 26px rgba(0,86,145,.08) !important;
+}
+.screen-home .upgrade-card.is-added {
+  background:#eef7fd !important;
+  border-color:#bfe1f4 !important;
+}
+.screen-home .upgrade-card.is-included {
+  background:#fff !important;
+  border-color:#e2eef6 !important;
+}
+
+/* local-only stronger upgrade section separation and hidden added cards v221 */
+.screen-home .package-upgrades {
+  margin:46px -22px 4px !important;
+  padding:34px 22px 6px !important;
+  border-top:3px solid #c4ddea !important;
+  background:linear-gradient(180deg, #eef7fd 0%, #ffffff 44%) !important;
+  box-shadow:0 -16px 30px rgba(0,86,145,.05) inset !important;
+}
+.screen-home .package-upgrades::before {
+  content:"";
+  display:block;
+  width:80px;
+  height:3px;
+  background:#0428a4;
+  margin:-37px 0 28px;
+}
+.screen-home .upgrade-card[hidden] {
+  display:none !important;
+}
+.screen-home .upgrade-card button {
+  display:inline-block !important;
+  margin-top:2px !important;
+}
+.screen-home .upgrade-card a + button {
+  margin-left:18px !important;
+}
+
+/* local-only stronger visual break before upgrades v222 */
+.screen-home .package-upgrades {
+  margin:60px -30px 4px !important;
+  padding:42px 30px 8px !important;
+  border-top:0 !important;
+  background:#f1f8fd !important;
+  box-shadow:0 -10px 0 #ffffff, 0 -13px 0 #c4ddea !important;
+}
+.screen-home .package-upgrades::before {
+  content:"Available upgrades";
+  display:inline-block;
+  width:auto;
+  height:auto;
+  background:#0428a4;
+  color:#fff;
+  margin:-58px 0 28px;
+  padding:8px 12px;
+  border-radius:3px;
+  font-size:11px;
+  line-height:1;
+  text-transform:uppercase;
+  letter-spacing:.12em;
+  font-weight:700;
+}
+.screen-home .package-upgrades h3 {
+  margin-top:0 !important;
+}
+
+/* local-only upgrade section refinement and nested package lines v225 */
+.screen-home .package-upgrade-line {
+  list-style:none !important;
+  margin:2px 0 2px 24px !important;
+  padding-left:0 !important;
+  font-size:18px !important;
+  line-height:1.32 !important;
+}
+.screen-home .package-upgrade-line span::before {
+  content:"↳";
+  color:#0428a4;
+  margin-right:8px;
+  font-size:15px;
+}
+.screen-home .package-upgrades {
+  margin:74px -30px 4px !important;
+  padding:34px 30px 8px !important;
+  border-top:0 !important;
+  background:#f1f8fd !important;
+  box-shadow:none !important;
+}
+.screen-home .package-upgrades::before {
+  margin:-50px 0 38px !important;
+}
+.screen-home .package-upgrades h3 {
+  display:none !important;
+}
+.screen-home .package-upgrades > p {
+  margin:0 0 18px !important;
+}
+.screen-home .upgrade-card {
+  position:relative !important;
+  padding:16px 16px 54px !important;
+  min-height:0 !important;
+}
+.screen-home .upgrade-card button {
+  position:absolute !important;
+  right:16px !important;
+  bottom:14px !important;
+  margin:0 !important;
+}
+.screen-home .upgrade-card a + button {
+  margin-left:0 !important;
+}
+
+/* local-only nested upgrade indentation and remove duplicate title fallback v226 */
+.screen-home .package-upgrades > h3 {
+  display:none !important;
+}
+.screen-home .package-list .package-upgrade-line {
+  margin-left:38px !important;
+  transform:translateX(18px) !important;
+}
+
+/* local-only upgrade add polish and reliable button target v227 */
+.screen-home .package-list .package-upgrade-line {
+  margin-left:18px !important;
+  transform:none !important;
+  color:#6f8798 !important;
+  font-size:18px !important;
+  line-height:1.3 !important;
+}
+.screen-home .package-upgrade-line span::before {
+  content:"" !important;
+  display:none !important;
+}
+.screen-home .package-upgrade-line span {
+  display:inline-block !important;
+  padding-left:10px !important;
+  border-left:2px solid #cfe2ef !important;
+}
+.screen-home .upgrade-card button {
+  min-width:128px !important;
+  min-height:34px !important;
+  padding:9px 12px !important;
+  border-radius:3px !important;
+  background:#0428a4 !important;
+  color:#fff !important;
+  text-align:center !important;
+  z-index:3 !important;
+}
+
+/* local-only plain upgrade bullets and button click target v228 */
+.screen-home .package-list .package-upgrade-line {
+  list-style:disc !important;
+  margin:2px 0 2px 4px !important;
+  padding-left:8px !important;
+  transform:none !important;
+  color:#8397a6 !important;
+  font-size:18px !important;
+  line-height:1.32 !important;
+}
+.screen-home .package-list .package-upgrade-line::marker {
+  color:#8397a6 !important;
+}
+.screen-home .package-upgrade-line span {
+  display:inline !important;
+  padding-left:0 !important;
+  border-left:0 !important;
+}
+.screen-home .package-upgrade-line span::before {
+  content:none !important;
+}
+.screen-home .upgrade-card button {
+  pointer-events:auto !important;
+  cursor:pointer !important;
+}
+
+/* local-only upgrade package title and aligned bullets v229 */
+.screen-home .package-list .package-upgrade-title,
+.screen-home .package-list .package-upgrade-line {
+  list-style:disc !important;
+  margin-left:0 !important;
+  padding-left:8px !important;
+  transform:none !important;
+  color:#8397a6 !important;
+  font-size:18px !important;
+  line-height:1.32 !important;
+}
+.screen-home .package-list .package-upgrade-title {
+  margin-top:12px !important;
+  color:#333 !important;
+  font-weight:700 !important;
+}
+.screen-home .package-list .package-upgrade-title::marker,
+.screen-home .package-list .package-upgrade-line::marker {
+  color:#8397a6 !important;
+}
+.screen-home .upgrade-card button {
+  z-index:20 !important;
+  pointer-events:auto !important;
+}
+.screen-home .upgrade-card {
+  z-index:1 !important;
+}
+
+/* local-only upgrade nested bullets and 24h remove control v230 */
+.screen-home .package-list .package-upgrade-title {
+  font-weight:400 !important;
+  color:#8397a6 !important;
+}
+.screen-home .package-list .package-upgrade-line {
+  margin-left:26px !important;
+}
+.screen-home .remove-upgrade {
+  margin-left:10px;
+  border:0;
+  background:transparent;
+  color:#d75b52;
+  border-bottom:1px dotted #d75b52;
+  font-size:13px;
+  padding:0;
+  text-transform:none;
+  letter-spacing:0;
+}
+.screen-home .package-upgrade-title[data-added-at] .remove-upgrade {
+  display:inline-block;
+}
+
+/* local-only upgrade replacement flow and tighter nested spacing v231 */
+.screen-home .package-list .package-upgrade-title {
+  margin-top:8px !important;
+}
+.screen-home .package-list .package-upgrade-line {
+  margin-top:0 !important;
+  margin-bottom:0 !important;
+  line-height:1.26 !important;
+}
+
+/* local-only move event timeline to right grid and remove vendors card v232 */
+.screen-home .event-left-column {
+  display:block !important;
+  height:var(--event-grid-height, auto) !important;
+}
+.screen-home .event-left-column > .package {
+  height:100% !important;
+}
+.screen-home .event-right-grid {
+  grid-template-rows:repeat(5, minmax(0, 1fr)) !important;
+}
+.screen-home .event-right-grid .tile-pay {
+  grid-column:1 !important;
+  grid-row:1 / span 2 !important;
+}
+.screen-home .event-right-grid .tile-video-details {
+  grid-column:2 !important;
+  grid-row:1 !important;
+}
+.screen-home .event-right-grid .tile-photo-booth {
+  grid-column:2 !important;
+  grid-row:2 !important;
+}
+.screen-home .event-right-grid .tile-timeline {
+  grid-column:1 / -1 !important;
+  grid-row:3 !important;
+  width:auto !important;
+}
+.screen-home .event-right-grid .tile-guest-upload {
+  grid-column:1 !important;
+  grid-row:4 !important;
+}
+.screen-home .event-right-grid .tile-book {
+  grid-column:2 !important;
+  grid-row:4 !important;
+}
+.screen-home .event-right-grid .tile-misc {
+  grid-column:1 / -1 !important;
+  grid-row:5 !important;
+  width:auto !important;
+}
+.screen-home .event-right-grid .tile-vendors {
+  display:none !important;
+}
+
+/* local-only always show relevant package upgrades v233 */
+.screen-home .package-upgrades {
+  display:block !important;
+}
+.screen-home .upgrade-card-video {
+  display:none !important;
+}
+.screen-home .event-dashboard-grid.has-photo-upgrade .upgrade-card[data-upgrade="sneak-peek"],
+.screen-home .event-dashboard-grid.has-photo-upgrade .upgrade-card[data-upgrade="premium-photo"] {
+  display:none !important;
+}
+.screen-home .event-dashboard-grid.has-photo-upgrade .upgrade-card-video:not([hidden]) {
+  display:block !important;
+}
+
+/* local-only content creation left card and stronger payment height v234 */
+.screen-home .event-left-column {
+  display:grid !important;
+  grid-template-rows:minmax(0, 1fr) 300px !important;
+  gap:34px !important;
+  height:var(--event-grid-height, auto) !important;
+}
+.screen-home .event-left-column > .package,
+.screen-home .event-left-column > .tile-content-creation {
+  height:100% !important;
+  width:auto !important;
+  min-height:0 !important;
+}
+.screen-home .event-left-column > .tile-content-creation {
+  position:static !important;
+  left:auto !important;
+  top:auto !important;
+  right:auto !important;
+  bottom:auto !important;
+}
+.screen-home .event-right-grid {
+  grid-template-rows:1.18fr 1.18fr 1fr 1fr 1fr !important;
+}
+.screen-home .event-right-grid .tile-pay {
+  grid-row:1 / span 2 !important;
+}
+.screen-home .event-dashboard-grid.upgrades-empty .package-upgrades {
+  display:none !important;
+}
+
+/* local-only content creation strip containment and two-upgrade rotation v235 */
+.screen-home .event-left-column > .tile-content-creation {
+  overflow:hidden !important;
+  position:relative !important;
+}
+.screen-home .upgrade-card.is-option-hidden {
+  display:none !important;
+}
+.screen-home .event-dashboard-grid .upgrade-card:not(.is-option-hidden):not([hidden]) {
+  display:block !important;
+}
+.screen-home .event-dashboard-grid.has-photo-upgrade .upgrade-card[data-upgrade="sneak-peek"].is-option-hidden,
+.screen-home .event-dashboard-grid.has-photo-upgrade .upgrade-card[data-upgrade="premium-photo"].is-option-hidden {
+  display:none !important;
+}
+
+/* local-only remove black bottom background on home v236 */
+body.body-home,
+html:has(body.body-home) {
+  background:#ebf5fd !important;
+}
+body.body-home .stage {
+  background:#ebf5fd !important;
+}
+
+/* local-only restore missing item fade and rotating upgrade cards v236 */
+.screen-home .event-dashboard-grid:not(.has-videography) .tile-video-details,
+.screen-home .event-dashboard-grid:not(.has-photo-booth) .tile-photo-booth,
+.screen-home .event-dashboard-grid:not(.has-photo-book) .tile-book,
+.screen-home .event-dashboard-grid:not(.has-content-creation) .tile-content-creation {
+  opacity:.5 !important;
+}
+.screen-home .event-dashboard-grid.has-videography .tile-video-details,
+.screen-home .event-dashboard-grid.has-photo-booth .tile-photo-booth,
+.screen-home .event-dashboard-grid.has-photo-book .tile-book,
+.screen-home .event-dashboard-grid.has-content-creation .tile-content-creation {
+  opacity:1 !important;
+}
+
+/* local-only enforce max two visible upgrade options v237 */
+.screen-home .event-dashboard-grid .upgrade-card.is-option-hidden,
+.screen-home .event-dashboard-grid.has-photo-upgrade .upgrade-card.is-option-hidden,
+.screen-home .event-dashboard-grid.has-photo-upgrade .upgrade-card-video.is-option-hidden {
+  display:none !important;
+}
+
+/* local-only upgrade details, notice, and same-size package titles v238 */
+.screen-home .package-list .package-upgrade-title,
+.screen-home .package-list .package-upgrade-line {
+  font-size:18px !important;
+  font-weight:400 !important;
+  line-height:1.28 !important;
+}
+.screen-home .package-list .package-upgrade-title {
+  color:#8397a6 !important;
+}
+.screen-home .upgrade-notice {
+  margin:8px 0 12px;
+  padding:10px 12px;
+  border-radius:12px;
+  background:#eef7ff;
+  border:1px solid rgba(75,139,190,.25);
+  color:#41657d;
+  font-size:14px;
+  line-height:1.35;
+}
+.screen-home .upgrade-card h4 span[data-dynamic-price] {
+  color:#4b8bbe;
+}
+.screen-home .remove-upgrade.add-album {
+  color:#4b8bbe;
+  border-bottom-color:#4b8bbe;
+}
+
+/* local-only package title sizing and upgrade choice popup v239 */
+.screen-home .package-list .package-upgrade-title {
+  font-size:22px !important;
+  line-height:34.1px !important;
+  font-weight:400 !important;
+  color:#8397a6 !important;
+}
+.screen-home .package-list .package-upgrade-line {
+  font-size:18px !important;
+  line-height:1.28 !important;
+}
+.screen-home .upgrade-choice-popup {
+  margin:10px 0 14px;
+  padding:14px;
+  border-radius:16px;
+  background:#f7fbff;
+  border:1px solid rgba(75,139,190,.24);
+  box-shadow:0 10px 24px rgba(83,122,149,.12);
+}
+.screen-home .upgrade-choice-popup h4 {
+  margin:0 0 10px;
+  color:#31566e;
+  font-size:16px;
+}
+.screen-home .upgrade-choice-popup button {
+  display:block;
+  width:100%;
+  margin:7px 0;
+  padding:10px 12px;
+  border-radius:10px;
+  border:1px solid rgba(75,139,190,.28);
+  background:white;
+  color:#31566e;
+  text-align:left;
+  cursor:pointer;
+}
+.screen-home .upgrade-choice-popup p {
+  margin:10px 0 4px;
+  color:#6b7f8f;
+  font-size:13px;
+  line-height:1.35;
+}
+.screen-home .upgrade-notice {
+  display:block;
+}
+
+/* local-only centered choice modal, inline booth notice, active booth card, bottom room v240 */
+.screen-home .upgrade-choice-popup:not([hidden]) {
+  position:fixed !important;
+  left:50% !important;
+  top:50% !important;
+  transform:translate(-50%, -50%) !important;
+  z-index:9999 !important;
+  width:min(460px, calc(100vw - 42px)) !important;
+  margin:0 !important;
+  padding:22px !important;
+  border-radius:22px !important;
+  background:#fff !important;
+  border:1px solid rgba(75,139,190,.24) !important;
+  box-shadow:0 28px 80px rgba(23,49,70,.28) !important;
+}
+.screen-home .upgrade-choice-popup:not([hidden])::before {
+  content:"";
+  position:fixed;
+  inset:-100vmax;
+  z-index:-1;
+  background:rgba(20,40,55,.32);
+}
+.screen-home .package-list .package-upgrade-notice {
+  list-style:none !important;
+  margin:8px 0 10px 34px !important;
+  padding:9px 11px !important;
+  border-radius:12px !important;
+  background:#eef7ff !important;
+  border:1px solid rgba(75,139,190,.25) !important;
+  color:#41657d !important;
+  font-size:14px !important;
+  line-height:1.35 !important;
+}
+.screen-home .event-dashboard-grid.is-photo-only.has-photo-booth .tile-photo-booth {
+  opacity:1 !important;
+}
+.screen-home .event-dashboard-grid.is-photo-only.has-photo-booth .tile-photo-booth .addon-badge,
+.screen-home .event-dashboard-grid.is-photo-only.has-photo-booth .tile-photo-booth .addon-copy,
+.screen-home .event-dashboard-grid.is-photo-only.has-photo-booth .tile-photo-booth .addon-action {
+  display:none !important;
+}
+.screen-home .event-dashboard-grid.is-photo-only.has-photo-booth .tile-photo-booth .included-copy,
+.screen-home .event-dashboard-grid.is-photo-only.has-photo-booth .tile-photo-booth .included-action {
+  display:block !important;
+}
+body.body-home {
+  padding-bottom:260px !important;
+}
+
+/* local-only body-level centered choice modal v241 */
+.upgrade-choice-popup:not([hidden]) {
+  position:fixed !important;
+  left:50% !important;
+  top:50% !important;
+  transform:translate(-50%, -50%) !important;
+  z-index:99999 !important;
+  width:min(460px, calc(100vw - 42px)) !important;
+  margin:0 !important;
+  padding:22px !important;
+  border-radius:22px !important;
+  background:#fff !important;
+  border:1px solid rgba(75,139,190,.24) !important;
+  box-shadow:0 28px 80px rgba(23,49,70,.28) !important;
+}
+.upgrade-choice-popup:not([hidden])::before {
+  content:"";
+  position:fixed;
+  inset:-100vmax;
+  z-index:-1;
+  background:rgba(20,40,55,.32);
+}
+.upgrade-choice-popup h4 {
+  margin:0 0 10px;
+  color:#31566e;
+  font-size:16px;
+}
+.upgrade-choice-popup button {
+  display:block;
+  width:100%;
+  margin:7px 0;
+  padding:10px 12px;
+  border-radius:10px;
+  border:1px solid rgba(75,139,190,.28);
+  background:white;
+  color:#31566e;
+  text-align:left;
+  cursor:pointer;
+}
+.upgrade-choice-popup p {
+  margin:10px 0 4px;
+  color:#6b7f8f;
+  font-size:13px;
+  line-height:1.35;
+}
+
+/* local-only square card-style upgrade choice modal and active booth centering v242 */
+.upgrade-choice-popup:not([hidden]) {
+  width:min(720px, calc(100vw - 64px)) !important;
+  min-height:420px !important;
+  border-radius:8px !important;
+  padding:34px 34px 76px !important;
+  background:#fff !important;
+  box-shadow:0 20px 0 rgba(139,178,205,.18), 0 34px 90px rgba(23,49,70,.28) !important;
+}
+.upgrade-choice-popup h4 {
+  font-size:24px !important;
+  color:#2f607d !important;
+  margin:0 0 22px !important;
+  font-weight:500 !important;
+}
+.upgrade-choice-grid {
+  display:grid;
+  grid-template-columns:repeat(2, minmax(0, 1fr));
+  gap:20px;
+}
+.upgrade-choice-popup .upgrade-choice-card {
+  min-height:150px;
+  display:grid;
+  align-content:center;
+  gap:10px;
+  width:100%;
+  margin:0;
+  padding:24px 22px 58px;
+  position:relative;
+  border-radius:8px;
+  border:1px solid rgba(149,183,207,.45);
+  background:linear-gradient(180deg, #fff 0%, #f9fcff 100%);
+  box-shadow:0 12px 0 rgba(129,173,204,.14), 0 16px 30px rgba(90,130,160,.12);
+  color:#31566e;
+  text-align:left;
+}
+.upgrade-choice-popup .upgrade-choice-card::after {
+  content:"add to package";
+  position:absolute;
+  right:18px;
+  bottom:14px;
+  color:#0428a4;
+  font-size:12px;
+  text-transform:lowercase;
+  letter-spacing:.03em;
+}
+.upgrade-choice-popup .upgrade-choice-card strong {
+  display:block;
+  font-size:20px;
+  font-weight:500;
+  color:#31566e;
+}
+.upgrade-choice-popup .upgrade-choice-card span {
+  display:block;
+  font-size:16px;
+  color:#6f8798;
+}
+.upgrade-choice-pro {
+  margin-top:26px;
+  padding-top:20px;
+  border-top:1px solid rgba(149,183,207,.35);
+}
+.upgrade-choice-pro p {
+  margin:0 0 14px !important;
+  font-size:16px !important;
+  color:#31566e !important;
+}
+.upgrade-choice-popup .upgrade-choice-cancel {
+  position:absolute;
+  right:28px;
+  bottom:22px;
+  width:auto;
+  margin:0;
+  padding:8px 18px;
+  border:0;
+  border-bottom:1px dotted #7d8f9d;
+  border-radius:0;
+  background:transparent;
+  color:#556c7d;
+  text-align:right;
+}
+.screen-home .event-dashboard-grid.is-photo-only.has-photo-booth .tile-photo-booth {
+  grid-template-rows:auto 1fr !important;
+}
+.screen-home .event-dashboard-grid.is-photo-only.has-photo-booth .tile-photo-booth .included-copy {
+  grid-row:2 !important;
+  align-self:center !important;
+  margin:auto 0 !important;
+  display:block !important;
+}
+.screen-home .event-dashboard-grid.is-photo-only.has-photo-booth .tile-photo-booth .included-action {
+  position:absolute !important;
+  right:26px !important;
+  bottom:12px !important;
+}
+
+/* local-only photo book multi-select modal v243 */
+.upgrade-choice-popup:not([hidden]) {
+  background:#fff !important;
+}
+.upgrade-choice-popup .upgrade-choice-card {
+  background:#f3f8fc !important;
+  border-color:rgba(149,183,207,.42) !important;
+}
+.upgrade-choice-popup .upgrade-choice-card.book-choice {
+  padding-bottom:70px !important;
+  cursor:pointer;
+}
+.upgrade-choice-popup .upgrade-choice-card.book-choice.is-selected {
+  outline:3px solid rgba(4,40,164,.28);
+  background:#eaf5fc !important;
+}
+.upgrade-choice-popup .upgrade-choice-card.book-choice::after {
+  content:"select";
+}
+.upgrade-choice-popup .upgrade-choice-card.book-choice.is-selected::after {
+  content:"selected";
+}
+.upgrade-choice-popup .book-qty {
+  position:absolute;
+  left:18px;
+  bottom:12px;
+  display:flex;
+  align-items:center;
+  gap:9px;
+}
+.upgrade-choice-popup .book-qty button {
+  width:28px !important;
+  height:28px !important;
+  min-height:0 !important;
+  display:grid !important;
+  place-items:center;
+  margin:0 !important;
+  padding:0 !important;
+  border-radius:50% !important;
+  text-align:center !important;
+  background:#fff !important;
+}
+.upgrade-choice-popup .book-qty em {
+  min-width:18px;
+  text-align:center;
+  font-style:normal;
+  color:#31566e;
+  font-weight:600;
+}
+.upgrade-choice-popup .upgrade-choice-submit {
+  position:absolute;
+  right:126px;
+  bottom:22px;
+  width:auto;
+  margin:0;
+  padding:10px 20px;
+  border-radius:0;
+  border:0;
+  background:#0428a4;
+  color:white;
+  text-align:center;
+  font-size:13px;
+}
+.upgrade-choice-popup .upgrade-choice-submit:disabled {
+  opacity:.45;
+  cursor:not-allowed;
+}
+
+/* local-only photo book popup cleanup v244 */
+.screen-home .package-upgrades > .upgrade-notice[hidden],
+.upgrade-notice[hidden] {
+  display:none !important;
+  border:0 !important;
+  padding:0 !important;
+  margin:0 !important;
+  box-shadow:none !important;
+}
+.upgrade-choice-popup:not([hidden]) {
+  background:#fff !important;
+}
+.upgrade-choice-popup .upgrade-choice-card {
+  background:#f2f8fc !important;
+  padding:24px 92px 58px 22px !important;
+}
+.upgrade-choice-popup .upgrade-choice-card::after,
+.upgrade-choice-popup .upgrade-choice-card.book-choice::after,
+.upgrade-choice-popup .upgrade-choice-card.book-choice.is-selected::after {
+  content:none !important;
+}
+.upgrade-choice-popup .upgrade-choice-card strong {
+  font-size:16px !important;
+  line-height:1.25 !important;
+  padding-right:0 !important;
+}
+.upgrade-choice-popup .upgrade-choice-card span {
+  position:absolute !important;
+  top:18px !important;
+  right:18px !important;
+  color:#4b8bbe !important;
+  font-size:14px !important;
+  font-weight:600 !important;
+  white-space:normal !important;
+  max-width:76px !important;
+  text-align:right !important;
+  line-height:1.18 !important;
+}
+.upgrade-choice-popup .upgrade-choice-pro p,
+.upgrade-choice-popup p {
+  font-size:14px !important;
+}
+.upgrade-choice-popup .book-qty button {
+  pointer-events:auto !important;
+}
+
+/* local-only opaque modal and clean album price badge v245 */
+.upgrade-choice-popup:not([hidden]) {
+  background:rgb(255,255,255) !important;
+  opacity:1 !important;
+  filter:none !important;
+  backdrop-filter:none !important;
+}
+.upgrade-choice-popup:not([hidden])::before {
+  background:rgba(20,40,55,.18) !important;
+}
+.upgrade-choice-popup,
+.upgrade-choice-popup * {
+  opacity:1 !important;
+}
+.upgrade-choice-popup .upgrade-choice-card small {
+  display:block;
+  margin-top:6px;
+  color:#6f8798;
+  font-size:13px;
+  line-height:1.25;
+}
+.upgrade-choice-popup .upgrade-choice-card span {
+  max-width:none !important;
+  white-space:nowrap !important;
+  font-size:15px !important;
+  line-height:1 !important;
+}
+
+/* local-only verified white modal, single-step album qty, centered album text v246 */
+.upgrade-choice-popup:not([hidden]) {
+  background:#fff !important;
+  background-color:#fff !important;
+  opacity:1 !important;
+  mix-blend-mode:normal !important;
+  isolation:isolate !important;
+}
+.upgrade-choice-popup:not([hidden])::before {
+  background:transparent !important;
+}
+.upgrade-choice-popup .upgrade-choice-card.book-choice {
+  display:grid !important;
+  grid-template-rows:auto auto !important;
+  align-content:center !important;
+  justify-content:stretch !important;
+  min-height:156px !important;
+  padding:30px 92px 64px 22px !important;
+}
+.upgrade-choice-popup .upgrade-choice-card.book-choice strong,
+.upgrade-choice-popup .upgrade-choice-card.book-choice small {
+  align-self:center !important;
+}
+.upgrade-choice-popup .upgrade-choice-card.book-choice small {
+  margin-top:7px !important;
+}
+
+/* local-only nudge album info to visual center v247 */
+.upgrade-choice-popup .upgrade-choice-card.book-choice strong,
+.upgrade-choice-popup .upgrade-choice-card.book-choice small {
+  position:relative !important;
+  top:16px !important;
+}
+
+/* local-only optional package card text state v250 */
+.screen-home .event-dashboard-grid:not(.has-photo-booth) .tile-photo-booth .included-copy,
+.screen-home .event-dashboard-grid:not(.has-photo-booth) .tile-photo-booth .included-action,
+.screen-home .event-dashboard-grid:not(.has-content-creation) .tile-content-creation .included-copy,
+.screen-home .event-dashboard-grid:not(.has-content-creation) .tile-content-creation .included-action {
+  display:none !important;
+}
+.screen-home .event-dashboard-grid:not(.has-photo-booth) .tile-photo-booth .addon-badge,
+.screen-home .event-dashboard-grid:not(.has-content-creation) .tile-content-creation .addon-badge {
+  display:inline-flex !important;
+}
+.screen-home .event-dashboard-grid:not(.has-photo-booth) .tile-photo-booth .addon-copy,
+.screen-home .event-dashboard-grid:not(.has-content-creation) .tile-content-creation .addon-copy {
+  display:block !important;
+  grid-row:2 !important;
+  align-self:center !important;
+  margin-top:0 !important;
+  margin-bottom:0 !important;
+}
+.screen-home .event-dashboard-grid:not(.has-photo-booth) .tile-photo-booth .addon-action,
+.screen-home .event-dashboard-grid:not(.has-content-creation) .tile-content-creation .addon-action {
+  display:block !important;
+  position:absolute !important;
+  right:26px !important;
+  bottom:12px !important;
+  color:#0428a4 !important;
+}
+
+/* local-only optional card transparency refinement v252 */
+.screen-home .event-dashboard-grid:not(.has-videography) .tile-video-details,
+.screen-home .event-dashboard-grid:not(.has-photo-booth) .tile-photo-booth,
+.screen-home .event-dashboard-grid:not(.has-photo-book) .tile-book,
+.screen-home .event-dashboard-grid:not(.has-content-creation) .tile-content-creation {
+  opacity:1 !important;
+  background:rgba(255,255,255,.5) !important;
+}
+.screen-home .event-dashboard-grid:not(.has-videography) .tile-video-details h3,
+.screen-home .event-dashboard-grid:not(.has-photo-booth) .tile-photo-booth h3,
+.screen-home .event-dashboard-grid:not(.has-photo-book) .tile-book h3,
+.screen-home .event-dashboard-grid:not(.has-content-creation) .tile-content-creation h3,
+.screen-home .event-dashboard-grid:not(.has-videography) .tile-video-details .addon-copy,
+.screen-home .event-dashboard-grid:not(.has-photo-booth) .tile-photo-booth .addon-copy,
+.screen-home .event-dashboard-grid:not(.has-photo-book) .tile-book .addon-copy,
+.screen-home .event-dashboard-grid:not(.has-content-creation) .tile-content-creation .addon-copy {
+  opacity:.5 !important;
+}
+.screen-home .event-dashboard-grid:not(.has-videography) .tile-video-details .addon-badge,
+.screen-home .event-dashboard-grid:not(.has-photo-booth) .tile-photo-booth .addon-badge,
+.screen-home .event-dashboard-grid:not(.has-photo-book) .tile-book .addon-badge,
+.screen-home .event-dashboard-grid:not(.has-content-creation) .tile-content-creation .addon-badge,
+.screen-home .event-dashboard-grid:not(.has-videography) .tile-video-details .addon-action,
+.screen-home .event-dashboard-grid:not(.has-photo-booth) .tile-photo-booth .addon-action,
+.screen-home .event-dashboard-grid:not(.has-photo-book) .tile-book .addon-action,
+.screen-home .event-dashboard-grid:not(.has-content-creation) .tile-content-creation .addon-action {
+  opacity:.7 !important;
+}
+
+/* local-only optional badge opacity correction v253 */
+.screen-home .event-dashboard-grid:not(.has-videography) .tile-video-details .addon-badge,
+.screen-home .event-dashboard-grid:not(.has-photo-booth) .tile-photo-booth .addon-badge,
+.screen-home .event-dashboard-grid:not(.has-photo-book) .tile-book .addon-badge,
+.screen-home .event-dashboard-grid:not(.has-content-creation) .tile-content-creation .addon-badge {
+  opacity:1 !important;
+  background:rgba(238,247,253,.95) !important;
+  color:rgba(4,40,164,.9) !important;
+}
+
+/* local-only optional badge strong contrast v254 */
+.screen-home .event-dashboard-grid:not(.has-videography) .tile-video-details .addon-badge,
+.screen-home .event-dashboard-grid:not(.has-photo-booth) .tile-photo-booth .addon-badge,
+.screen-home .event-dashboard-grid:not(.has-photo-book) .tile-book .addon-badge,
+.screen-home .event-dashboard-grid:not(.has-content-creation) .tile-content-creation .addon-badge {
+  opacity:1 !important;
+  background:#0428a4 !important;
+  color:#fff !important;
+  -webkit-text-fill-color:#fff !important;
+  box-shadow:0 3px 10px rgba(0,86,145,.18) !important;
+}
+
+/* local-only optional badge no transparency v255 */
+.screen-home .event-dashboard-grid:not(.has-videography) .tile-video-details .addon-badge,
+.screen-home .event-dashboard-grid:not(.has-photo-booth) .tile-photo-booth .addon-badge,
+.screen-home .event-dashboard-grid:not(.has-photo-book) .tile-book .addon-badge,
+.screen-home .event-dashboard-grid:not(.has-content-creation) .tile-content-creation .addon-badge {
+  opacity:1 !important;
+  background:#eef7fd !important;
+  color:#0428a4 !important;
+  -webkit-text-fill-color:#0428a4 !important;
+  box-shadow:none !important;
+}
+
+/* local-only optional badge parent opacity fix v256 */
+.screen-home .event-dashboard-grid:not(.has-videography) .tile-video-details h3,
+.screen-home .event-dashboard-grid:not(.has-photo-booth) .tile-photo-booth h3,
+.screen-home .event-dashboard-grid:not(.has-photo-book) .tile-book h3,
+.screen-home .event-dashboard-grid:not(.has-content-creation) .tile-content-creation h3 {
+  opacity:1 !important;
+  color:rgba(51,51,51,.5) !important;
+}
+.screen-home .event-dashboard-grid:not(.has-videography) .tile-video-details .addon-badge,
+.screen-home .event-dashboard-grid:not(.has-photo-booth) .tile-photo-booth .addon-badge,
+.screen-home .event-dashboard-grid:not(.has-photo-book) .tile-book .addon-badge,
+.screen-home .event-dashboard-grid:not(.has-content-creation) .tile-content-creation .addon-badge {
+  opacity:1 !important;
+  color:#0428a4 !important;
+  -webkit-text-fill-color:#0428a4 !important;
+  background:#eef7fd !important;
+}
+
+/* local-only optional badge size and hover action clarity v257 */
+.screen-home .event-dashboard-grid:not(.has-videography) .tile-video-details .addon-badge,
+.screen-home .event-dashboard-grid:not(.has-photo-booth) .tile-photo-booth .addon-badge,
+.screen-home .event-dashboard-grid:not(.has-photo-book) .tile-book .addon-badge,
+.screen-home .event-dashboard-grid:not(.has-content-creation) .tile-content-creation .addon-badge {
+  font-size:10px !important;
+}
+.screen-home .event-dashboard-grid:not(.has-videography) .tile-video-details .addon-action:hover,
+.screen-home .event-dashboard-grid:not(.has-videography) .tile-video-details .addon-action:focus-visible,
+.screen-home .event-dashboard-grid:not(.has-photo-booth) .tile-photo-booth .addon-action:hover,
+.screen-home .event-dashboard-grid:not(.has-photo-booth) .tile-photo-booth .addon-action:focus-visible,
+.screen-home .event-dashboard-grid:not(.has-photo-book) .tile-book .addon-action:hover,
+.screen-home .event-dashboard-grid:not(.has-photo-book) .tile-book .addon-action:focus-visible,
+.screen-home .event-dashboard-grid:not(.has-content-creation) .tile-content-creation .addon-action:hover,
+.screen-home .event-dashboard-grid:not(.has-content-creation) .tile-content-creation .addon-action:focus-visible {
+  opacity:1 !important;
+}
+
+/* local-only optional action hover fallback v258 */
+.screen-home .event-dashboard-grid:not(.has-videography) .tile-video-details .addon-action.is-hover-test,
+.screen-home .event-dashboard-grid:not(.has-photo-booth) .tile-photo-booth .addon-action.is-hover-test,
+.screen-home .event-dashboard-grid:not(.has-photo-book) .tile-book .addon-action.is-hover-test,
+.screen-home .event-dashboard-grid:not(.has-content-creation) .tile-content-creation .addon-action.is-hover-test {
+  opacity:1 !important;
+}
+
+/* local-only photo book popup and upgrade control cleanup v259 */
+.screen-home .remove-upgrade {
+  border-bottom:0 !important;
+  text-decoration-line:underline !important;
+  text-decoration-style:dotted !important;
+  text-decoration-thickness:1px !important;
+  text-underline-offset:2px !important;
+  padding-bottom:0 !important;
+  line-height:1 !important;
+  vertical-align:baseline !important;
+}
+.screen-home .remove-upgrade.add-album {
+  text-underline-offset:2px !important;
+}
+.upgrade-choice-popup h4 {
+  margin-bottom:18px !important;
+}
+.upgrade-choice-popup .upgrade-choice-card.book-choice {
+  background:#fbfdff !important;
+  border-color:rgba(149,183,207,.30) !important;
+  box-shadow:0 8px 0 rgba(129,173,204,.08), 0 14px 24px rgba(90,130,160,.08) !important;
+  min-height:146px !important;
+  padding-top:24px !important;
+  padding-bottom:56px !important;
+  align-content:start !important;
+}
+.upgrade-choice-popup .upgrade-choice-card.book-choice.is-selected {
+  background:#f7fbff !important;
+  outline:2px solid rgba(4,40,164,.24) !important;
+}
+.upgrade-choice-popup .upgrade-choice-card.book-choice strong,
+.upgrade-choice-popup .upgrade-choice-card.book-choice small {
+  top:0 !important;
+}
+.upgrade-choice-popup .upgrade-choice-card.book-choice small {
+  margin-top:2px !important;
+  font-size:12px !important;
+  line-height:1.12 !important;
+}
+.upgrade-choice-popup .book-qty {
+  gap:6px !important;
+  bottom:13px !important;
+}
+.upgrade-choice-popup .book-qty button {
+  width:22px !important;
+  height:22px !important;
+  min-width:22px !important;
+  min-height:22px !important;
+  font-size:13px !important;
+  line-height:1 !important;
+  padding:0 !important;
+}
+.upgrade-choice-popup .book-qty em {
+  min-width:14px !important;
+  font-size:12px !important;
+  line-height:1 !important;
+}
+
+/* local-only photo booth availability modal v261 */
+.upgrade-choice-popup .booth-date-check {
+  margin:0 0 24px !important;
+  padding:18px !important;
+  border-radius:8px !important;
+  background:#fbfdff !important;
+  border:1px solid rgba(149,183,207,.30) !important;
+}
+.upgrade-choice-popup .booth-date-check label {
+  display:grid !important;
+  grid-template-columns:1fr auto !important;
+  gap:18px !important;
+  align-items:end !important;
+}
+.upgrade-choice-popup .booth-date-check label span {
+  grid-column:1 / -1 !important;
+  color:#31566e !important;
+  font-size:13px !important;
+  text-transform:uppercase !important;
+  letter-spacing:.08em !important;
+  font-weight:700 !important;
+}
+.upgrade-choice-popup .booth-date-check input {
+  width:100% !important;
+  height:46px !important;
+}
+.upgrade-choice-popup .booth-check-btn {
+  width:auto !important;
+  height:44px !important;
+  min-width:160px !important;
+  border-radius:0 !important;
+  padding:0 18px !important;
+  font-size:12px !important;
+}
+.upgrade-choice-popup .booth-availability-help,
+.upgrade-choice-popup .booth-availability-status {
+  margin:14px 0 0 !important;
+  color:#6f8798 !important;
+  font-size:14px !important;
+  line-height:1.35 !important;
+}
+.upgrade-choice-popup .booth-availability-status {
+  display:flex !important;
+  align-items:center !important;
+  gap:10px !important;
+}
+.upgrade-choice-popup .booth-availability-status.is-available {
+  display:block !important;
+  padding:12px 14px !important;
+  background:#eef9f1 !important;
+  border:1px solid rgba(58,169,86,.25) !important;
+  color:#31566e !important;
+}
+.upgrade-choice-popup .booth-availability-status.is-available strong {
+  display:block !important;
+  margin:0 0 5px !important;
+  color:#2e8b46 !important;
+}
+.upgrade-choice-popup .booth-availability-status.is-available p {
+  margin:0 !important;
+  font-size:13px !important;
+}
+.booth-spinner {
+  width:18px !important;
+  height:18px !important;
+  border:2px solid rgba(4,40,164,.18) !important;
+  border-top-color:#0428a4 !important;
+  border-radius:50% !important;
+  animation:booth-spin .8s linear infinite !important;
+}
+@keyframes booth-spin { to { transform:rotate(360deg); } }
+.upgrade-choice-popup .booth-choice-grid {
+  align-items:stretch !important;
+}
+.upgrade-choice-popup .upgrade-choice-card.booth-choice {
+  background:#fbfdff !important;
+  border-color:rgba(149,183,207,.30) !important;
+  box-shadow:0 8px 0 rgba(129,173,204,.08), 0 14px 24px rgba(90,130,160,.08) !important;
+  padding:24px 92px 58px 22px !important;
+  min-height:250px !important;
+  align-content:start !important;
+}
+.upgrade-choice-popup .upgrade-choice-card.booth-choice[disabled] {
+  opacity:.45 !important;
+  cursor:not-allowed !important;
+}
+.upgrade-choice-popup .upgrade-choice-card.booth-choice ul {
+  margin:10px 0 0 17px !important;
+  padding:0 !important;
+  color:#6f8798 !important;
+  font-size:13px !important;
+  line-height:1.28 !important;
+}
+.upgrade-choice-popup .upgrade-choice-card.booth-choice::after {
+  content:"add to package" !important;
+}
+.upgrade-choice-popup .upgrade-choice-card.booth-choice[disabled]::after {
+  content:"check date first" !important;
+  color:#8aa0b1 !important;
+}
+
+/* local-only photo booth selection submit flow v264 */
+.upgrade-choice-popup .upgrade-choice-card.booth-choice.is-selected {
+  background:#f7fbff !important;
+  outline:2px solid rgba(4,40,164,.34) !important;
+}
+.upgrade-choice-popup .upgrade-choice-card.booth-choice::after {
+  content:"select" !important;
+}
+.upgrade-choice-popup .upgrade-choice-card.booth-choice.is-selected::after {
+  content:"selected" !important;
+}
+.upgrade-choice-popup .upgrade-choice-card.booth-choice[disabled]::after {
+  content:"check date first" !important;
+}
+.upgrade-choice-popup .booth-choice-submit {
+  right:126px !important;
+}
+
+/* local-only lighter photo booth calendar and copy v265 */
+.upgrade-choice-popup .booth-date-check {
+  max-width:430px !important;
+  padding:14px !important;
+  margin-bottom:20px !important;
+  position:relative !important;
+}
+.upgrade-choice-popup .booth-date-check label {
+  grid-template-columns:1fr !important;
+  gap:7px !important;
+}
+.upgrade-choice-popup .booth-date-display {
+  width:100% !important;
+  height:42px !important;
+  margin:0 !important;
+  padding:0 14px !important;
+  border:1px solid rgba(149,183,207,.38) !important;
+  border-radius:6px !important;
+  background:#fff !important;
+  color:#31566e !important;
+  text-align:left !important;
+  font-size:14px !important;
+}
+.upgrade-choice-popup .booth-check-btn {
+  position:absolute !important;
+  right:14px !important;
+  top:38px !important;
+  width:auto !important;
+  height:32px !important;
+  min-width:70px !important;
+  padding:0 12px !important;
+  font-size:11px !important;
+}
+.booth-calendar {
+  display:none;
+  width:252px;
+  margin-top:10px;
+  padding:12px;
+  border:1px solid rgba(149,183,207,.32);
+  border-radius:10px;
+  background:#fff;
+  box-shadow:0 16px 34px rgba(90,130,160,.16);
+}
+.booth-calendar.is-open { display:block; }
+.booth-calendar-head strong {
+  display:block;
+  margin-bottom:10px;
+  color:#31566e;
+  font-size:14px;
+  font-weight:600;
+}
+.booth-calendar-days,
+.booth-calendar-grid {
+  display:grid;
+  grid-template-columns:repeat(7, 1fr);
+  gap:4px;
+}
+.booth-calendar-days span {
+  color:#8aa0b1;
+  font-size:10px;
+  text-align:center;
+}
+.booth-calendar-grid button {
+  width:28px !important;
+  height:28px !important;
+  min-height:28px !important;
+  margin:0 !important;
+  padding:0 !important;
+  border:0 !important;
+  border-radius:50% !important;
+  background:#f7fbff !important;
+  color:#31566e !important;
+  text-align:center !important;
+  font-size:12px !important;
+}
+.booth-calendar-grid button:hover,
+.booth-calendar-grid button.is-selected {
+  background:#0428a4 !important;
+  color:#fff !important;
+}
+.upgrade-choice-popup .booth-availability-status.is-available {
+  padding:10px 12px !important;
+}
+.upgrade-choice-popup .booth-availability-status.is-available p {
+  font-size:12.5px !important;
+  line-height:1.34 !important;
+}
+
+/* local-only stable booth calendar layout v267 */
+.upgrade-choice-popup:not([hidden]) {
+  min-height:720px !important;
+}
+.upgrade-choice-popup .booth-date-check {
+  max-width:none !important;
+  min-height:300px !important;
+}
+.upgrade-choice-popup .booth-date-row {
+  display:grid !important;
+  grid-template-columns:minmax(0, 290px) auto !important;
+  gap:16px !important;
+  align-items:end !important;
+}
+.upgrade-choice-popup .booth-date-check label {
+  display:block !important;
+}
+.upgrade-choice-popup .booth-date-check label span {
+  display:block !important;
+  margin-bottom:7px !important;
+}
+.upgrade-choice-popup .booth-check-btn {
+  position:static !important;
+  right:auto !important;
+  top:auto !important;
+  width:150px !important;
+  min-width:150px !important;
+  height:42px !important;
+  font-size:11px !important;
+  padding:0 12px !important;
+}
+.booth-calendar {
+  display:block !important;
+  visibility:hidden !important;
+  opacity:0 !important;
+  pointer-events:none !important;
+  height:214px !important;
+}
+.booth-calendar.is-open {
+  visibility:visible !important;
+  opacity:1 !important;
+  pointer-events:auto !important;
+}
+.booth-calendar-head {
+  display:grid !important;
+  grid-template-columns:30px 1fr 30px !important;
+  align-items:center !important;
+  gap:6px !important;
+}
+.booth-calendar-head strong {
+  margin:0 0 10px !important;
+  text-align:center !important;
+}
+.booth-calendar-head button {
+  width:28px !important;
+  height:28px !important;
+  min-height:28px !important;
+  margin:0 0 10px !important;
+  padding:0 !important;
+  border:0 !important;
+  border-radius:50% !important;
+  background:#f7fbff !important;
+  color:#0428a4 !important;
+  text-align:center !important;
+  font-size:20px !important;
+  line-height:1 !important;
+}
+.booth-calendar-head button:hover {
+  background:#0428a4 !important;
+  color:#fff !important;
+}
+
+/* local-only booth calendar alignment fix v268 */
+.upgrade-choice-popup .booth-date-check {
+  min-height:345px !important;
+  overflow:visible !important;
+}
+.upgrade-choice-popup .booth-date-row {
+  grid-template-columns:290px 150px !important;
+  align-items:end !important;
+}
+.upgrade-choice-popup .booth-date-display,
+.upgrade-choice-popup .booth-check-btn {
+  height:42px !important;
+}
+.upgrade-choice-popup .booth-check-btn {
+  background:#0428a4 !important;
+  color:#fff !important;
+  font-size:10px !important;
+  letter-spacing:.07em !important;
+  line-height:1 !important;
+  align-self:end !important;
+  margin:0 !important;
+}
+.booth-calendar {
+  height:242px !important;
+  margin-top:14px !important;
+  margin-bottom:0 !important;
+}
+.upgrade-choice-popup .booth-availability-help,
+.upgrade-choice-popup .booth-availability-status {
+  margin-top:12px !important;
+  clear:both !important;
+}
+
+/* local-only booth popup compact calendar overlay v269 */
+.upgrade-choice-popup h4 {
+  font-size:18px !important;
+  text-transform:uppercase !important;
+  letter-spacing:.09em !important;
+  font-weight:700 !important;
+  margin-bottom:18px !important;
+}
+.upgrade-choice-popup:not([hidden]) {
+  min-height:0 !important;
+}
+.upgrade-choice-popup .booth-date-check {
+  min-height:0 !important;
+  position:relative !important;
+  padding:14px !important;
+  margin-bottom:18px !important;
+  z-index:20 !important;
+}
+.upgrade-choice-popup .booth-date-row {
+  grid-template-columns:290px 126px !important;
+  gap:10px !important;
+}
+.upgrade-choice-popup .booth-check-btn {
+  width:126px !important;
+  min-width:126px !important;
+  height:40px !important;
+  border-radius:6px !important;
+  font-size:9px !important;
+  letter-spacing:.055em !important;
+  padding:0 9px !important;
+}
+.upgrade-choice-popup .booth-date-display {
+  height:40px !important;
+}
+.booth-calendar {
+  position:absolute !important;
+  left:14px !important;
+  top:78px !important;
+  z-index:200 !important;
+  height:auto !important;
+  margin:0 !important;
+}
+.upgrade-choice-popup .booth-availability-help,
+.upgrade-choice-popup .booth-availability-status {
+  margin-top:12px !important;
+}
+
+/* local-only popup title/buttons and inactive card top line cleanup v270 */
+.upgrade-choice-popup h4 {
+  font-size:14px !important;
+  line-height:1.2 !important;
+  letter-spacing:.11em !important;
+  margin-bottom:16px !important;
+}
+.upgrade-choice-popup .upgrade-choice-submit,
+.upgrade-choice-popup .upgrade-choice-cancel,
+.upgrade-choice-popup .blue-btn {
+  border-radius:6px !important;
+}
+.upgrade-choice-popup .upgrade-choice-cancel {
+  border:1px solid rgba(85,108,125,.22) !important;
+  border-bottom:1px solid rgba(85,108,125,.22) !important;
+  background:#fff !important;
+  padding:9px 18px !important;
+}
+.screen-home .event-dashboard-grid:not(.has-videography) .tile-video-details,
+.screen-home .event-dashboard-grid:not(.has-photo-booth) .tile-photo-booth,
+.screen-home .event-dashboard-grid:not(.has-photo-book) .tile-book,
+.screen-home .event-dashboard-grid:not(.has-content-creation) .tile-content-creation {
+  border-top-color:transparent !important;
+  box-shadow:0 18px 28px rgba(0,86,145,.07), 0 42px 80px rgba(0,86,145,.08) !important;
+}
+.screen-home .event-dashboard-grid:not(.has-videography) .tile-video-details::before,
+.screen-home .event-dashboard-grid:not(.has-videography) .tile-video-details::after,
+.screen-home .event-dashboard-grid:not(.has-photo-booth) .tile-photo-booth::before,
+.screen-home .event-dashboard-grid:not(.has-photo-booth) .tile-photo-booth::after,
+.screen-home .event-dashboard-grid:not(.has-photo-book) .tile-book::before,
+.screen-home .event-dashboard-grid:not(.has-photo-book) .tile-book::after,
+.screen-home .event-dashboard-grid:not(.has-content-creation) .tile-content-creation::before,
+.screen-home .event-dashboard-grid:not(.has-content-creation) .tile-content-creation::after {
+  border-top-color:rgba(4,40,164,.08) !important;
+}
+
+/* local-only future-only booth calendar and upgrade text size v271 */
+.booth-calendar-head button:disabled,
+.booth-calendar-grid button:disabled,
+.booth-calendar-grid button.is-disabled {
+  opacity:.28 !important;
+  cursor:not-allowed !important;
+  background:#f3f7fa !important;
+  color:#9caebb !important;
+}
+.booth-calendar-grid button:disabled:hover,
+.booth-calendar-grid button.is-disabled:hover {
+  background:#f3f7fa !important;
+  color:#9caebb !important;
+}
+.screen-home .upgrade-card ul {
+  font-size:14px !important;
+}
+.screen-home .upgrade-card a,
+.screen-home .upgrade-card button {
+  font-size:13px !important;
+}
+.screen-home .upgrade-card h4 {
+  font-size:18px !important;
+}
+
+/* local-only upgrade section font bump v272 */
+.screen-home .upgrade-card h4 {
+  font-size:19px !important;
+}
+.screen-home .upgrade-card ul {
+  font-size:15px !important;
+}
+.screen-home .upgrade-card a,
+.screen-home .upgrade-card button {
+  font-size:14px !important;
+}
+
+/* local-only upgrade sample link matches body copy v273 */
+.screen-home .upgrade-card a {
+  font-size:15px !important;
+  line-height:1.34 !important;
+}
+
+
+/* local-only lower upgrade card item lists v276 */
+.screen-home .upgrade-card ul {
+  margin-top:14px !important;
+}
+
+
+/* local-only available upgrades label bump v279 */
+.screen-home .package-upgrades::before {
+  font-size:13px !important;
+  padding:9px 14px !important;
+}
+
+/* local-only tighter package item spacing v280 */
+.screen-home .package-list {
+  line-height:1.38 !important;
+}
+.screen-home .package-list li {
+  margin-bottom:3px !important;
+}
+.screen-home .package-list .package-upgrade-title {
+  line-height:1.22 !important;
+}
+.screen-home .package-list .package-upgrade-line {
+  line-height:1.18 !important;
+}
+
+/* local-only content creation modal v281 */
+.upgrade-choice-popup .content-choice {
+  background:#fbfdff !important;
+  border-color:rgba(149,183,207,.30) !important;
+  box-shadow:0 8px 0 rgba(129,173,204,.08), 0 14px 24px rgba(90,130,160,.08) !important;
+  padding:24px 92px 58px 22px !important;
+  min-height:300px !important;
+  align-content:start !important;
+}
+.upgrade-choice-popup .content-choice.is-selected {
+  background:#f7fbff !important;
+  outline:2px solid rgba(4,40,164,.34) !important;
+}
+.upgrade-choice-popup .content-choice ul {
+  margin:46px 0 0 17px !important;
+  padding:0 !important;
+  color:#6f8798 !important;
+  font-size:13px !important;
+  line-height:1.28 !important;
+}
+.upgrade-choice-popup .content-choice::after { content:"select" !important; }
+.upgrade-choice-popup .content-choice.is-selected::after { content:"selected" !important; }
+.upgrade-choice-popup .content-choice[disabled]::after { content:"check date first" !important; color:#8aa0b1 !important; }
+.upgrade-choice-popup .content-hours {
+  bottom:auto !important;
+  top:62px !important;
+}
+.upgrade-choice-popup .content-choice-submit { right:126px !important; }
+
+/* local-only content creation popup layout repair v282 */
+.upgrade-choice-popup .content-choice-grid {
+  align-items:stretch !important;
+}
+.upgrade-choice-popup .content-choice {
+  display:block !important;
+  width:100% !important;
+  min-height:360px !important;
+  padding:24px 92px 58px 22px !important;
+  position:relative !important;
+  cursor:pointer !important;
+}
+.upgrade-choice-popup .content-choice.is-disabled {
+  opacity:.45 !important;
+  cursor:not-allowed !important;
+}
+.upgrade-choice-popup .content-choice ul {
+  display:block !important;
+  margin:56px 0 0 17px !important;
+}
+.upgrade-choice-popup .content-choice .content-hours {
+  display:flex !important;
+  width:auto !important;
+  height:auto !important;
+  left:18px !important;
+  top:72px !important;
+}
+.upgrade-choice-popup .content-choice::after {
+  position:absolute !important;
+  right:18px !important;
+  bottom:14px !important;
+  color:#0428a4 !important;
+  font-size:12px !important;
+  text-transform:lowercase !important;
+}
+.upgrade-choice-popup .content-choice.is-disabled::after {
+  content:"check date first" !important;
+  color:#8aa0b1 !important;
+}
+
+/* local-only content popup calendar closed and centered copy v283 */
+.upgrade-choice-popup .booth-date-row label > span {
+  font-size:9px !important;
+  letter-spacing:.11em !important;
+}
+.upgrade-choice-popup .content-choice ul {
+  margin-top:86px !important;
+}
+.upgrade-choice-popup .content-choice:first-child ul {
+  margin-top:112px !important;
+}
+.upgrade-choice-popup .content-choice .content-hours button {
+  pointer-events:auto !important;
+  position:relative !important;
+  z-index:5 !important;
+}
+
+/* local-only content hours below package items v284 */
+.upgrade-choice-popup .content-choice ul {
+  margin-top:52px !important;
+}
+.upgrade-choice-popup .content-choice:first-child ul {
+  margin-top:78px !important;
+}
+.upgrade-choice-popup .content-choice .content-hours {
+  position:static !important;
+  display:flex !important;
+  width:max-content !important;
+  height:auto !important;
+  margin:16px 0 0 17px !important;
+  left:auto !important;
+  top:auto !important;
+  bottom:auto !important;
+}
+
+/* local-only center and lower content hour controls v285 */
+.upgrade-choice-popup .content-choice .content-hours {
+  margin:26px auto 0 !important;
+}
+
+/* local-only true center for content hour controls v286 */
+.upgrade-choice-popup .content-choice .content-hours {
+  position:relative !important;
+  left:50% !important;
+  transform:translateX(-50%) !important;
+  margin-top:26px !important;
+  margin-right:0 !important;
+  margin-bottom:0 !important;
+  margin-left:0 !important;
+}
+
+/* local-only absolute centered content hour controls v287 */
+.upgrade-choice-popup .content-choice .content-hours {
+  position:absolute !important;
+  left:50% !important;
+  right:auto !important;
+  top:auto !important;
+  bottom:48px !important;
+  transform:translateX(-50%) !important;
+  margin:0 !important;
+}
+.upgrade-choice-popup .content-choice {
+  padding-bottom:88px !important;
+}
+
+/* local-only loosen added package item spacing v288 */
+.screen-home .package-list .package-upgrade-line {
+  line-height:1.32 !important;
+  margin-bottom:3px !important;
+}
+.screen-home .package-list .package-upgrade-title {
+  margin-top:8px !important;
+  margin-bottom:5px !important;
+}
+
+/* local-only videography choice modal v289 */
+.upgrade-choice-popup .video-choice-grid {
+  margin-bottom:18px !important;
+}
+.upgrade-choice-popup .video-choice {
+  min-height:300px !important;
+  padding-bottom:88px !important;
+}
+.upgrade-choice-popup .video-choice ul {
+  margin-top:66px !important;
+}
+.upgrade-choice-popup .video-choice .content-hours {
+  position:absolute !important;
+  left:50% !important;
+  bottom:48px !important;
+  transform:translateX(-50%) !important;
+  margin:0 !important;
+}
+.upgrade-choice-popup .video-price {
+  display:block !important;
+  margin-top:6px !important;
+  color:#0428a4 !important;
+  font-size:24px !important;
+  font-weight:700 !important;
+  line-height:1 !important;
+}
+.upgrade-choice-popup .video-price small {
+  display:block !important;
+  color:#8aa0b1 !important;
+  font-size:13px !important;
+  font-weight:600 !important;
+  text-decoration:line-through !important;
+  margin-bottom:3px !important;
+}
+.upgrade-choice-popup .video-edit-options {
+  margin:0 0 76px !important;
+  padding:16px !important;
+  border:1px solid rgba(149,183,207,.24) !important;
+  border-radius:18px !important;
+  background:#fbfdff !important;
+}
+.upgrade-choice-popup .video-edit-options h5 {
+  margin:0 0 12px !important;
+  color:#31566e !important;
+  font-size:12px !important;
+  letter-spacing:.1em !important;
+  text-transform:uppercase !important;
+}
+.upgrade-choice-popup .video-edit-grid {
+  display:grid !important;
+  grid-template-columns:repeat(4,1fr) !important;
+  gap:10px !important;
+}
+.upgrade-choice-popup .video-edit-card {
+  min-height:74px !important;
+  padding:13px 10px !important;
+  border:1px solid rgba(149,183,207,.30) !important;
+  border-radius:12px !important;
+  background:#fff !important;
+  color:#31566e !important;
+  text-align:left !important;
+  cursor:pointer !important;
+}
+.upgrade-choice-popup .video-edit-card strong,
+.upgrade-choice-popup .video-edit-card span {
+  display:block !important;
+}
+.upgrade-choice-popup .video-edit-card strong {
+  font-size:12px !important;
+  line-height:1.15 !important;
+}
+.upgrade-choice-popup .video-edit-card span {
+  margin-top:6px !important;
+  color:#0428a4 !important;
+  font-size:14px !important;
+  font-weight:700 !important;
+}
+.upgrade-choice-popup .video-edit-card.is-selected {
+  background:#eaf5fc !important;
+  border-color:rgba(4,40,164,.42) !important;
+  outline:2px solid rgba(4,40,164,.18) !important;
+}
+.upgrade-choice-popup .video-choice-submit { right:126px !important; }
+
+/* local-only second videographer dependency v290 */
+.upgrade-choice-popup .video-choice.is-dependent-disabled {
+  opacity:.35 !important;
+  cursor:not-allowed !important;
+}
+.upgrade-choice-popup .video-choice.is-dependent-disabled::after {
+  content:"select one videographer first" !important;
+  color:#8aa0b1 !important;
+}
+
+/* local-only normalize videography package title size v292 */
+.screen-home .package-list .package-upgrade-title[data-upgrade-line="video-one"],
+.screen-home .package-list .package-upgrade-title[data-upgrade-line="video-second"],
+.screen-home .package-list .package-upgrade-title[data-upgrade-line="video-editing"] {
+  font-size:inherit !important;
+  line-height:1.32 !important;
+}
+.screen-home .package-list .package-upgrade-title[data-upgrade-line="video-one"] .package-upgrade-name,
+.screen-home .package-list .package-upgrade-title[data-upgrade-line="video-second"] .package-upgrade-name,
+.screen-home .package-list .package-upgrade-title[data-upgrade-line="video-editing"] .package-upgrade-name {
+  font-size:inherit !important;
+}
+
+/* local-only edit existing raw video action v300 */
+.screen-home .package-list .edit-video-action {
+  margin-left:8px !important;
+  font-size:inherit !important;
+}
+.upgrade-choice-popup .video-edit-options.is-edit-only {
+  margin-top:8px !important;
+}
+
+/* local-only edit existing raw video action v300 */
+.screen-home .package-list .edit-video-action {
+  margin-left:8px !important;
+  font-size:inherit !important;
+}
+.upgrade-choice-popup .video-edit-options.is-edit-only {
+  margin-top:8px !important;
+  margin-bottom:76px !important;
+}
+
+/* local-only edit video action matches remove link v301 */
+.screen-home .package-list .edit-video-action {
+  font-size:12px !important;
+  line-height:1 !important;
+}
+
+/* local-only edit video action exact remove size v302 */
+.screen-home .package-list .edit-video-action {
+  font-size:13px !important;
+}
+
+/* local-only second videographer option in edit video modal v303 */
+.upgrade-choice-popup .video-choice-grid-edit-only {
+  grid-template-columns:minmax(0, 315px) !important;
+  justify-content:center !important;
+  margin-bottom:18px !important;
+}
+
+/* local-only photography choice modal v305 */
+.upgrade-choice-popup .photography-choice {
+  min-height:390px !important;
+}
+.upgrade-choice-popup .photography-choice ul {
+  margin-top:34px !important;
+}
+.upgrade-choice-popup .photography-choice .content-hours {
+  position:absolute !important;
+  left:50% !important;
+  bottom:48px !important;
+  transform:translateX(-50%) !important;
+  margin:0 !important;
+}
+/* local-only active package tile plus buttons and live package price v261 */
+.screen-home .tile-plus-action {
+  position:absolute !important;
+  left:26px !important;
+  bottom:12px !important;
+  width:34px !important;
+  height:34px !important;
+  border-radius:999px !important;
+  border:1px solid rgba(4,40,164,.35) !important;
+  background:#eef7fd !important;
+  color:#0428a4 !important;
+  font-size:26px !important;
+  line-height:30px !important;
+  font-weight:300 !important;
+  display:flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+  cursor:pointer !important;
+  box-shadow:0 5px 14px rgba(0,86,145,.12) !important;
+}
+.screen-home .tile-plus-action:hover,
+.screen-home .tile-plus-action:focus-visible {
+  background:#dff0fb !important;
+  transform:translateY(-1px) !important;
+}
+.screen-home .tile-pay .package-price-label {
+  display:block !important;
+  color:#8397a6 !important;
+  font-size:14px !important;
+  line-height:1.2 !important;
+  margin-bottom:6px !important;
+}
+.screen-home .tile-pay .package-price-total {
+  display:block !important;
+  color:#333 !important;
+  font-size:34px !important;
+  line-height:1.05 !important;
+  font-weight:700 !important;
+}
+
+/* local-only photography tile active override v262 */
+.screen-home .event-dashboard-grid .tile-book.is-active-package-card {
+  opacity:1 !important;
+  background:#fff !important;
+}
+.screen-home .event-dashboard-grid .tile-book.is-active-package-card h3,
+.screen-home .event-dashboard-grid .tile-book.is-active-package-card .addon-copy,
+.screen-home .event-dashboard-grid .tile-book.is-active-package-card .included-copy {
+  opacity:1 !important;
+}
+
+/* local-only payments breakdown with taxable photo book/photo booth only v263 */
+.screen-home .tile-pay p {
+  display:flex !important;
+  flex-direction:column !important;
+  gap:5px !important;
+  margin-top:12px !important;
+  color:#526b7d !important;
+  font-size:15px !important;
+  line-height:1.25 !important;
+}
+.screen-home .pay-breakdown-row {
+  display:flex !important;
+  align-items:baseline !important;
+  justify-content:space-between !important;
+  gap:14px !important;
+  width:100% !important;
+}
+.screen-home .pay-breakdown-row strong {
+  color:#333 !important;
+  font-weight:700 !important;
+  white-space:nowrap !important;
+}
+.screen-home .pay-grand-total {
+  padding-top:5px !important;
+  margin-top:3px !important;
+  border-top:1px solid rgba(131,151,166,.22) !important;
+}
+.screen-home .pay-grand-total strong,
+.screen-home .pay-balance strong {
+  font-size:18px !important;
+}
+.screen-home .pay-breakdown-payments {
+  display:flex !important;
+  flex-direction:column !important;
+  gap:4px !important;
+  padding-top:7px !important;
+  margin-top:4px !important;
+  border-top:1px solid rgba(131,151,166,.16) !important;
+}
+.screen-home .pay-payment-row {
+  color:#8397a6 !important;
+  font-size:13px !important;
+}
+.screen-home .pay-payment-row strong {
+  color:#6f8798 !important;
+}
+.screen-home .pay-balance {
+  padding-top:6px !important;
+  margin-top:3px !important;
+  border-top:1px solid rgba(131,151,166,.22) !important;
+}
+
+/* local-only larger payments card and payment method tags v264 */
+.screen-home .event-right-grid {
+  grid-template-rows:1.05fr 1.05fr 1.05fr .92fr .92fr .92fr !important;
+}
+.screen-home .event-right-grid .tile-pay {
+  grid-column:1 !important;
+  grid-row:1 / span 3 !important;
+}
+.screen-home .event-right-grid .tile-video-details {
+  grid-column:2 !important;
+  grid-row:1 !important;
+}
+.screen-home .event-right-grid .tile-photo-booth {
+  grid-column:2 !important;
+  grid-row:2 !important;
+}
+.screen-home .event-right-grid .tile-guest-upload {
+  grid-column:2 !important;
+  grid-row:3 !important;
+}
+.screen-home .event-right-grid .tile-timeline {
+  grid-column:1 / -1 !important;
+  grid-row:4 !important;
+  width:auto !important;
+}
+.screen-home .event-right-grid .tile-book {
+  grid-column:1 !important;
+  grid-row:5 !important;
+}
+.screen-home .event-right-grid .tile-misc {
+  grid-column:2 !important;
+  grid-row:5 !important;
+  width:auto !important;
+}
+.screen-home .tile-pay p {
+  gap:8px !important;
+  font-size:18px !important;
+}
+.screen-home .pay-breakdown-row strong {
+  font-size:18px !important;
+}
+.screen-home .pay-grand-total strong,
+.screen-home .pay-balance strong {
+  font-size:24px !important;
+}
+.screen-home .pay-payment-row {
+  font-size:15px !important;
+}
+.screen-home .pay-payment-meta {
+  display:flex !important;
+  align-items:center !important;
+  gap:8px !important;
+  min-width:0 !important;
+}
+.screen-home .pay-method-tag {
+  display:inline-flex !important;
+  align-items:center !important;
+  min-height:20px !important;
+  padding:3px 8px !important;
+  border-radius:999px !important;
+  background:#e3f7e9 !important;
+  border:1px solid rgba(39,154,83,.22) !important;
+  color:#23834d !important;
+  font-size:11px !important;
+  line-height:1 !important;
+  font-style:normal !important;
+  font-weight:700 !important;
+  text-transform:uppercase !important;
+  letter-spacing:.04em !important;
+  white-space:nowrap !important;
+}
+
+/* local-only plus button and payment typography refinements v265 */
+.screen-home .tile-plus-action {
+  width:26px !important;
+  height:26px !important;
+  left:26px !important;
+  bottom:16px !important;
+  font-size:20px !important;
+  line-height:22px !important;
+  font-weight:400 !important;
+  padding:0 0 2px !important;
+}
+.screen-home .tile-pay p,
+.screen-home .pay-breakdown-row,
+.screen-home .pay-breakdown-row strong,
+.screen-home .pay-grand-total strong,
+.screen-home .pay-balance strong,
+.screen-home .pay-payment-row {
+  font-size:17px !important;
+  line-height:1.25 !important;
+}
+.screen-home .pay-breakdown-payments {
+  margin-top:14px !important;
+  padding-top:13px !important;
+  gap:7px !important;
+  border-top:1px solid rgba(131,151,166,.28) !important;
+}
+.screen-home .pay-payments-title {
+  display:block !important;
+  margin:0 0 3px !important;
+  color:#333 !important;
+  font-size:17px !important;
+  line-height:1.25 !important;
+  font-weight:700 !important;
+}
+.screen-home .pay-balance {
+  margin-top:11px !important;
+  padding-top:12px !important;
+}
+
+/* local-only larger payments card text v266 */
+.screen-home .tile-pay p,
+.screen-home .pay-breakdown-row,
+.screen-home .pay-breakdown-row strong,
+.screen-home .pay-grand-total strong,
+.screen-home .pay-balance strong,
+.screen-home .pay-payment-row,
+.screen-home .pay-payments-title {
+  font-size:20px !important;
+  line-height:1.22 !important;
+}
+.screen-home .pay-method-tag {
+  font-size:12px !important;
+  min-height:22px !important;
+  padding:4px 9px !important;
+}
+.screen-home .tile-pay p {
+  gap:9px !important;
+}
+.screen-home .pay-breakdown-payments {
+  gap:8px !important;
+}
+
+/* local-only restore payments card to double-height grid v267 */
+.screen-home .event-right-grid {
+  grid-template-rows:1.18fr 1.18fr 1fr 1fr 1fr !important;
+}
+.screen-home .event-right-grid .tile-pay {
+  grid-column:1 !important;
+  grid-row:1 / span 2 !important;
+}
+.screen-home .event-right-grid .tile-video-details {
+  grid-column:2 !important;
+  grid-row:1 !important;
+}
+.screen-home .event-right-grid .tile-photo-booth {
+  grid-column:2 !important;
+  grid-row:2 !important;
+}
+.screen-home .event-right-grid .tile-timeline {
+  grid-column:1 / -1 !important;
+  grid-row:3 !important;
+  width:auto !important;
+}
+.screen-home .event-right-grid .tile-guest-upload {
+  grid-column:1 !important;
+  grid-row:4 !important;
+}
+.screen-home .event-right-grid .tile-book {
+  grid-column:2 !important;
+  grid-row:4 !important;
+}
+.screen-home .event-right-grid .tile-misc {
+  grid-column:1 / -1 !important;
+  grid-row:5 !important;
+  width:auto !important;
+}
+
+/* local-only empty package builder v268 */
+.screen-home .package-builder {
+  position:relative !important;
+  margin:14px 0 22px !important;
+  padding:16px !important;
+  border:1px solid rgba(75,139,190,.22) !important;
+  border-radius:16px !important;
+  background:#f7fbff !important;
+}
+.screen-home .package-builder.has-package-items {
+  margin-top:18px !important;
+}
+.screen-home .package-empty-copy {
+  margin:0 0 12px !important;
+  color:#8397a6 !important;
+  font-size:15px !important;
+  line-height:1.35 !important;
+}
+.screen-home .package-builder-grid {
+  display:grid !important;
+  grid-template-columns:repeat(2, minmax(0, 1fr)) !important;
+  gap:10px !important;
+}
+.screen-home .package-builder-grid button {
+  border:1px solid rgba(4,40,164,.28) !important;
+  border-radius:12px !important;
+  background:#fff !important;
+  color:#0428a4 !important;
+  padding:10px 12px !important;
+  font-size:15px !important;
+  line-height:1.2 !important;
+  font-weight:700 !important;
+  text-align:left !important;
+  cursor:pointer !important;
+}
+.screen-home .package-builder-grid button:hover,
+.screen-home .package-builder-grid button:focus-visible {
+  background:#eef7fd !important;
+}
+.screen-home .package-builder-grid button:disabled {
+  opacity:.35 !important;
+  cursor:not-allowed !important;
+}
+.screen-home .package-base-title {
+  list-style:none !important;
+  font-size:22px !important;
+  line-height:34px !important;
+  color:#8397a6 !important;
+}
+.screen-home .package-base-line {
+  list-style:none !important;
+  margin-left:24px !important;
+}
+
+/* local-only full booked package builder options v269 */
+.screen-home .package-builder-grid {
+  grid-template-columns:repeat(3, minmax(0, 1fr)) !important;
+  gap:8px !important;
+  max-height:360px !important;
+  overflow:auto !important;
+  padding-right:4px !important;
+}
+.screen-home .package-builder-grid button {
+  min-height:42px !important;
+  padding:8px 10px !important;
+  font-size:13px !important;
+}
+.screen-home .package-builder-grid button.is-builder-done {
+  background:#e3f7e9 !important;
+  border-color:rgba(39,154,83,.28) !important;
+  color:#23834d !important;
+  text-align:center !important;
+}
+.screen-home .package-built-status {
+  display:inline-flex !important;
+  align-items:center !important;
+  margin-left:8px !important;
+  padding:3px 8px !important;
+  border-radius:999px !important;
+  background:#e3f7e9 !important;
+  color:#23834d !important;
+  font-size:12px !important;
+  line-height:1 !important;
+  font-weight:700 !important;
+  vertical-align:middle !important;
+}
+
+/* local-only grouped package builder with active cards first v270 */
+.screen-home .package-builder-grid {
+  display:grid !important;
+  grid-template-columns:repeat(2, minmax(0, 1fr)) !important;
+  gap:9px !important;
+  max-height:430px !important;
+}
+.screen-home .builder-group-title {
+  grid-column:1 / -1 !important;
+  justify-self:start !important;
+  margin:11px 0 0 !important;
+  padding:3px 8px !important;
+  color:#fff !important;
+  background:#0428a4 !important;
+  border:1px solid rgba(4,40,164,.22) !important;
+  border-radius:3px !important;
+  font-size:11px !important;
+  line-height:1.15 !important;
+  font-weight:700 !important;
+  letter-spacing:.03em !important;
+}
+.screen-home .package-builder-card {
+  display:flex !important;
+  align-items:center !important;
+  justify-content:space-between !important;
+  gap:8px !important;
+  min-height:48px !important;
+  padding:8px !important;
+  border:1px solid rgba(4,40,164,.22) !important;
+  border-radius:12px !important;
+  background:#fff !important;
+}
+.screen-home .package-builder-card > button[data-package-build] {
+  flex:1 1 auto !important;
+  min-height:0 !important;
+  padding:0 !important;
+  border:0 !important;
+  background:transparent !important;
+  color:#0428a4 !important;
+  box-shadow:none !important;
+  text-align:left !important;
+}
+.screen-home .package-builder-card .builder-check {
+  display:none !important;
+  margin-right:5px !important;
+  color:#23834d !important;
+  font-weight:900 !important;
+}
+.screen-home .package-builder-card.is-builder-done {
+  background:#f3f7fa !important;
+  border-color:rgba(131,151,166,.2) !important;
+  opacity:.72 !important;
+  order:-1 !important;
+}
+.screen-home .package-builder-card.is-builder-done .builder-check {
+  display:inline !important;
+}
+.screen-home .package-builder-card.is-builder-done .builder-name {
+  color:#526b7d !important;
+}
+.screen-home .package-builder-card.is-builder-disabled:not(.is-builder-done) {
+  opacity:.38 !important;
+}
+.screen-home .builder-control {
+  display:inline-flex !important;
+  align-items:center !important;
+  gap:5px !important;
+  flex:0 0 auto !important;
+}
+.screen-home .builder-control button {
+  width:24px !important;
+  height:24px !important;
+  border-radius:999px !important;
+  border:1px solid rgba(4,40,164,.28) !important;
+  background:#eef7fd !important;
+  color:#0428a4 !important;
+  font-size:18px !important;
+  line-height:18px !important;
+  padding:0 !important;
+  cursor:pointer !important;
+}
+.screen-home .builder-control strong {
+  min-width:44px !important;
+  color:#333 !important;
+  font-size:12px !important;
+  text-align:center !important;
+  white-space:nowrap !important;
+}
+.screen-home .package-builder-done {
+  grid-column:1 / -1 !important;
+  justify-self:end !important;
+  margin-top:8px !important;
+  padding:10px 14px !important;
+  border:0 !important;
+  border-radius:999px !important;
+  background:#23834d !important;
+  color:#fff !important;
+  font-size:14px !important;
+  font-weight:800 !important;
+  cursor:pointer !important;
+}
+
+/* local-only move quantity controls from builder to Your Package list v271 */
+.screen-home .package-builder-card .builder-control {
+  display:none !important;
+}
+.screen-home .package-line-control {
+  display:inline-flex !important;
+  align-items:center !important;
+  gap:5px !important;
+  margin-left:8px !important;
+  vertical-align:middle !important;
+}
+.screen-home .package-line-control button {
+  width:24px !important;
+  height:24px !important;
+  border-radius:999px !important;
+  border:1px solid rgba(4,40,164,.28) !important;
+  background:#eef7fd !important;
+  color:#0428a4 !important;
+  font-size:18px !important;
+  line-height:18px !important;
+  padding:0 !important;
+  cursor:pointer !important;
+}
+.screen-home .package-line-control strong {
+  min-width:46px !important;
+  color:#333 !important;
+  font-size:13px !important;
+  text-align:center !important;
+  white-space:nowrap !important;
+}
+
+/* local-only builder polish: black cards, neutral package controls, top-right done/edit v272 */
+.screen-home .package h2 {
+  position:relative !important;
+  padding-right:44px !important;
+}
+.screen-home .package-builder-toggle {
+  position:absolute !important;
+  right:0 !important;
+  top:50% !important;
+  transform:translateY(-50%) !important;
+  width:34px !important;
+  height:34px !important;
+  border-radius:999px !important;
+  border:1px solid rgba(51,51,51,.16) !important;
+  background:#111 !important;
+  color:#fff !important;
+  font-size:18px !important;
+  line-height:1 !important;
+  font-weight:800 !important;
+  display:inline-flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+  cursor:pointer !important;
+}
+.screen-home .package-builder-toggle.is-edit-mode {
+  background:#fff !important;
+  color:#111 !important;
+  border-color:rgba(17,17,17,.28) !important;
+}
+.screen-home .package-builder-card {
+  background:#111 !important;
+  border-color:#111 !important;
+  color:#fff !important;
+}
+.screen-home .package-builder-card > button[data-package-build] {
+  color:#fff !important;
+}
+.screen-home .package-builder-card .builder-name {
+  color:#fff !important;
+}
+.screen-home .package-builder-card.is-builder-done {
+  background:#111 !important;
+  border-color:#111 !important;
+  opacity:.42 !important;
+}
+.screen-home .package-builder-card.is-builder-done .builder-name,
+.screen-home .package-builder-card.is-builder-done .builder-check {
+  color:#fff !important;
+}
+.screen-home .package-builder-card.is-builder-disabled:not(.is-builder-done) {
+  opacity:.25 !important;
+}
+.screen-home .package-line-control button {
+  border-color:rgba(51,51,51,.22) !important;
+  background:#f1f3f5 !important;
+  color:#333 !important;
+}
+.screen-home .package-line-control button:hover,
+.screen-home .package-line-control button:focus-visible {
+  background:#e4e8ec !important;
+}
+.screen-home .package-builder-done {
+  display:none !important;
+}
+
+/* local-only booked package builder visual cleanup v273 */
+.screen-home .package h2 {
+  position:relative !important;
+  padding-right:34px !important;
+  font-size:22px !important;
+  line-height:1.2 !important;
+  font-weight:700 !important;
+}
+.screen-home .package-builder-add-day {
+  position:absolute !important;
+  top:10px !important;
+  right:10px !important;
+  width:24px !important;
+  height:24px !important;
+  min-width:0 !important;
+  display:inline-flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+  padding:0 !important;
+  border:1px solid rgba(4,40,164,.32) !important;
+  border-radius:50% !important;
+  background:#fff !important;
+  color:#0428a4 !important;
+  font-size:22px !important;
+  line-height:1 !important;
+  font-weight:300 !important;
+  box-shadow:none !important;
+}
+.screen-home .package-builder-add-day:hover,
+.screen-home .package-builder-add-day:focus-visible {
+  background:#f2f5ff !important;
+}
+.screen-home .package-builder-date-calendar-holder {
+  position:absolute !important;
+  top:38px !important;
+  right:10px !important;
+  z-index:50 !important;
+  width:280px !important;
+}
+.screen-home .package-builder-calendar {
+  background:#fff !important;
+  border:1px solid rgba(4,40,164,.18) !important;
+  box-shadow:0 18px 40px rgba(36,54,76,.18) !important;
+}
+.screen-home .package-date-header {
+  margin:26px 0 8px !important;
+  padding:0 !important;
+  display:block !important;
+  color:#111 !important;
+  background:transparent !important;
+  border-radius:0 !important;
+  font-size:22px !important;
+  line-height:34px !important;
+  font-weight:400 !important;
+  list-style:none !important;
+}
+.screen-home .package-date-header:first-child {
+  margin-top:10px !important;
+}
+.screen-home .package-builder-toggle {
+  width:auto !important;
+  height:auto !important;
+  min-width:0 !important;
+  border:0 !important;
+  border-radius:0 !important;
+  background:transparent !important;
+  color:#23834d !important;
+  box-shadow:none !important;
+  font-size:26px !important;
+  line-height:1 !important;
+  padding:0 !important;
+}
+.screen-home .package-builder-toggle.is-edit-mode {
+  background:transparent !important;
+  color:#23834d !important;
+  border:0 !important;
+}
+.screen-home .package-builder-card {
+  background:#fff !important;
+  border:1px solid rgba(51,51,51,.18) !important;
+  border-radius:0 !important;
+  color:#111 !important;
+  box-shadow:none !important;
+}
+.screen-home .package-builder-card > button[data-package-build],
+.screen-home .package-builder-card .builder-name {
+  color:#111 !important;
+}
+.screen-home .package-builder-card .builder-name {
+  display:block !important;
+}
+.screen-home .package-builder-card .builder-name-sub {
+  display:block !important;
+  margin-top:2px !important;
+  font-size:11px !important;
+  line-height:1.15 !important;
+  opacity:.72 !important;
+}
+.screen-home .package-builder-card.is-builder-done {
+  background:#fff !important;
+  border-color:rgba(51,51,51,.18) !important;
+  opacity:.48 !important;
+}
+.screen-home .package-builder-card.is-builder-done .builder-name {
+  color:#111 !important;
+}
+.screen-home .package-builder-card.is-builder-done .builder-check {
+  color:#23834d !important;
+}
+.screen-home .package-line-control strong {
+  font-size:22px !important;
+  line-height:1.2 !important;
+  font-weight:400 !important;
+}
+.screen-home .event-dashboard-grid.upgrades-empty .package-upgrades {
+  pointer-events:none !important;
+  opacity:.35 !important;
+}
+
+/* local-only modern package builder toggle and final ordering pass v274 */
+.screen-home .package-builder-toggle {
+  color:#23834d !important;
+  width:28px !important;
+  height:28px !important;
+}
+.screen-home .package-builder-toggle svg {
+  width:26px !important;
+  height:26px !important;
+  display:block !important;
+  fill:none !important;
+  stroke:currentColor !important;
+  stroke-width:2.4 !important;
+  stroke-linecap:round !important;
+  stroke-linejoin:round !important;
+}
+.screen-home .package-builder-toggle.is-edit-mode {
+  color:#111 !important;
+}
+.screen-home .package-line-control strong {
+  font-size:16px !important;
+  line-height:1.2 !important;
+  font-weight:400 !important;
+}
+.screen-home .package-builder-card.is-builder-disabled:not(.is-builder-done) {
+  opacity:1 !important;
+}
+
+/* local-only compact booked package line controls v275 */
+.screen-home .package-base-title {
+  font-size:16px !important;
+  line-height:28px !important;
+}
+.screen-home .package-line-control strong {
+  font-size:16px !important;
+  line-height:1.2 !important;
+}
+
+/* local-only restore package item typography, lighter edit icon, payments plus v276 */
+.screen-home .package-base-title {
+  font-size:22px !important;
+  line-height:34px !important;
+}
+.screen-home .package-line-control strong {
+  font-size:22px !important;
+  line-height:1.2 !important;
+}
+.screen-home .package-builder-toggle svg {
+  stroke-width:1.65 !important;
+}
+.screen-home .package-builder-toggle.is-edit-mode svg {
+  width:24px !important;
+  height:24px !important;
+  stroke-width:1.45 !important;
+}
+.screen-home .tile-pay {
+  position:relative !important;
+}
+.screen-home .tile-pay .tile-pay-plus-action {
+  left:22px !important;
+  bottom:14px !important;
+  width:26px !important;
+  height:26px !important;
+  font-size:20px !important;
+  line-height:22px !important;
+}
+
+/* local-only builder no internal scroll and package list cleanup v277 */
+.screen-home .package-builder-grid {
+  max-height:none !important;
+  overflow:visible !important;
+  padding-right:0 !important;
+}
+.screen-home .package-base-title,
+.screen-home .package-base-title .package-upgrade-name,
+.screen-home .package-base-line,
+.screen-home .package-list li {
+  color:#111 !important;
+}
+.screen-home .package-base-title {
+  margin-top:16px !important;
+  padding-top:12px !important;
+  border-top:1px solid rgba(17,17,17,.08) !important;
+}
+.screen-home .package-list .package-base-title:first-child {
+  margin-top:0 !important;
+  padding-top:0 !important;
+  border-top:0 !important;
+}
+.screen-home .package-base-line {
+  margin-top:4px !important;
+  line-height:1.35 !important;
+}
+.screen-home .package-builder-card.is-builder-done {
+  display:none !important;
+}
+.screen-home .builder-check {
+  display:none !important;
+}
+
+/* local-only force booked package descriptions black v278 */
+.screen-home .package-list .package-upgrade-line,
+.screen-home .package-list .package-base-line,
+.screen-home .package-list .package-base-line[data-base-package-line] {
+  color:#111 !important;
+}
+
+/* local-only match Your Package typography to Payments & Balance v279 */
+.screen-home .package-list,
+.screen-home .package-list li,
+.screen-home .package-base-title,
+.screen-home .package-base-title .package-upgrade-name,
+.screen-home .package-base-line,
+.screen-home .package-list .package-upgrade-line,
+.screen-home .package-list .package-base-line[data-base-package-line],
+.screen-home .package-line-control strong {
+  color:#526b7d !important;
+  font-size:20px !important;
+  line-height:1.22 !important;
+  font-weight:400 !important;
+}
+.screen-home .package-base-title .package-upgrade-name {
+  font-weight:700 !important;
+}
+.screen-home .package-built-status,
+.screen-home .remove-upgrade {
+  font-size:13px !important;
+}
+
+/* local-only remove package separators and add payments plus popup v280 */
+.screen-home .package-base-title,
+.screen-home .package-list .package-base-title:first-child {
+  border-top:0 !important;
+  padding-top:0 !important;
+}
+.screen-home .payment-plus-popup {
+  position:absolute !important;
+  left:22px !important;
+  bottom:48px !important;
+  z-index:20 !important;
+  min-width:172px !important;
+  padding:8px !important;
+  border:1px solid rgba(17,17,17,.12) !important;
+  background:#fff !important;
+  box-shadow:0 12px 28px rgba(25,45,64,.16) !important;
+}
+.screen-home .payment-plus-popup[hidden] {
+  display:none !important;
+}
+.screen-home .payment-plus-popup button {
+  display:block !important;
+  width:100% !important;
+  border:0 !important;
+  background:transparent !important;
+  color:#111 !important;
+  padding:9px 10px !important;
+  font-size:14px !important;
+  line-height:1.2 !important;
+  text-align:left !important;
+  cursor:pointer !important;
+}
+.screen-home .payment-plus-popup button:hover,
+.screen-home .payment-plus-popup button:focus-visible {
+  background:#f1f3f5 !important;
+}
+
+/* local-only subtle spacing between Your Package items v281 */
+.screen-home .package-base-title {
+  margin-top:22px !important;
+}
+.screen-home .package-list .package-base-title:first-child {
+  margin-top:0 !important;
+}
+.screen-home .package-base-line + .package-base-title {
+  margin-top:24px !important;
+}
+.screen-home .package-base-line {
+  margin-top:6px !important;
+}
+
+/* local-only actually visible payments plus popup v282 */
+.screen-home .tile-pay {
+  overflow:visible !important;
+  z-index:30 !important;
+}
+.screen-home .payment-plus-popup {
+  height:auto !important;
+  min-height:0 !important;
+  overflow:visible !important;
+}
+.screen-home .payment-plus-popup button {
+  position:static !important;
+  left:auto !important;
+  top:auto !important;
+  right:auto !important;
+  bottom:auto !important;
+  height:auto !important;
+  min-height:0 !important;
+  transform:none !important;
+}
+
+/* local-only override tile absolute button rule for payments popup v283 */
+.screen-home .event-dashboard-grid .tile.tile-pay .payment-plus-popup button[data-payment-option] {
+  position:static !important;
+  display:block !important;
+  width:100% !important;
+  height:auto !important;
+  min-height:0 !important;
+  left:auto !important;
+  top:auto !important;
+  right:auto !important;
+  bottom:auto !important;
+  transform:none !important;
+}
+.screen-home .event-dashboard-grid .tile.tile-pay .payment-plus-popup {
+  height:auto !important;
+  min-height:112px !important;
+}
+
+/* local-only editable payment adjustments above grand total v284 */
+.screen-home .pay-adjustment-row {
+  color:#526b7d !important;
+}
+.screen-home .payment-adjustment-input-wrap {
+  display:inline-flex !important;
+  align-items:center !important;
+  justify-content:flex-end !important;
+  gap:2px !important;
+  color:#333 !important;
+  font-weight:700 !important;
+}
+.screen-home .payment-adjustment-input-wrap input {
+  width:92px !important;
+  border:1px solid rgba(82,107,125,.18) !important;
+  border-radius:6px !important;
+  background:#fff !important;
+  color:#333 !important;
+  font:inherit !important;
+  font-weight:700 !important;
+  text-align:right !important;
+  padding:3px 6px !important;
+}
+.screen-home .payment-adjustment-rename {
+  display:inline-flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+  position:static !important;
+  border:0 !important;
+  background:transparent !important;
+  color:#526b7d !important;
+  font-size:15px !important;
+  line-height:1 !important;
+  padding:0 0 0 4px !important;
+  cursor:pointer !important;
+}
+
+/* local-only remove visible boxes from payment adjustment amount fields v285 */
+.screen-home .payment-adjustment-input-wrap input {
+  border:0 !important;
+  border-radius:0 !important;
+  background:transparent !important;
+  box-shadow:none !important;
+  outline:0 !important;
+  padding:0 !important;
+}
+.screen-home .payment-adjustment-input-wrap input:focus {
+  border-bottom:1px solid rgba(82,107,125,.35) !important;
+}
+
+/* local-only payment adjustment text entry without number arrows v286 */
+.screen-home .payment-adjustment-input-wrap input::-webkit-outer-spin-button,
+.screen-home .payment-adjustment-input-wrap input::-webkit-inner-spin-button {
+  -webkit-appearance:none !important;
+  margin:0 !important;
+}
+.screen-home .payment-adjustment-input-wrap input[type="number"] {
+  -moz-appearance:textfield !important;
+}
+
+/* local-only payment adjustment delete, rename, and tight currency layout v287 */
+.screen-home .payment-adjustment-label {
+  display:inline-flex !important;
+  align-items:center !important;
+  gap:5px !important;
+}
+.screen-home .payment-adjustment-remove {
+  position:static !important;
+  display:inline-flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+  width:18px !important;
+  height:18px !important;
+  border:0 !important;
+  background:transparent !important;
+  color:#9a3d3d !important;
+  font-size:20px !important;
+  line-height:1 !important;
+  padding:0 !important;
+  cursor:pointer !important;
+}
+.screen-home .payment-adjustment-rename {
+  position:static !important;
+  display:inline-flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+  width:18px !important;
+  height:18px !important;
+  border:0 !important;
+  background:transparent !important;
+  color:#526b7d !important;
+  padding:0 !important;
+  cursor:pointer !important;
+}
+.screen-home .payment-adjustment-rename svg {
+  width:16px !important;
+  height:16px !important;
+  fill:none !important;
+  stroke:currentColor !important;
+  stroke-width:1.6 !important;
+  stroke-linecap:round !important;
+  stroke-linejoin:round !important;
+}
+.screen-home .payment-adjustment-input-wrap {
+  gap:0 !important;
+  justify-content:flex-end !important;
+}
+.screen-home .payment-adjustment-input-wrap input {
+  width:58px !important;
+  min-width:0 !important;
+  text-align:left !important;
+  margin-left:1px !important;
+}
+
+/* local-only signed adjustment entry and aligned amount column v288 */
+.screen-home .payment-adjustment-input-wrap {
+  width:112px !important;
+  justify-content:flex-end !important;
+  gap:1px !important;
+}
+.screen-home .payment-adjustment-dollar {
+  display:inline-block !important;
+  width:10px !important;
+  color:#333 !important;
+  font-weight:700 !important;
+  text-align:right !important;
+}
+.screen-home .payment-adjustment-dollar.is-empty {
+  visibility:hidden !important;
+}
+.screen-home .payment-adjustment-input-wrap input {
+  width:76px !important;
+  text-align:right !important;
+  margin-left:0 !important;
+}
+
+/* local-only adjustment amount dollar adjacency and inline other rename v289 */
+.screen-home .payment-adjustment-input-wrap {
+  width:112px !important;
+  justify-content:flex-end !important;
+  gap:0 !important;
+}
+.screen-home .payment-adjustment-dollar {
+  width:auto !important;
+  margin-right:1px !important;
+}
+.screen-home .payment-adjustment-input-wrap input[data-payment-adjustment-amount] {
+  width:62px !important;
+  text-align:left !important;
+  margin-left:0 !important;
+}
+.screen-home .payment-adjustment-label-input {
+  width:92px !important;
+  border:0 !important;
+  border-bottom:1px solid rgba(82,107,125,.35) !important;
+  background:transparent !important;
+  color:#526b7d !important;
+  font:inherit !important;
+  padding:0 !important;
+  outline:0 !important;
+}
+
+/* local-only stronger payment adjustment tool overrides and aligned currency v290 */
+.screen-home .event-dashboard-grid .tile.tile-pay .payment-adjustment-remove,
+.screen-home .event-dashboard-grid .tile.tile-pay .payment-adjustment-rename {
+  position:static !important;
+  left:auto !important;
+  top:auto !important;
+  right:auto !important;
+  bottom:auto !important;
+  transform:none !important;
+}
+.screen-home .event-dashboard-grid .tile.tile-pay .payment-adjustment-rename {
+  width:22px !important;
+  height:22px !important;
+  min-width:22px !important;
+}
+.screen-home .payment-adjustment-input-wrap {
+  min-width:112px !important;
+  width:112px !important;
+  justify-content:flex-end !important;
+}
+.screen-home .payment-adjustment-input-wrap input[data-payment-adjustment-amount] {
+  min-width:1.2ch !important;
+  max-width:8ch !important;
+  text-align:left !important;
+}
+
+/* local-only payment adjustment label alignment and hover tools v291 */
+.screen-home .pay-adjustment-row {
+  position:relative !important;
+}
+.screen-home .pay-adjustment-row .payment-adjustment-label {
+  position:relative !important;
+  gap:0 !important;
+  padding-left:0 !important;
+}
+.screen-home .pay-adjustment-row .payment-adjustment-remove {
+  position:absolute !important;
+  left:-24px !important;
+  top:50% !important;
+  transform:translateY(-50%) !important;
+  opacity:0 !important;
+  pointer-events:none !important;
+}
+.screen-home .pay-adjustment-row .payment-adjustment-rename {
+  opacity:0 !important;
+  pointer-events:none !important;
+  margin-left:6px !important;
+}
+.screen-home .pay-adjustment-row:hover .payment-adjustment-remove,
+.screen-home .pay-adjustment-row:focus-within .payment-adjustment-remove,
+.screen-home .pay-adjustment-row:hover .payment-adjustment-rename,
+.screen-home .pay-adjustment-row:focus-within .payment-adjustment-rename {
+  opacity:1 !important;
+  pointer-events:auto !important;
+}
+.screen-home .pay-breakdown-payments {
+  border-top:0 !important;
+  padding-top:8px !important;
+}
+
+/* local-only keep adjustment delete outside label flow v292 */
+.screen-home .pay-adjustment-row .payment-adjustment-label {
+  display:inline-block !important;
+}
+.screen-home .pay-adjustment-row .payment-adjustment-remove {
+  width:18px !important;
+  min-width:0 !important;
+  margin:0 !important;
+}
+
+/* local-only final override for adjustment x outside flow v293 */
+.screen-home .event-dashboard-grid .tile.tile-pay .pay-adjustment-row .payment-adjustment-remove {
+  position:absolute !important;
+  left:-24px !important;
+  top:50% !important;
+  right:auto !important;
+  bottom:auto !important;
+  transform:translateY(-50%) !important;
+  display:inline-flex !important;
+  width:18px !important;
+  height:18px !important;
+  opacity:0 !important;
+  pointer-events:none !important;
+}
+.screen-home .event-dashboard-grid .tile.tile-pay .pay-adjustment-row:hover .payment-adjustment-remove,
+.screen-home .event-dashboard-grid .tile.tile-pay .pay-adjustment-row:focus-within .payment-adjustment-remove {
+  opacity:1 !important;
+  pointer-events:auto !important;
+}
+
+/* local-only less-rounded payment method tags v294 */
+.screen-home .pay-method-tag {
+  border-radius:5px !important;
+}
+
+/* local-only nearly square payment method tags v295 */
+.screen-home .pay-method-tag {
+  border-radius:2px !important;
+}
+
+/* local-only keep payment adjustment delete reachable on hover v296 */
+.screen-home .pay-adjustment-row {
+  margin-left:-28px !important;
+  padding-left:28px !important;
+}
+.screen-home .event-dashboard-grid .tile.tile-pay .pay-adjustment-row .payment-adjustment-remove {
+  left:4px !important;
+}
+
+/* local-only keep delete x outside payment adjustment text v297 */
+.screen-home .event-dashboard-grid .tile.tile-pay .pay-adjustment-row .payment-adjustment-remove {
+  left:-22px !important;
+}
+
+/* local-only red delete x and stable payments box sizing v298 */
+.screen-home .event-dashboard-grid .tile.tile-pay .pay-adjustment-row .payment-adjustment-remove {
+  color:#c62828 !important;
+}
+.screen-home .event-right-grid {
+  align-items:stretch !important;
+}
+.screen-home .event-right-grid .tile-pay {
+  min-height:430px !important;
+  height:auto !important;
+  overflow:visible !important;
+}
+.screen-home .tile-pay p {
+  min-height:0 !important;
+}
+
+/* local-only prevent payments card from shrinking below default double height v299 */
+.screen-home .event-right-grid .tile-pay {
+  min-height:562px !important;
+}
+
+/* local-only pin available upgrades near package bottom v300 */
+.screen-home .event-dashboard-grid .package {
+  display:flex !important;
+  flex-direction:column !important;
+}
+.screen-home .package-upgrades {
+  margin-top:auto !important;
+  margin-bottom:18px !important;
+}
+.screen-home .event-dashboard-grid.upgrades-empty .package-upgrades,
+.screen-home .package-upgrades[hidden] {
+  margin-top:0 !important;
+}
+
+/* local-only right aligned Your Package item prices v301 */
+.screen-home .package-list .package-base-title,
+.screen-home .package-list .package-upgrade-title {
+  display:flex !important;
+  align-items:baseline !important;
+  gap:10px !important;
+  width:100% !important;
+}
+.screen-home .package-list .package-base-title .package-upgrade-name,
+.screen-home .package-list .package-upgrade-title .package-upgrade-name {
+  min-width:0 !important;
+}
+.screen-home .package-list .package-line-price {
+  margin-left:auto !important;
+  color:#333 !important;
+  font-size:20px !important;
+  line-height:1.22 !important;
+  font-weight:700 !important;
+  white-space:nowrap !important;
+  text-align:right !important;
+}
+.screen-home .package-list .remove-upgrade + .package-line-price {
+  margin-left:auto !important;
+}
+
+/* local-only website price blue for Your Package prices v302 */
+.screen-home .package-list .package-line-price {
+  color:#0428a4 !important;
+}
+
+/* local-only match added upgrade lines to booked package builder colors v303 */
+.screen-home .package-list .package-upgrade-title,
+.screen-home .package-list .package-upgrade-title .package-upgrade-name,
+.screen-home .package-list .package-upgrade-line:not(.package-upgrade-notice) {
+  color:#526b7d !important;
+}
+.screen-home .package-list .package-upgrade-title .package-upgrade-name {
+  font-weight:700 !important;
+}
+
+/* local-only restore package item grouping separation v304 */
+.screen-home .package-list .package-base-title,
+.screen-home .package-list .package-upgrade-title {
+  margin-top:18px !important;
+  margin-bottom:6px !important;
+}
+.screen-home .package-list .package-base-title:first-child,
+.screen-home .package-list .package-upgrade-title:first-child {
+  margin-top:0 !important;
+}
+.screen-home .package-list .package-base-line + .package-base-title,
+.screen-home .package-list .package-base-line + .package-upgrade-title,
+.screen-home .package-list .package-upgrade-line + .package-base-title,
+.screen-home .package-list .package-upgrade-line + .package-upgrade-title,
+.screen-home .package-list .package-upgrade-notice + .package-base-title,
+.screen-home .package-list .package-upgrade-notice + .package-upgrade-title {
+  margin-top:24px !important;
+}
+.screen-home .package-list .package-base-line,
+.screen-home .package-list .package-upgrade-line:not(.package-upgrade-notice) {
+  margin-top:3px !important;
+  margin-bottom:3px !important;
+}
+
+/* local-only photo book quantity badge in package line v305 */
+.screen-home .package-list .package-line-quantity {
+  color:#526b7d !important;
+  font-size:18px !important;
+  line-height:1 !important;
+  font-weight:700 !important;
+  white-space:nowrap !important;
+}
+
+/* local-only package quantity badge same size as item v306 */
+.screen-home .package-list .package-line-quantity {
+  font-size:20px !important;
+  line-height:1.22 !important;
+}
+
+/* local-only package quantity badge exact current title size v307 */
+.screen-home .package-list .package-line-quantity {
+  font-size:22px !important;
+  line-height:34.1px !important;
+}
+
+/* local-only video editing availability helper copy v308 */
+.screen-home .video-edit-help {
+  margin:0 0 12px !important;
+  color:#526b7d !important;
+  font-size:14px !important;
+  line-height:1.35 !important;
+}
+
+/* local-only reliable inactive videography add button for any no-video package v309 */
+.screen-home .event-dashboard-grid:not(.has-videography) .tile-video-details .included-copy,
+.screen-home .event-dashboard-grid:not(.has-videography) .tile-video-details .included-action {
+  display:none !important;
+}
+.screen-home .event-dashboard-grid:not(.has-videography) .tile-video-details .addon-badge {
+  display:inline-flex !important;
+}
+.screen-home .event-dashboard-grid:not(.has-videography) .tile-video-details .addon-copy {
+  display:block !important;
+  grid-row:2 !important;
+  align-self:center !important;
+  margin-top:0 !important;
+  margin-bottom:0 !important;
+}
+.screen-home .event-dashboard-grid:not(.has-videography) .tile-video-details .addon-action {
+  display:block !important;
+  position:absolute !important;
+  right:26px !important;
+  bottom:12px !important;
+  color:#0428a4 !important;
+}
+
+/* local-only builder hour controls for photographer and content creator v310 */
+.screen-home .package-builder-card[data-builder-card="photo-one"] .builder-control,
+.screen-home .package-builder-card[data-builder-card="photo-second"] .builder-control,
+.screen-home .package-builder-card[data-builder-card="content-creator"] .builder-control,
+.screen-home .package-builder-card[data-builder-card="content-package"] .builder-control {
+  display:flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+  gap:7px !important;
+  margin:9px 0 0 !important;
+}
+.screen-home .package-builder-card .builder-control button {
+  width:24px !important;
+  height:24px !important;
+  border-radius:999px !important;
+  border:1px solid rgba(82,107,125,.28) !important;
+  background:#f3f7fa !important;
+  color:#526b7d !important;
+  font-size:18px !important;
+  line-height:18px !important;
+  padding:0 !important;
+  cursor:pointer !important;
+}
+.screen-home .package-builder-card .builder-control strong {
+  min-width:54px !important;
+  color:#526b7d !important;
+  font-size:14px !important;
+  line-height:1 !important;
+  text-align:center !important;
+  white-space:nowrap !important;
+}
+
+/* local-only admin/client dashboard permissions v311 */
+body.is-client .package-builder,
+body.is-client .package-builder-add-day,
+body.is-client .package-builder-toggle,
+body.is-client .tile-pay .tile-pay-plus-action,
+body.is-client .tile-pay .payment-plus-popup,
+body.is-client [data-payment-adjustment-remove],
+body.is-client [data-payment-adjustment-rename],
+body.is-client .package-list .remove-upgrade,
+body.is-client .package-list .package-built-status {
+  display:none !important;
+}
+body.is-client .package h2 {
+  padding-right:0 !important;
+}
+body.is-client .package-line-control button[data-delta="-1"]:disabled,
+body.is-client .package-line-control button[data-delta="-1"].is-locked-min {
+  opacity:.3 !important;
+  cursor:not-allowed !important;
+}
+
+/* local-only client upgrade payment breakdown v312 */
+.screen-home .pay-breakdown-upgrades {
+  display:block !important;
+  margin:8px 0 4px !important;
+}
+.screen-home .pay-upgrades-title {
+  display:block !important;
+  color:#526b7d !important;
+  font-size:13px !important;
+  font-weight:800 !important;
+  letter-spacing:.08em !important;
+  margin:0 0 4px !important;
+  text-transform:uppercase !important;
+}
+.screen-home .pay-client-upgrade-row span:first-child {
+  color:#526b7d !important;
+}
+.screen-home .pay-client-upgrade-row strong {
+  color:#0428a4 !important;
+}
+
+/* local-only client upgrades payment typography polish v313 */
+.screen-home .pay-upgrades-title {
+  display:inline-flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+  width:auto !important;
+  min-width:0 !important;
+  padding:3px 8px !important;
+  margin:0 0 6px !important;
+  border-radius:4px !important;
+  background:#0428a4 !important;
+  color:#fff !important;
+  -webkit-text-fill-color:#fff !important;
+  font-size:12px !important;
+  line-height:1.2 !important;
+  font-weight:800 !important;
+  letter-spacing:.04em !important;
+  text-transform:uppercase !important;
+}
+.screen-home .pay-client-upgrade-row,
+.screen-home .pay-client-upgrade-row span,
+.screen-home .pay-client-upgrade-row strong {
+  font-size:14px !important;
+  line-height:1.35 !important;
+  font-weight:700 !important;
+}
+.screen-home .pay-client-upgrade-row span:first-child {
+  color:#526b7d !important;
+}
+.screen-home .pay-client-upgrade-row strong {
+  color:#0428a4 !important;
+}
+
+/* local-only client upgrades match payment row typography v314 */
+.screen-home .pay-client-upgrade-row,
+.screen-home .pay-client-upgrade-row span,
+.screen-home .pay-client-upgrade-row strong {
+  font-size:20px !important;
+  line-height:1.22 !important;
+  font-weight:400 !important;
+}
+.screen-home .pay-client-upgrade-row strong {
+  font-weight:700 !important;
+  color:#0428a4 !important;
+}
+
+/* local-only client upgrades row correction v315 */
+.screen-home .pay-client-upgrade-row,
+.screen-home .pay-client-upgrade-row span,
+.screen-home .pay-client-upgrade-row strong {
+  font-size:17px !important;
+  line-height:1.25 !important;
+}
+.screen-home .pay-client-upgrade-row span:first-child {
+  font-weight:400 !important;
+  color:#526b7d !important;
+}
+.screen-home .pay-client-upgrade-row strong {
+  font-weight:700 !important;
+  color:#333 !important;
+}
+
+/* local-only client upgrades spacing like payments v316 */
+.screen-home .pay-breakdown-upgrades {
+  display:flex !important;
+  flex-direction:column !important;
+  gap:7px !important;
+  margin-top:14px !important;
+  margin-bottom:13px !important;
+  padding-top:13px !important;
+  border-top:1px solid rgba(131,151,166,.28) !important;
+}
+.screen-home .pay-client-upgrade-row {
+  margin:0 !important;
+}
+.screen-home .pay-upgrades-title {
+  margin:0 0 3px !important;
+}
+
+/* local-only restore upgrades title blue badge v317 */
+.screen-home .pay-upgrades-title {
+  display:inline-flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+  align-self:flex-start !important;
+  width:auto !important;
+  min-width:0 !important;
+  padding:3px 8px !important;
+  margin:0 0 6px !important;
+  border-radius:4px !important;
+  background:#0428a4 !important;
+  color:#fff !important;
+  -webkit-text-fill-color:#fff !important;
+  font-size:12px !important;
+  line-height:1.2 !important;
+  font-weight:800 !important;
+  letter-spacing:.04em !important;
+  text-transform:uppercase !important;
+}
+
+/* local-only multi day package date spacing final override v306 */
+.screen-home .package-list .package-date-header {
+  margin:34px 0 10px !important;
+  padding:0 !important;
+  display:block !important;
+  color:#526b7d !important;
+  background:transparent !important;
+  border:0 !important;
+  border-radius:0 !important;
+  font-size:20px !important;
+  line-height:1.22 !important;
+  font-weight:400 !important;
+  list-style:none !important;
+}
+.screen-home .package-list .package-date-header:first-child {
+  margin-top:0 !important;
+}
+.screen-home .package-list .package-base-line + .package-date-header,
+.screen-home .package-list .package-upgrade-line + .package-date-header {
+  margin-top:42px !important;
+}
+.screen-home .package-list .package-date-header + .package-base-title,
+.screen-home .package-list .package-date-header + .package-upgrade-title {
+  margin-top:8px !important;
+}
+
+/* local-only clickable package date headers v307 */
+.screen-home .package-list .package-date-switch {
+  appearance:none !important;
+  border:0 !important;
+  background:transparent !important;
+  color:inherit !important;
+  font:inherit !important;
+  line-height:inherit !important;
+  padding:0 !important;
+  margin:0 !important;
+  cursor:pointer !important;
+  text-align:left !important;
+}
+.screen-home .package-list .package-date-switch:hover,
+.screen-home .package-list .package-date-switch:focus-visible {
+  text-decoration:underline !important;
+  text-underline-offset:3px !important;
+}
+.screen-home .package-list .package-date-header.is-active-package-date .package-date-switch {
+  text-decoration:underline !important;
+  text-underline-offset:3px !important;
+}
+
+/* local-only package edit pill toggle v308 */
+.screen-home .package-builder-toggle.is-edit-mode {
+  width:auto !important;
+  height:auto !important;
+  min-width:0 !important;
+  padding:5px 9px !important;
+  border:1px solid rgba(4,40,164,.22) !important;
+  border-radius:999px !important;
+  color:#0428a4 !important;
+  background:#fff !important;
+  line-height:1 !important;
+}
+.screen-home .package-builder-edit-text {
+  display:block !important;
+  font-family:Avenir, sans-serif !important;
+  font-size:12px !important;
+  line-height:1 !important;
+  font-weight:700 !important;
+  letter-spacing:.04em !important;
+  text-transform:uppercase !important;
+}
+.screen-home .package-builder-toggle:not(.is-edit-mode) .package-builder-edit-text {
+  display:none !important;
+}
+
+/* local-only package edit icon from requested SVGRepo reference v309 */
+.screen-home .package-builder-toggle.is-edit-mode {
+  width:28px !important;
+  height:28px !important;
+  padding:0 !important;
+  border:0 !important;
+  border-radius:0 !important;
+  background:transparent !important;
+  color:#0428a4 !important;
+}
+.screen-home .package-builder-toggle.is-edit-mode .package-builder-edit-icon {
+  width:23px !important;
+  height:23px !important;
+  display:block !important;
+  fill:currentColor !important;
+  stroke:none !important;
+}
+
+/* local-only realign payment adjustment rows with amount column v310 */
+.screen-home .pay-adjustment-row {
+  margin-left:0 !important;
+  padding-left:0 !important;
+  width:100% !important;
+}
+.screen-home .payment-adjustment-input-wrap {
+  width:auto !important;
+  min-width:0 !important;
+  justify-content:flex-end !important;
+}
+.screen-home .payment-adjustment-input-wrap input[data-payment-adjustment-amount] {
+  text-align:right !important;
+}
+
+/* local-only keep payment adjustment delete visible and clickable after realignment v311 */
+.screen-home .event-dashboard-grid .tile.tile-pay .pay-adjustment-row {
+  overflow:visible !important;
+}
+.screen-home .event-dashboard-grid .tile.tile-pay .pay-adjustment-row .payment-adjustment-label {
+  position:relative !important;
+  padding-left:22px !important;
+}
+.screen-home .event-dashboard-grid .tile.tile-pay .pay-adjustment-row .payment-adjustment-remove {
+  left:0 !important;
+  opacity:1 !important;
+  pointer-events:auto !important;
+  z-index:2 !important;
+}
+
+/* local-only align adjustment label text with other payment labels v312 */
+.screen-home .event-dashboard-grid .tile.tile-pay .pay-adjustment-row .payment-adjustment-label {
+  padding-left:0 !important;
+}
+.screen-home .event-dashboard-grid .tile.tile-pay .pay-adjustment-row .payment-adjustment-label-text,
+.screen-home .event-dashboard-grid .tile.tile-pay .pay-adjustment-row .payment-adjustment-label-input {
+  display:inline-block !important;
+  padding-left:22px !important;
+}
+.screen-home .event-dashboard-grid .tile.tile-pay .pay-adjustment-row .payment-adjustment-remove {
+  left:0 !important;
+}
+
+/* local-only put adjustment delete outside while label aligns with payment labels v313 */
+.screen-home .event-dashboard-grid .tile.tile-pay .pay-adjustment-row {
+  overflow:visible !important;
+}
+.screen-home .event-dashboard-grid .tile.tile-pay .pay-adjustment-row .payment-adjustment-label {
+  position:relative !important;
+  padding-left:0 !important;
+  overflow:visible !important;
+}
+.screen-home .event-dashboard-grid .tile.tile-pay .pay-adjustment-row .payment-adjustment-label-text,
+.screen-home .event-dashboard-grid .tile.tile-pay .pay-adjustment-row .payment-adjustment-label-input {
+  padding-left:0 !important;
+}
+.screen-home .event-dashboard-grid .tile.tile-pay .pay-adjustment-row .payment-adjustment-remove {
+  left:-24px !important;
+  opacity:1 !important;
+  pointer-events:auto !important;
+}
