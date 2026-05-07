@@ -1067,6 +1067,7 @@ function syncPackageBuilderState(ctx = packageUpgradeState()) {
   if (!builder || !grid || !list) return;
   syncPackageDateHeaders();
   const hasAnyPackage = list.children.length > 0;
+  if (!hasAnyPackage) builderState().done = false;
   const keys = activeBasePackageKeys();
   const defs = basePackageDefinitions(ctx);
   builder.classList.toggle('has-package-items', hasAnyPackage);
@@ -2142,7 +2143,8 @@ function bind() {
       if (!state.isAdmin) return;
       e.preventDefault();
       e.stopPropagation();
-      builderState().done = !builderState().done;
+        const hasAnyPackage = document.querySelector('.package-list')?.children.length > 0;
+      builderState().done = hasAnyPackage ? !builderState().done : false;
       syncPackageBuilderState();
       syncHomeGridHeight();
       return;
