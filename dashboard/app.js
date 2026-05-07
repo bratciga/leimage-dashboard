@@ -19,6 +19,21 @@ const state = {
   savedLocations: [],
   googlePlacesReady: false,
   googlePlacesLoading: false,
+  paymentMethod: 'credit-card',
+  paymentAmount: '',
+  eventInfoEditing: false,
+  eventInfoPhoto: '',
+  eventInfoPhotoX: 50,
+  eventInfoPhotoY: 50,
+  eventInfoPhotoDrag: null,
+  eventInfoPhotoMoved: false,
+  eventInfo: {
+    eventDate: 'September 28, 2014',
+    venue: 'The Foundry, Long Island City',
+    phones: 'Rachel: 917.555.0124\nMichael: 917.555.0188',
+    emails: 'rachel@example.com\nmichael@example.com',
+    address: '123 Brooklyn Ave, Brooklyn, NY 11201'
+  },
   teamMembers: ['Photographer'],
   shortSlots: [],
   vendors: [
@@ -44,7 +59,7 @@ const state = {
 };
 
 const app = document.querySelector('#app');
-const routes = ['home', 'vendors', 'timeline', 'payments', 'faq', 'contact'];
+const routes = ['home', 'vendors', 'timeline', 'misc', 'payments', 'faq', 'contact'];
 const defaultTimelineCards = ['GETTING READY - SPOUSE 1','GETTING READY - SPOUSE 2','FIRST LOOK','COUPLE PORTRAITS','BRIDAL PARTY PORTRAITS','FAMILY PORTRAITS','CEREMONY','COCKTAIL HOUR','RECEPTION','PHOTOGRAPHER LEAVES'];
 
 function cloneTimeline(timeline) {
@@ -122,20 +137,69 @@ function signIn() {
   </section>`;
 }
 
-function side() {
-  return `<aside class="abs side"><nav class="abs side-nav">
-    ${nav('home','event info')}${nav('vendors','vendors')}${nav('timeline','timeline')}${nav('payments','payments')}${nav('faq','FAQ')}${nav('contact','contact us')}
-  </nav></aside>`;
+function sidebarMarkup(classes = 'abs home-left') {
+  return `<aside class="${classes}"><div class="sidebar-brand"><div class="logo-box">LI</div></div><nav class="sidebar-menu"><div class="sidebar-section"><div class="sidebar-section-title">Event Info</div><button data-route="home"><span class="sidebar-icon">◼</span><span>Event details</span></button><button data-route="vendors"><span class="sidebar-icon">◎</span><span>Event vendors</span></button><button data-route="timeline"><span class="sidebar-icon">◷</span><span>Event Timeline</span></button><button data-route="home"><span class="sidebar-icon">◉</span><span>Video details</span></button><button data-route="misc"><span class="sidebar-icon">✣</span><span>Miscellaneous</span></button></div><div class="sidebar-section"><div class="sidebar-section-title">Photo Book</div><button data-route="home"><span class="sidebar-icon">▣</span><span>Create your album</span></button></div><div class="sidebar-section"><div class="sidebar-section-title">Photo Booth</div><button data-route="home"><span class="sidebar-icon">◈</span><span>Create your monogram</span></button></div><div class="sidebar-section"><div class="sidebar-section-title">QR Code</div><button data-route="home"><span class="sidebar-icon">▦</span><span>Create your QR Code</span></button></div><div class="sidebar-section"><div class="sidebar-section-title">Payments</div><button data-route="payments"><span class="sidebar-icon">▭</span><span>Billing</span></button></div></nav><nav class="sidebar-bottom"><button data-route="faq"><span class="sidebar-icon">●</span><span>FAQ</span></button><button data-route="contact"><span class="sidebar-icon">✉</span><span>Contact us</span></button><button data-route="home"><span class="sidebar-icon">⚙</span><span>Your settings</span></button></nav></aside>`;
 }
+function side() { return sidebarMarkup('abs side home-left'); }
 function nav(route, label) { return `<button class="${state.route === route ? 'active' : ''}" data-route="${route}">${label}</button>`; }
-function shell(inner) { return `<section class="dashboard-page ${state.menuOpen ? 'menu-open' : ''}"><button class="abs menu-toggle" aria-label="Open menu" data-menu-toggle><span></span><span></span><span></span></button>${side()}<h1 class="abs page-heading">${pageTitle()}</h1><div class="abs content">${inner}</div></section>`; }
-function pageTitle() { return ({payments:'Billing', vendors:'Event vendors', timeline:'Event Timeline', faq:'FAQ', contact:'Contact us'})[state.route] || 'Event details'; }
+function eventInfoBox() {
+  const info = state.eventInfo;
+  const editing = state.eventInfoEditing && state.isAdmin;
+  const field = (key, label) => {
+    const value = info[key] || '';
+    const display = String(value).replace(/\n/g, '<br>');
+    return `<div><dt>${label}</dt><dd>${editing ? `<textarea data-event-info-field="${key}" rows="2">${value}</textarea>` : display}</dd></div>`;
+  };
+  const photoStyle = state.eventInfoPhoto ? ` style="--event-info-photo:url('${state.eventInfoPhoto}');--event-info-photo-x:${state.eventInfoPhotoX}%;--event-info-photo-y:${state.eventInfoPhotoY}%;"` : '';
+  return `<article class="abs couple-info ${editing ? 'is-editing' : ''}"><button type="button" class="event-info-edit" data-event-info-edit aria-label="${editing ? 'Done editing event info' : 'Edit event info'}">${editing ? '✓' : '<svg viewBox="0 0 494.936 494.936" aria-hidden="true"><path d="M389.844 182.85c-6.743 0-12.21 5.467-12.21 12.21v222.968c0 23.562-19.174 42.735-42.736 42.735H67.157c-23.562 0-42.736-19.174-42.736-42.735V150.285c0-23.562 19.174-42.735 42.736-42.735h267.741c6.743 0 12.21-5.467 12.21-12.21s-5.467-12.21-12.21-12.21H67.157C30.126 83.13 0 113.255 0 150.285v267.743c0 37.029 30.126 67.155 67.157 67.155h267.741c37.03 0 67.156-30.126 67.156-67.155V195.061c0-6.743-5.467-12.211-12.21-12.211z"></path><path d="M483.876 20.791c-14.72-14.72-38.669-14.714-53.377 0L221.352 229.944c-.28.28-3.434 3.559-4.251 5.396l-28.963 65.069c-2.057 4.619-1.056 10.027 2.521 13.6 2.337 2.336 5.461 3.576 8.639 3.576 1.675 0 3.362-.346 4.96-1.057l65.07-28.963c1.83-.815 5.114-3.97 5.396-4.25L483.876 74.169c7.131-7.131 11.06-16.61 11.06-26.692 0-10.081-3.929-19.562-11.06-26.686zM466.61 56.897 257.457 266.05c-.035.036-.055.078-.089.107l-33.989 15.131L238.51 247.3c.03-.036.071-.055.107-.09L447.765 38.058c5.038-5.039 13.819-5.033 18.846.005 2.518 2.51 3.905 5.855 3.905 9.414 0 3.559-1.389 6.903-3.906 9.42z"></path></svg>'}</button><label class="couple-info-photo ${state.eventInfoPhoto ? 'has-event-photo' : ''}" data-event-photo-drop aria-label="Couple photo"${photoStyle}>${editing ? '<input type="file" accept="image/*" data-event-photo-input><span>Drop photo<br>or browse</span>' : ''}</label><div class="couple-info-details"><dl>${field('eventDate','Event date')}${field('venue','Venue')}${field('phones','Phone numbers')}${field('emails','Emails')}${field('address','Mailing address')}</dl></div></article>`;
+}
+function setEventInfoPhoto(file) {
+  if (!file || !file.type?.startsWith('image/')) return;
+  const reader = new FileReader();
+  reader.onload = () => { state.eventInfoPhoto = reader.result; state.eventInfoPhotoX = 50; state.eventInfoPhotoY = 50; render(); };
+  reader.readAsDataURL(file);
+}
+function startEventInfoPhotoDrag(e) {
+  if (!state.eventInfoEditing || !state.eventInfoPhoto || e.target.matches?.('[data-event-photo-input]')) return;
+  e.preventDefault();
+  const rect = e.currentTarget.getBoundingClientRect();
+  state.eventInfoPhotoMoved = false;
+  state.eventInfoPhotoDrag = {pointerId:e.pointerId, startX:e.clientX, startY:e.clientY, baseX:state.eventInfoPhotoX, baseY:state.eventInfoPhotoY, width:rect.width, height:rect.height};
+  e.currentTarget.setPointerCapture?.(e.pointerId);
+  e.currentTarget.classList.add('is-positioning');
+}
+function moveEventInfoPhoto(e) {
+  const drag = state.eventInfoPhotoDrag;
+  if (!drag || drag.pointerId !== e.pointerId) return;
+  e.preventDefault();
+  const dx = ((e.clientX - drag.startX) / Math.max(1, drag.width)) * 100;
+  const dy = ((e.clientY - drag.startY) / Math.max(1, drag.height)) * 100;
+  if (Math.abs(e.clientX - drag.startX) > 2 || Math.abs(e.clientY - drag.startY) > 2) state.eventInfoPhotoMoved = true;
+  state.eventInfoPhotoX = Math.max(0, Math.min(100, drag.baseX - dx));
+  state.eventInfoPhotoY = Math.max(0, Math.min(100, drag.baseY - dy));
+  e.currentTarget.style.setProperty('--event-info-photo-x', `${state.eventInfoPhotoX}%`);
+  e.currentTarget.style.setProperty('--event-info-photo-y', `${state.eventInfoPhotoY}%`);
+}
+function endEventInfoPhotoDrag(e) {
+  const drag = state.eventInfoPhotoDrag;
+  if (!drag || drag.pointerId !== e.pointerId) return;
+  e.currentTarget.classList.remove('is-positioning');
+  state.eventInfoPhotoDrag = null;
+}
+function toggleMenu(event) {
+  event?.preventDefault?.();
+  event?.stopPropagation?.();
+  state.menuOpen = !state.menuOpen;
+  render();
+}
+function shell(inner) { return `<section class="dashboard-page ${state.menuOpen ? 'menu-open' : ''}"><button type="button" class="abs menu-toggle" aria-label="Open menu" data-menu-toggle onclick="toggleMenu(event)"><span></span><span></span><span></span></button><button type="button" class="abs menu-click-zone" aria-label="Open menu" onclick="toggleMenu(event)"></button>${side()}<h1 class="abs page-heading">${pageTitle()}</h1><div class="abs content">${inner}</div></section>`; }
+function pageTitle() { return ({payments:'Billing', vendors:'Event vendors', timeline:'Event Timeline', misc:'Miscellaneous', faq:'FAQ', contact:'Contact us'})[state.route] || 'Event details'; }
 
 function home() {
   return `<section class="home">
-    <aside class="abs home-left"><div class="sidebar-brand"><div class="logo-box">LI</div></div><nav class="sidebar-menu"><div class="sidebar-section"><div class="sidebar-section-title">Event Info</div><button data-route="home"><span class="sidebar-icon">◼</span><span>Event details</span></button><button data-route="vendors"><span class="sidebar-icon">◎</span><span>Event vendors</span></button><button data-route="timeline"><span class="sidebar-icon">◷</span><span>Event Timeline</span></button><button data-route="home"><span class="sidebar-icon">◉</span><span>Video details</span></button><button data-route="home"><span class="sidebar-icon">✣</span><span>Miscellaneous</span></button></div><div class="sidebar-section"><div class="sidebar-section-title">Photo Book</div><button data-route="home"><span class="sidebar-icon">▣</span><span>Create your album</span></button></div><div class="sidebar-section"><div class="sidebar-section-title">Photo Booth</div><button data-route="home"><span class="sidebar-icon">◈</span><span>Create your monogram</span></button></div><div class="sidebar-section"><div class="sidebar-section-title">QR Code</div><button data-route="home"><span class="sidebar-icon">▦</span><span>Create your QR Code</span></button></div><div class="sidebar-section"><div class="sidebar-section-title">Payments</div><button data-route="payments"><span class="sidebar-icon">▭</span><span>Billing</span></button></div></nav><nav class="sidebar-bottom"><button data-route="faq"><span class="sidebar-icon">●</span><span>FAQ</span></button><button data-route="contact"><span class="sidebar-icon">✉</span><span>Contact us</span></button><button data-route="home"><span class="sidebar-icon">⚙</span><span>Your settings</span></button></nav></aside>
+    ${sidebarMarkup('abs home-left')}
     <h1 class="abs client-name">Rachel and Michael Silvermans</h1>
-    <article class="abs couple-info"><div class="couple-info-photo" aria-label="Couple photo"></div><div class="couple-info-details"><h2>Event info</h2><dl><div><dt>Event date</dt><dd>September 28, 2014</dd></div><div><dt>Venue</dt><dd>The Foundry, Long Island City</dd></div><div><dt>Phone numbers</dt><dd>Rachel: 917.555.0124<br>Michael: 917.555.0188</dd></div><div><dt>Emails</dt><dd>rachel@example.com<br>michael@example.com</dd></div><div><dt>Mailing address</dt><dd>123 Brooklyn Ave, Brooklyn, NY 11201</dd></div></dl></div></article>
+    ${eventInfoBox()}
     <div class="abs event-dashboard-grid">
       <div class="event-left-column">
         <article class="abs package"><h2>Your Package <button type="button" class="package-builder-toggle" data-package-builder-toggle aria-label="Done building package"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"></path></svg></button></h2><ul class="package-list"></ul><section class="package-builder"><button type="button" class="package-builder-add-day" data-package-builder-add-day aria-label="Add another shoot day" title="Add another shoot day">+</button><div class="package-builder-date-calendar-holder" data-builder-date-calendar-holder></div><p class="package-empty-copy">No package has been added yet. Build the client’s booked package below.</p><div class="package-builder-grid"><button type="button" data-package-build="photo-one">+ One Photographer</button><button type="button" data-package-build="photo-second">+ Second Photographer</button><button type="button" data-package-build="engagement-1">+ Engagement 1 Hour</button><button type="button" data-package-build="engagement-2">+ Engagement 2 Hours</button><button type="button" data-package-build="photo-book-10">+ Photo Book 10x10</button><button type="button" data-package-build="photo-book-12">+ Photo Book 12x12</button><button type="button" data-package-build="photo-book-10-design">+ Photo Book 10x10 + Design</button><button type="button" data-package-build="photo-book-12-design">+ Photo Book 12x12 + Design</button><button type="button" data-package-build="retouch-10">+ Retouching 10</button><button type="button" data-package-build="retouch-20">+ Retouching 20</button><button type="button" data-package-build="retouch-30">+ Retouching 30</button><button type="button" data-package-build="expedited-photo">+ Expedited Photos</button><button type="button" data-package-build="premium-photo-editing">+ Premium Photo Editing</button><button type="button" data-package-build="premium-photo-package">+ Premium Photo Package</button><button type="button" data-package-build="video-one">+ One Videographer</button><button type="button" data-package-build="video-second">+ Second Videographer</button><button type="button" data-package-build="video-cinematography">+ Cinematography</button><button type="button" data-package-build="video-trailer">+ Trailer Only</button><button type="button" data-package-build="video-extended">+ Extended Trailer</button><button type="button" data-package-build="video-traditional">+ Traditional Video</button><button type="button" data-package-build="premium-video-package">+ Premium Video Package</button><button type="button" data-package-build="sneak-photo">+ Sneak Peek Photo</button><button type="button" data-package-build="sneak-video">+ Sneak Peek Video</button><button type="button" data-package-build="sneak-photo-video">+ Sneak Peek Photo & Video</button><button type="button" data-package-build="photo-booth-3">+ Photo Booth Basic</button><button type="button" data-package-build="photo-booth-4">+ Photo Booth All Inclusive</button><button type="button" data-package-build="content-creator">+ Content Creator</button><button type="button" data-package-build="content-package">+ Content Creation Package</button><button type="button" data-package-build="highlight-reel">+ Highlight Reel</button><button type="button" data-package-build="short-reel">+ Short Reel</button></div></section><section class="package-upgrades"><p>These upgrades are available for your current package. Add any upgrade below and your balance will update automatically.</p><div class="upgrade-notice" hidden></div><div class="upgrade-choice-popup" hidden></div><div class="upgrade-card upgrade-card-video-editing" data-upgrade="video-editing"><h4>Edit Your Video / Add Second Videographer</h4><ul><li>Add professional editing to your raw footage package</li><li>Choose trailer, traditional edit, cinematography, extended trailer, or a second videographer</li></ul><button type="button" data-upgrade-choice="video-editing-only" onclick="event.preventDefault(); event.stopPropagation(); openUpgradeChoice('video-editing-only');">add to package</button></div><div class="upgrade-card" data-upgrade="sneak-peek"><h4>Sneak Peek Package <span>$99</span></h4><ul><li>50 Edited Sneak Peek Photos</li><li>Wedding Photo Reel</li><li>7 Business Day Turnaround</li></ul><button type="button" data-upgrade-add="sneak-peek" onclick="event.preventDefault(); event.stopPropagation(); addPackageUpgrade('sneak-peek');">add to package</button></div><div class="upgrade-card" data-upgrade="premium-photo"><h4>Premium Photography Package <span>$299</span></h4><ul><li>Premium Photo Editing Upgrade</li><li>Expedited Processing Upgrade</li><li>Sneak Peek Package, 50 photos within 7 days</li><li>5 Year Online Viewing, Storage, Download Upgrade</li></ul><a href="https://leimageinc.com/premium-photo-package/" target="_blank" rel="noopener">See standard vs premium photo samples</a><button type="button" data-upgrade-add="premium-photo" onclick="event.preventDefault(); event.stopPropagation(); addPackageUpgrade('premium-photo');">add to package</button></div><div class="upgrade-card upgrade-card-video" data-upgrade="premium-video"><h4>Premium Video <span data-dynamic-price="premium-video">$299</span></h4><ul data-premium-video-items><li>Cinematography Sound Upgrade</li><li>1 min. Video Reel</li><li>Expedited Processing Upgrade</li><li>5 Year Online Viewing, Storage, Download Upgrade</li><li>Premium Song Upgrade</li></ul><button type="button" data-upgrade-add="premium-video" onclick="event.preventDefault(); event.stopPropagation(); addPackageUpgrade('premium-video');">add to package</button></div><div class="upgrade-card upgrade-card-video-add" data-upgrade="add-videography"><h4>Add Videography</h4><ul><li>Choose one videographer or add a second videographer</li><li>Availability needs confirmation</li></ul><button type="button" data-upgrade-choice="videography" onclick="event.preventDefault(); event.stopPropagation(); openUpgradeChoice('videography');">add to package</button></div><div class="upgrade-card" data-upgrade="photo-booth"><h4>Photo Booth <span data-dynamic-price="photo-booth-range">$799 / $899</span></h4><ul><li>Choose 3-hour or 4-hour rental</li><li>Includes attendant, prints, backdrop, and props</li><li>Availability needs confirmation</li></ul><button type="button" data-upgrade-choice="photo-booth" onclick="event.preventDefault(); event.stopPropagation(); openUpgradeChoice('photo-booth');">add to package</button></div><div class="upgrade-card" data-upgrade="photo-book"><h4>Photo Book <span>$519 / $569</span></h4><ul><li>Choose 10x10 or 12x12, 30 pages</li><li>DIY album design with our free software</li><li>Professional album design available for $100</li></ul><button type="button" data-upgrade-choice="photo-book" onclick="event.preventDefault(); event.stopPropagation(); openUpgradeChoice('photo-book');">add to package</button></div><div class="upgrade-card" data-upgrade="content-creation"><h4>Content Creation</h4><ul><li>We need to check availability for your event date</li><li>Our studio will get back to you soon</li></ul><button type="button" data-upgrade-choice="content-creation" onclick="event.preventDefault(); event.stopPropagation(); openUpgradeChoice('content-creation');">add to package</button></div></section><div class="package-actions"><button type="button" class="package-action" aria-label="View your contract" title="View your contract"><span class="package-action-icon package-action-view" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M2.5 12s3.5-6 9.5-6 9.5 6 9.5 6-3.5 6-9.5 6-9.5-6-9.5-6z"></path><circle cx="12" cy="12" r="2.8"></circle></svg></span><span class="package-action-text">View your contract</span></button><button type="button" class="package-action" aria-label="Download contract" title="Download contract"><span class="package-action-icon package-action-download" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 4v10"></path><path d="M8 10l4 4 4-4"></path><path d="M5 19h14"></path></svg></span><span class="package-action-text">Download contract</span></button></div></article>
@@ -147,7 +211,7 @@ function home() {
         <article class="abs tile tile-timeline"><h3>Event Timeline</h3><p>The timeline will serve as a guideline for our photographers/videographers on your event day. Please be sure to read our suggestions for each section and assign the time accordingly.</p><button class="plain-btn" data-route="timeline">create</button></article>
         <article class="abs tile tile-photo-booth"><h3>Photo Booth <span class="addon-badge">Optional add on</span></h3><p class="included-copy">Please complete the photo booth questions so we have everything set up correctly for your event.</p><p class="addon-copy">Photo booth is not included in your current package, but you can still add it anytime. Let us know if you would like a booth at your event.</p><button class="plain-btn included-action" data-route="home">create monogram</button><button class="plain-btn addon-action" type="button" onclick="event.preventDefault(); event.stopPropagation(); openUpgradeChoice('photo-booth');">add to package</button></article>
         <article class="abs tile tile-guest-upload"><h3>Guest Upload Link &amp; QR Code</h3><div class="tile-copy"><p>Now your guests can upload photos they take at your event and you can access them all in one place!</p></div><button class="plain-btn" data-route="home">create</button></article>
-        <article class="abs tile tile-misc"><h3>Miscellaneous</h3><p>Review important details about gratuity, vendor meals, vendor contacts, and any final notes our team should know before the event.</p><button class="plain-btn" data-route="home">view</button></article>
+        <article class="abs tile tile-misc"><h3>Miscellaneous</h3><p>Review important details about gratuity, vendor meals, vendor contacts, and any final notes our team should know before the event.</p><button class="plain-btn" data-route="misc">view</button></article>
         <article class="abs tile tile-book"><h3>Photo Book <span class="addon-badge">Optional add on</span></h3><p class="included-copy">Use our DIY photo book software to design your album when you are ready.</p><p class="addon-copy">Photo book is not included in your current package, but you can still add one anytime. Design it yourself with our DIY album software, or ask us about professional album design.</p><button class="plain-btn included-action" data-route="photobook">create</button><button class="plain-btn addon-action" type="button" onclick="event.preventDefault(); event.stopPropagation(); openUpgradeChoice('photo-book');">add to package</button></article>
       </div>
     </div>
@@ -205,7 +269,7 @@ function builderState() {
   return window.__bookedPackageBuilder;
 }
 function originalPackageDate() {
-  return document.querySelector('.couple-info dd')?.textContent.trim() || 'Original event date';
+  return state.eventInfo?.eventDate || 'Original event date';
 }
 function activePackageDate() {
   return builderState().activeDate || originalPackageDate();
@@ -562,7 +626,7 @@ function syncPaymentAdjustmentLayout() {
 }
 function addPaymentAdjustment(type) {
   const labels = {discount:'Discount', gratuity:'Gratuity', other:'Other'};
-  paymentAdjustmentState().push({id: Date.now() + Math.random(), type, label: labels[type] || 'Other', amount: 0, raw: ''});
+  paymentAdjustmentState().push({id: Date.now() + Math.random(), type, label: labels[type] || 'Other', amount: 0, raw: '', renaming: false});
   updatePackageBalance();
   closePaymentPlusPopup();
   syncPaymentAdjustmentLayout();
@@ -582,6 +646,23 @@ function savePaymentAdjustmentLabel(id, label) {
   if (!row) return;
   const next = String(label || '').trim();
   if (next) row.label = next;
+  row.renaming = false;
+  updatePackageBalance();
+}
+function finishPaymentAdjustmentEdit(id) {
+  const row = paymentAdjustmentState().find(item => String(item.id) === String(id));
+  if (!row) return;
+  const label = document.querySelector(`[data-payment-adjustment-label="${id}"]`);
+  if (label) {
+    const next = String(label.value || '').trim();
+    if (next) row.label = next;
+  }
+  const amount = document.querySelector(`[data-payment-adjustment-amount="${id}"]`);
+  if (amount) {
+    const raw = String(amount.value || '').replace(/[^0-9.-]/g, '').replace(/(?!^)-/g, '');
+    row.amount = raw === '' || raw === '-' ? 0 : Number(raw || 0);
+    row.raw = raw === '' || raw === '-' ? raw : row.amount.toFixed(2);
+  }
   row.renaming = false;
   updatePackageBalance();
 }
@@ -1048,7 +1129,17 @@ function updatePackageBalance() {
   if (!payCopy) return;
   const payments = packagePaymentRows();
   const adjustments = paymentAdjustmentState();
-  const adjustmentHtml = adjustments.map(row => { const value = row.raw ?? (row.amount ? String(row.amount) : ''); const cleanLength = String(value).replace('-', '').length || 1; const inputWidth = value ? Math.max(1.2, cleanLength * 0.62 + (String(value).startsWith('-') ? 0.45 : 0)) : 1.2; const labelHtml = row.type === 'other' && row.renaming && state.isAdmin ? `<input class="payment-adjustment-label-input" type="text" value="${row.label}" data-payment-adjustment-label="${row.id}">` : `<span class="payment-adjustment-label-text">${row.label}:</span>`; return `<span class="pay-breakdown-row pay-adjustment-row" data-payment-adjustment-row="${row.id}"><span class="payment-adjustment-label"><button type="button" class="payment-adjustment-remove" data-payment-adjustment-remove="${row.id}" aria-label="Remove ${row.label}">×</button>${labelHtml}${row.type === 'other' ? ` <button type="button" class="payment-adjustment-rename" data-payment-adjustment-rename="${row.id}" aria-label="Rename item"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20h4.5L19 9.5 14.5 5 4 15.5V20z"></path><path d="M13 6l5 5"></path></svg></button>` : ''}</span><label class="payment-adjustment-input-wrap"><span class="payment-adjustment-dollar ${value ? '' : 'is-empty'}">$</span><input type="text" inputmode="decimal" value="${value}" style="width:${inputWidth}ch" data-payment-adjustment-amount="${row.id}" ${state.isAdmin ? '' : 'readonly tabindex="-1"'}></label></span>`; }).join('');
+  const adjustmentHtml = adjustments.map(row => {
+    const value = row.raw ?? (row.amount ? String(row.amount) : '');
+    const cleanLength = String(value).replace('-', '').length || 1;
+    const inputWidth = value ? Math.max(1.2, cleanLength * 0.62 + (String(value).startsWith('-') ? 0.45 : 0)) : 1.2;
+    const isEditableAdjustment = true;
+    const labelHtml = isEditableAdjustment && row.renaming && state.isAdmin ? `<input class="payment-adjustment-label-input" type="text" value="${row.label}" data-payment-adjustment-label="${row.id}">` : `<span class="payment-adjustment-label-text">${row.label}:</span>`;
+    const amountHtml = isEditableAdjustment && !row.renaming
+      ? `<strong class="payment-adjustment-static-amount">${formatMoney(row.amount)}</strong><button type="button" class="payment-adjustment-rename" data-payment-adjustment-rename="${row.id}" aria-label="Edit ${row.label}"><svg viewBox="0 0 494.936 494.936" aria-hidden="true"><path d="M389.844 182.85c-6.743 0-12.21 5.467-12.21 12.21v222.968c0 23.562-19.174 42.735-42.736 42.735H67.157c-23.562 0-42.736-19.174-42.736-42.735V150.285c0-23.562 19.174-42.735 42.736-42.735h267.741c6.743 0 12.21-5.467 12.21-12.21s-5.467-12.21-12.21-12.21H67.157C30.126 83.13 0 113.255 0 150.285v267.743c0 37.029 30.126 67.155 67.157 67.155h267.741c37.03 0 67.156-30.126 67.156-67.155V195.061c0-6.743-5.467-12.211-12.21-12.211z"></path><path d="M483.876 20.791c-14.72-14.72-38.669-14.714-53.377 0L221.352 229.944c-.28.28-3.434 3.559-4.251 5.396l-28.963 65.069c-2.057 4.619-1.056 10.027 2.521 13.6 2.337 2.336 5.461 3.576 8.639 3.576 1.675 0 3.362-.346 4.96-1.057l65.07-28.963c1.83-.815 5.114-3.97 5.396-4.25L483.876 74.169c7.131-7.131 11.06-16.61 11.06-26.692 0-10.081-3.929-19.562-11.06-26.686zM466.61 56.897 257.457 266.05c-.035.036-.055.078-.089.107l-33.989 15.131L238.51 247.3c.03-.036.071-.055.107-.09L447.765 38.058c5.038-5.039 13.819-5.033 18.846.005 2.518 2.51 3.905 5.855 3.905 9.414 0 3.559-1.389 6.903-3.906 9.42z"></path></svg></button>`
+      : `<label class="payment-adjustment-input-wrap"><span class="payment-adjustment-dollar ${value ? '' : 'is-empty'}">$</span><input type="text" inputmode="decimal" value="${value}" style="width:${inputWidth}ch" data-payment-adjustment-amount="${row.id}" ${state.isAdmin ? '' : 'readonly tabindex="-1"'}></label><button type="button" class="payment-adjustment-done" data-payment-adjustment-done="${row.id}" aria-label="Done editing ${row.label}">✓</button>`;
+    return `<span class="pay-breakdown-row pay-adjustment-row pay-adjustment-row-other ${row.renaming ? 'is-editing' : ''}" data-payment-adjustment-row="${row.id}"><span class="payment-adjustment-label"><button type="button" class="payment-adjustment-remove" data-payment-adjustment-remove="${row.id}" aria-label="Remove ${row.label}">×</button>${labelHtml}</span><span class="payment-adjustment-amount-cell">${amountHtml}</span></span>`;
+  }).join('');
   const clientUpgradeRows = packageClientUpgradeRows();
   const clientUpgradeHtml = clientUpgradeRows.length ? `<span class="pay-breakdown-upgrades"><span class="pay-upgrades-title">Upgrades:</span>${clientUpgradeRows.map(row => `<span class="pay-breakdown-row pay-client-upgrade-row"><span>${row.label}</span><strong>${formatMoney(row.amount)}</strong></span>`).join('')}</span>` : '';
   const bundledSavings = packageBundledSavings();
@@ -1212,7 +1303,7 @@ function notifyUpgradeRequest(def, upgrade, quantity = 1) {
     quantity: Number(quantity || 1),
     price: def?.price || 0,
     client: document.querySelector('.client-name')?.textContent.trim() || 'Wedding dashboard client',
-    eventDate: document.querySelector('.couple-info dd')?.textContent.trim() || '',
+    eventDate: state.eventInfo?.eventDate || '',
     requestedAt: new Date().toISOString()
   };
   fetch('/api/upgrade-email.php', {
@@ -1632,18 +1723,178 @@ function content(route) {
   if (route === 'payments') return payments();
   if (route === 'vendors') return vendors();
   if (route === 'timeline') return timeline();
+  if (route === 'misc') return misc();
   if (route === 'faq') return faq();
   return `<article class="card" style="left:0;top:0;width:760px;height:260px;padding:50px"><h2>Contact us</h2><p>Call us at 718.971.9710</p></article>`;
 }
+function selectPaymentMethod(event, method) {
+  event?.preventDefault?.();
+  event?.stopPropagation?.();
+  state.paymentMethod = method;
+  render();
+}
+function paymentMethodHead(method, label, logo = '') {
+  const selected = state.paymentMethod === method;
+  return `<button type="button" class="payment-method-head ${selected ? 'is-selected' : ''}" data-payment-method="${method}" onclick="selectPaymentMethod(null,'${method}')"><span class="pay-check ${selected ? '' : 'empty'}">${selected ? '✓' : ''}</span>${logo || `<strong>${label}</strong>`}</button>`;
+}
+function mastercardLogo() {
+  return '<span class="cc-logo mc" aria-label="Mastercard"><svg viewBox="0 0 64 40" aria-hidden="true"><rect width="64" height="40" rx="4" fill="#fff"/><circle cx="26" cy="20" r="13" fill="#eb001b"/><circle cx="38" cy="20" r="13" fill="#f79e1b"/><path d="M32 9.8a13 13 0 0 1 0 20.4 13 13 0 0 1 0-20.4z" fill="#ff5f00"/></svg></span>';
+}
+function formatPaymentAmount(value) {
+  const cleaned = String(value || '').replace(/[^0-9.]/g, '');
+  if (!cleaned) return '';
+  return `$${cleaned}`;
+}
+const paymentStates = ['State','AL','AK','AZ','AR','CA','CO','CT','DE','FL','GA','HI','ID','IL','IN','IA','KS','KY','LA','ME','MD','MA','MI','MN','MS','MO','MT','NE','NV','NH','NJ','NM','NY','NC','ND','OH','OK','OR','PA','RI','SC','SD','TN','TX','UT','VT','VA','WA','WV','WI','WY','DC'];
+const paymentCountries = ['Country','United States','United Kingdom','Canada','Australia','Afghanistan','Albania','Algeria','Argentina','Armenia','Austria','Bahamas','Bangladesh','Belgium','Brazil','Bulgaria','Chile','China','Colombia','Costa Rica','Croatia','Czech Republic','Denmark','Dominican Republic','Ecuador','Egypt','France','Georgia','Germany','Greece','Guatemala','Haiti','Honduras','Hong Kong','Hungary','India','Indonesia','Ireland','Israel','Italy','Jamaica','Japan','Kazakhstan','Mexico','Moldova','Montenegro','Netherlands','New Zealand','Nigeria','North Macedonia','Norway','Pakistan','Peru','Philippines','Poland','Portugal','Romania','Russia','Serbia','Singapore','Slovakia','Slovenia','South Africa','South Korea','Spain','Sweden','Switzerland','Taiwan','Thailand','Turkey','Ukraine','United Arab Emirates','Uruguay','Venezuela','Vietnam'];
+function optionList(items) { return items.map(item => `<option>${item}</option>`).join(''); }
+function paymentLookupField(placeholder, items, cls = '') {
+  const values = items.filter(item => item !== 'State' && item !== 'Country' && item !== 'Month' && item !== 'Year');
+  return `<label class="payment-lookup ${cls}"><input class="payment-search-field" placeholder="${placeholder}" data-payment-lookup autocomplete="off"><div class="payment-lookup-menu">${values.map(item => `<button type="button" data-payment-lookup-choice="${item}">${item}</button>`).join('')}</div></label>`;
+}
+function paymentSubmitButton() {
+  if (state.paymentMethod === 'zelle') return '';
+  const label = state.paymentMethod === 'paypal' ? 'CONTINUE TO PAYPAL' : 'MAKE A PAYMENT';
+  return `<button class="payment-submit">${label}</button>`;
+}
 function payments() {
-  return `<article class="card pay-total"><h2>TOTAL</h2><div class="big-money">$2,860,00</div><div class="due-money">$860,00</div><p>Outstanding balance<br>Due September 18</p><button class="blue-btn pay-btn">make payment</button></article>
-  <article class="card pay-history"><h2>Payment history</h2><p>Here you can find your prveious payments, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore.</p><table class="payment-table"><thead><tr><th>AMOUNT</th><th>DATE</th><th>METHOD</th></tr></thead><tbody><tr><td>$1,000.00</td><td>Sep 16, 2016</td><td>Check</td></tr><tr><td>$500.00</td><td>Dec 22, 2016</td><td>Online</td></tr><tr><td>$500.00</td><td>Dec 23, 2016</td><td>Check</td></tr></tbody></table></article>
-  <article class="card pay-form"><h2>Make a payment</h2><div class="form-grid"><div class="form-full"><span class="field-label">Choose your payment method</span><div class="card-radio">Credit card<span>All transactions are secure and encrypted.</span></div></div>${['First name','Last name','Credit card number','Month','Year','CVV','Address 1','Address 2','City','Zip code','State','Country'].map((x,i)=>field(x, i===2?'form-wide':'')).join('')}<div class="form-full">${field('Choose your payment amount','', '$50,00')}<span class="field-label">Enter payment amount here</span></div><button class="blue-btn pay-btn">make payment</button></div></article>`;
+  return `<style id="payment-critical-css">
+.screen-payments .payment-top-bar{position:absolute!important;left:0!important;top:0!important;width:2549px!important;height:68px!important;background:#0785c4!important;z-index:40!important;display:block!important;pointer-events:none!important;}
+.screen-payments .dashboard-page .page-heading{display:block!important;left:102px!important;top:18px!important;z-index:90!important;color:#fff!important;font-size:24px!important;font-weight:500!important;line-height:32px!important;margin:0!important;}
+.screen-payments .dashboard-page .page-heading:before{content:""!important;position:absolute!important;left:-34px!important;top:-14px!important;width:1px!important;height:68px!important;background:rgba(255,255,255,.24)!important;}
+.screen-payments .dashboard-page .menu-toggle{display:flex!important;flex-direction:column!important;justify-content:center!important;gap:6px!important;left:0!important;top:0!important;width:76px!important;height:68px!important;z-index:801!important;background:transparent!important;pointer-events:auto!important;cursor:pointer!important;padding:0 0 0 24px!important;box-sizing:border-box!important;}
+.screen-payments .dashboard-page .menu-toggle span{display:block!important;width:28px!important;height:3px!important;margin:0!important;background:#fff!important;border-radius:2px!important;pointer-events:none!important;}
+.screen-payments .dashboard-page .menu-click-zone{display:block!important;left:0!important;top:0!important;width:95px!important;height:78px!important;z-index:800!important;border:0!important;background:transparent!important;cursor:pointer!important;pointer-events:auto!important;}
+.screen-payments .dashboard-page .side.home-left{display:block!important;left:-280px!important;top:0!important;width:280px!important;height:1340px!important;padding:0!important;background:#fff!important;color:#333!important;border-right:1px solid #e8eef2!important;box-shadow:none!important;z-index:180!important;pointer-events:auto!important;transition:left .2s ease!important;}
+.screen-payments .dashboard-page.menu-open .side.home-left{display:block!important;left:0!important;}
+.screen-payments .dashboard-page .side.home-left::before{content:""!important;position:absolute!important;left:0!important;top:0!important;width:280px!important;height:68px!important;background:linear-gradient(135deg,#a9c9e1 0%,#a9c9e1 46%,#c8dce9 47%,#c8dce9 100%)!important;z-index:0!important;}
+.screen-payments .dashboard-page .side.home-left::after{display:none!important;}
+.screen-payments .dashboard-page .side.home-left .sidebar-brand{position:relative!important;z-index:1!important;height:68px!important;display:flex!important;align-items:center!important;justify-content:flex-start!important;}
+.screen-payments .dashboard-page .side.home-left .sidebar-brand .logo-box{display:none!important;}
+.screen-payments .dashboard-page .side.home-left .sidebar-menu,.screen-payments .dashboard-page .side.home-left .sidebar-bottom{position:relative!important;z-index:1!important;width:100%!important;}
+.screen-payments .dashboard-page .side.home-left .sidebar-section{border-bottom:14px solid #fff!important;}
+.screen-payments .dashboard-page .side.home-left .sidebar-section-title{height:46px!important;display:flex!important;align-items:center!important;padding:0 31px!important;background:#f4f4f4!important;color:#aeb8c1!important;font-size:12px!important;line-height:1!important;letter-spacing:.16em!important;text-transform:uppercase!important;font-weight:700!important;}
+.screen-payments .dashboard-page .side.home-left .sidebar-menu button,.screen-payments .dashboard-page .side.home-left .sidebar-bottom button{width:100%!important;height:44px!important;border:0!important;background:#fff!important;color:#60727f!important;display:flex!important;align-items:center!important;gap:16px!important;padding:0 31px!important;text-align:left!important;font-size:14px!important;font-weight:400!important;text-transform:none!important;letter-spacing:0!important;}
+.screen-payments .dashboard-page .side.home-left .sidebar-menu button:hover,.screen-payments .dashboard-page .side.home-left .sidebar-bottom button:hover{background:#fbfdff!important;color:#0428a4!important;}
+.screen-payments .dashboard-page .side.home-left .sidebar-icon{color:#0428a4!important;font-size:13px!important;width:16px!important;flex:0 0 16px!important;opacity:.9!important;display:inline-flex!important;justify-content:center!important;line-height:1!important;}
+.screen-payments .dashboard-page .side.home-left .sidebar-bottom{position:absolute!important;left:0!important;bottom:0!important;border-top:1px solid #eef2f5!important;background:#fff!important;}
+.screen-payments .dashboard-page .side.home-left .sidebar-bottom button{height:46px!important;border-top:1px solid #eef2f5!important;}
+.screen-payments .payment-left-menu{display:none!important;}
+.screen-payments .payment-page{left:465px!important;top:108px!important;width:1240px!important;height:1150px!important;transform:scale(1.16)!important;transform-origin:top left!important;}
+.screen-payments .payment-main-title{left:55px!important;top:0!important;font-size:30px!important;}
+.screen-payments .payment-history-card{left:55px!important;top:84px!important;width:410px!important;min-height:560px!important;padding:32px 30px 0!important;}
+.screen-payments .payment-history-card h3{font-size:19px!important;}
+.screen-payments .payment-history-card p{font-size:15px!important;width:330px!important;}
+.screen-payments .payment-history-table{margin-top:62px!important;font-size:14px!important;}
+.screen-payments .payment-history-table th{font-size:12px!important;color:#0428a4!important;}
+.screen-payments .payment-history-table thead{border-bottom:1px solid #d9e3ea!important;}
+.screen-payments .payment-history-table tbody tr:first-child td{padding-top:16px!important;}
+.screen-payments .payment-history-method-tag{display:inline-flex!important;align-items:center!important;min-height:18px!important;padding:2px 6px!important;border-radius:4px!important;background:#e3f7e9!important;border:1px solid rgba(39,154,83,.22)!important;color:#23834d!important;font-size:9px!important;line-height:1!important;font-style:normal!important;font-weight:700!important;text-transform:uppercase!important;letter-spacing:.025em!important;white-space:nowrap!important;}
+.screen-payments .payment-history-balance strong{font-size:18px!important;}
+.screen-payments .payment-history-total strong{font-size:15px!important;}
+.screen-payments .payment-checkout{left:540px!important;top:84px!important;width:750px!important;}
+.screen-payments .payment-amount-input,.screen-payments .payment-method-card{width:750px!important;}
+.screen-payments .payment-method-card{min-height:0!important;}
+.screen-payments .payment-method-section{margin-top:44px!important;}
+.screen-payments .payment-method-head{width:100%!important;border-left:0!important;border-right:0!important;border-bottom:0!important;background:#fff!important;text-align:left!important;cursor:pointer!important;font-family:inherit!important;}
+.screen-payments .payment-method-head.is-selected{background:#f4f8fb!important;}
+.screen-payments .payment-method-head strong{color:#111!important;}
+.screen-payments .payment-method-card,.screen-payments .payment-amount-input,.screen-payments .payment-history-card{border-color:#8bb4d4!important;}
+.screen-payments .pay-check{background:#0428a4!important;}
+.screen-payments .credit-card-fields{padding:30px 32px 34px!important;gap:28px 30px!important;position:relative!important;z-index:2!important;}
+.screen-payments .payment-amount-input input{font-size:15px!important;}
+.screen-payments .credit-card-fields select,.screen-payments .credit-card-fields input{position:relative!important;z-index:3!important;pointer-events:auto!important;color:#263b55!important;font-size:14px!important;opacity:1!important;}
+.screen-payments .credit-card-fields input{border:0!important;border-bottom:1px solid #ddd!important;border-radius:0!important;background:transparent!important;box-shadow:none!important;padding:0!important;}
+.screen-payments .credit-card-fields select{height:34px!important;border:0!important;border-bottom:1px solid #ddd!important;border-radius:0!important;background-color:transparent!important;padding:0 24px 0 0!important;color:#263b55!important;background-image:linear-gradient(45deg, transparent 50%, #0785c4 50%),linear-gradient(135deg, #0785c4 50%, transparent 50%)!important;background-position:calc(100% - 13px) 14px,calc(100% - 8px) 14px!important;background-size:5px 5px,5px 5px!important;background-repeat:no-repeat!important;appearance:none!important;box-shadow:none!important;}
+.screen-payments .credit-card-fields .payment-search-field{height:34px!important;border:0!important;border-bottom:1px solid #ddd!important;border-radius:0!important;background:transparent!important;padding:0 22px 0 0!important;box-shadow:none!important;}
+.screen-payments .payment-lookup{position:relative!important;}
+.screen-payments .payment-lookup::after{display:none!important;}
+.screen-payments .payment-lookup-menu{display:none!important;position:absolute!important;left:0!important;top:38px!important;width:100%!important;max-height:168px!important;overflow:auto!important;background:#fff!important;border:1px solid #c8dce9!important;box-shadow:0 10px 22px rgba(38,59,85,.12)!important;z-index:50!important;box-sizing:border-box!important;}
+.screen-payments .payment-lookup:focus-within .payment-lookup-menu{display:block!important;}
+.screen-payments .payment-lookup-menu button{display:block!important;width:100%!important;height:30px!important;padding:0 10px!important;border:0!important;background:#fff!important;color:#263b55!important;font-size:13px!important;text-align:left!important;cursor:pointer!important;}
+.screen-payments .payment-lookup-menu button:hover{background:#eef7fd!important;color:#0428a4!important;}
+.screen-payments .payment-lookup-menu button.is-hidden{display:none!important;}
+.screen-payments .credit-card-fields select:focus,.screen-payments .credit-card-fields input:focus{outline:0!important;border-color:#0785c4!important;box-shadow:none!important;}
+.screen-payments .payment-option-note{padding:30px 28px!important;color:#263b55!important;font-size:16px!important;line-height:1.45!important;background:#fff!important;border-top:1px solid #d9e3ea!important;}
+.screen-payments .payment-option-note strong{display:block!important;margin-bottom:8px!important;color:#263b55!important;font-size:18px!important;}
+.screen-payments .paypal-logo,.screen-payments .payment-method-head strong,.screen-payments .payment-method-head strong.zelle-logo{font-size:22px!important;line-height:1!important;}
+.screen-payments .cc-logo{width:44px!important;height:26px!important;font-size:10px!important;}
+.screen-payments .cc-logo.mc{width:48px!important;height:30px!important;border:0!important;box-shadow:none!important;background:transparent!important;padding:0!important;}
+.screen-payments .cc-logo.mc svg{display:block!important;width:48px!important;height:30px!important;}
+.screen-payments .payment-card-action{grid-column:1 / -1!important;display:flex!important;justify-content:flex-end!important;margin-top:8px!important;}
+.screen-payments .payment-submit{display:block!important;float:none!important;margin:0!important;width:320px!important;height:48px!important;background:#0428a4!important;color:#fff!important;border:0!important;font-size:14px!important;font-weight:700!important;letter-spacing:1.2px!important;text-align:center!important;}
+.screen-payments .paypal-note{display:flex!important;flex-direction:column!important;align-items:flex-end!important;}
+.screen-payments .paypal-note strong,.screen-payments .paypal-note p{align-self:stretch!important;}
+.screen-payments .paypal-note .payment-submit{margin-top:22px!important;width:320px!important;height:48px!important;font-size:14px!important;}
+</style><div class="payment-top-bar" aria-hidden="true" style="position:absolute;left:0;top:0;width:2549px;height:68px;background:#0785c4;z-index:40;display:block;pointer-events:none;"></div><aside class="abs home-left payment-left-menu"><div class="sidebar-brand"><div class="logo-box">LI</div></div><nav class="sidebar-menu"><div class="sidebar-section"><div class="sidebar-section-title">Event Info</div><button data-route="home"><span class="sidebar-icon">◼</span><span>Event details</span></button><button data-route="vendors"><span class="sidebar-icon">◎</span><span>Event vendors</span></button><button data-route="timeline"><span class="sidebar-icon">◷</span><span>Event Timeline</span></button><button data-route="home"><span class="sidebar-icon">◉</span><span>Video details</span></button><button data-route="misc"><span class="sidebar-icon">✣</span><span>Miscellaneous</span></button></div><div class="sidebar-section"><div class="sidebar-section-title">Photo Book</div><button data-route="home"><span class="sidebar-icon">▣</span><span>Create your album</span></button></div><div class="sidebar-section"><div class="sidebar-section-title">Photo Booth</div><button data-route="home"><span class="sidebar-icon">◈</span><span>Create your monogram</span></button></div><div class="sidebar-section"><div class="sidebar-section-title">QR Code</div><button data-route="home"><span class="sidebar-icon">▦</span><span>Create your QR Code</span></button></div><div class="sidebar-section"><div class="sidebar-section-title">Payments</div><button data-route="payments"><span class="sidebar-icon">▭</span><span>Billing</span></button></div></nav><nav class="sidebar-bottom"><button data-route="faq"><span class="sidebar-icon">●</span><span>FAQ</span></button><button data-route="contact"><span class="sidebar-icon">✉</span><span>Contact us</span></button><button data-route="home"><span class="sidebar-icon">⚙</span><span>Your settings</span></button></nav></aside><section class="payment-page">
+    <h2 class="payment-main-title">Make a payment</h2>
+    <article class="payment-history-card">
+      <h3>Payment history</h3>
+      <p>Here you can find your previous payments, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore.</p>
+      <table class="payment-history-table"><thead><tr><th>DATE</th><th>METHOD</th><th>AMOUNT</th></tr></thead><tbody><tr><td>Sep 16, 2016</td><td><span class="payment-history-method-tag">Check</span></td><td>$1,000.00</td></tr><tr><td>Dec 22, 2016</td><td><span class="payment-history-method-tag">Zelle</span></td><td>$500.00</td></tr><tr><td>Dec 23, 2016</td><td><span class="payment-history-method-tag">Credit card</span></td><td>$500.00</td></tr><tr><td>Jan 04, 2017</td><td><span class="payment-history-method-tag">Cash</span></td><td>$860.00</td></tr></tbody></table>
+      <div class="payment-history-balance"><span>Outstanding balance</span><strong>$860,00</strong><em>Due September 18</em></div>
+      <div class="payment-history-total"><span>TOTAL</span><strong>$2,860,00</strong></div>
+    </article>
+    <section class="payment-checkout">
+      <div class="payment-amount-section">
+        <h3>Choose your payment amount</h3>
+        <label class="payment-amount-input"><span>Enter payment amount here</span><input data-payment-amount value="${state.paymentAmount}" placeholder="$50.00" inputmode="decimal"></label>
+      </div>
+      <div class="payment-method-section">
+        <h3>Choose your payment method</h3>
+        <p>All transactions are secure and encrypted.</p>
+        <article class="payment-method-card">
+          ${paymentMethodHead('credit-card', 'Credit card', `<strong>Credit card</strong><span class="card-icons"><span class="cc-logo visa">VISA</span>${mastercardLogo()}<span class="cc-logo amex">AMEX</span><span class="cc-logo discover">DISC</span></span>`)}
+          ${state.paymentMethod === 'credit-card' ? `<div class="credit-card-fields">
+            <label><input placeholder="First name"></label><label><input placeholder="Last name"></label>
+            <label class="pay-field-wide"><input placeholder="Credit card number"></label>
+            ${paymentLookupField('Month', ['Month','01','02','03','04','05','06','07','08','09','10','11','12'], 'pay-field-third')}${paymentLookupField('Year', ['Year','2026','2027','2028','2029','2030','2031','2032','2033','2034','2035','2036'], 'pay-field-third')}<label class="pay-field-third"><input placeholder="CVV"></label>
+            <label><input placeholder="Address 1"></label><label><input placeholder="Address 2"></label>
+            <label><input placeholder="City"></label>${paymentLookupField('State', paymentStates)}
+            <label><input placeholder="Zip code"></label>${paymentLookupField('Country', paymentCountries)}
+            <div class="payment-card-action">${paymentSubmitButton()}</div>
+          </div>` : ''}
+          ${paymentMethodHead('paypal', 'PayPal', '<strong class="paypal-logo"><span>Pay</span><b>Pal</b></strong>')}
+          ${state.paymentMethod === 'paypal' ? `<div class="payment-option-note paypal-note"><strong>PayPal selected</strong><p>Continue with PayPal to complete your payment securely. After the payment is processed, your balance will be updated.</p>${paymentSubmitButton()}</div>` : ''}
+          ${paymentMethodHead('zelle', 'Zelle', '<strong class="zelle-logo">Zelle<span>®</span></strong>')}
+          ${state.paymentMethod === 'zelle' ? '<div class="payment-option-note zelle-note"><strong>Zelle payment</strong><p>Please send your payment to nikola@leimageinc.com through Zelle. Once we receive it, we will update your payment history and balance.</p></div>' : ''}
+        </article>
+      </div>
+    </section>
+  </section>`;
 }
 function field(label, cls='', value='') { return `<label class="${cls}"><span class="field-label">${label}</span><input class="input" value="${value}"></label>`; }
 
 function vendors() {
   return `<article class="card vendor-info"><h2>Your vendors</h2><p>Coordinating with all parties involved helps us to provide you with the best photos/video possible, please take a moment to fill out the contact info for the following vendors.</p><button class="blue-btn vendor-submit">SUBMIT VENDORS LIST</button></article><section class="abs vendor-list">${state.vendors.map(v => `<article class="vendor-card"><h3>${v[0]}</h3><div class="vendor-fields">${field('Name','',v[1])}${field('Website','',v[2])}${field('Email','',v[3])}</div></article>`).join('')}</section>`;
+}
+function miscChoice(label) { return `<label class="misc-choice"><input type="checkbox"><span>${label}</span></label>`; }
+function miscRadio(name, label) { return `<label class="misc-choice"><input type="radio" name="${name}"><span>${label}</span></label>`; }
+function miscInput(label, placeholder = '', cls = '') { return `<label class="misc-input ${cls}"><span>${label}</span><input placeholder="${placeholder}"></label>`; }
+function miscTextarea(label, placeholder = '', cls = '') { return `<label class="misc-input ${cls}"><span>${label}</span><textarea placeholder="${placeholder}"></textarea></label>`; }
+function miscSection(title, body) { return `<article class="misc-section"><h3>${title}</h3><div class="misc-section-body">${body}</div></article>`; }
+function misc() {
+  const vendorFields = [
+    ['Wedding Venue Contact', "If you haven't provided this information already, please list the name, email, and phone number for your wedding venue contact."],
+    ['Photographer', 'Please list the company name, contact person, and/or website.'],
+    ['Videographer', 'Please list the company name, contact person, and/or website.'],
+    ['DJ or Band', 'Please list the company name, contact person, and/or website.'],
+    ['Officiant', 'Please list the company name, contact person, and/or website.'],
+    ['Hair & Makeup', 'Please list the company name, contact person, and/or website.'],
+    ['Florist', 'Please list the company name, contact person, and/or website.'],
+    ['Cake', 'Please list the company name, contact person, and/or website.']
+  ];
+  return `<h2 class="abs misc-main-title">Miscellaneous</h2><article class="card misc-info"><h2>Miscellaneous info</h2><p>Please review these event notes and confirmations so our team has the information needed before the wedding day.</p></article><section class="abs misc-form-list">
+    ${miscSection('Vendor Meal', `<p>Your photographer and videographer begin preparing for your wedding early and are on their feet throughout the day.</p><p>We ask that couples provide a vendor meal and allow the team at least a 20 minute break to eat and rest. Venues often serve vendors after all guests have been served, but that can delay the team from eating and preparing for the next event.</p><p>Please request that our team is served <strong>at the same time as guests</strong> so they have enough time to rest, use the restroom, eat, and prepare for the next timeline event.</p><div class="misc-choice-row">${miscRadio('vendor-meal','Sure, we will provide a vendor meal')}${miscRadio('vendor-meal','No, I need more information')}</div>`)}
+    ${miscSection('Gratuity / Tip', `<p>We keep our package prices competitive and do not include gratuity in the package total. Any tip you feel is deserved is greatly appreciated. Please tip your photographer and videographer directly in separate payments, or add the tip to your final balance.</p>${miscChoice('I understand')}`)}
+    ${miscSection('Add Gratuity to Final Balance', `<p>Would you like to add a tip to the final balance? A 10 to 20 percent gratuity is industry standard.</p><div class="misc-choice-row">${miscRadio('tip-balance','Yes')}${miscRadio('tip-balance','No')}</div>`)}
+    ${miscSection('Family Photos', `<p>You provided a family shot list for required group photos during your wedding. Please choose a point person who knows the family and can help gather everyone for these photos. Please also give a copy of the shot list to that point person.</p><p>Our team is not familiar with every family member, so photos not listed on the family shot list may not be taken unless requested by the couple that day.</p>${miscChoice('I understand')}${miscInput('Point Person Name','Full name')}`)}
+    ${miscSection('Day of Coordination', `<p>Our team will do their best to follow the schedule based on the timeline you provided. However, the team will not serve as coordinators or planners on the wedding day. If the schedule changes or runs late, the team cannot be held responsible for photos not captured due to time constraints.</p>${miscChoice('I understand')}`)}
+    ${miscSection('Photo & Video Completion', `<p>After the wedding, you can expect to receive your wedding photos and/or video in approximately 8 to 11 weeks. You will receive an email from nikola@leimageinc.com with links to access your photos and/or video. Please check your spam folder as well.</p>${miscChoice('I understand')}`)}
+    ${miscSection('Other Wedding Vendors', `<p>We often coordinate with your other wedding vendors while preparing for the wedding day. Please answer the questions below about your vendor team.</p><div class="misc-vendor-grid">${vendorFields.map((item, index) => miscTextarea(`${item[0]}${index === 0 ? ' *' : ''}`, item[1])).join('')}</div>`)}
+    ${miscSection('Wedding Planning Call', `<p>If you have questions about the event timeline or would like to review the final schedule with us, you can schedule a planning call below.</p><a class="misc-call-btn" href="https://calendly.com/leimage/timeline" target="_blank" rel="noopener">Set up a call</a>`)}
+    <div class="misc-footer"><button class="blue-btn misc-submit">SUBMIT MISCELLANEOUS INFO</button></div>
+  </section>`;
 }
 function timeline() {
   if (document.querySelector('.package-list')) syncTimelineTeamFromPackage();
@@ -1687,7 +1938,32 @@ function faqSection(title, items) { return `<section class="faq-section"><h2>${t
 
 function bind() {
   document.querySelector('#signin-form')?.addEventListener('submit', e => { e.preventDefault(); state.loggedIn = true; sessionStorage.setItem('wedding-dashboard-auth','1'); state.route='home'; location.hash='home'; render(); });
-  document.querySelector('[data-menu-toggle]')?.addEventListener('click', () => { state.menuOpen = !state.menuOpen; render(); });
+  document.querySelector('[data-event-info-edit]')?.addEventListener('click', e => { e.preventDefault(); state.eventInfoEditing = !state.eventInfoEditing; render(); });
+  document.querySelectorAll('[data-event-info-field]').forEach(input => input.addEventListener('input', e => { state.eventInfo[e.target.dataset.eventInfoField] = e.target.value; }));
+  document.querySelector('[data-event-photo-input]')?.addEventListener('change', e => setEventInfoPhoto(e.target.files?.[0]));
+  document.querySelector('[data-event-photo-drop]')?.addEventListener('click', e => { if (!state.eventInfoEditing || e.target.matches?.('[data-event-photo-input]')) return; e.preventDefault(); e.stopPropagation(); if (state.eventInfoPhotoMoved) { state.eventInfoPhotoMoved = false; return; } document.querySelector('[data-event-photo-input]')?.click(); });
+  document.querySelector('[data-event-photo-drop]')?.addEventListener('pointerdown', startEventInfoPhotoDrag);
+  document.querySelector('[data-event-photo-drop]')?.addEventListener('pointermove', moveEventInfoPhoto);
+  document.querySelector('[data-event-photo-drop]')?.addEventListener('pointerup', endEventInfoPhotoDrag);
+  document.querySelector('[data-event-photo-drop]')?.addEventListener('pointercancel', endEventInfoPhotoDrag);
+  document.querySelector('[data-event-photo-drop]')?.addEventListener('dragover', e => { if (!state.eventInfoEditing) return; e.preventDefault(); e.currentTarget.classList.add('is-dragging'); });
+  document.querySelector('[data-event-photo-drop]')?.addEventListener('dragleave', e => e.currentTarget.classList.remove('is-dragging'));
+  document.querySelector('[data-event-photo-drop]')?.addEventListener('drop', e => { if (!state.eventInfoEditing) return; e.preventDefault(); e.currentTarget.classList.remove('is-dragging'); setEventInfoPhoto(e.dataTransfer?.files?.[0]); });
+  document.querySelectorAll('[data-payment-method]').forEach(b => b.addEventListener('click', e => selectPaymentMethod(e, b.dataset.paymentMethod)));
+  document.querySelectorAll('[data-payment-lookup]').forEach(input => input.addEventListener('input', e => {
+    const q = e.target.value.trim().toLowerCase();
+    e.target.closest('.payment-lookup')?.querySelectorAll('[data-payment-lookup-choice]').forEach(btn => btn.classList.toggle('is-hidden', q && !btn.textContent.toLowerCase().includes(q)));
+  }));
+  document.querySelectorAll('[data-payment-lookup-choice]').forEach(btn => btn.addEventListener('pointerdown', e => {
+    e.preventDefault();
+    e.stopPropagation();
+    const input = btn.closest('.payment-lookup')?.querySelector('[data-payment-lookup]');
+    if (input) input.value = btn.dataset.paymentLookupChoice;
+    btn.closest('.payment-lookup')?.querySelectorAll('[data-payment-lookup-choice]').forEach(item => item.classList.remove('is-hidden'));
+    input?.blur();
+  }));
+  document.querySelector('[data-payment-amount]')?.addEventListener('input', e => { state.paymentAmount = formatPaymentAmount(e.target.value); e.target.value = state.paymentAmount; });
+  document.querySelector('[data-payment-amount]')?.addEventListener('blur', e => { state.paymentAmount = formatPaymentAmount(e.target.value); e.target.value = state.paymentAmount; });
   document.querySelectorAll('[data-route]').forEach(b => b.addEventListener('click', () => { if (b.dataset.route === 'timeline') syncTimelineTeamFromPackage(); state.route=b.dataset.route; state.menuOpen=false; location.hash=state.route; render(); }));
   document.querySelectorAll('[data-upgrade-add]').forEach(b => b.addEventListener('click', e => { e.preventDefault(); e.stopPropagation(); addPackageUpgrade(b.dataset.upgradeAdd); }));
   document.querySelectorAll('[data-upgrade-choice]').forEach(b => b.addEventListener('click', e => { e.preventDefault(); e.stopPropagation(); openUpgradeChoice(b.dataset.upgradeChoice); }));
@@ -1703,13 +1979,17 @@ function bind() {
     if (input && e.key === 'Enter') {
       e.preventDefault();
       if (!state.isAdmin) return;
-      updatePaymentAdjustment(input.dataset.paymentAdjustmentAmount, input.value);
+      const row = input.closest('[data-payment-adjustment-row]');
+      if (row?.classList.contains('pay-adjustment-row-other')) finishPaymentAdjustmentEdit(input.dataset.paymentAdjustmentAmount);
+      else updatePaymentAdjustment(input.dataset.paymentAdjustmentAmount, input.value);
       input.blur();
     }
     const label = e.target.closest?.('[data-payment-adjustment-label]');
     if (label && e.key === 'Enter') {
       e.preventDefault();
-      savePaymentAdjustmentLabel(label.dataset.paymentAdjustmentLabel, label.value);
+      const row = label.closest('[data-payment-adjustment-row]');
+      if (row?.classList.contains('pay-adjustment-row-other')) finishPaymentAdjustmentEdit(label.dataset.paymentAdjustmentLabel);
+      else savePaymentAdjustmentLabel(label.dataset.paymentAdjustmentLabel, label.value);
     }
   });
   document.addEventListener('pointerdown', e => {
@@ -1730,6 +2010,10 @@ function bind() {
       addPaymentAdjustment(paymentOption.dataset.paymentOption);
       return;
     }
+    const openPaymentPopup = document.querySelector('[data-payment-plus-popup]:not([hidden])');
+    if (openPaymentPopup && !e.target.closest('[data-payment-plus-popup]')) {
+      closePaymentPlusPopup();
+    }
     const adjustmentRemove = e.target.closest('[data-payment-adjustment-remove]');
     if (adjustmentRemove) {
       if (!state.isAdmin) return;
@@ -1744,6 +2028,14 @@ function bind() {
       e.preventDefault();
       e.stopPropagation();
       renamePaymentAdjustment(adjustmentRename.dataset.paymentAdjustmentRename);
+      return;
+    }
+    const adjustmentDone = e.target.closest('[data-payment-adjustment-done]');
+    if (adjustmentDone) {
+      if (!state.isAdmin) return;
+      e.preventDefault();
+      e.stopPropagation();
+      finishPaymentAdjustmentEdit(adjustmentDone.dataset.paymentAdjustmentDone);
       return;
     }
     const upgradeLineAdjustButton = e.target.closest('[data-package-upgrade-line-adjust]');
