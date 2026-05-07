@@ -263,7 +263,7 @@ function packageHasBaseVideo(ctx = packageUpgradeState()) {
   return /one videographer|raw video footage|digital download of high resolution video/.test(basePackageText() || ctx.packageText);
 }
 function builderState() {
-  window.__bookedPackageBuilder ||= {done:false, values:{}, activeDate: originalPackageDate(), calendarOpen:false, calendarMonth:''};
+  window.__bookedPackageBuilder ||= {done:true, values:{}, activeDate: originalPackageDate(), calendarOpen:false, calendarMonth:''};
   window.__bookedPackageBuilder.values ||= {};
   window.__bookedPackageBuilder.activeDate ||= originalPackageDate();
   return window.__bookedPackageBuilder;
