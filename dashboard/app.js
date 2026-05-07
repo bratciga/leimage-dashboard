@@ -30,7 +30,10 @@ const state = {
   miscSneakPeekAdded: !!persistedMisc.miscSneakPeekAdded,
   miscSneakPeekAddedAt: Number(persistedMisc.miscSneakPeekAddedAt || 0),
   miscFields: persistedMisc.miscFields || {},
+  packageMenuKeys: new Set(JSON.parse(localStorage.getItem('wedding-dashboard-package-menu') || '[]')),
   miscSubmitWarning: '',
+  miscSubmitted: !!persistedMisc.miscSubmitted,
+  timelineSubmitted: localStorage.getItem('wedding-dashboard-timeline-submitted') === '1',
   eventInfoEditing: false,
   eventInfoPhoto: '',
   eventInfoPhotoX: 50,
@@ -110,16 +113,29 @@ function fit() {
   const scale = viewportWidth / 2549;
   document.documentElement.style.setProperty('--scale', Math.max(scale, 0.2));
 }
-window.addEventListener('resize', () => { fit(); syncHomeGridHeight(); });
+window.addEventListener('resize', () => { fit(); syncFixedSidebarScroll(); syncHomeGridHeight(); });
 fit();
+function syncFixedSidebarScroll() {
+  const stage = document.querySelector('.stage');
+  const scale = Number(getComputedStyle(document.documentElement).getPropertyValue('--scale')) || 1;
+  document.documentElement.style.setProperty('--dashboard-scroll-unscaled', `${(stage?.scrollTop || 0) / Math.max(scale, 0.2)}px`);
+}
+function bindFixedSidebarScroll() {
+  const stage = document.querySelector('.stage');
+  if (!stage || stage.dataset.sidebarScrollBound) return;
+  stage.dataset.sidebarScrollBound = '1';
+  stage.addEventListener('scroll', syncFixedSidebarScroll, {passive:true});
+  syncFixedSidebarScroll();
+}
 
 function render() {
   document.body.className = `body-${screenName()} ${state.isAdmin ? 'is-admin' : 'is-client'}`;
   document.documentElement.style.background = screenName() === 'home' ? '#ebf5fd' : '#ebf5fd';
   if (!state.loggedIn) app.innerHTML = box(signIn());
-  else if (state.route === 'home') app.innerHTML = box(home());
+  else if (state.route === 'home') { app.innerHTML = box(home()); restoreDashboardState(); }
   else app.innerHTML = box(shell(content(state.route)));
   bind();
+  bindFixedSidebarScroll();
   syncHomeGridHeight();
   requestAnimationFrame(() => {
     fit();
@@ -148,8 +164,53 @@ function signIn() {
   </section>`;
 }
 
+function packageMenuKeyForItem(key = '') {
+  if (/^(photo-one|photo-second|engagement-|retouch-|expedited-photo|premium-photo|premium-photo-editing|premium-photo-package)/.test(key)) return 'photography';
+  if (/^(video-one|video-second|video-|premium-video)/.test(key)) return 'videography';
+  if (/^photo-booth/.test(key)) return 'photo-booth';
+  if (/^photo-book/.test(key)) return 'photo-book';
+  if (/^(content-|highlight-reel|short-reel)/.test(key)) return 'content-creation';
+  if (/^sneak-peek|sneak-photo|sneak-video|sneak-photo-video/.test(key)) return '';
+  return '';
+}
+function savePackageMenuKeys() { localStorage.setItem('wedding-dashboard-package-menu', JSON.stringify([...state.packageMenuKeys])); }
+function setPackageMenuKeyForItem(key, present = true) {
+  const menuKey = packageMenuKeyForItem(key);
+  if (!menuKey) return;
+  if (present) state.packageMenuKeys.add(menuKey);
+  else state.packageMenuKeys.delete(menuKey);
+  savePackageMenuKeys();
+  refreshSidebarMenus();
+}
+function sidebarButton(route, icon, label) { return `<button data-route="${route}"><span class="sidebar-icon">${icon}</span><span>${label}</span></button>`; }
+function currentPackageMenuKeys() {
+  const keys = new Set();
+  const list = document.querySelector('.package-list');
+  const html = list?.innerHTML || localStorage.getItem('wedding-dashboard-package-list') || '';
+  const matches = html.matchAll(/data-(?:base-package-line|upgrade-line)="([^"]+)"/g);
+  for (const match of matches) {
+    const key = packageMenuKeyForItem(match[1]);
+    if (key) keys.add(key);
+  }
+  state.packageMenuKeys = keys;
+  savePackageMenuKeys();
+  return keys;
+}
+function sidebarMenuHtml() {
+  const packageLinks = [];
+  const keys = currentPackageMenuKeys();
+  if (keys.has('photography')) packageLinks.push(sidebarButton('home', '◼', 'Photography'));
+  if (keys.has('videography')) packageLinks.push(sidebarButton('home', '◉', 'Videography'));
+  if (keys.has('photo-booth')) packageLinks.push(sidebarButton('home', '◈', 'Photo Booth'));
+  if (keys.has('photo-book')) packageLinks.push(sidebarButton('home', '▣', 'Photo Book'));
+  if (keys.has('content-creation')) packageLinks.push(sidebarButton('home', '◎', 'Content Creation'));
+  const packageSection = packageLinks.length ? `<div class="sidebar-section"><div class="sidebar-section-title">Your Package</div>${packageLinks.join('')}</div>` : '';
+  const eventSection = `<div class="sidebar-section"><div class="sidebar-section-title">Event Info</div>${sidebarButton('home', '◼', 'Event details')}${sidebarButton('timeline', '◷', 'Event timeline')}${sidebarButton('home', '▦', 'Guest upload link & QR code')}${sidebarButton('misc', '✣', 'Miscellaneous')}${sidebarButton('payments', '▭', 'Payments & Balance')}</div>`;
+  return `${eventSection}${packageSection}`;
+}
+function refreshSidebarMenus() { document.querySelectorAll('.sidebar-menu').forEach(menu => { menu.innerHTML = sidebarMenuHtml(); }); bindRouteButtons(); }
 function sidebarMarkup(classes = 'abs home-left') {
-  return `<aside class="${classes}"><div class="sidebar-brand"><div class="logo-box">LI</div></div><nav class="sidebar-menu"><div class="sidebar-section"><div class="sidebar-section-title">Event Info</div><button data-route="home"><span class="sidebar-icon">◼</span><span>Event details</span></button><button data-route="vendors"><span class="sidebar-icon">◎</span><span>Event vendors</span></button><button data-route="timeline"><span class="sidebar-icon">◷</span><span>Event Timeline</span></button><button data-route="home"><span class="sidebar-icon">◉</span><span>Video details</span></button><button data-route="misc"><span class="sidebar-icon">✣</span><span>Miscellaneous</span></button></div><div class="sidebar-section"><div class="sidebar-section-title">Photo Book</div><button data-route="home"><span class="sidebar-icon">▣</span><span>Create your album</span></button></div><div class="sidebar-section"><div class="sidebar-section-title">Photo Booth</div><button data-route="home"><span class="sidebar-icon">◈</span><span>Create your monogram</span></button></div><div class="sidebar-section"><div class="sidebar-section-title">QR Code</div><button data-route="home"><span class="sidebar-icon">▦</span><span>Create your QR Code</span></button></div><div class="sidebar-section"><div class="sidebar-section-title">Payments</div><button data-route="payments"><span class="sidebar-icon">▭</span><span>Billing</span></button></div></nav><nav class="sidebar-bottom"><button data-route="faq"><span class="sidebar-icon">●</span><span>FAQ</span></button><button data-route="contact"><span class="sidebar-icon">✉</span><span>Contact us</span></button><button data-route="home"><span class="sidebar-icon">⚙</span><span>Your settings</span></button></nav></aside>`;
+  return `<aside class="${classes}"><button type="button" class="sidebar-close" data-menu-toggle onclick="toggleMenu(event)" aria-label="Close menu">×</button><div class="sidebar-brand"><div class="logo-box">LI</div></div><nav class="sidebar-menu">${sidebarMenuHtml()}</nav><nav class="sidebar-bottom"><button data-route="faq"><span class="sidebar-icon">●</span><span>FAQ</span></button><button data-route="contact"><span class="sidebar-icon">✉</span><span>Contact us</span></button><button data-route="home"><span class="sidebar-icon">⚙</span><span>Your settings</span></button></nav></aside>`;
 }
 function side() { return sidebarMarkup('abs side home-left'); }
 function nav(route, label) { return `<button class="${state.route === route ? 'active' : ''}" data-route="${route}">${label}</button>`; }
@@ -207,9 +268,10 @@ function shell(inner) { return `<section class="dashboard-page ${state.menuOpen 
 function pageTitle() { return ({payments:'Billing', vendors:'Event vendors', timeline:'Event Timeline', misc:'Miscellaneous', faq:'FAQ', contact:'Contact us'})[state.route] || 'Event details'; }
 
 function home() {
-  return `<section class="home">
+  return `<section class="home ${state.menuOpen ? 'menu-open' : ''}"><button type="button" class="abs menu-toggle" aria-label="Open menu" data-menu-toggle onclick="toggleMenu(event)"><span></span><span></span><span></span></button><button type="button" class="abs menu-click-zone" aria-label="Open menu" onclick="toggleMenu(event)"></button>
     ${sidebarMarkup('abs home-left')}
-    <h1 class="abs client-name">Rachel and Michael Silvermans</h1>
+    <h1 class="home-title-bar">Event Details</h1>
+    <h2 class="abs client-name">Rachel and Michael Silvermans</h2>
     ${eventInfoBox()}
     <div class="abs event-dashboard-grid">
       <div class="event-left-column">
@@ -219,10 +281,10 @@ function home() {
       <div class="event-right-grid">
         <article class="abs tile tile-pay"><h3>Payments &amp; Balance</h3><p>Your current balance is $1800.00 due in full by September 28, 2014.</p><button class="plain-btn" data-route="payments">make a payment</button><button type="button" class="tile-plus-action tile-pay-plus-action" data-payment-plus aria-label="Add payment adjustment" onpointerdown="event.preventDefault(); event.stopImmediatePropagation(); togglePaymentPlusPopup();" onclick="event.preventDefault(); event.stopImmediatePropagation();">+</button><div class="payment-plus-popup" data-payment-plus-popup hidden><button type="button" data-payment-option="discount" onpointerdown="event.preventDefault(); event.stopImmediatePropagation(); closePaymentPlusPopup();">Add discount</button><button type="button" data-payment-option="gratuity" onpointerdown="event.preventDefault(); event.stopImmediatePropagation(); closePaymentPlusPopup();">Add gratuity</button><button type="button" data-payment-option="other" onpointerdown="event.preventDefault(); event.stopImmediatePropagation(); closePaymentPlusPopup();">Other</button></div></article>
         <article class="abs tile tile-video-details"><h3>Videography <span class="addon-badge">Optional add on</span></h3><p class="included-copy">Please answer the video questions below so our team knows exactly what to capture and deliver.</p><p class="addon-copy">Video is not included in your current package, but you can still add it anytime. Tell us if you would like video coverage added to your event.</p><button class="plain-btn included-action" data-route="home">view</button><button class="plain-btn addon-action" type="button" onclick="event.preventDefault(); event.stopPropagation(); openUpgradeChoice('videography');">add to package</button></article>
-        <article class="abs tile tile-timeline"><h3>Event Timeline</h3><p>The timeline will serve as a guideline for our photographers/videographers on your event day. Please be sure to read our suggestions for each section and assign the time accordingly.</p><button class="plain-btn" data-route="timeline">create</button></article>
+        <article class="abs tile tile-timeline status-tile ${tileStatusClass('timeline')}"><h3>Event Timeline</h3><p>The timeline will serve as a guideline for our photographers/videographers on your event day. Please be sure to read our suggestions for each section and assign the time accordingly.</p><button class="plain-btn" data-route="timeline">create</button></article>
         <article class="abs tile tile-photo-booth"><h3>Photo Booth <span class="addon-badge">Optional add on</span></h3><p class="included-copy">Please complete the photo booth questions so we have everything set up correctly for your event.</p><p class="addon-copy">Photo booth is not included in your current package, but you can still add it anytime. Let us know if you would like a booth at your event.</p><button class="plain-btn included-action" data-route="home">create monogram</button><button class="plain-btn addon-action" type="button" onclick="event.preventDefault(); event.stopPropagation(); openUpgradeChoice('photo-booth');">add to package</button></article>
         <article class="abs tile tile-guest-upload"><h3>Guest Upload Link &amp; QR Code</h3><div class="tile-copy"><p>Now your guests can upload photos they take at your event and you can access them all in one place!</p></div><button class="plain-btn" data-route="home">create</button></article>
-        <article class="abs tile tile-misc"><h3>Miscellaneous</h3><p>Review important details about gratuity, vendor meals, vendor contacts, and any final notes our team should know before the event.</p><button class="plain-btn" data-route="misc">view</button></article>
+        <article class="abs tile tile-misc status-tile ${tileStatusClass('misc')}"><h3>Miscellaneous</h3><p>Review important details about gratuity, vendor meals, vendor contacts, and any final notes our team should know before the event.</p><button class="plain-btn" data-route="misc">view</button></article>
         <article class="abs tile tile-book"><h3>Photo Book <span class="addon-badge">Optional add on</span></h3><p class="included-copy">Use our DIY photo book software to design your album when you are ready.</p><p class="addon-copy">Photo book is not included in your current package, but you can still add one anytime. Design it yourself with our DIY album software, or ask us about professional album design.</p><button class="plain-btn included-action" data-route="photobook">create</button><button class="plain-btn addon-action" type="button" onclick="event.preventDefault(); event.stopPropagation(); openUpgradeChoice('photo-book');">add to package</button></article>
       </div>
     </div>
@@ -557,7 +619,6 @@ function packageUpgradeLinePriceAt(line, attrs = {}) {
   return price;
 }
 function packageClientUpgradeRows() {
-  if (state.isAdmin) return [];
   const rows = [];
   document.querySelectorAll('.package-list .package-base-title').forEach(line => {
     const key = line.dataset.basePackageLine;
@@ -578,6 +639,11 @@ function packageClientUpgradeRows() {
   document.querySelectorAll('.package-list .package-upgrade-title').forEach(line => {
     const name = line.querySelector('.package-upgrade-name')?.textContent.trim() || 'Package upgrade';
     if (line.dataset.clientUpgrade === '1') {
+      rows.push({label: name, amount: packageUpgradeLinePrice(line)});
+      return;
+    }
+    const addedAt = Number(line.dataset.addedAt || 0);
+    if (addedAt) {
       rows.push({label: name, amount: packageUpgradeLinePrice(line)});
       return;
     }
@@ -635,6 +701,74 @@ function paymentAdjustmentState() {
 function syncPaymentAdjustmentLayout() {
   requestAnimationFrame(() => syncHomeGridHeight());
 }
+function packageModelFromDom() {
+  const base = Array.from(document.querySelectorAll('.package-list .package-base-title')).map(line => ({key: line.dataset.basePackageLine, date: line.dataset.shootDate || originalPackageDate(), hours: Number(line.dataset.hours || 0), qty: Number(line.dataset.qty || 1)})).filter(item => item.key);
+  const upgrades = Array.from(document.querySelectorAll('.package-list .package-upgrade-title')).map(line => ({key: line.dataset.upgradeLine, quantity: Number(line.dataset.quantity || 1), hours: Number(line.dataset.hours || 0), client: line.dataset.clientUpgrade === '1'})).filter(item => item.key);
+  return {base, upgrades};
+}
+function restorePackageModel(model) {
+  const list = document.querySelector('.package-list');
+  if (!list || !model || (!model.base?.length && !model.upgrades?.length)) return false;
+  const previousSuppress = window.__suppressDashboardSave;
+  window.__suppressDashboardSave = true;
+  list.innerHTML = '';
+  try {
+    (model.base || []).forEach(item => {
+      const bs = builderState();
+      bs.activeDate = item.date || originalPackageDate();
+      const def = basePackageDefinitions()[item.key];
+      if (def?.control === 'hours' && item.hours) bs.values[def.controlKey || item.key] = item.hours;
+      if (def?.control === 'qty' && item.qty) bs.values[def.controlKey || item.key] = item.qty;
+      addBasePackageItem(item.key);
+    });
+    builderState().activeDate ||= originalPackageDate();
+    (model.upgrades || []).forEach(item => addPackageUpgrade(item.key, item.quantity || 1, {keepChoiceOpen:true, skipNotify:true, client:item.client}));
+  } finally {
+    window.__suppressDashboardSave = previousSuppress;
+  }
+  return true;
+}
+function saveDashboardState() {
+  if (window.__suppressDashboardSave) return;
+  const list = document.querySelector('.package-list');
+  if (list) {
+    localStorage.setItem('wedding-dashboard-package-list', list.innerHTML);
+    try { localStorage.setItem('wedding-dashboard-package-model', JSON.stringify(packageModelFromDom())); } catch {}
+  }
+  localStorage.setItem('wedding-dashboard-package-menu', JSON.stringify([...(state.packageMenuKeys || new Set())]));
+  try { localStorage.setItem('wedding-dashboard-builder-state', JSON.stringify(builderState())); } catch {}
+  try { localStorage.setItem('wedding-dashboard-payment-adjustments', JSON.stringify(paymentAdjustmentState())); } catch {}
+}
+function restoreDashboardState() {
+  const savedBuilder = localStorage.getItem('wedding-dashboard-builder-state');
+  if (savedBuilder) { try { window.__bookedPackageBuilder = JSON.parse(savedBuilder); } catch {} }
+  const savedAdjustments = localStorage.getItem('wedding-dashboard-payment-adjustments');
+  if (savedAdjustments) { try { window.__paymentAdjustments = JSON.parse(savedAdjustments); } catch {} }
+  const list = document.querySelector('.package-list');
+  const savedModel = localStorage.getItem('wedding-dashboard-package-model');
+  let restoredModel = false;
+  if (list && savedModel && !list.children.length) { try { restoredModel = restorePackageModel(JSON.parse(savedModel)); } catch {} }
+  const savedList = localStorage.getItem('wedding-dashboard-package-list');
+  if (list && savedList && !list.children.length && !restoredModel) list.innerHTML = savedList;
+  const savedMenu = localStorage.getItem('wedding-dashboard-package-menu');
+  if (savedMenu) { try { state.packageMenuKeys = new Set(JSON.parse(savedMenu)); } catch {} }
+  syncPackageDateHeaders();
+  refreshBasePackagePrices();
+  refreshPackageUpgradePrices();
+  updatePackageBalance();
+  syncPackageBuilderState();
+}
+function bindRouteButtons(root = document) {
+  root.querySelectorAll('[data-route]').forEach(b => { if (b.dataset.routeBound) return; b.dataset.routeBound = '1'; b.addEventListener('click', e => { e.preventDefault(); e.stopPropagation(); goRoute(b.dataset.route); }); });
+}
+function goRoute(route) {
+  saveDashboardState();
+  if (route === 'timeline') syncTimelineTeamFromPackage();
+  state.route = route;
+  state.menuOpen = false;
+  location.hash = route;
+  render();
+}
 function saveMiscState() {
   localStorage.setItem('wedding-dashboard-misc', JSON.stringify({
     miscGratuityChoice: state.miscGratuityChoice,
@@ -642,6 +776,7 @@ function saveMiscState() {
     miscGratuityAdded: state.miscGratuityAdded,
     miscSneakPeekAdded: state.miscSneakPeekAdded,
     miscSneakPeekAddedAt: state.miscSneakPeekAddedAt,
+    miscSubmitted: !!state.miscSubmitted,
     miscFields: state.miscFields || {}
   }));
 }
@@ -708,19 +843,46 @@ function undoSneakPeekFromMisc() {
   saveMiscState();
   render();
 }
+function miscIsComplete() {
+  const fields = state.miscFields || {};
+  const requiredChecks = ['gratuity-understand', 'family-understand', 'coordination-understand', 'completion-understand'];
+  const missingCheck = requiredChecks.some(key => !fields[key]);
+  const missingVendorMeal = !fields['vendor-meal'];
+  const missingVenueContact = !String(fields['vendor-Wedding Venue Contact-name'] || '').trim();
+  return !missingCheck && !missingVendorMeal && !missingVenueContact;
+}
 function validateMiscSubmit() {
-  const unchecked = Array.from(document.querySelectorAll('[data-misc-required]')).some(input => !input.checked);
-  const missingRadio = ['vendor-meal', 'miscGratuityChoice'].some(name => !document.querySelector(`input[name="${name}"]:checked`));
-  const gratuityNeedsAdd = state.miscGratuityChoice === 'yes' && (!state.miscGratuityAdded || Number(state.miscGratuityAmount || 0) <= 0);
-  if (unchecked || missingRadio || gratuityNeedsAdd) {
+  const complete = miscIsComplete();
+  if (!complete) {
+    state.miscSubmitted = false;
+    saveMiscState();
     state.miscSubmitWarning = 'Please complete all required confirmations before submitting.';
     render();
     setTimeout(() => document.querySelector('.misc-submit-warning')?.scrollIntoView({behavior:'smooth', block:'center'}), 0);
     return false;
   }
+  state.miscSubmitted = true;
+  saveMiscState();
   state.miscSubmitWarning = 'Miscellaneous info submitted.';
   render();
   return true;
+}
+function timelineIsComplete() {
+  const timelines = state.teamTimelines?.length ? state.teamTimelines : [state.timeline];
+  return timelines.every(timeline => Array.isArray(timeline) && timeline.length && timeline.every(slot => {
+    const from = String(slot?.[0] || '').trim();
+    const to = String(slot?.[1] || '').trim();
+    return from && to && from !== '0:00' && to !== '0:00' && !slotTooShort(from, to);
+  }));
+}
+function setTimelineSubmitted(value) {
+  state.timelineSubmitted = !!value;
+  localStorage.setItem('wedding-dashboard-timeline-submitted', state.timelineSubmitted ? '1' : '0');
+}
+function tileStatusClass(section) {
+  if (section === 'timeline') return state.timelineSubmitted && timelineIsComplete() ? 'is-complete' : 'is-missing';
+  if (section === 'misc') return state.miscSubmitted && miscIsComplete() ? 'is-complete' : 'is-missing';
+  return '';
 }
 function paymentAdjustmentTotal() {
   return paymentAdjustmentState().reduce((sum, row) => sum + Number(row.amount || 0), 0);
@@ -977,7 +1139,7 @@ function upgradeDefinitions(ctx = packageUpgradeState()) {
       items: ['DIY Album Design FREE', 'Shipping fee included ($20)']
     },
     'photo-book-10-pro': {
-      title: 'Photo Book 10x10, 30 Pages, Professional Album Design', price: 619, album: true,
+      title: 'Photo Book 10x10, 30 Pages', price: 619, album: true,
       items: ['Professional Album Design', 'Shipping fee included ($20)']
     },
     'photo-book-12': {
@@ -985,7 +1147,7 @@ function upgradeDefinitions(ctx = packageUpgradeState()) {
       items: ['DIY Album Design FREE', 'Shipping fee included ($20)']
     },
     'photo-book-12-pro': {
-      title: 'Photo Book 12x12, 30 Pages, Professional Album Design', price: 669, album: true,
+      title: 'Photo Book 12x12, 30 Pages', price: 669, album: true,
       items: ['Professional Album Design', 'Shipping fee included ($20)']
     },
     'content-creator': (() => { const choice = contentChoiceForUpgrade('content-creator'); return {
@@ -1014,8 +1176,8 @@ function basePackageDefinitions(ctx = packageUpgradeState()) {
     engagement: {group:'Photography', control:'hours', controlKey:'engagement', title:'Engagement Photoshoot', items:[`${val.engagement === 2 ? '2hrs' : '1hr'} engagement photoshoot`, 'Online gallery']},
     'photo-book-10': {group:'Photography', control:'qty', controlKey:'photo-book-10', title:'Photo Book 10x10, 30 Pages', items:['DIY Album Design FREE', 'Shipping fee included ($20)']},
     'photo-book-12': {group:'Photography', control:'qty', controlKey:'photo-book-12', title:'Photo Book 12x12, 30 Pages', items:['DIY Album Design FREE', 'Shipping fee included ($20)']},
-    'photo-book-10-design': {group:'Photography', parent:'photo-book-10', title:'Photo Book 10x10, 30 Pages, Professional Album Design', items:['Professional Album Design', 'Shipping fee included ($20)']},
-    'photo-book-12-design': {group:'Photography', parent:'photo-book-12', title:'Photo Book 12x12, 30 Pages, Professional Album Design', items:['Professional Album Design', 'Shipping fee included ($20)']},
+    'photo-book-10-design': {group:'Photography', parent:'photo-book-10', control:'qty', controlKey:'photo-book-10-design', title:'Photo Book 10x10, 30 Pages, Professional Album Design', items:['Professional Album Design', 'Shipping fee included ($20)']},
+    'photo-book-12-design': {group:'Photography', parent:'photo-book-12', control:'qty', controlKey:'photo-book-12-design', title:'Photo Book 12x12, 30 Pages, Professional Album Design', items:['Professional Album Design', 'Shipping fee included ($20)']},
     retouching: {group:'Photography', control:'qty', controlKey:'retouching', title:'Photo Retouching', items:['Detailed retouching for selected photos']},
     'expedited-photo': {group:'Photography', title:'Expedited Processing', items:['Faster photo processing and delivery']},
     'premium-photo-editing': {group:'Photography', title:'Premium Photo Editing Upgrade', items:['Premium photo editing upgrade']}, 
@@ -1052,6 +1214,10 @@ function refreshBasePackagePrices() {
     titleLine.querySelector('.package-line-price')?.replaceChildren(document.createTextNode(formatMoney(packageBaseItemPrice(key, keysForDate, meta))));
   });
 }
+function packageDisplayTitle(key, title = '') {
+  if (['photo-book-10-design', 'photo-book-12-design'].includes(key)) return String(title).replace(/, Professional Album Design$/i, '');
+  return title;
+}
 function addBasePackageItem(key) {
   const list = document.querySelector('.package-list');
   if (key === 'premium-photo-package') {
@@ -1065,12 +1231,14 @@ function addBasePackageItem(key) {
   if (!list || !def || document.querySelector(`.package-list [data-base-package-line="${key}"][data-shoot-date="${packageDateSelector(shootDate)}"]`)) return;
   const value = builderValue(def.controlKey || key);
   const attrs = `${def.control === 'hours' ? ` data-hours="${value}" data-min-hours="${value}"` : ''}${def.control === 'qty' ? ` data-qty="${value}" data-min-qty="${value}"` : ''}`;
-  const title = `<li class="package-base-title" data-shoot-date="${packageDateAttr(shootDate)}" data-base-package-line="${key}"${attrs}><span class="package-upgrade-name">${def.title}</span> ${packageLineControl(def)} <span class="package-built-status">✓ booked</span> <button type="button" class="remove-upgrade" data-base-package-remove="${key}">remove</button><strong class="package-line-price">${formatMoney(packageBaseLinePrice(key))}</strong></li>`;
+  const title = `<li class="package-base-title" data-shoot-date="${packageDateAttr(shootDate)}" data-base-package-line="${key}"${attrs}><span class="package-upgrade-name">${packageDisplayTitle(key, def.title)}</span> ${packageLineControl(def)} <span class="package-built-status">✓ booked</span> <button type="button" class="remove-upgrade" data-base-package-remove="${key}">remove</button><strong class="package-line-price">${formatMoney(packageBaseLinePrice(key))}</strong></li>`;
   const items = def.items.map(item => `<li class="package-upgrade-line package-base-line" data-shoot-date="${packageDateAttr(shootDate)}" data-base-package-line="${key}">${item}</li>`).join('');
   list.insertAdjacentHTML('beforeend', title + items);
+  setPackageMenuKeyForItem(key, true);
   syncPackageDateHeaders();
   refreshBasePackagePrices();
   syncHomeGridHeight();
+  saveDashboardState();
 }
 function refreshBasePackageItem(key, date = '') {
   const selector = date ? `.package-base-title[data-base-package-line="${key}"][data-shoot-date="${packageDateSelector(date)}"]` : `.package-base-title[data-base-package-line="${key}"]`;
@@ -1081,7 +1249,7 @@ function refreshBasePackageItem(key, date = '') {
   const value = builderValue(def.controlKey || key);
   if (def.control === 'hours') titleLine.dataset.hours = value;
   if (def.control === 'qty') titleLine.dataset.qty = value;
-  titleLine.querySelector('.package-upgrade-name')?.replaceChildren(document.createTextNode(def.title));
+  titleLine.querySelector('.package-upgrade-name')?.replaceChildren(document.createTextNode(packageDisplayTitle(key, def.title)));
   const oldControl = titleLine.querySelector('.package-line-control');
   if (oldControl) oldControl.outerHTML = packageLineControl(def);
   const dateForLine = titleLine.dataset.shootDate || originalPackageDate();
@@ -1090,13 +1258,16 @@ function refreshBasePackageItem(key, date = '') {
   titleLine.querySelector('.package-line-price')?.replaceChildren(document.createTextNode(formatMoney(packageBaseItemPrice(key, keys, meta))));
   const itemLines = Array.from(document.querySelectorAll(`.package-base-line[data-base-package-line="${key}"]`));
   def.items.forEach((item, index) => itemLines[index]?.replaceChildren(document.createTextNode(item)));
+  saveDashboardState();
 }
 function removeBasePackageItem(key, date = '') {
   const selector = date ? `[data-base-package-line="${key}"][data-shoot-date="${packageDateSelector(date)}"]` : `[data-base-package-line="${key}"]`;
   document.querySelectorAll(selector).forEach(line => line.remove());
+  setPackageMenuKeyForItem(key, !!document.querySelector(`[data-base-package-line="${key}"], [data-upgrade-line="${key}"]`));
   syncPackageDateHeaders();
   refreshBasePackagePrices();
   syncHomeGridHeight();
+  saveDashboardState();
 }
 function builderCanSelect(key, keys = basePackageKeys()) {
   return !keys.includes(key);
@@ -1191,6 +1362,7 @@ function syncPackageBuilderState(ctx = packageUpgradeState()) {
     const groupTitle = def.group !== currentGroup ? (currentGroup = def.group, `<h4 class="builder-group-title">${def.group}</h4>`) : '';
     return `${groupTitle}<div class="package-builder-card ${disabled ? 'is-builder-disabled' : ''}" data-builder-card="${key}"><button type="button" data-package-build="${key}" ${disabled ? 'disabled' : ''}>${renderBuilderName(def)}</button>${renderBuilderControl(def)}</div>`;
   }).join('');
+  saveDashboardState();
 }
 function showUpgradeNotice(message) {
   const notice = document.querySelector('.upgrade-notice');
@@ -1239,6 +1411,7 @@ function updatePackageBalance() {
   const bundledSavingsHtml = bundledSavings > 0 ? `<span class="pay-breakdown-row pay-bundled-savings"><span>Bundled Savings:</span><strong>−${formatMoney(bundledSavings)}</strong></span>` : '';
   const paymentsHtml = payments.length ? `<span class="pay-breakdown-payments"><span class="pay-payments-title">Payments:</span>${payments.map(row => `<span class="pay-breakdown-row pay-payment-row"><span class="pay-payment-meta"><span>${row.date}</span><em class="pay-method-tag">${row.method}</em></span><strong>−${formatMoney(row.amount)}</strong></span>`).join('')}</span>` : '';
   payCopy.innerHTML = `<span class="pay-breakdown-row"><span>Package Price:</span><strong>${formatMoney(displayedPackagePrice)}</strong></span>${bundledSavingsHtml}<span class="pay-breakdown-row"><span>Sales Tax (8.875%):</span><strong>${formatMoney(packageSalesTax())}</strong></span>${adjustmentHtml}${clientUpgradeHtml}<span class="pay-breakdown-row pay-grand-total"><span>Grand Total:</span><strong>${formatMoney(packageGrandTotal())}</strong></span>${paymentsHtml}<span class="pay-breakdown-row pay-balance"><span>Balance:</span><strong>${formatMoney(packageGrandTotal() - payments.reduce((sum, row) => sum + row.amount, 0))}</strong></span>`;
+  saveDashboardState();
 }
 function openUpgradeChoice(type) {
   const popup = document.querySelector('.upgrade-choice-popup');
@@ -1596,6 +1769,7 @@ function syncPackageUpgradeQuantityLabel(titleLine) {
   } else {
     badge?.remove();
   }
+  titleLine.querySelector('[data-package-upgrade-quantity-control] strong')?.replaceChildren(document.createTextNode(String(quantity)));
 }
 function addPackageUpgrade(upgrade, quantity = 1, options = {}) {
   const now = Date.now();
@@ -1606,7 +1780,7 @@ function addPackageUpgrade(upgrade, quantity = 1, options = {}) {
   const def = defs[upgrade];
   const list = document.querySelector('.package-list');
   if (!list || !def) return;
-  notifyUpgradeRequest(def, upgrade, quantity);
+  if (!options.skipNotify) notifyUpgradeRequest(def, upgrade, quantity);
   if (upgrade === 'premium-photo') {
     document.querySelectorAll('[data-upgrade-line="sneak-peek"]').forEach(line => line.remove());
     const sneakCard = document.querySelector('[data-upgrade="sneak-peek"]');
@@ -1625,13 +1799,13 @@ function addPackageUpgrade(upgrade, quantity = 1, options = {}) {
     titleLine.querySelector('.package-line-price')?.replaceChildren(document.createTextNode(formatMoney((def.price || 0) * Number(titleLine.dataset.quantity || 1))));
   } else if (!titleLine) {
     const addedAt = Date.now();
-    const qtyControls = '';
     const initialQuantity = Number(quantity || 1);
+    const qtyControls = def.album ? `<span class="package-line-control" data-package-upgrade-quantity-control="${upgrade}"><button type="button" data-package-upgrade-qty-adjust="${upgrade}" data-delta="-1">−</button><strong>${initialQuantity}</strong><button type="button" data-package-upgrade-qty-adjust="${upgrade}" data-delta="1">+</button></span>` : '';
     const initialHours = Number((def.title || '').match(/, (\d+) hours/)?.[1] || 0);
     const hourAttrs = initialHours ? ` data-hours="${initialHours}"` : '';
     const quantityBadge = def.album && initialQuantity > 1 ? `<span class="package-line-quantity">×${initialQuantity}</span>` : '';
     const tempLine = {dataset:{upgradeLine: upgrade, quantity: String(initialQuantity), hours: String(initialHours || '')}};
-    const title = `<li class="package-upgrade-title" data-upgrade-line="${upgrade}" data-added-at="${addedAt}" data-quantity="${initialQuantity}" data-min-quantity="${initialQuantity}"${!state.isAdmin ? ' data-client-upgrade="1"' : ''}${hourAttrs}${initialHours ? ` data-min-hours="${initialHours}"` : ''}><span class="package-upgrade-name">${upgradeLineTitle(upgrade, def.title)}</span>${quantityBadge}${upgradeLineControl(upgrade, initialHours)}${qtyControls} <button type="button" class="remove-upgrade" data-upgrade-remove="${upgrade}">remove</button><strong class="package-line-price">${formatMoney(packageUpgradeLinePrice(tempLine, defs))}</strong></li>`;
+    const title = `<li class="package-upgrade-title" data-upgrade-line="${upgrade}" data-added-at="${addedAt}" data-quantity="${initialQuantity}" data-min-quantity="${initialQuantity}"${(!state.isAdmin || options.client) ? ' data-client-upgrade="1"' : ''}${hourAttrs}${initialHours ? ` data-min-hours="${initialHours}"` : ''}><span class="package-upgrade-name">${upgradeLineTitle(upgrade, def.title)}</span>${quantityBadge}${upgradeLineControl(upgrade, initialHours)}${qtyControls} <button type="button" class="remove-upgrade" data-upgrade-remove="${upgrade}">remove</button><strong class="package-line-price">${formatMoney(packageUpgradeLinePrice(tempLine, defs))}</strong></li>`;
     const items = def.items.map(item => `<li class="package-upgrade-line" data-upgrade-line="${upgrade}">${item}</li>`).join('');
     const inlineNotice = def.inlineNotice ? `<li class="package-upgrade-notice" data-upgrade-line="${upgrade}">${def.notice}</li>` : '';
     list.insertAdjacentHTML('beforeend', title + items + inlineNotice);
@@ -1643,13 +1817,16 @@ function addPackageUpgrade(upgrade, quantity = 1, options = {}) {
   card?.setAttribute('hidden', '');
   const button = document.querySelector(`[data-upgrade-add="${upgrade}"]`);
   if (button && !button.classList.contains('add-album')) button.textContent = 'added';
+  setPackageMenuKeyForItem(upgrade, true);
   refreshPackageUpgradePrices();
+  saveDashboardState();
   if (!options.keepChoiceOpen) closeUpgradeChoice();
   if (!options.keepChoiceOpen) updatePackageBalance();
   if (!options.keepChoiceOpen) syncHomeGridHeight();
 }
 function removePackageUpgrade(upgrade) {
   document.querySelectorAll(`[data-upgrade-line="${upgrade}"]`).forEach(line => line.remove());
+  setPackageMenuKeyForItem(upgrade, !!document.querySelector(`[data-base-package-line="${upgrade}"], [data-upgrade-line="${upgrade}"]`));
   if (upgrade === 'video-one') {
     document.querySelectorAll('[data-upgrade-line="video-second"], [data-upgrade-line="video-editing"], [data-upgrade-line="premium-video"]').forEach(line => line.remove());
   }
@@ -2062,9 +2239,9 @@ function bind() {
   }));
   document.querySelector('[data-payment-amount]')?.addEventListener('input', e => { state.paymentAmount = formatPaymentAmount(e.target.value); e.target.value = state.paymentAmount; });
   document.querySelector('[data-payment-amount]')?.addEventListener('blur', e => { state.paymentAmount = formatPaymentAmount(e.target.value); e.target.value = state.paymentAmount; });
-  document.querySelectorAll('[data-misc-check]').forEach(input => input.addEventListener('change', e => { state.miscFields[e.target.dataset.miscCheck] = e.target.checked; saveMiscState(); }));
-  document.querySelectorAll('[data-misc-text]').forEach(input => input.addEventListener('input', e => { state.miscFields[e.target.dataset.miscText] = e.target.value; saveMiscState(); }));
-  document.querySelectorAll('[data-misc-radio]').forEach(input => input.addEventListener('change', e => { if (e.target.dataset.miscRadio === 'miscGratuityChoice') setMiscGratuityChoice(e.target.value); else { state.miscFields[e.target.dataset.miscRadio] = e.target.value; saveMiscState(); } }));
+  document.querySelectorAll('[data-misc-check]').forEach(input => input.addEventListener('change', e => { state.miscFields[e.target.dataset.miscCheck] = e.target.checked; state.miscSubmitted = false; saveMiscState(); }));
+  document.querySelectorAll('[data-misc-text]').forEach(input => input.addEventListener('input', e => { state.miscFields[e.target.dataset.miscText] = e.target.value; state.miscSubmitted = false; saveMiscState(); }));
+  document.querySelectorAll('[data-misc-radio]').forEach(input => input.addEventListener('change', e => { state.miscSubmitted = false; if (e.target.dataset.miscRadio === 'miscGratuityChoice') setMiscGratuityChoice(e.target.value); else { state.miscFields[e.target.dataset.miscRadio] = e.target.value; saveMiscState(); } }));
   document.querySelector('[data-misc-gratuity-amount]')?.addEventListener('input', e => { if (state.miscGratuityAdded) return; const raw = String(e.target.value || '').replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1'); const parts = raw.split('.'); state.miscGratuityAmount = parts.length > 1 ? `${parts[0]}.${parts.slice(1).join('').slice(0, 2)}` : raw; state.miscGratuityNotice = ''; e.target.value = state.miscGratuityAmount; saveMiscState(); });
   document.querySelector('[data-misc-gratuity-amount]')?.addEventListener('blur', e => { if (state.miscGratuityAdded) return; const raw = String(e.target.value || '').replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1'); state.miscGratuityAmount = raw ? Number(raw).toFixed(2) : ''; e.target.value = state.miscGratuityAmount; saveMiscState(); });
   document.querySelector('[data-misc-gratuity-add]')?.addEventListener('click', e => { e.preventDefault(); if (state.miscGratuityAdded) return; syncMiscGratuityAdjustment(); if (Number(state.miscGratuityAmount || 0) > 0) { state.miscGratuityAdded = true; state.miscGratuityNotice = ''; saveMiscState(); render(); } });
@@ -2072,10 +2249,12 @@ function bind() {
   document.querySelector('[data-misc-sneak-peek-add]')?.addEventListener('click', e => { e.preventDefault(); addSneakPeekFromMisc(); });
   document.querySelector('[data-misc-sneak-peek-undo]')?.addEventListener('click', e => { e.preventDefault(); undoSneakPeekFromMisc(); });
   document.querySelector('[data-misc-submit]')?.addEventListener('click', e => { e.preventDefault(); validateMiscSubmit(); });
-  document.querySelectorAll('[data-route]').forEach(b => b.addEventListener('click', () => { if (b.dataset.route === 'timeline') syncTimelineTeamFromPackage(); state.route=b.dataset.route; state.menuOpen=false; location.hash=state.route; render(); }));
+  bindRouteButtons();
   document.querySelectorAll('[data-upgrade-add]').forEach(b => b.addEventListener('click', e => { e.preventDefault(); e.stopPropagation(); addPackageUpgrade(b.dataset.upgradeAdd); }));
   document.querySelectorAll('[data-upgrade-choice]').forEach(b => b.addEventListener('click', e => { e.preventDefault(); e.stopPropagation(); openUpgradeChoice(b.dataset.upgradeChoice); }));
   document.querySelectorAll('[data-payment-adjustment-amount]').forEach(input => input.addEventListener('change', e => { if (state.isAdmin) updatePaymentAdjustment(e.target.dataset.paymentAdjustmentAmount, e.target.value); }));
+  if (!window.__dashboardDocumentEventsBound) {
+  window.__dashboardDocumentEventsBound = true;
   document.addEventListener('change', e => {
     const input = e.target.closest?.('[data-payment-adjustment-amount]');
     if (input && state.isAdmin) updatePaymentAdjustment(input.dataset.paymentAdjustmentAmount, input.value);
@@ -2144,6 +2323,23 @@ function bind() {
       e.preventDefault();
       e.stopPropagation();
       finishPaymentAdjustmentEdit(adjustmentDone.dataset.paymentAdjustmentDone);
+      return;
+    }
+    const upgradeQtyAdjustButton = e.target.closest('[data-package-upgrade-qty-adjust]');
+    if (upgradeQtyAdjustButton) {
+      e.preventDefault();
+      e.stopPropagation();
+      const titleLine = upgradeQtyAdjustButton.closest('.package-upgrade-title');
+      if (!titleLine) return;
+      const delta = Number(upgradeQtyAdjustButton.dataset.delta || 1);
+      const lockedMin = state.isAdmin ? 1 : Number(titleLine.dataset.minQuantity || titleLine.dataset.quantity || 1);
+      const nextQty = Math.max(lockedMin, Number(titleLine.dataset.quantity || 1) + delta);
+      titleLine.dataset.quantity = String(nextQty);
+      syncPackageUpgradeQuantityLabel(titleLine);
+      titleLine.querySelector('.package-line-price')?.replaceChildren(document.createTextNode(formatMoney(packageUpgradeLinePrice(titleLine))));
+      syncClientPackageMinimumControls();
+      updatePackageBalance();
+      syncHomeGridHeight();
       return;
     }
     const upgradeLineAdjustButton = e.target.closest('[data-package-upgrade-line-adjust]');
@@ -2460,6 +2656,7 @@ function bind() {
       removePackageUpgrade(removeButton.dataset.upgradeRemove);
     }
   }, true);
+  }
   document.querySelector('[data-booth-date]')?.addEventListener('input', e => {
     window.__photoBoothAvailability = {date: e.currentTarget.value, status: 'idle'};
     renderPhotoBoothChoicePopup();
@@ -2493,7 +2690,7 @@ function bind() {
   document.querySelector('[data-delete-selected]')?.addEventListener('click', e => { e.preventDefault(); e.stopPropagation(); if (state.timeline.length > 1) { state.confirmAction = {type:'slot', index:state.selectedSlot}; render(); } });
   document.querySelector('[data-confirm-no]')?.addEventListener('click', e => { e.preventDefault(); state.confirmAction = null; render(); });
   document.querySelector('[data-confirm-yes]')?.addEventListener('click', e => { e.preventDefault(); const action = state.confirmAction; if (!action) return; if (action.type === 'team') { state.teamMembers.splice(action.index, 1); state.teamTimelines.splice(action.index, 1); state.timelineMode = `team-${Math.max(0, action.index - 1)}`; } else if (action.type === 'slot' && state.timeline.length > 1) { state.timeline.splice(action.index, 1); state.selectedSlot = Math.max(0, Math.min(action.index - 1, state.timeline.length - 1)); } state.confirmAction = null; state.teamNamePopup=false; state.linkPopup=false; state.addCardPopup=false; render(); });
-  document.querySelectorAll('#timeline-form input, #timeline-form textarea').forEach(input => input.addEventListener('input', () => { ensureFirstFamilyNumber(input); autoGrowTextarea(input); autoSaveSelectedSlot(true); }));
+  document.querySelectorAll('#timeline-form input, #timeline-form textarea').forEach(input => input.addEventListener('input', () => { setTimelineSubmitted(false); ensureFirstFamilyNumber(input); autoGrowTextarea(input); autoSaveSelectedSlot(true); }));
   document.querySelectorAll('textarea.family-arrangements-input').forEach(t => { t.addEventListener('keydown', handleFamilyArrangementKeydown); ensureFirstFamilyNumber(t); autoGrowTextarea(t); });
   document.querySelectorAll('#timeline-form [name=from], #timeline-form [name=to]').forEach(s => s.addEventListener('change', () => autoSaveSelectedSlot(true)));
   document.querySelectorAll('[data-clock-input]').forEach(input => input.addEventListener('click', () => openTimeWheel(input.dataset.clockInput)));
@@ -2506,6 +2703,7 @@ function bind() {
   attachSavedLocationHandlers();
   document.querySelectorAll('[data-place-name],[data-address-one]').forEach(i => i.addEventListener('change', fillSuggestedAddress));
   document.querySelector('#timeline-form')?.addEventListener('submit', e => { e.preventDefault(); });
+  document.querySelector('.submit-timeline')?.addEventListener('click', e => { e.preventDefault(); setTimelineSubmitted(timelineIsComplete()); render(); });
   document.querySelector('.save-btn')?.addEventListener('click', e => { e.preventDefault(); saveSelectedSlot(); });
 }
 window.addEventListener('hashchange', () => { const r=location.hash.replace('#','') || 'home'; if (state.loggedIn && routes.includes(r) && r!==state.route) { state.route=r; render(); }});

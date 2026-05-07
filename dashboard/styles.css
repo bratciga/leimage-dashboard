@@ -10263,3 +10263,714 @@ body.body-misc .stage {
 body.body-misc .fit-box.screen-misc {
   overflow:visible !important;
 }
+
+/* Sidebar cleanup and viewport-pinned bottom links v350 */
+.dashboard-page .side.home-left {
+  position:fixed !important;
+  height:calc(100vh / var(--scale, 1)) !important;
+  min-height:1340px !important;
+  background:#fff !important;
+  border-right:1px solid #edf2f5 !important;
+}
+.dashboard-page .side.home-left::before {
+  background:#fff !important;
+  border-bottom:1px solid #edf2f5 !important;
+}
+.dashboard-page .side.home-left .sidebar-section {
+  border-bottom:10px solid #fff !important;
+}
+.dashboard-page .side.home-left .sidebar-section-title {
+  background:#fff !important;
+  color:#a5b0b8 !important;
+  font-size:12px !important;
+}
+.dashboard-page .side.home-left .sidebar-menu button,
+.dashboard-page .side.home-left .sidebar-bottom button {
+  height:50px !important;
+  font-size:16px !important;
+  color:#4f6574 !important;
+}
+.dashboard-page .side.home-left .sidebar-icon {
+  font-size:15px !important;
+  width:18px !important;
+  flex-basis:18px !important;
+}
+.dashboard-page .side.home-left .sidebar-bottom {
+  position:absolute !important;
+  left:0 !important;
+  bottom:0 !important;
+  width:100% !important;
+  background:#fff !important;
+}
+.dashboard-page .side.home-left .sidebar-bottom button {
+  height:52px !important;
+}
+
+/* Menu ordering, larger icons, and single-sidebar cleanup v352 */
+.screen-home .home-left,
+.dashboard-page .side.home-left {
+  background:#fff !important;
+}
+.screen-home .home-left .sidebar-menu button,
+.screen-home .home-left .sidebar-bottom button,
+.dashboard-page .side.home-left .sidebar-menu button,
+.dashboard-page .side.home-left .sidebar-bottom button {
+  font-size:16px !important;
+}
+.screen-home .home-left .sidebar-icon,
+.dashboard-page .side.home-left .sidebar-icon {
+  font-size:20px !important;
+  width:24px !important;
+  flex:0 0 24px !important;
+}
+.screen-home .home-left .sidebar-bottom,
+.dashboard-page .side.home-left .sidebar-bottom {
+  bottom:0 !important;
+}
+.screen-home .home-left + .home-left,
+.screen-home .side.home-left,
+.screen-home .payment-left-menu {
+  display:none !important;
+}
+
+/* Menu sizing, pastel top bars, and payment tag polish v353 */
+:root {
+  --dashboard-sky:#4aa6d4;
+}
+.screen-home .home::before {
+  content:"" !important;
+  position:absolute !important;
+  left:0 !important;
+  top:0 !important;
+  width:2549px !important;
+  height:68px !important;
+  background:var(--dashboard-sky) !important;
+  z-index:35 !important;
+  pointer-events:none !important;
+}
+.screen-misc .dashboard-page::before,
+.screen-misc .misc-section::before,
+.screen-misc .misc-card::before,
+.screen-payments .payment-top-bar,
+.screen-payments .dashboard-page::before {
+  background:var(--dashboard-sky) !important;
+}
+.screen-misc .misc-call-btn,
+.screen-misc .misc-sneak-peek-add,
+.screen-misc .misc-submit {
+  background:var(--dashboard-sky) !important;
+}
+.screen-home .menu-toggle,
+.screen-home .menu-click-zone,
+.dashboard-page .menu-toggle,
+.dashboard-page .menu-click-zone {
+  position:fixed !important;
+  z-index:1200 !important;
+}
+.screen-home .menu-toggle span,
+.dashboard-page.menu-open .menu-toggle span {
+  background:#0428a4 !important;
+}
+.screen-misc .dashboard-page:not(.menu-open) .menu-toggle span,
+.screen-payments .dashboard-page:not(.menu-open) .menu-toggle span {
+  background:#fff !important;
+}
+.screen-home .home-left,
+.dashboard-page .side.home-left {
+  width:340px !important;
+  left:-340px !important;
+  height:calc(100vh / var(--scale, 1)) !important;
+  min-height:0 !important;
+}
+.screen-home .home-left {
+  left:0 !important;
+}
+.dashboard-page.menu-open .side.home-left {
+  left:0 !important;
+}
+.screen-home .home-left::before,
+.dashboard-page .side.home-left::before {
+  width:340px !important;
+}
+.screen-home .home-left .sidebar-menu button,
+.screen-home .home-left .sidebar-bottom button,
+.dashboard-page .side.home-left .sidebar-menu button,
+.dashboard-page .side.home-left .sidebar-bottom button {
+  height:56px !important;
+  font-size:18px !important;
+  padding-left:36px !important;
+  padding-right:24px !important;
+}
+.screen-home .home-left .sidebar-icon,
+.dashboard-page .side.home-left .sidebar-icon {
+  font-size:24px !important;
+  width:30px !important;
+  flex:0 0 30px !important;
+}
+.screen-home .home-left .sidebar-section-title,
+.dashboard-page .side.home-left .sidebar-section-title {
+  padding-left:36px !important;
+}
+.screen-home .home-left .sidebar-bottom,
+.dashboard-page .side.home-left .sidebar-bottom {
+  position:absolute !important;
+  left:0 !important;
+  bottom:0 !important;
+  width:340px !important;
+  background:#fff !important;
+  z-index:5 !important;
+}
+.screen-home .home-left .sidebar-menu,
+.dashboard-page .side.home-left .sidebar-menu {
+  padding-bottom:168px !important;
+}
+.screen-home .pay-method-tag {
+  min-height:16px !important;
+  padding:2px 5px !important;
+  border-radius:4px !important;
+  font-size:9px !important;
+  letter-spacing:.025em !important;
+}
+
+/* Keep hamburger above opened menu on every page v354 */
+.screen-home .home .menu-toggle,
+.screen-home .home .menu-click-zone,
+.screen-misc .dashboard-page .menu-toggle,
+.screen-misc .dashboard-page .menu-click-zone,
+.screen-payments .dashboard-page .menu-toggle,
+.screen-payments .dashboard-page .menu-click-zone,
+.dashboard-page.menu-open .menu-toggle,
+.dashboard-page.menu-open .menu-click-zone {
+  position:fixed !important;
+  z-index:1200 !important;
+}
+
+/* Menu close affordance, fixed sidebar, and pastel home trial v355 */
+.screen-home .home-left,
+.dashboard-page .side.home-left {
+  position:fixed !important;
+  top:0 !important;
+  bottom:auto !important;
+  transform:none !important;
+  z-index:1000 !important;
+}
+.screen-home .home-left {
+  left:0 !important;
+}
+.dashboard-page.menu-open .side.home-left {
+  left:0 !important;
+}
+.dashboard-page .side.home-left:not(.home-left) {
+  left:-340px !important;
+}
+.screen-home .sidebar-close {
+  display:none !important;
+}
+.dashboard-page .side.home-left .sidebar-close {
+  position:absolute !important;
+  right:22px !important;
+  top:14px !important;
+  z-index:1300 !important;
+  width:40px !important;
+  height:40px !important;
+  border:0 !important;
+  background:transparent !important;
+  color:#4f6574 !important;
+  font-size:34px !important;
+  line-height:36px !important;
+  font-weight:300 !important;
+  display:flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+}
+.dashboard-page .side.home-left .sidebar-close:hover {
+  color:var(--dashboard-sky) !important;
+}
+.dashboard-page .side.home-left .sidebar-bottom,
+.screen-home .home-left .sidebar-bottom {
+  position:absolute !important;
+  bottom:0 !important;
+}
+.screen-home .pay-method-tag {
+  min-height:17px !important;
+  padding:2px 6px !important;
+  font-size:10px !important;
+}
+.screen-home .package-list .package-line-price,
+.screen-home .package-base-title .package-upgrade-name,
+.screen-home .package-list .package-upgrade-title .package-upgrade-name,
+.screen-home .pay-grand-total strong,
+.screen-home .pay-balance strong,
+.screen-home .tile h3,
+.screen-home .package h2,
+.screen-home .couple-info h2 {
+  color:var(--dashboard-sky) !important;
+}
+.screen-home .package-upgrades::before,
+.screen-home .package-built-status,
+.screen-home .package-builder-toggle,
+.screen-home .tile-plus-action,
+.screen-home .blue-btn,
+.screen-home .package-line-control button {
+  background:var(--dashboard-sky) !important;
+  border-color:var(--dashboard-sky) !important;
+}
+.screen-home .sidebar-icon,
+.dashboard-page .side.home-left .sidebar-icon,
+.screen-home .home-left .sidebar-menu button:hover,
+.dashboard-page .side.home-left .sidebar-menu button:hover,
+.screen-home .home-left .sidebar-bottom button:hover,
+.dashboard-page .side.home-left .sidebar-bottom button:hover {
+  color:var(--dashboard-sky) !important;
+}
+
+/* Keep Event Details sidebar fixed while the dashboard content scrolls v356 */
+html:has(body.body-home),
+body.body-home {
+  height:100% !important;
+  overflow:hidden !important;
+}
+body.body-home .stage {
+  height:100vh !important;
+  min-height:100vh !important;
+  overflow-y:auto !important;
+  overflow-x:hidden !important;
+}
+body.body-home .fit-box.screen-home {
+  overflow:visible !important;
+}
+
+/* Counter-scroll fixed sidebar inside scaled artboard v357 */
+.screen-home .home-left,
+.dashboard-page .side.home-left {
+  transform:translateY(var(--dashboard-scroll-unscaled, 0px)) !important;
+}
+
+/* Undo Event Details pastel accent trial v358 */
+.screen-home .package-list .package-line-price,
+.screen-home .package-base-title .package-upgrade-name,
+.screen-home .package-list .package-upgrade-title .package-upgrade-name,
+.screen-home .pay-grand-total strong,
+.screen-home .pay-balance strong,
+.screen-home .tile h3,
+.screen-home .package h2,
+.screen-home .couple-info h2 {
+  color:#0428a4 !important;
+}
+.screen-home .package-upgrades::before,
+.screen-home .package-built-status,
+.screen-home .package-builder-toggle,
+.screen-home .tile-plus-action,
+.screen-home .blue-btn,
+.screen-home .package-line-control button {
+  background:#0428a4 !important;
+  border-color:#0428a4 !important;
+}
+
+/* Restore actual pre-pastel Event Details colors v359 */
+.screen-home .tile h3,
+.screen-home .event-dashboard-grid .tile h3,
+.screen-home .package h2 {
+  color:#333 !important;
+}
+.screen-home .pay-grand-total strong,
+.screen-home .pay-balance strong,
+.screen-home .pay-breakdown-row strong {
+  color:#333 !important;
+}
+.screen-home .package-base-title,
+.screen-home .package-base-title .package-upgrade-name,
+.screen-home .package-base-line,
+.screen-home .package-list li {
+  color:#111 !important;
+}
+.screen-home .package-list .package-upgrade-title,
+.screen-home .package-list .package-upgrade-title .package-upgrade-name,
+.screen-home .package-list .package-upgrade-line:not(.package-upgrade-notice) {
+  color:#526b7d !important;
+}
+.screen-home .package-list .package-line-price {
+  color:#0428a4 !important;
+}
+.screen-home .package-built-status {
+  background:#e3f7e9 !important;
+  border-color:rgba(39,154,83,.28) !important;
+  color:#23834d !important;
+}
+.screen-home .package-builder-toggle {
+  background:#111 !important;
+  border-color:rgba(51,51,51,.16) !important;
+  color:#fff !important;
+}
+.screen-home .package-builder-toggle.is-edit-mode {
+  background:#fff !important;
+  border-color:rgba(17,17,17,.28) !important;
+  color:#111 !important;
+}
+.screen-home .tile-plus-action {
+  background:#eef7fd !important;
+  border-color:rgba(4,40,164,.35) !important;
+  color:#0428a4 !important;
+}
+.screen-home .package-line-control button {
+  background:#f1f3f5 !important;
+  border-color:rgba(51,51,51,.22) !important;
+  color:#333 !important;
+}
+.screen-home .package-upgrades::before {
+  background:#0428a4 !important;
+}
+
+/* Package-accurate menu, X close, pastel upgrade buttons and prices v360 */
+.screen-home .home-left {
+  left:-340px !important;
+}
+.screen-home .home.menu-open .home-left {
+  left:0 !important;
+}
+.screen-home .home .menu-toggle,
+.screen-home .home .menu-click-zone {
+  display:flex !important;
+  position:fixed !important;
+  left:0 !important;
+  top:0 !important;
+  z-index:1200 !important;
+}
+.screen-home .home.menu-open .menu-toggle,
+.screen-home .home.menu-open .menu-click-zone,
+.dashboard-page.menu-open .menu-toggle,
+.dashboard-page.menu-open .menu-click-zone {
+  display:none !important;
+}
+.screen-home .sidebar-close,
+.dashboard-page .side.home-left .sidebar-close {
+  position:absolute !important;
+  right:22px !important;
+  top:14px !important;
+  z-index:1300 !important;
+  width:40px !important;
+  height:40px !important;
+  border:0 !important;
+  background:transparent !important;
+  color:#4f6574 !important;
+  font-size:34px !important;
+  line-height:36px !important;
+  font-weight:300 !important;
+  display:flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+}
+.screen-home .sidebar-close:hover,
+.dashboard-page .side.home-left .sidebar-close:hover {
+  color:var(--dashboard-sky) !important;
+}
+.screen-home .package-upgrades .upgrade-card button,
+.screen-home .package-upgrades [data-upgrade-add],
+.screen-home .package-upgrades [data-upgrade-choice] {
+  background:var(--dashboard-sky) !important;
+  border-color:var(--dashboard-sky) !important;
+  color:#fff !important;
+}
+.screen-home .package-list .package-line-price {
+  color:var(--dashboard-sky) !important;
+}
+
+/* Undo pastel trial for package prices and upgrade buttons v361 */
+.screen-home .package-upgrades .upgrade-card button,
+.screen-home .package-upgrades [data-upgrade-add],
+.screen-home .package-upgrades [data-upgrade-choice] {
+  background:#0428a4 !important;
+  border-color:#0428a4 !important;
+  color:#fff !important;
+}
+.screen-home .package-list .package-line-price {
+  color:#0428a4 !important;
+}
+.screen-home .package-list [data-upgrade-line="sneak-peek"],
+.screen-home .package-list [data-upgrade-line="sneak-peek"] .package-upgrade-name {
+  color:#111 !important;
+}
+.screen-home .package-list .package-upgrade-line[data-upgrade-line="sneak-peek"] {
+  color:#111 !important;
+}
+
+/* Event Details menu visibility and package item color normalization v363 */
+.screen-home .home .menu-toggle span,
+.screen-home .menu-toggle span,
+.screen-home .home:not(.menu-open) .menu-toggle span {
+  background:#fff !important;
+}
+.screen-home .package-list .package-base-title,
+.screen-home .package-list .package-base-title .package-upgrade-name,
+.screen-home .package-list .package-base-line,
+.screen-home .package-list .package-upgrade-title,
+.screen-home .package-list .package-upgrade-title .package-upgrade-name,
+.screen-home .package-list .package-upgrade-line:not(.package-upgrade-notice),
+.screen-home .package-list [data-upgrade-line="sneak-peek"],
+.screen-home .package-list [data-upgrade-line="sneak-peek"] .package-upgrade-name,
+.screen-home .package-list .package-upgrade-line[data-upgrade-line="sneak-peek"],
+.screen-home .package-list li {
+  color:#526b7d !important;
+}
+
+/* Event Details menu, optional cards, package checkmark, and package text fixes v364 */
+.screen-home .home .menu-toggle,
+.screen-home .menu-toggle {
+  display:flex !important;
+  flex-direction:column !important;
+  position:fixed !important;
+  left:26px !important;
+  top:26px !important;
+  width:70px !important;
+  height:60px !important;
+  z-index:5000 !important;
+  opacity:1 !important;
+  visibility:visible !important;
+  pointer-events:auto !important;
+}
+.screen-home .home .menu-toggle span,
+.screen-home .menu-toggle span {
+  display:block !important;
+  width:46px !important;
+  height:5px !important;
+  margin:0 0 9px !important;
+  background:#fff !important;
+  border-radius:4px !important;
+  box-shadow:0 1px 5px rgba(0,0,0,.22) !important;
+}
+.screen-home .home.menu-open .menu-toggle,
+.screen-home .home.menu-open .menu-click-zone {
+  display:none !important;
+}
+.screen-home .package-builder-toggle:not(.is-edit-mode) {
+  background:#20b45b !important;
+  border-color:#20b45b !important;
+  color:#fff !important;
+}
+.screen-home .package-builder-toggle:not(.is-edit-mode) svg,
+.screen-home .package-builder-toggle:not(.is-edit-mode) svg path {
+  stroke:#fff !important;
+  fill:none !important;
+}
+.screen-home .event-dashboard-grid:not(.has-videography) .tile-video-details,
+.screen-home .event-dashboard-grid:not(.has-photo-booth) .tile-photo-booth,
+.screen-home .event-dashboard-grid:not(.has-photo-book) .tile-book,
+.screen-home .event-dashboard-grid:not(.has-content-creation) .tile-content-creation {
+  opacity:1 !important;
+  background:rgba(255,255,255,.5) !important;
+}
+.screen-home .event-dashboard-grid:not(.has-videography) .tile-video-details .included-copy,
+.screen-home .event-dashboard-grid:not(.has-videography) .tile-video-details .included-action,
+.screen-home .event-dashboard-grid:not(.has-photo-booth) .tile-photo-booth .included-copy,
+.screen-home .event-dashboard-grid:not(.has-photo-booth) .tile-photo-booth .included-action,
+.screen-home .event-dashboard-grid:not(.has-photo-book) .tile-book .included-copy,
+.screen-home .event-dashboard-grid:not(.has-photo-book) .tile-book .included-action,
+.screen-home .event-dashboard-grid:not(.has-content-creation) .tile-content-creation .included-copy,
+.screen-home .event-dashboard-grid:not(.has-content-creation) .tile-content-creation .included-action {
+  display:none !important;
+}
+.screen-home .event-dashboard-grid:not(.has-videography) .tile-video-details .addon-badge,
+.screen-home .event-dashboard-grid:not(.has-photo-booth) .tile-photo-booth .addon-badge,
+.screen-home .event-dashboard-grid:not(.has-photo-book) .tile-book .addon-badge,
+.screen-home .event-dashboard-grid:not(.has-content-creation) .tile-content-creation .addon-badge {
+  display:inline-flex !important;
+}
+.screen-home .event-dashboard-grid:not(.has-videography) .tile-video-details .addon-copy,
+.screen-home .event-dashboard-grid:not(.has-photo-booth) .tile-photo-booth .addon-copy,
+.screen-home .event-dashboard-grid:not(.has-photo-book) .tile-book .addon-copy,
+.screen-home .event-dashboard-grid:not(.has-content-creation) .tile-content-creation .addon-copy {
+  display:block !important;
+  opacity:.55 !important;
+}
+.screen-home .event-dashboard-grid:not(.has-videography) .tile-video-details .addon-action,
+.screen-home .event-dashboard-grid:not(.has-photo-booth) .tile-photo-booth .addon-action,
+.screen-home .event-dashboard-grid:not(.has-photo-book) .tile-book .addon-action,
+.screen-home .event-dashboard-grid:not(.has-content-creation) .tile-content-creation .addon-action {
+  display:block !important;
+  position:absolute !important;
+  right:26px !important;
+  bottom:12px !important;
+  color:#0428a4 !important;
+  opacity:1 !important;
+}
+
+/* Smaller menu icon, remove stray click box, restore package checkmark v365 */
+.screen-home .home .menu-toggle,
+.screen-home .menu-toggle {
+  left:22px !important;
+  top:22px !important;
+  width:44px !important;
+  height:36px !important;
+  background:transparent !important;
+  border:0 !important;
+  padding:0 !important;
+  box-shadow:none !important;
+}
+.screen-home .home .menu-toggle span,
+.screen-home .menu-toggle span {
+  width:34px !important;
+  height:4px !important;
+  margin:0 0 7px !important;
+  background:#fff !important;
+  box-shadow:0 1px 4px rgba(0,0,0,.18) !important;
+}
+.screen-home .home .menu-click-zone,
+.screen-home .menu-click-zone {
+  display:none !important;
+  pointer-events:none !important;
+  width:0 !important;
+  height:0 !important;
+  background:transparent !important;
+  border:0 !important;
+  box-shadow:none !important;
+}
+.screen-home .package-builder-toggle:not(.is-edit-mode) {
+  width:28px !important;
+  height:28px !important;
+  min-width:0 !important;
+  border:0 !important;
+  border-radius:0 !important;
+  background:transparent !important;
+  color:#23834d !important;
+  box-shadow:none !important;
+  padding:0 !important;
+}
+.screen-home .package-builder-toggle:not(.is-edit-mode) svg {
+  width:26px !important;
+  height:26px !important;
+  display:block !important;
+  fill:none !important;
+  stroke:currentColor !important;
+  stroke-width:2.4 !important;
+  stroke-linecap:round !important;
+  stroke-linejoin:round !important;
+}
+.screen-home .package-builder-toggle:not(.is-edit-mode) svg path {
+  stroke:currentColor !important;
+  fill:none !important;
+}
+
+/* Event Details top bar parity, title restore, and bottom breathing room v366 */
+.screen-home .home::after {
+  content:"" !important;
+  position:fixed !important;
+  left:76px !important;
+  top:0 !important;
+  width:1px !important;
+  height:68px !important;
+  background:rgba(255,255,255,.75) !important;
+  z-index:1201 !important;
+  pointer-events:none !important;
+}
+.screen-home .client-name {
+  display:block !important;
+  opacity:1 !important;
+  visibility:visible !important;
+  position:absolute !important;
+  left:405px !important;
+  top:82px !important;
+  z-index:80 !important;
+  color:#333 !important;
+  font-size:54px !important;
+  line-height:1.1 !important;
+  font-weight:300 !important;
+}
+.screen-home .event-dashboard-grid {
+  padding-bottom:260px !important;
+  box-sizing:content-box !important;
+}
+.artboard.screen-home,
+.screen-home.artboard,
+.screen-home .home {
+  min-height:2360px !important;
+  height:2360px !important;
+}
+.fit-box.screen-home {
+  height:calc(2360px * var(--scale, 1)) !important;
+}
+body.body-home .stage {
+  padding-bottom:180px !important;
+}
+
+/* Restore Event Details blue bar title and normal client name v367 */
+.screen-home .client-name {
+  display:block !important;
+  opacity:1 !important;
+  visibility:visible !important;
+  position:absolute !important;
+  left:405px !important;
+  top:94px !important;
+  z-index:80 !important;
+  color:#333 !important;
+  font-size:28px !important;
+  line-height:1.2 !important;
+  font-weight:300 !important;
+}
+.screen-home .home-title-bar {
+  position:fixed !important;
+  left:102px !important;
+  top:18px !important;
+  z-index:1202 !important;
+  color:#fff !important;
+  font-size:24px !important;
+  font-weight:500 !important;
+  line-height:32px !important;
+  margin:0 !important;
+  pointer-events:none !important;
+}
+
+/* Thin completion status bars on Event Details cards v368 */
+.screen-home .event-dashboard-grid .tile.status-tile {
+  position:relative !important;
+  overflow:hidden !important;
+}
+.screen-home .event-dashboard-grid .tile.status-tile::before {
+  content:"" !important;
+  position:absolute !important;
+  left:0 !important;
+  top:0 !important;
+  width:100% !important;
+  height:3px !important;
+  z-index:6 !important;
+  pointer-events:none !important;
+}
+.screen-home .event-dashboard-grid .tile.status-tile.is-missing::before {
+  background:#e04545 !important;
+}
+.screen-home .event-dashboard-grid .tile.status-tile.is-complete::before {
+  background:#20b45b !important;
+}
+
+/* Misc required fields and brighter thinner status line v369 */
+.screen-home .event-dashboard-grid .tile.status-tile::before {
+  height:1px !important;
+}
+.screen-home .event-dashboard-grid .tile.status-tile.is-missing::before {
+  background:#ff1e1e !important;
+}
+
+/* Put completion status color on the true top edge of Event Details cards v370 */
+.screen-home .event-dashboard-grid .tile.status-tile {
+  border-top-width:1px !important;
+  border-top-style:solid !important;
+}
+.screen-home .event-dashboard-grid .tile.status-tile::before {
+  display:none !important;
+  content:none !important;
+}
+.screen-home .event-dashboard-grid .tile.status-tile.is-missing {
+  border-top-color:#ff1e1e !important;
+}
+.screen-home .event-dashboard-grid .tile.status-tile.is-complete {
+  border-top-color:#20b45b !important;
+}
+
+/* Trial: green Miscellaneous card title when completed v371 */
+.screen-home .event-dashboard-grid .tile-misc.status-tile.is-complete h3 {
+  color:#20b45b !important;
+}
+
+/* Undo green completed Miscellaneous title trial v372 */
+.screen-home .event-dashboard-grid .tile-misc.status-tile.is-complete h3 {
+  color:#333 !important;
+}
