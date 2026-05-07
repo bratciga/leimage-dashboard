@@ -9687,3 +9687,11 @@ body.is-client .package-line-control button[data-delta="-1"].is-locked-min {
 .artboard.screen-misc,
 .screen-misc .dashboard-page { height:3600px !important; }
 .artboard.screen-misc { overflow:visible !important; }
+
+/* Keep the package edit/done tool visible in the package box v327 */
+.screen-home .package .package-builder-toggle {
+  opacity:1 !important;
+  pointer-events:auto !important;
+  display:inline-flex !important;
+  z-index:25 !important;
+}
