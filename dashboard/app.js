@@ -1,3 +1,5 @@
+const persistedMisc = (() => { try { return JSON.parse(localStorage.getItem('wedding-dashboard-misc') || '{}'); } catch { return {}; } })();
+
 const state = {
   loggedIn: sessionStorage.getItem('wedding-dashboard-auth') === '1',
   route: location.hash.replace('#', '') || 'home',
@@ -21,6 +23,14 @@ const state = {
   googlePlacesLoading: false,
   paymentMethod: 'credit-card',
   paymentAmount: '',
+  miscGratuityChoice: persistedMisc.miscGratuityChoice || '',
+  miscGratuityAmount: persistedMisc.miscGratuityAmount || '',
+  miscGratuityAdded: !!persistedMisc.miscGratuityAdded,
+  miscGratuityNotice: '',
+  miscSneakPeekAdded: !!persistedMisc.miscSneakPeekAdded,
+  miscSneakPeekAddedAt: Number(persistedMisc.miscSneakPeekAddedAt || 0),
+  miscFields: persistedMisc.miscFields || {},
+  miscSubmitWarning: '',
   eventInfoEditing: false,
   eventInfoPhoto: '',
   eventInfoPhotoX: 50,
@@ -114,6 +124,7 @@ function render() {
   requestAnimationFrame(() => {
     fit();
     syncHomeGridHeight();
+    syncMiscPackageAdds();
   });
 }
 function screenName() {
@@ -624,12 +635,92 @@ function paymentAdjustmentState() {
 function syncPaymentAdjustmentLayout() {
   requestAnimationFrame(() => syncHomeGridHeight());
 }
+function saveMiscState() {
+  localStorage.setItem('wedding-dashboard-misc', JSON.stringify({
+    miscGratuityChoice: state.miscGratuityChoice,
+    miscGratuityAmount: state.miscGratuityAmount,
+    miscGratuityAdded: state.miscGratuityAdded,
+    miscSneakPeekAdded: state.miscSneakPeekAdded,
+    miscSneakPeekAddedAt: state.miscSneakPeekAddedAt,
+    miscFields: state.miscFields || {}
+  }));
+}
+function miscFieldValue(key) { return (state.miscFields || {})[key] || ''; }
+function miscFieldChecked(key) { return !!(state.miscFields || {})[key]; }
+function miscSneakPeekUndoAvailable() { return state.miscSneakPeekAdded && state.miscSneakPeekAddedAt && Date.now() - state.miscSneakPeekAddedAt < 24 * 60 * 60 * 1000; }
 function addPaymentAdjustment(type) {
   const labels = {discount:'Discount', gratuity:'Gratuity', other:'Other'};
   paymentAdjustmentState().push({id: Date.now() + Math.random(), type, label: labels[type] || 'Other', amount: 0, raw: '', renaming: false});
   updatePackageBalance();
   closePaymentPlusPopup();
   syncPaymentAdjustmentLayout();
+}
+function syncMiscGratuityAdjustment() {
+  const rows = paymentAdjustmentState();
+  const existingIndex = rows.findIndex(item => item.source === 'misc-gratuity');
+  const raw = String(state.miscGratuityAmount || '').replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');
+  const amount = raw === '' ? 0 : Number(raw || 0);
+  if (state.miscGratuityChoice !== 'yes' || amount <= 0) {
+    if (existingIndex >= 0) rows.splice(existingIndex, 1);
+    state.miscGratuityAdded = false;
+  } else if (existingIndex >= 0) {
+    rows[existingIndex] = {...rows[existingIndex], type:'gratuity', label:'Gratuity', amount, raw: amount.toFixed(2), renaming:false, source:'misc-gratuity'};
+  } else {
+    rows.push({id:'misc-gratuity', type:'gratuity', label:'Gratuity', amount, raw: amount.toFixed(2), renaming:false, source:'misc-gratuity'});
+  }
+  saveMiscState();
+  updatePackageBalance();
+  syncPaymentAdjustmentLayout();
+}
+function setMiscGratuityChoice(value) {
+  state.miscGratuityChoice = value;
+  state.miscGratuityNotice = '';
+  if (value !== 'yes') { state.miscGratuityAmount = ''; state.miscGratuityAdded = false; }
+  syncMiscGratuityAdjustment();
+  saveMiscState();
+  render();
+}
+function setMiscGratuityAmount(value) {
+  const raw = String(value || '').replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');
+  const parts = raw.split('.');
+  state.miscGratuityAmount = parts.length > 1 ? `${parts[0]}.${parts.slice(1).join('').slice(0, 2)}` : raw;
+  syncMiscGratuityAdjustment();
+  saveMiscState();
+}
+function syncMiscPackageAdds() {
+  if (state.route !== 'home' || !state.miscSneakPeekAdded) return;
+  if (!document.querySelector('[data-upgrade-line="sneak-peek"]')) addPackageUpgrade('sneak-peek', 1, {keepChoiceOpen:true});
+  updatePackageBalance();
+  syncHomeGridHeight();
+}
+function addSneakPeekFromMisc() {
+  if (state.miscSneakPeekAdded) return;
+  state.miscSneakPeekAdded = true;
+  state.miscSneakPeekAddedAt = Date.now();
+  saveMiscState();
+  render();
+}
+function undoSneakPeekFromMisc() {
+  if (!miscSneakPeekUndoAvailable()) return;
+  state.miscSneakPeekAdded = false;
+  state.miscSneakPeekAddedAt = 0;
+  removePackageUpgrade('sneak-peek');
+  saveMiscState();
+  render();
+}
+function validateMiscSubmit() {
+  const unchecked = Array.from(document.querySelectorAll('[data-misc-required]')).some(input => !input.checked);
+  const missingRadio = ['vendor-meal', 'miscGratuityChoice'].some(name => !document.querySelector(`input[name="${name}"]:checked`));
+  const gratuityNeedsAdd = state.miscGratuityChoice === 'yes' && (!state.miscGratuityAdded || Number(state.miscGratuityAmount || 0) <= 0);
+  if (unchecked || missingRadio || gratuityNeedsAdd) {
+    state.miscSubmitWarning = 'Please complete all required confirmations before submitting.';
+    render();
+    setTimeout(() => document.querySelector('.misc-submit-warning')?.scrollIntoView({behavior:'smooth', block:'center'}), 0);
+    return false;
+  }
+  state.miscSubmitWarning = 'Miscellaneous info submitted.';
+  render();
+  return true;
 }
 function paymentAdjustmentTotal() {
   return paymentAdjustmentState().reduce((sum, row) => sum + Number(row.amount || 0), 0);
@@ -1869,32 +1960,38 @@ function field(label, cls='', value='') { return `<label class="${cls}"><span cl
 function vendors() {
   return `<article class="card vendor-info"><h2>Your vendors</h2><p>Coordinating with all parties involved helps us to provide you with the best photos/video possible, please take a moment to fill out the contact info for the following vendors.</p><button class="blue-btn vendor-submit">SUBMIT VENDORS LIST</button></article><section class="abs vendor-list">${state.vendors.map(v => `<article class="vendor-card"><h3>${v[0]}</h3><div class="vendor-fields">${field('Name','',v[1])}${field('Website','',v[2])}${field('Email','',v[3])}</div></article>`).join('')}</section>`;
 }
-function miscChoice(label) { return `<label class="misc-choice"><input type="checkbox"><span>${label}</span></label>`; }
-function miscRadio(name, label) { return `<label class="misc-choice"><input type="radio" name="${name}"><span>${label}</span></label>`; }
-function miscInput(label, placeholder = '', cls = '') { return `<label class="misc-input ${cls}"><span>${label}</span><input placeholder="${placeholder}"></label>`; }
-function miscTextarea(label, placeholder = '', cls = '') { return `<label class="misc-input ${cls}"><span>${label}</span><textarea placeholder="${placeholder}"></textarea></label>`; }
-function miscSection(title, body) { return `<article class="misc-section"><h3>${title}</h3><div class="misc-section-body">${body}</div></article>`; }
+function miscChoice(label, key = label) { return `<label class="misc-choice"><input type="checkbox" data-misc-required data-misc-check="${key}" ${miscFieldChecked(key) ? 'checked' : ''}><span>${label}</span></label>`; }
+function miscRadio(name, label, value = label) { const checkedValue = name === 'miscGratuityChoice' ? state.miscGratuityChoice : miscFieldValue(name); return `<label class="misc-choice"><input type="radio" name="${name}" value="${value}" data-misc-radio="${name}" ${checkedValue === value ? 'checked' : ''}><span>${label}</span></label>`; }
+function miscInput(label, placeholder = '', cls = '', key = '') { const attr = key ? ` data-misc-text="${key}" value="${miscFieldValue(key)}"` : ''; return `<label class="misc-input ${cls}"><span>${label}</span><input placeholder="${placeholder}"${attr}></label>`; }
+function miscTextarea(label, placeholder = '', cls = '', key = '') { const attr = key ? ` data-misc-text="${key}"` : ''; return `<label class="misc-input ${cls}"><span>${label}</span><textarea placeholder="${placeholder}"${attr}>${key ? miscFieldValue(key) : ''}</textarea></label>`; }
+function miscPencilIcon() { return `<svg viewBox="0 0 494.936 494.936" aria-hidden="true"><path d="M389.844 182.85c-6.743 0-12.21 5.467-12.21 12.21v222.968c0 23.562-19.174 42.735-42.736 42.735H67.157c-23.562 0-42.736-19.174-42.736-42.735V150.285c0-23.562 19.174-42.735 42.736-42.735h267.741c6.743 0 12.21-5.467 12.21-12.21s-5.467-12.21-12.21-12.21H67.157C30.126 83.13 0 113.255 0 150.285v267.743c0 37.029 30.126 67.155 67.157 67.155h267.741c37.03 0 67.156-30.126 67.156-67.155V195.061c0-6.743-5.467-12.211-12.21-12.211z"></path><path d="M483.876 20.791c-14.72-14.72-38.669-14.714-53.377 0L221.352 229.944c-.28.28-3.434 3.559-4.251 5.396l-28.963 65.069c-2.057 4.619-1.056 10.027 2.521 13.6 2.337 2.336 5.461 3.576 8.639 3.576 1.675 0 3.362-.346 4.96-1.057l65.07-28.963c1.83-.815 5.114-3.97 5.396-4.25L483.876 74.169c7.131-7.131 11.06-16.61 11.06-26.692 0-10.081-3.929-19.562-11.06-26.686zM466.61 56.897 257.457 266.05c-.035.036-.055.078-.089.107l-33.989 15.131L238.51 247.3c.03-.036.071-.055.107-.09L447.765 38.058c5.038-5.039 13.819-5.033 18.846.005 2.518 2.51 3.905 5.855 3.905 9.414 0 3.559-1.389 6.903-3.906 9.42z"></path></svg>`; }
+function miscVendorCard(title, required = false) {
+  const namePlaceholder = title === 'Wedding Venue Contact' ? 'Full name' : 'Full name or company';
+  const websitePlaceholders = {
+    'Wedding Venue Contact': 'Venue website',
+    Photographer: 'Photographer website',
+    Videographer: 'Videographer website',
+    'DJ or Band': 'DJ or band website',
+    Officiant: 'Officiant website',
+    'Hair & Makeup': 'Hair and makeup website',
+    Florist: 'Florist website',
+    Cake: 'Cake vendor website'
+  };
+  return `<article class="misc-vendor-card"><h4>${title}${required ? ' *' : ''}</h4><div class="misc-vendor-fields">${miscInput('Name',namePlaceholder, '', `vendor-${title}-name`)}${miscInput('Website',websitePlaceholders[title] || 'Vendor website', '', `vendor-${title}-website`)}${miscInput('Email','Email address', '', `vendor-${title}-email`)}</div></article>`;
+}
+function miscSection(title, body, cls = '') { return `<article class="misc-section ${cls}"><h3>${title}</h3><div class="misc-section-body">${body}</div></article>`; }
 function misc() {
-  const vendorFields = [
-    ['Wedding Venue Contact', "If you haven't provided this information already, please list the name, email, and phone number for your wedding venue contact."],
-    ['Photographer', 'Please list the company name, contact person, and/or website.'],
-    ['Videographer', 'Please list the company name, contact person, and/or website.'],
-    ['DJ or Band', 'Please list the company name, contact person, and/or website.'],
-    ['Officiant', 'Please list the company name, contact person, and/or website.'],
-    ['Hair & Makeup', 'Please list the company name, contact person, and/or website.'],
-    ['Florist', 'Please list the company name, contact person, and/or website.'],
-    ['Cake', 'Please list the company name, contact person, and/or website.']
-  ];
-  return `<h2 class="abs misc-main-title">Miscellaneous</h2><article class="card misc-info"><h2>Miscellaneous info</h2><p>Please review these event notes and confirmations so our team has the information needed before the wedding day.</p></article><section class="abs misc-form-list">
-    ${miscSection('Vendor Meal', `<p>Your photographer and videographer begin preparing for your wedding early and are on their feet throughout the day.</p><p>We ask that couples provide a vendor meal and allow the team at least a 20 minute break to eat and rest. Venues often serve vendors after all guests have been served, but that can delay the team from eating and preparing for the next event.</p><p>Please request that our team is served <strong>at the same time as guests</strong> so they have enough time to rest, use the restroom, eat, and prepare for the next timeline event.</p><div class="misc-choice-row">${miscRadio('vendor-meal','Sure, we will provide a vendor meal')}${miscRadio('vendor-meal','No, I need more information')}</div>`)}
-    ${miscSection('Gratuity / Tip', `<p>We keep our package prices competitive and do not include gratuity in the package total. Any tip you feel is deserved is greatly appreciated. Please tip your photographer and videographer directly in separate payments, or add the tip to your final balance.</p>${miscChoice('I understand')}`)}
-    ${miscSection('Add Gratuity to Final Balance', `<p>Would you like to add a tip to the final balance? A 10 to 20 percent gratuity is industry standard.</p><div class="misc-choice-row">${miscRadio('tip-balance','Yes')}${miscRadio('tip-balance','No')}</div>`)}
-    ${miscSection('Family Photos', `<p>You provided a family shot list for required group photos during your wedding. Please choose a point person who knows the family and can help gather everyone for these photos. Please also give a copy of the shot list to that point person.</p><p>Our team is not familiar with every family member, so photos not listed on the family shot list may not be taken unless requested by the couple that day.</p>${miscChoice('I understand')}${miscInput('Point Person Name','Full name')}`)}
-    ${miscSection('Day of Coordination', `<p>Our team will do their best to follow the schedule based on the timeline you provided. However, the team will not serve as coordinators or planners on the wedding day. If the schedule changes or runs late, the team cannot be held responsible for photos not captured due to time constraints.</p>${miscChoice('I understand')}`)}
-    ${miscSection('Photo & Video Completion', `<p>After the wedding, you can expect to receive your wedding photos and/or video in approximately 8 to 11 weeks. You will receive an email from nikola@leimageinc.com with links to access your photos and/or video. Please check your spam folder as well.</p>${miscChoice('I understand')}`)}
-    ${miscSection('Other Wedding Vendors', `<p>We often coordinate with your other wedding vendors while preparing for the wedding day. Please answer the questions below about your vendor team.</p><div class="misc-vendor-grid">${vendorFields.map((item, index) => miscTextarea(`${item[0]}${index === 0 ? ' *' : ''}`, item[1])).join('')}</div>`)}
+  const vendorFields = ['Wedding Venue Contact', 'Photographer', 'Videographer', 'DJ or Band', 'Officiant', 'Hair & Makeup', 'Florist', 'Cake'];
+  return `<h2 class="abs misc-main-title">Miscellaneous</h2><article class="card misc-info"><h2>Miscellaneous info</h2><p>Please review these final wedding day details so our team knows how to prepare, who to coordinate with, and what has been confirmed before your event.</p></article><section class="abs misc-form-list">
+    ${miscSection('Vendor Meal', `<p>Your photographer and videographer begin preparing for your wedding early and are on their feet throughout the day.</p><p>We ask that couples provide a vendor meal and allow the team at least a 20 minute break to eat and rest. Venues often serve vendors after all guests have been served, but that can delay the team from eating and preparing for the next event.</p><p>Please request that our team is served <strong>at the same time as guests</strong> so they have enough time to rest, use the restroom, eat, and prepare for the next timeline event.</p><div class="misc-choice-row">${miscRadio('vendor-meal','Sure, we will provide a vendor meal','vendor-meal-yes')}${miscRadio('vendor-meal','No, I need more information','vendor-meal-no')}</div>`)}
+    ${miscSection('Gratuity / Tip', `<p>We keep our package prices competitive and do not include gratuity in the package total. Any tip you feel is deserved is greatly appreciated. Please tip your photographer and videographer directly in separate payments, or add the tip to your final balance.</p>${miscChoice('I understand','gratuity-understand')}`)}
+    ${miscSection('Add Gratuity to Final Balance', `<p>Would you like to add a tip to the final balance? A 10 to 20 percent gratuity is industry standard.</p><div class="misc-choice-row">${miscRadio('miscGratuityChoice','Yes','yes')}${miscRadio('miscGratuityChoice','No','no')}</div>${state.miscGratuityChoice === 'yes' ? `<div class="misc-gratuity-panel ${state.miscGratuityAdded ? 'is-added' : ''}"><p>Thank you! Please enter the gratuity amount you would like added to your final balance.</p><div class="misc-gratuity-row"><label class="misc-input misc-gratuity-input"><span>Gratuity amount</span><div class="misc-money-input"><span>$</span><input type="text" inputmode="decimal" value="${state.miscGratuityAmount}" placeholder="0.00" data-misc-gratuity-amount ${state.miscGratuityAdded ? 'readonly tabindex="-1"' : ''}></div></label><button type="button" class="blue-btn misc-gratuity-add ${state.miscGratuityAdded ? 'is-added' : ''}" data-misc-gratuity-add ${state.miscGratuityAdded ? 'disabled' : ''}>${state.miscGratuityAdded ? 'Added to balance' : 'Add to balance'}</button>${state.miscGratuityAdded ? `<button type="button" class="misc-gratuity-edit" data-misc-gratuity-edit aria-label="Edit gratuity">${miscPencilIcon()}</button>` : ''}</div></div>` : ''}`)}
+    ${miscSection('Family Photos', `<p>You provided a family shot list for required group photos during your wedding. Please choose a point person who knows the family and can help gather everyone for these photos. Please also give a copy of the shot list to that point person.</p><p>Our team is not familiar with every family member, so photos not listed on the family shot list may not be taken unless requested by the couple that day.</p>${miscChoice('I understand','family-understand')}${miscInput('Point Person Name','Full name', '', 'family-point-person')}`)}
+    ${miscSection('Day of Coordination', `<p>Our team will do their best to follow the schedule based on the timeline you provided. However, the team will not serve as coordinators or planners on the wedding day. If the schedule changes or runs late, the team cannot be held responsible for photos not captured due to time constraints.</p>${miscChoice('I understand','coordination-understand')}`)}
+    ${miscSection('Photo & Video Completion', `<p>After the wedding, you can expect to receive your wedding photos and/or video in approximately 8 to 11 weeks. You will receive an email from nikola@leimageinc.com with links to access your photos and/or video. Please check your spam folder as well.</p>${miscChoice('I understand','completion-understand')}<div class="misc-sneak-peek"><p>Need a few photos sooner? Add our Sneak Peek package to receive 50 edited preview photos, a wedding photo reel, and a 7 business day turnaround.</p><button type="button" class="blue-btn misc-sneak-peek-add ${state.miscSneakPeekAdded ? 'is-added' : ''}" data-misc-sneak-peek-add ${state.miscSneakPeekAdded ? 'disabled' : ''}>${state.miscSneakPeekAdded ? 'Added to package' : 'Add Sneak Peek'}</button>${miscSneakPeekUndoAvailable() ? '<button type="button" class="misc-sneak-peek-undo" data-misc-sneak-peek-undo aria-label="Undo Sneak Peek">↶</button>' : ''}</div>`)}
+    ${miscSection('Other Wedding Vendors', `<p>We often coordinate with your other wedding vendors while preparing for the wedding day. Please answer the questions below about your vendor team.</p><div class="misc-vendor-grid">${vendorFields.map((item, index) => miscVendorCard(item, index === 0)).join('')}</div>`, 'misc-vendors-section')}
     ${miscSection('Wedding Planning Call', `<p>If you have questions about the event timeline or would like to review the final schedule with us, you can schedule a planning call below.</p><a class="misc-call-btn" href="https://calendly.com/leimage/timeline" target="_blank" rel="noopener">Set up a call</a>`)}
-    <div class="misc-footer"><button class="blue-btn misc-submit">SUBMIT MISCELLANEOUS INFO</button></div>
+    <div class="misc-footer">${state.miscSubmitWarning ? `<div class="misc-submit-warning">${state.miscSubmitWarning}</div>` : ''}<button type="button" class="blue-btn misc-submit" data-misc-submit>SUBMIT MISCELLANEOUS INFO</button></div>
   </section>`;
 }
 function timeline() {
@@ -1965,6 +2062,16 @@ function bind() {
   }));
   document.querySelector('[data-payment-amount]')?.addEventListener('input', e => { state.paymentAmount = formatPaymentAmount(e.target.value); e.target.value = state.paymentAmount; });
   document.querySelector('[data-payment-amount]')?.addEventListener('blur', e => { state.paymentAmount = formatPaymentAmount(e.target.value); e.target.value = state.paymentAmount; });
+  document.querySelectorAll('[data-misc-check]').forEach(input => input.addEventListener('change', e => { state.miscFields[e.target.dataset.miscCheck] = e.target.checked; saveMiscState(); }));
+  document.querySelectorAll('[data-misc-text]').forEach(input => input.addEventListener('input', e => { state.miscFields[e.target.dataset.miscText] = e.target.value; saveMiscState(); }));
+  document.querySelectorAll('[data-misc-radio]').forEach(input => input.addEventListener('change', e => { if (e.target.dataset.miscRadio === 'miscGratuityChoice') setMiscGratuityChoice(e.target.value); else { state.miscFields[e.target.dataset.miscRadio] = e.target.value; saveMiscState(); } }));
+  document.querySelector('[data-misc-gratuity-amount]')?.addEventListener('input', e => { if (state.miscGratuityAdded) return; const raw = String(e.target.value || '').replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1'); const parts = raw.split('.'); state.miscGratuityAmount = parts.length > 1 ? `${parts[0]}.${parts.slice(1).join('').slice(0, 2)}` : raw; state.miscGratuityNotice = ''; e.target.value = state.miscGratuityAmount; saveMiscState(); });
+  document.querySelector('[data-misc-gratuity-amount]')?.addEventListener('blur', e => { if (state.miscGratuityAdded) return; const raw = String(e.target.value || '').replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1'); state.miscGratuityAmount = raw ? Number(raw).toFixed(2) : ''; e.target.value = state.miscGratuityAmount; saveMiscState(); });
+  document.querySelector('[data-misc-gratuity-add]')?.addEventListener('click', e => { e.preventDefault(); if (state.miscGratuityAdded) return; syncMiscGratuityAdjustment(); if (Number(state.miscGratuityAmount || 0) > 0) { state.miscGratuityAdded = true; state.miscGratuityNotice = ''; saveMiscState(); render(); } });
+  document.querySelector('[data-misc-gratuity-edit]')?.addEventListener('click', e => { e.preventDefault(); state.miscGratuityAdded = false; state.miscGratuityNotice = ''; saveMiscState(); render(); setTimeout(() => document.querySelector('[data-misc-gratuity-amount]')?.focus(), 0); });
+  document.querySelector('[data-misc-sneak-peek-add]')?.addEventListener('click', e => { e.preventDefault(); addSneakPeekFromMisc(); });
+  document.querySelector('[data-misc-sneak-peek-undo]')?.addEventListener('click', e => { e.preventDefault(); undoSneakPeekFromMisc(); });
+  document.querySelector('[data-misc-submit]')?.addEventListener('click', e => { e.preventDefault(); validateMiscSubmit(); });
   document.querySelectorAll('[data-route]').forEach(b => b.addEventListener('click', () => { if (b.dataset.route === 'timeline') syncTimelineTeamFromPackage(); state.route=b.dataset.route; state.menuOpen=false; location.hash=state.route; render(); }));
   document.querySelectorAll('[data-upgrade-add]').forEach(b => b.addEventListener('click', e => { e.preventDefault(); e.stopPropagation(); addPackageUpgrade(b.dataset.upgradeAdd); }));
   document.querySelectorAll('[data-upgrade-choice]').forEach(b => b.addEventListener('click', e => { e.preventDefault(); e.stopPropagation(); openUpgradeChoice(b.dataset.upgradeChoice); }));
