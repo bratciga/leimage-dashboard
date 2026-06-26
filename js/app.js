@@ -44,6 +44,7 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 async function initApp() {
+  document.body.classList.toggle('is-dashboard-embedded', new URLSearchParams(window.location.search).get('embedded') === '1');
   setFooterYear();
 
   // Initialize monogram builder
@@ -104,6 +105,15 @@ async function initApp() {
   const saveBtn = document.getElementById('save-project-btn');
   if (saveBtn) saveBtn.addEventListener('click', () => saveProject());
 
+  window.addEventListener('resize', notifyEmbeddedStudioHeight);
+  window.addEventListener('message', (event) => {
+    if (event?.data?.type !== 'dashboard-scroll-unscaled') return;
+    document.documentElement.style.setProperty('--embedded-parent-scroll', `${Math.max(0, Number(event.data.value) || 0)}px`);
+  });
+  const embeddedHeightObserver = new MutationObserver(() => notifyEmbeddedStudioHeight());
+  embeddedHeightObserver.observe(document.body, { childList:true, subtree:true, attributes:true, attributeFilter:['class','style'] });
+  notifyEmbeddedStudioHeight();
+
 }
 
 /* ================================================================
@@ -115,7 +125,53 @@ function setFooterYear() {
 }
 
 function getProjectToken() {
-  return new URLSearchParams(window.location.search).get('project') || '';
+  const params = new URLSearchParams(window.location.search);
+  return params.get('project') || params.get('token') || params.get('project_token') || '';
+}
+
+function formatMonogramDateLine(value) {
+  const raw = String(value || '').trim();
+  if (!raw) return '';
+  const date = /^\d{4}-\d{2}-\d{2}$/.test(raw) ? new Date(`${raw}T00:00:00`) : new Date(raw);
+  if (Number.isNaN(date.getTime())) return raw;
+  return date.toLocaleDateString('en-US', { month:'long', day:'numeric', year:'numeric' });
+}
+
+function formatMonogramNamesLine(value) {
+  const raw = String(value || '').trim();
+  if (!raw) return '';
+  const parts = raw.split(/\s*(?:&|\+|and)\s*/i).map(part => part.trim()).filter(Boolean);
+  if (parts.length >= 2) {
+    return parts.slice(0, 2).map(part => part.split(/\s+/)[0]).filter(Boolean).join(' & ');
+  }
+  return raw.split(/\s+/)[0] || raw;
+}
+
+function applyDefaultProjectMonogram(project = ActiveProjectRecord) {
+  const mono = window.MonogramBuilder?.state;
+  if (!mono) return;
+  const hasExisting = String(mono.line1 || '').trim() || String(mono.line2 || '').trim();
+  if (hasExisting) return;
+  const name = formatMonogramNamesLine(project?.client_name || project?.project_data?.client_name || '');
+  const dateLine = formatMonogramDateLine(project?.event_date || project?.project_data?.event_date || '');
+  if (!name && !dateLine) return;
+  mono.line1 = name;
+  mono.line2 = dateLine;
+  const line1 = document.getElementById('mono-line1');
+  const line2 = document.getElementById('mono-line2');
+  if (line1) line1.value = name;
+  if (line2) line2.value = dateLine;
+  window.MonogramBuilder.render?.();
+}
+
+function parseSavedBoolean(value, fallback = false) {
+  if (value === undefined || value === null) return fallback;
+  if (typeof value === 'boolean') return value;
+  if (typeof value === 'number') return value !== 0;
+  const normalized = String(value).trim().toLowerCase();
+  if (['true', '1', 'yes', 'on'].includes(normalized)) return true;
+  if (['false', '0', 'no', 'off'].includes(normalized)) return false;
+  return fallback;
 }
 
 function getEventSlug() {
@@ -223,6 +279,35 @@ function initWizardNavigation() {
   });
 }
 
+
+function notifyEmbeddedStudioHeight() {
+  if (!document.body.classList.contains('is-dashboard-embedded') || !window.parent || window.parent === window) return;
+  const activePanel = document.querySelector('.wizard-step-panel:not(.hidden)');
+  const progress = document.getElementById('wizard-progress-bar');
+  const panelBottom = activePanel ? activePanel.getBoundingClientRect().bottom : document.body.scrollHeight;
+  const progressTop = progress ? progress.getBoundingClientRect().top : 0;
+  const height = Math.ceil(Math.max(720, panelBottom - progressTop + 46));
+  window.parent.postMessage({ type: 'photo-booth-studio-height', height, step: WizardState.currentStep }, '*');
+}
+
+function resetEmbeddedStudioScroll() {
+  const reset = () => {
+    window.scrollTo(0, 0);
+    document.documentElement.scrollTop = 0;
+    document.body.scrollTop = 0;
+    if (document.body.classList.contains('is-dashboard-embedded') && window.parent && window.parent !== window) {
+      try {
+        window.parent.scrollTo(0, 0);
+        window.parent.document.querySelector('.stage')?.scrollTo?.(0, 0);
+      } catch (_) {}
+    }
+  };
+  reset();
+  requestAnimationFrame(reset);
+  setTimeout(reset, 80);
+  setTimeout(reset, 240);
+}
+
 function goToStep(step) {
   const prev = WizardState.currentStep;
   WizardState.currentStep = step;
@@ -232,12 +317,14 @@ function goToStep(step) {
     const panelStep = parseInt(panel.dataset.step, 10);
     if (panelStep === step) {
       panel.classList.remove('hidden');
-      // Scroll to top of panel
-      panel.scrollIntoView({ behavior: 'smooth', block: 'start' });
     } else {
       panel.classList.add('hidden');
     }
   });
+  resetEmbeddedStudioScroll();
+  notifyEmbeddedStudioHeight();
+  setTimeout(notifyEmbeddedStudioHeight, 120);
+  setTimeout(notifyEmbeddedStudioHeight, 360);
 
   // Update progress bar
   updateProgressBar(step);
@@ -248,6 +335,12 @@ function goToStep(step) {
     if (printSize) window.MonogramBuilder.updatePrintSize(printSize);
     const backdrop = document.getElementById('backdrop-value')?.value;
     if (backdrop) window.MonogramBuilder.updateBackdropColor(backdrop);
+    if (document.body.classList.contains('is-dashboard-embedded') && window.MonogramBuilder?.state) {
+      const mono = window.MonogramBuilder.state;
+      if (!mono.fontSize1 || mono.fontSize1 <= 0) mono.fontSize1 = 100;
+      if (!mono.fontSize2 || mono.fontSize2 <= 0) mono.fontSize2 = 80;
+      window.MonogramBuilder.render?.();
+    }
   }
 
   // If entering step 8 (review), populate it
@@ -411,6 +504,8 @@ function setGroupValue(group, value) {
 ================================================================ */
 function addZoomOverlays() {
   document.querySelectorAll('.lightbox-trigger').forEach(trigger => {
+    // Print cards contain a nested preview trigger; keep only the preview magnifier.
+    if (trigger.classList.contains('print-card') && trigger.querySelector('.print-preview.lightbox-trigger')) return;
     // Don't add if already has one
     if (trigger.querySelector('.zoom-icon-overlay')) return;
     const btn = document.createElement('button');
@@ -674,11 +769,11 @@ function buildPrintLayoutPreview() {
       const y = startY + i * (slotH + gap);
       container.appendChild(makePhotoSlot(3, y, 94, slotH, `Photo ${i + 1}`));
     }
-    // Monogram — same size as photo slots
+    // Monogram — centered inside the final strip slot instead of sitting low
     const mono = document.createElement('div');
     mono.className = 'monogram-placeholder';
     const monoY = startY + 4 * (slotH + gap);
-    mono.style.cssText = `left:3%; top:${monoY}%; width:94%; height:${slotH}%;`;
+    mono.style.cssText = `left:3%; top:${monoY}%; width:94%; height:${slotH}%; align-items:center; justify-content:center;`;
     addMonogramToPlaceholder(mono);
     container.appendChild(mono);
   } else {
@@ -724,8 +819,11 @@ function addMonogramToPlaceholder(container) {
   }
 
   const miniCanvas = document.createElement('canvas');
-  miniCanvas.style.maxWidth = is4x6 ? '80%' : '100%';
-  miniCanvas.style.maxHeight = is4x6 ? '80%' : '100%';
+  miniCanvas.style.maxWidth = is4x6 ? '64%' : '80%';
+  miniCanvas.style.maxHeight = is4x6 ? '64%' : '80%';
+  miniCanvas.style.transform = is4x6 ? 'translateX(4%)' : 'translateX(0)';
+  miniCanvas.style.display = 'block';
+  miniCanvas.style.objectFit = 'contain';
 
   // Crop to the monogram zone (bottom 96% — matching MONOGRAM_ZONE_HEIGHT_RATIO)
   const zoneRatio = 0.96;
@@ -855,6 +953,7 @@ function collectFormData() {
       colorsLinked:   mono.colorsLinked,
       fontSize1:      mono.fontSize1,
       fontSize2:      mono.fontSize2,
+      boldText:       Boolean(mono.boldText),
       offsetX1:       mono.offsetX1,
       offsetY1:       mono.offsetY1,
       offsetX2:       mono.offsetX2,
@@ -1151,9 +1250,22 @@ async function loadProject() {
       if (m.fontsLinked !== undefined) mono.fontsLinked = m.fontsLinked;
       if (m.textColor1 || m.text_color1) { mono.textColor1 = m.textColor1 || m.text_color1; const el = document.getElementById('mono-color1'); if (el) el.value = mono.textColor1; }
       if (m.textColor2 || m.text_color2) { mono.textColor2 = m.textColor2 || m.text_color2; const el = document.getElementById('mono-color2'); if (el) el.value = mono.textColor2; }
-      if (m.colorsLinked !== undefined) { mono.colorsLinked = m.colorsLinked; ['color-link-toggle','color-link-toggle-2'].forEach(id => { const btn = document.getElementById(id); if (btn) { btn.classList.toggle('linked', m.colorsLinked); btn.textContent = m.colorsLinked ? '🔗' : '🔓'; } }); }
+      if (m.colorsLinked !== undefined) { mono.colorsLinked = document.body.classList.contains('is-dashboard-embedded') ? false : m.colorsLinked; ['color-link-toggle','color-link-toggle-2'].forEach(id => { const btn = document.getElementById(id); if (btn) { btn.classList.toggle('linked', mono.colorsLinked); btn.textContent = mono.colorsLinked ? '🔗' : '🔓'; } }); }
+      if (document.body.classList.contains('is-dashboard-embedded')) mono.colorsLinked = false;
       if (m.fontSize1 !== undefined) mono.fontSize1 = parseInt(m.fontSize1, 10) || 0;
       if (m.fontSize2 !== undefined) mono.fontSize2 = parseInt(m.fontSize2, 10) || 0;
+      if (m.boldText !== undefined) {
+        mono.boldText = parseSavedBoolean(m.boldText, false);
+        const boldBtn = document.getElementById('mono-bold-toggle');
+        if (boldBtn) {
+          boldBtn.classList.toggle('active', mono.boldText);
+          boldBtn.setAttribute('aria-pressed', mono.boldText ? 'true' : 'false');
+        }
+      }
+      if (document.body.classList.contains('is-dashboard-embedded')) {
+        if (m.fontSize1 === undefined || !parseInt(m.fontSize1, 10)) mono.fontSize1 = 100;
+        if (m.fontSize2 === undefined || !parseInt(m.fontSize2, 10)) mono.fontSize2 = 80;
+      }
       if (m.offsetX1 !== undefined) mono.offsetX1 = parseInt(m.offsetX1, 10) || 0;
       if (m.offsetY1 !== undefined) mono.offsetY1 = parseInt(m.offsetY1, 10) || 0;
       if (m.offsetX2 !== undefined) mono.offsetX2 = parseInt(m.offsetX2, 10) || 0;
@@ -1165,6 +1277,9 @@ async function loadProject() {
       if (m.frameOffsetX !== undefined) mono.frameOffsetX = parseInt(m.frameOffsetX, 10) || 0;
       if (m.frameOffsetY !== undefined) mono.frameOffsetY = parseInt(m.frameOffsetY, 10) || 0;
       if (m.printSize) mono.printSize = m.printSize;
+      window.MonogramBuilder.render?.();
+    } else {
+      applyDefaultProjectMonogram(project);
     }
 
     // Navigate to saved step

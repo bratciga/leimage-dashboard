@@ -3068,6 +3068,37 @@ img, canvas, iframe, video {
 .btn-ghost.btn-xs:hover {
   background: rgba(4,40,164,0.06);
 }
+
+.mono-bold-toggle {
+  width: 2rem;
+  height: 2rem;
+  border: 1px solid rgba(4,40,164,0.18);
+  border-radius: 4px;
+  background: #fff;
+  color: var(--navy);
+  font-family: Georgia, serif;
+  font-size: 1rem;
+  font-weight: 800;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.mono-bold-toggle.active,
+.mono-bold-toggle[aria-pressed="true"] {
+  background: var(--navy);
+  color: #fff;
+  border-color: var(--navy);
+}
+
+.mono-bold-toggle:hover {
+  background: rgba(4,40,164,0.08);
+}
+
+.mono-bold-toggle.active:hover,
+.mono-bold-toggle[aria-pressed="true"]:hover {
+  background: var(--navy);
+}
+
 /* Hide Simple category heading when it only has None */
 .frame-category-label:empty {
   display: none;
@@ -3105,4 +3136,131 @@ img, canvas, iframe, video {
 }
 .btn-nudge:active {
   background: rgba(4,40,164,0.15);
+}
+
+
+/* Embedded Photo Booth Studio inside Event Dashboard */
+body.is-dashboard-embedded {
+  background:transparent !important;
+  min-height:auto !important;
+}
+body.is-dashboard-embedded .site-header,
+body.is-dashboard-embedded .event-banner,
+body.is-dashboard-embedded .site-footer {
+  display:none !important;
+}
+body.is-dashboard-embedded .container {
+  max-width:1180px !important;
+  padding:0 0 3rem !important;
+}
+body.is-dashboard-embedded .wizard-container {
+  margin:0 auto !important;
+}
+body.is-dashboard-embedded .wizard-progress-bar {
+  position:relative !important;
+  top:auto !important;
+  margin:0 0 1.25rem !important;
+  box-shadow:none !important;
+}
+body.is-dashboard-embedded footer {
+  display:none !important;
+}
+
+
+
+/* RESTORE 7:40 checkpoint: Step 7 preview follows parent scroll */
+body.is-dashboard-embedded #step-panel-7 .monogram-preview-wrap {
+  position:relative !important;
+  top:auto !important;
+  transform:translateY(var(--embedded-parent-scroll, 0px)) !important;
+}
+
+
+
+
+
+/* Embedded dashboard: Step 7 live preview sticks to the top during parent page scroll */
+body.is-dashboard-embedded #step-panel-7 .monogram-preview-wrap {
+  position:relative !important;
+  top:auto !important;
+  transform:translateY(max(0px, calc(var(--embedded-parent-scroll, 0px) - 240px))) !important;
+  z-index:80 !important;
+}
+
+
+/* Frame picker: keep the None card the same visual size as frame thumbnails */
+.frame-preview-inner.frame-preview-none {
+  width:100% !important;
+  aspect-ratio:2 / 1 !important;
+  min-height:36px !important;
+  display:flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+}
+.frame-preview-inner.frame-preview-none span {
+  font-size:1rem !important;
+  color:var(--text-light) !important;
+}
+
+
+/* Frame picker: do not let single-item categories stretch the None option */
+body.is-dashboard-embedded .frame-category-grid,
+.frame-category-grid {
+  grid-template-columns:repeat(3, minmax(0, 1fr)) !important;
+}
+
+
+/* Step 4 parking icons: consistent UI glyphs */
+.toggle-card-icon--parking,
+.toggle-card-icon--no {
+  width:2rem !important;
+  height:2rem !important;
+  border-radius:999px !important;
+  display:inline-flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+  font-family:Arial, Helvetica, sans-serif !important;
+  font-size:1.15rem !important;
+  font-weight:800 !important;
+  line-height:1 !important;
+}
+.toggle-card-icon--parking {
+  color:#fff !important;
+  background:var(--navy) !important;
+}
+.toggle-card-icon--no {
+  color:#fff !important;
+  background:#d75b52 !important;
+}
+
+
+/* Frame color swatches: keep active black circle same size as other colors */
+.frame-color-swatch.active {
+  transform:none !important;
+}
+
+/* Embedded Photo Booth Studio: align top wizard steps with studio width v92 */
+body.is-dashboard-embedded .wizard-steps-track,
+body.is-dashboard-embedded .wizard-fill-track {
+  max-width:1180px !important;
+  width:100% !important;
+}
+
+/* Embedded Photo Booth Studio: pastel blue Next buttons v93 */
+body.is-dashboard-embedded .wizard-next,
+body.is-dashboard-embedded .btn-primary.wizard-next {
+  background:#4aa6d4 !important;
+  color:#fff !important;
+}
+body.is-dashboard-embedded .wizard-next:hover,
+body.is-dashboard-embedded .btn-primary.wizard-next:hover,
+body.is-dashboard-embedded .wizard-next:focus,
+body.is-dashboard-embedded .btn-primary.wizard-next:focus {
+  background:#4aa6d4 !important;
+  box-shadow:0 4px 12px rgba(74,166,212,.28) !important;
+}
+
+/* Embedded Photo Booth Studio: pastel blue section title line v94 */
+body.is-dashboard-embedded .section-title {
+  border-bottom-color:#4aa6d4 !important;
 }

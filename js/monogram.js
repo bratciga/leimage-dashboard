@@ -78,6 +78,10 @@ const PADDING_RATIO = 0.02;
 // How much of the final PRINT the monogram strip occupies (bottom portion)
 const PRINT_STRIP_RATIO = 0.18;
 const FOUR_BY_SIX_DEFAULT_MONOGRAM_SCALE = 0.8;
+const DEFAULT_PRINT_STROKE_RATIO = 0.045;
+const EXTRA_BOLD_PRINT_STROKE_RATIO = 0.075;
+const DEFAULT_FRAME_BOLD_OFFSET = 2;
+const EXTRA_BOLD_FRAME_OFFSET = 4;
 
 /* ================================================================
    STATE
@@ -94,12 +98,13 @@ const MonogramState = {
   // Colors
   textColor1:     '#333333',
   textColor2:     '#333333',
-  colorsLinked:   true,
+  colorsLinked:   false,
   // Font sizes (0 = auto-fit)
   fontSize1:      0,
   fontSize2:      0,
   computedFontSize1: 0,
   computedFontSize2: 0,
+  boldText:       false,
   // Text offsets
   offsetX1:       0,
   offsetY1:       0,
@@ -130,11 +135,12 @@ const _defaultMonogramState = {
   fontsLinked:    true,
   textColor1:     '#333333',
   textColor2:     '#333333',
-  colorsLinked:   true,
+  colorsLinked:   false,
   fontSize1:      0,
   fontSize2:      0,
   computedFontSize1: 0,
   computedFontSize2: 0,
+  boldText:       false,
   offsetX1:       0,
   offsetY1:       0,
   offsetX2:       0,
@@ -544,12 +550,58 @@ function fitFontSize(ctx, text, fontFamily, maxWidth, maxSize, minSize = 16) {
   const lines = text.split('\n');
   const longest = lines.reduce((a, b) => a.length >= b.length ? a : b, '');
   let size = maxSize;
-  ctx.font = `${size}px "${fontFamily}"`;
+  ctx.font = `700 ${size}px "${fontFamily}"`;
   while (size > minSize && ctx.measureText(longest).width > maxWidth) {
     size -= 2;
-    ctx.font = `${size}px "${fontFamily}"`;
+    ctx.font = `700 ${size}px "${fontFamily}"`;
   }
   return size;
+}
+
+function getPrintStrokeRatio(state) {
+  return state.boldText ? EXTRA_BOLD_PRINT_STROKE_RATIO : DEFAULT_PRINT_STROKE_RATIO;
+}
+
+function getFrameBoldOffset(state) {
+  return state.boldText ? EXTRA_BOLD_FRAME_OFFSET : DEFAULT_FRAME_BOLD_OFFSET;
+}
+
+function drawBoldFrameImage(ctx, img, x, y, w, h, offset) {
+  const distance = Math.max(1, Math.round(offset));
+  const offsets = [
+    [-distance, 0], [distance, 0], [0, -distance], [0, distance],
+    [-distance, -distance], [distance, -distance], [-distance, distance], [distance, distance],
+  ];
+  offsets.forEach(([dx, dy]) => ctx.drawImage(img, x + dx, y + dy, w, h));
+  ctx.drawImage(img, x, y, w, h);
+}
+
+function setMonogramFont(ctx, size, fontFamily, state) {
+  const weight = state.boldText ? 800 : 700;
+  ctx.font = `${weight} ${size}px "${fontFamily}"`;
+}
+
+function drawPrintableText(ctx, text, x, y, color, size, state) {
+  const strokeWidth = Math.max(1.5, size * getPrintStrokeRatio(state));
+  ctx.save();
+  ctx.fillStyle = color;
+  ctx.strokeStyle = color;
+  ctx.lineWidth = strokeWidth;
+  ctx.lineJoin = 'round';
+  ctx.miterLimit = 2;
+  ctx.strokeText(text, x, y);
+  ctx.fillText(text, x, y);
+  ctx.restore();
+}
+
+function parseSavedBoolean(value, fallback = false) {
+  if (value === undefined || value === null) return fallback;
+  if (typeof value === 'boolean') return value;
+  if (typeof value === 'number') return value !== 0;
+  const normalized = String(value).trim().toLowerCase();
+  if (['true', '1', 'yes', 'on'].includes(normalized)) return true;
+  if (['false', '0', 'no', 'off'].includes(normalized)) return false;
+  return fallback;
 }
 
 /**
@@ -573,6 +625,7 @@ async function drawMonogramContent(ctx, spec, state, transparent = false) {
   const fScale  = (state.frameScale != null && state.frameScale > 0) ? state.frameScale : 1.0;
   const fOffX   = state.frameOffsetX || 0;
   const fOffY   = state.frameOffsetY || 0;
+  const frameBoldOffset = getFrameBoldOffset(state);
 
   if (!line1 && !line2) {
     if (!transparent) {
@@ -675,13 +728,13 @@ async function drawMonogramContent(ctx, spec, state, transparent = false) {
         }
         const drawX = centerX - drawW / 2 + fOffX;
         const drawY = (spec.h - drawH) / 2 + fOffY;
-        ctx.drawImage(frameImg, drawX, drawY, drawW, drawH);
+        drawBoldFrameImage(ctx, frameImg, drawX, drawY, drawW, drawH, frameBoldOffset);
       } else {
         const frameW = spec.w * fScale;
         const frameH = spec.h * fScale;
         const frameX = (spec.w - frameW) / 2 + fOffX;
         const frameY = (spec.h - frameH) / 2 + fOffY;
-        ctx.drawImage(frameImg, frameX, frameY, frameW, frameH);
+        drawBoldFrameImage(ctx, frameImg, frameX, frameY, frameW, frameH, frameBoldOffset);
       }
     }
   }
@@ -694,25 +747,23 @@ async function drawMonogramContent(ctx, spec, state, transparent = false) {
   ctx.textBaseline = 'alphabetic';
 
   if (line1) {
-    ctx.fillStyle = color1;
     const subLines1 = line1.split('\n');
     const sub1Size = subLines1.length > 1 ? Math.floor(size1 / subLines1.length * 1.2) : size1;
-    ctx.font = `${sub1Size}px "${font1}"`;
+    setMonogramFont(ctx, sub1Size, font1, state);
     const cx1 = textZoneCenterX + (state.offsetX1 || 0);
     subLines1.forEach((sl, i) => {
-      ctx.fillText(sl, cx1, cursor + sub1Size * 0.82 + i * sub1Size * 1.1 + (state.offsetY1 || 0));
+      drawPrintableText(ctx, sl, cx1, cursor + sub1Size * 0.82 + i * sub1Size * 1.1 + (state.offsetY1 || 0), color1, sub1Size, state);
     });
     cursor += (subLines1.length > 1 ? sub1Size * 1.1 * subLines1.length : size1) + lineGap;
   }
 
   if (line2) {
-    ctx.fillStyle = color2;
     const subLines2 = line2.split('\n');
     const sub2Size = subLines2.length > 1 ? Math.floor(size2 / subLines2.length * 1.2) : size2;
-    ctx.font = `${sub2Size}px "${font2}"`;
+    setMonogramFont(ctx, sub2Size, font2, state);
     const cx2 = textZoneCenterX + (state.offsetX2 || 0);
     subLines2.forEach((sl, i) => {
-      ctx.fillText(sl, cx2, cursor + sub2Size * 0.82 + i * sub2Size * 1.1 + (state.offsetY2 || 0));
+      drawPrintableText(ctx, sl, cx2, cursor + sub2Size * 0.82 + i * sub2Size * 1.1 + (state.offsetY2 || 0), color2, sub2Size, state);
     });
   }
 }
@@ -757,8 +808,8 @@ async function renderMonogram() {
   syncAutoFontSizeControls();
 }
 
-function getDefaultFontSizeDisplayValue() {
-  return 100;
+function getDefaultFontSizeDisplayValue(field = 1) {
+  return field === 2 ? 80 : 100;
 }
 
 function syncAutoFontSizeControls() {
@@ -766,19 +817,20 @@ function syncAutoFontSizeControls() {
   const fontSize1Range = document.getElementById('mono-fontsize1-range');
   const fontSize2Input = document.getElementById('mono-fontsize2');
   const fontSize2Range = document.getElementById('mono-fontsize2-range');
-  const defaultValue = getDefaultFontSizeDisplayValue();
+  const defaultValue1 = getDefaultFontSizeDisplayValue(1);
+  const defaultValue2 = getDefaultFontSizeDisplayValue(2);
 
   if (!MonogramState.fontSize1 || MonogramState.fontSize1 <= 0) {
-    if (fontSize1Input && fontSize1Input !== document.activeElement) fontSize1Input.value = String(defaultValue);
-    if (fontSize1Range) fontSize1Range.value = String(defaultValue);
+    if (fontSize1Input && fontSize1Input !== document.activeElement) fontSize1Input.value = String(defaultValue1);
+    if (fontSize1Range) fontSize1Range.value = String(defaultValue1);
   } else {
     if (fontSize1Input && fontSize1Input !== document.activeElement) fontSize1Input.value = String(MonogramState.fontSize1);
     if (fontSize1Range) fontSize1Range.value = String(MonogramState.fontSize1);
   }
 
   if (!MonogramState.fontSize2 || MonogramState.fontSize2 <= 0) {
-    if (fontSize2Input && fontSize2Input !== document.activeElement) fontSize2Input.value = String(defaultValue);
-    if (fontSize2Range) fontSize2Range.value = String(defaultValue);
+    if (fontSize2Input && fontSize2Input !== document.activeElement) fontSize2Input.value = String(defaultValue2);
+    if (fontSize2Range) fontSize2Range.value = String(defaultValue2);
   } else {
     if (fontSize2Input && fontSize2Input !== document.activeElement) fontSize2Input.value = String(MonogramState.fontSize2);
     if (fontSize2Range) fontSize2Range.value = String(MonogramState.fontSize2);
@@ -991,6 +1043,7 @@ function buildSavedMonogramState(savedMonogram = {}, printSize = '4x6') {
     colorsLinked: savedMonogram.colorsLinked !== undefined ? Boolean(savedMonogram.colorsLinked) : _defaultMonogramState.colorsLinked,
     fontSize1: parseInt(savedMonogram.fontSize1, 10) || 0,
     fontSize2: parseInt(savedMonogram.fontSize2, 10) || 0,
+    boldText: parseSavedBoolean(savedMonogram.boldText, _defaultMonogramState.boldText),
     offsetX1: parseInt(savedMonogram.offsetX1, 10) || 0,
     offsetY1: parseInt(savedMonogram.offsetY1, 10) || 0,
     offsetX2: parseInt(savedMonogram.offsetX2, 10) || 0,
@@ -1244,6 +1297,13 @@ async function initMonogramBuilder() {
   const fontSize2Input = document.getElementById('mono-fontsize2');
   const fontSize2Range = document.getElementById('mono-fontsize2-range');
   const fontSize2Reset = document.getElementById('mono-fontsize2-reset');
+  const boldToggle = document.getElementById('mono-bold-toggle');
+
+  function syncBoldToggle() {
+    if (!boldToggle) return;
+    boldToggle.classList.toggle('active', Boolean(MonogramState.boldText));
+    boldToggle.setAttribute('aria-pressed', MonogramState.boldText ? 'true' : 'false');
+  }
 
   function syncFontSize1(val) {
     const v = parseInt(val) || 0;
@@ -1270,6 +1330,14 @@ async function initMonogramBuilder() {
   });
   if (fontSize1Reset) fontSize1Reset.addEventListener('click', () => syncFontSize1(0));
   if (fontSize2Reset) fontSize2Reset.addEventListener('click', () => syncFontSize2(0));
+  if (boldToggle) {
+    syncBoldToggle();
+    boldToggle.addEventListener('click', () => {
+      MonogramState.boldText = !MonogramState.boldText;
+      syncBoldToggle();
+      scheduleRender();
+    });
+  }
 
   /* ---- Text position controls ---- */
   const offsetX1 = document.getElementById('mono-offsetx1');
@@ -1337,10 +1405,11 @@ async function initMonogramBuilder() {
       if (fontLinkBtn) { fontLinkBtn.classList.add('linked'); fontLinkBtn.textContent = '🔗'; }
 
       // Font sizes
-      if (fontSize1Input) fontSize1Input.value = String(getDefaultFontSizeDisplayValue());
-      if (fontSize1Range) fontSize1Range.value = String(getDefaultFontSizeDisplayValue());
-      if (fontSize2Input) fontSize2Input.value = String(getDefaultFontSizeDisplayValue());
-      if (fontSize2Range) fontSize2Range.value = String(getDefaultFontSizeDisplayValue());
+      if (fontSize1Input) fontSize1Input.value = String(getDefaultFontSizeDisplayValue(1));
+      if (fontSize1Range) fontSize1Range.value = String(getDefaultFontSizeDisplayValue(1));
+      if (fontSize2Input) fontSize2Input.value = String(getDefaultFontSizeDisplayValue(2));
+      if (fontSize2Range) fontSize2Range.value = String(getDefaultFontSizeDisplayValue(2));
+      syncBoldToggle();
 
       // Offsets
       [offsetX1, offsetY1, offsetX2, offsetY2].forEach(el => { if (el) el.value = 0; });
@@ -1409,6 +1478,16 @@ async function initMonogramBuilder() {
   const warn1 = document.getElementById('color1-warning');
   const warn2 = document.getElementById('color2-warning');
   const quickColorButtons = document.querySelectorAll('[data-quick-color-target]');
+
+  if (document.body.classList.contains('is-dashboard-embedded')) {
+    MonogramState.colorsLinked = false;
+    [linkBtn, linkBtn2].forEach(btn => {
+      if (btn) {
+        btn.classList.remove('linked');
+        btn.textContent = '🔓';
+      }
+    });
+  }
 
   function updateColorWarnings() {
     if (warn1) warn1.classList.toggle('hidden', !isColorTooLight(MonogramState.textColor1));

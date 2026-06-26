@@ -11,7 +11,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300&display=swap" rel="stylesheet" />
 
-  <link rel="stylesheet" href="css/style.css?v=81" />
+  <link rel="stylesheet" href="css/style.css?v=95" />
 </head>
 <body>
 
@@ -190,11 +190,11 @@
 
       <div class="toggle-card-group">
         <button type="button" class="toggle-card" data-group="parking" data-value="yes">
-          <span class="toggle-card-icon">🅿️</span>
+          <span class="toggle-card-icon toggle-card-icon--parking" aria-hidden="true">P</span>
           <span class="toggle-card-label">Yes</span>
         </button>
         <button type="button" class="toggle-card" data-group="parking" data-value="no">
-          <span class="toggle-card-icon">🚫</span>
+          <span class="toggle-card-icon toggle-card-icon--no" aria-hidden="true">×</span>
           <span class="toggle-card-label">No</span>
         </button>
       </div>
@@ -414,13 +414,21 @@
               <div class="field-sub-col">
                 <label class="field-sublabel" for="mono-fontsize2">Size</label>
                 <div class="fontsize-row">
-                  <input type="number" id="mono-fontsize2" class="text-input text-input--xs" min="0" max="600" placeholder="100" />
-                  <input type="range" id="mono-fontsize2-range" class="range-input" min="0" max="600" value="0" />
+                  <input type="number" id="mono-fontsize2" class="text-input text-input--xs" min="0" max="600" placeholder="80" />
+                  <input type="range" id="mono-fontsize2-range" class="range-input" min="0" max="600" value="80" />
                   <button type="button" id="mono-fontsize2-reset" class="font-size-reset-btn" aria-label="Reset date size">↺</button>
                 </div>
               </div>
             </div>
             <!-- Date position -->
+          </div>
+
+          <!-- Print weight -->
+          <div class="field-group">
+            <div class="field-label-row">
+              <label class="field-label">Print Weight</label>
+              <button type="button" id="mono-bold-toggle" class="mono-bold-toggle" aria-pressed="false" title="Make text and frames even bolder for print">B</button>
+            </div>
           </div>
 
           <!-- Position controls -->
@@ -611,8 +619,8 @@
   </footer>
 
   <script src="js/frames.js?v=74"></script>
-  <script src="js/monogram.js?v=81"></script>
-  <script src="js/app.js?v=81"></script>
+  <script src="js/monogram.js?v=92"></script>
+  <script src="js/app.js?v=95"></script>
 
 </body>
 </html>
