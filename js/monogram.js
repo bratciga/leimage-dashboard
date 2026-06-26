@@ -77,13 +77,14 @@ const MONOGRAM_ZONE_HEIGHT_RATIO = 0.96;
 const PADDING_RATIO = 0.02;
 // How much of the final PRINT the monogram strip occupies (bottom portion)
 const PRINT_STRIP_RATIO = 0.18;
+const TWO_BY_SIX_MONOGRAM_TOP_RATIO = 0.79;
 const FOUR_BY_SIX_DEFAULT_MONOGRAM_SCALE = 0.8;
-const DEFAULT_PRINT_STROKE_RATIO = 0.014;
-const EXTRA_BOLD_PRINT_STROKE_RATIO = 0.028;
-const DEFAULT_PRINT_STROKE_MAX = 3.5;
-const EXTRA_BOLD_PRINT_STROKE_MAX = 6;
-const DEFAULT_FRAME_BOLD_OFFSET = 1;
-const EXTRA_BOLD_FRAME_OFFSET = 2;
+const DEFAULT_PRINT_STROKE_RATIO = 0;
+const EXTRA_BOLD_PRINT_STROKE_RATIO = 0.01;
+const DEFAULT_PRINT_STROKE_MAX = 0;
+const EXTRA_BOLD_PRINT_STROKE_MAX = 2.5;
+const DEFAULT_FRAME_BOLD_OFFSET = 0;
+const EXTRA_BOLD_FRAME_OFFSET = 1;
 
 /* ================================================================
    STATE
@@ -552,10 +553,10 @@ function fitFontSize(ctx, text, fontFamily, maxWidth, maxSize, minSize = 16) {
   const lines = text.split('\n');
   const longest = lines.reduce((a, b) => a.length >= b.length ? a : b, '');
   let size = maxSize;
-  ctx.font = `700 ${size}px "${fontFamily}"`;
+  ctx.font = `${size}px "${fontFamily}"`;
   while (size > minSize && ctx.measureText(longest).width > maxWidth) {
     size -= 2;
-    ctx.font = `700 ${size}px "${fontFamily}"`;
+    ctx.font = `${size}px "${fontFamily}"`;
   }
   return size;
 }
@@ -573,6 +574,10 @@ function getFrameBoldOffset(state) {
 }
 
 function drawBoldFrameImage(ctx, img, x, y, w, h, offset) {
+  if (!offset || offset <= 0) {
+    ctx.drawImage(img, x, y, w, h);
+    return;
+  }
   const distance = Math.max(1, Math.round(offset));
   const offsets = [
     [-distance, 0], [distance, 0], [0, -distance], [0, distance],
@@ -583,19 +588,23 @@ function drawBoldFrameImage(ctx, img, x, y, w, h, offset) {
 }
 
 function setMonogramFont(ctx, size, fontFamily, state) {
-  const weight = state.boldText ? 800 : 700;
-  ctx.font = `${weight} ${size}px "${fontFamily}"`;
+  ctx.font = state.boldText ? `700 ${size}px "${fontFamily}"` : `${size}px "${fontFamily}"`;
 }
 
 function drawPrintableText(ctx, text, x, y, color, size, state) {
-  const strokeWidth = Math.max(1, Math.min(getPrintStrokeMax(state), size * getPrintStrokeRatio(state)));
+  const strokeMax = getPrintStrokeMax(state);
+  const strokeWidth = strokeMax > 0
+    ? Math.max(1, Math.min(strokeMax, size * getPrintStrokeRatio(state)))
+    : 0;
   ctx.save();
   ctx.fillStyle = color;
-  ctx.strokeStyle = color;
-  ctx.lineWidth = strokeWidth;
-  ctx.lineJoin = 'round';
-  ctx.miterLimit = 2;
-  ctx.strokeText(text, x, y);
+  if (strokeWidth > 0) {
+    ctx.strokeStyle = color;
+    ctx.lineWidth = strokeWidth;
+    ctx.lineJoin = 'round';
+    ctx.miterLimit = 2;
+    ctx.strokeText(text, x, y);
+  }
   ctx.fillText(text, x, y);
   ctx.restore();
 }
@@ -1090,58 +1099,69 @@ async function getExportCanvas(state = MonogramState, explicitPrintSize = null) 
   const print     = PRINT_DIMS[printSize] || PRINT_DIMS['4x6'];
   const is2x6     = printSize === '2x6';
 
-  // Render the monogram at the internal spec resolution (transparent)
-  const spec = CANVAS_SPECS[printSize];
-  const monoCanvas = document.createElement('canvas');
-  monoCanvas.width  = spec.w;
-  monoCanvas.height = spec.h;
-  const mctx = monoCanvas.getContext('2d');
-  await drawMonogramContent(mctx, spec, state, true);
-
-  // --- find the actual bounding box of content ---
-  const imgData = mctx.getImageData(0, 0, spec.w, spec.h);
-  const px = imgData.data;
-  let cTop = spec.h, cBot = 0, cLeft = spec.w, cRight = 0;
-  let found = false;
-  for (let y = 0; y < spec.h; y++) {
-    for (let x = 0; x < spec.w; x++) {
-      if (px[(y * spec.w + x) * 4 + 3] > 10) {
-        found = true;
-        if (y < cTop) cTop = y;
-        if (y > cBot) cBot = y;
-        if (x < cLeft) cLeft = x;
-        if (x > cRight) cRight = x;
-      }
-    }
-  }
-  if (!found) { cTop = 0; cBot = spec.h; cLeft = 0; cRight = spec.w; }
-
-  // Add small padding around the content
-  const pad = Math.round(spec.w * 0.01);
-  cTop  = Math.max(0, cTop - pad);
-  cBot  = Math.min(spec.h, cBot + pad);
-  cLeft = Math.max(0, cLeft - pad);
-  cRight = Math.min(spec.w, cRight + pad);
-
-  const srcW = cRight - cLeft;
-  const srcH = cBot - cTop;
-  const srcAspect = srcW / srcH;
-
   // Create full-print-size canvas (transparent)
   const singleW = is2x6 ? print.w / 2 : print.w;
   const singleH = print.h;
 
   // Monogram strip at bottom — same proportion as preview mock
   const monoStripH = Math.round(singleH * PRINT_STRIP_RATIO);
-  const monoY      = singleH - monoStripH;
+  const monoY      = is2x6 ? Math.round(singleH * TWO_BY_SIX_MONOGRAM_TOP_RATIO) : singleH - monoStripH;
 
-  // Fit the content bbox into a target area, preserving aspect ratio, centered
-  function drawFitted(ctx, sx, targetW, targetH, targetY) {
+  async function renderSlotContent(targetW, targetH) {
+    const slotCanvas = document.createElement('canvas');
+    slotCanvas.width = Math.round(targetW);
+    slotCanvas.height = Math.round(targetH);
+    const slotCtx = slotCanvas.getContext('2d');
+    await drawMonogramContent(slotCtx, { w: slotCanvas.width, h: slotCanvas.height }, state, true);
+
+    const imgData = slotCtx.getImageData(0, 0, slotCanvas.width, slotCanvas.height);
+    const px = imgData.data;
+    let cTop = slotCanvas.height, cBot = 0, cLeft = slotCanvas.width, cRight = 0;
+    let found = false;
+    for (let y = 0; y < slotCanvas.height; y++) {
+      for (let x = 0; x < slotCanvas.width; x++) {
+        if (px[(y * slotCanvas.width + x) * 4 + 3] > 10) {
+          found = true;
+          if (y < cTop) cTop = y;
+          if (y > cBot) cBot = y;
+          if (x < cLeft) cLeft = x;
+          if (x > cRight) cRight = x;
+        }
+      }
+    }
+    if (!found) {
+      cTop = 0;
+      cBot = slotCanvas.height;
+      cLeft = 0;
+      cRight = slotCanvas.width;
+    }
+
+    const pad = Math.round(slotCanvas.width * 0.01);
+    cTop = Math.max(0, cTop - pad);
+    cBot = Math.min(slotCanvas.height, cBot + pad);
+    cLeft = Math.max(0, cLeft - pad);
+    cRight = Math.min(slotCanvas.width, cRight + pad);
+
+    return {
+      canvas: slotCanvas,
+      x: cLeft,
+      y: cTop,
+      w: cRight - cLeft,
+      h: cBot - cTop,
+    };
+  }
+
+  // Fit the final-resolution content bbox into a target area without raster downscaling.
+  async function drawFitted(ctx, sx, targetW, targetH, targetY) {
+    const content = await renderSlotContent(targetW, targetH);
+    const srcAspect = content.w / content.h;
     const scale = is2x6 ? 1 : FOUR_BY_SIX_DEFAULT_MONOGRAM_SCALE;
     const { dw, dh } = fitBoxToTarget(srcAspect, targetW, targetH, scale);
     const dx = sx + (targetW - dw) / 2;
     const dy = targetY + (targetH - dh) / 2;
-    ctx.drawImage(monoCanvas, cLeft, cTop, srcW, srcH, dx, dy, dw, dh);
+    ctx.imageSmoothingEnabled = true;
+    ctx.imageSmoothingQuality = 'high';
+    ctx.drawImage(content.canvas, content.x, content.y, content.w, content.h, dx, dy, dw, dh);
   }
 
   const out = document.createElement('canvas');
@@ -1151,15 +1171,15 @@ async function getExportCanvas(state = MonogramState, explicitPrintSize = null) 
 
   if (is2x6) {
     // Two strips side by side — one monogram per half (printer cuts in half)
-    drawFitted(ctx, 0, singleW, monoStripH, monoY);
-    drawFitted(ctx, singleW, singleW, monoStripH, monoY);
+    await drawFitted(ctx, 0, singleW, monoStripH, monoY);
+    await drawFitted(ctx, singleW, singleW, monoStripH, monoY);
   } else {
     // 4x6 layout: 2×2 grid — monogram goes in the bottom-left quadrant
     const quadW = Math.floor(print.w / 2);
     const quadH = Math.floor(print.h / 2);
     const qx = 0;              // left column
     const qy = quadH;          // bottom row
-    drawFitted(ctx, qx, quadW, quadH, qy);
+    await drawFitted(ctx, qx, quadW, quadH, qy);
   }
   return out;
 }
@@ -1344,7 +1364,6 @@ async function initMonogramBuilder() {
       scheduleRender();
     });
   }
-
   /* ---- Text position controls ---- */
   const offsetX1 = document.getElementById('mono-offsetx1');
   const offsetY1 = document.getElementById('mono-offsety1');
