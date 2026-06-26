@@ -78,10 +78,12 @@ const PADDING_RATIO = 0.02;
 // How much of the final PRINT the monogram strip occupies (bottom portion)
 const PRINT_STRIP_RATIO = 0.18;
 const FOUR_BY_SIX_DEFAULT_MONOGRAM_SCALE = 0.8;
-const DEFAULT_PRINT_STROKE_RATIO = 0.045;
-const EXTRA_BOLD_PRINT_STROKE_RATIO = 0.075;
-const DEFAULT_FRAME_BOLD_OFFSET = 2;
-const EXTRA_BOLD_FRAME_OFFSET = 4;
+const DEFAULT_PRINT_STROKE_RATIO = 0.014;
+const EXTRA_BOLD_PRINT_STROKE_RATIO = 0.028;
+const DEFAULT_PRINT_STROKE_MAX = 3.5;
+const EXTRA_BOLD_PRINT_STROKE_MAX = 6;
+const DEFAULT_FRAME_BOLD_OFFSET = 1;
+const EXTRA_BOLD_FRAME_OFFSET = 2;
 
 /* ================================================================
    STATE
@@ -562,6 +564,10 @@ function getPrintStrokeRatio(state) {
   return state.boldText ? EXTRA_BOLD_PRINT_STROKE_RATIO : DEFAULT_PRINT_STROKE_RATIO;
 }
 
+function getPrintStrokeMax(state) {
+  return state.boldText ? EXTRA_BOLD_PRINT_STROKE_MAX : DEFAULT_PRINT_STROKE_MAX;
+}
+
 function getFrameBoldOffset(state) {
   return state.boldText ? EXTRA_BOLD_FRAME_OFFSET : DEFAULT_FRAME_BOLD_OFFSET;
 }
@@ -582,7 +588,7 @@ function setMonogramFont(ctx, size, fontFamily, state) {
 }
 
 function drawPrintableText(ctx, text, x, y, color, size, state) {
-  const strokeWidth = Math.max(1.5, size * getPrintStrokeRatio(state));
+  const strokeWidth = Math.max(1, Math.min(getPrintStrokeMax(state), size * getPrintStrokeRatio(state)));
   ctx.save();
   ctx.fillStyle = color;
   ctx.strokeStyle = color;
